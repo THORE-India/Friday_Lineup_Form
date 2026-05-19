@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THORE — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:         #0e0f14;
+      --surface:    #16181f;
+      --surface2:   #1d1f28;
+      --surface3:   #252834;
+      --border:     rgba(255,255,255,0.07);
+      --border-mid: rgba(255,255,255,0.13);
+      --gold:       #c9a84c;
+      --gold-light: #f0d080;
+      --gold-dim:   rgba(201,168,76,0.15);
+      --red:        #e05c5c;
+      --green:      #52c47e;
+      --blue:       #5c9be0;
+      --orange:     #e08c5c;
+      --text:       #f0ede6;
+      --text-muted: #7a7a8e;
+      --text-dim:   #a0a0b4;
+      --radius:     12px;
+      --radius-sm:  8px;
+      --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── Header ──────────────────────────────────────────────── */
+    .header {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(14,15,20,0.92);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 1rem; }
+    .logo {
+      font-family: 'Fraunces', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+    .logo span { color: var(--text-muted); font-size: 0.7rem; font-weight: 400; font-family: 'Outfit', sans-serif; letter-spacing: 0.04em; display: block; margin-top: -2px; }
+
+    /* Dashboard tabs in header */
+    .dash-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--surface2);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      padding: 4px;
+    }
+    .dash-tab {
+      padding: 6px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: var(--transition);
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .dash-tab.active {
+      background: var(--gold);
+      color: #0e0f14;
+    }
+    .dash-tab:not(.active):hover { color: var(--text); }
+
+    .header-right { display: flex; align-items: center; gap: 12px; }
+
+    .status-pill {
+      display: flex; align-items: center; gap: 6px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .status-pill.online  { background: rgba(82,196,126,0.12); color: var(--green); }
+    .status-pill.offline { background: rgba(224,92,92,0.12);  color: var(--red);   }
+
+    .profile-wrap { position: relative; }
+    .profile-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      display: flex; align-items: center; justify-content: center;
+      color: #0e0f14;
+      font-weight: 800;
+      font-size: 0.78rem;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: var(--transition);
+    }
+    .profile-avatar:hover { border-color: var(--gold); }
+    .profile-dropdown {
+      position: absolute; top: 46px; right: 0;
+      background: var(--surface2);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+      min-width: 200px;
+      display: none; z-index: 999;
+      overflow: hidden;
+    }
+    .profile-dropdown.show { display: block; }
+    .pd-item {
+      padding: 11px 16px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+      color: var(--text-dim);
+    }
+    .pd-item:last-child { border-bottom: none; }
+    .pd-item:hover { background: var(--surface3); color: var(--text); }
+    .pd-item.username { font-weight: 700; color: var(--text); cursor: default; }
+    .pd-item.username:hover { background: transparent; }
+    .pd-item.logout { color: var(--red); }
+    .pd-item.logout:hover { background: rgba(224,92,92,0.08); }
+
+    /* ── Layout ───────────────────────────────────────────────── */
+    .content { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; }
+
+    /* ── Login Card ───────────────────────────────────────────── */
+    #loginPanel {
+      display: flex; align-items: center; justify-content: center;
+      min-height: calc(100vh - 60px);
+      padding: 2rem;
+    }
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--border-mid);
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .login-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.6rem;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 0.4rem;
+    }
+    .login-sub { text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2rem; }
+
+    .form-field { margin-bottom: 1.1rem; }
+    .form-field label { display: block; font-size: 0.72rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 6px; }
+    .form-field input, .form-field select {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: var(--surface2);
+      border: 1.5px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: var(--transition);
+      -webkit-appearance: none; appearance: none;
+    }
+    .form-field input:focus, .form-field select:focus { border-color: var(--gold); background: var(--surface3); box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
+    .form-field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237a7a8e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+    .form-field select option { background: var(--surface2); }
+
+    .login-btn {
+      width: 100%;
+      padding: 0.9rem;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border: none;
+      border-radius: var(--radius-sm);
+      color: #0e0f14;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: var(--transition);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 0.4rem;
+    }
+    .login-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .login-btn:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
+
+    .login-status {
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 14px;
+      min-height: 20px;
+    }
+    .login-status.err { color: var(--red); }
+
+    /* ── Dashboard Panel ─────────────────────────────────────── */
+    #dashPanel { display: none; flex-direction: column; flex: 1; }
+
+    /* ── Filters Bar ──────────────────────────────────────────── */
+    .filters-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+    }
+    .filters-grid {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end;
+    }
+    .filter-item { display: flex; flex-direction: column; gap: 5px; }
+    .filter-item label { font-size: 0.65rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; }
+    .filter-item select, .filter-item input {
+      padding: 7px 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.82rem;
+      outline: none;
+      transition: var(--transition);
+      min-width: 140px;
+      -webkit-appearance: none; appearance: none;
+    }
+    .filter-item select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7a8e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; padding-right: 28px; }
+    .filter-item select option { background: var(--surface2); }
+    .filter-item select:focus, .filter-item input:focus { border-color: var(--gold); }
+
+    .clear-btn {
+      padding: 7px 16px;
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: 'Outfit', sans-serif;
+      align-self: flex-end;
+    }
+    .clear-btn:hover { border-color: var(--text-muted); color: var(--text); }
+
+    /* ── Table Header ─────────────────────────────────────────── */
+    .table-meta {
+      padding: 12px 20px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .row-count { font-size: 0.8rem; color: var(--text-muted); }
+    .last-updated { font-size: 0.72rem; color: var(--text-muted); }
+
+    /* ── Table ────────────────────────────────────────────────── */
+    .table-wrap {
+      flex: 1;
+      overflow: auto;
+      max-height: calc(100vh - 220px);
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-mid) transparent;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      background: var(--surface);
+    }
+    thead { position: sticky; top: 0; z-index: 10; }
+    th {
+      background: var(--surface2);
+      padding: 11px 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-mid);
+      white-space: nowrap;
+    }
+    th.sortable { cursor: pointer; user-select: none; transition: color 0.15s; }
+    th.sortable:hover { color: var(--gold); }
+    th.sortable::after { content: ' ↕'; opacity: 0.3; font-size: 0.65rem; }
+    th.asc::after  { content: ' ▲'; opacity: 1; color: var(--gold); }
+    th.desc::after { content: ' ▼'; opacity: 1; color: var(--gold); }
+
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-dim);
+      vertical-align: middle;
+    }
+    tr:hover td { background: var(--surface2); color: var(--text); }
+
+    .no-data {
+      padding: 50px 20px;
+      text-align: center;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ── Status badges ──────────────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .badge-hot    { background: rgba(224,92,92,0.15);  color: #e05c5c; }
+    .badge-warm   { background: rgba(224,140,92,0.15); color: #e08c5c; }
+    .badge-cold   { background: rgba(92,155,224,0.15); color: #5c9be0; }
+    .badge-yes    { background: rgba(82,196,126,0.15); color: #52c47e; }
+    .badge-no     { background: rgba(224,92,92,0.12);  color: #e05c5c; }
+    .badge-conv   { background: rgba(201,168,76,0.15); color: var(--gold); }
+
+    /* ── Convert Button ──────────────────────────────────────────── */
+    .convert-btn {
+      padding: 4px 12px;
+      background: transparent;
+      border: 1px solid rgba(201,168,76,0.4);
+      border-radius: 20px;
+      color: var(--gold);
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: 'Outfit', sans-serif;
+      white-space: nowrap;
+      letter-spacing: 0.03em;
+    }
+    .convert-btn:hover {
+      background: var(--gold-dim);
+      border-color: var(--gold);
+      box-shadow: 0 0 8px rgba(201,168,76,0.2);
+    }
+
+    /* ── Pivot Table Extras ───────────────────────────────────── */
+    td.total  { font-weight: 700; color: var(--gold); }
+    td.zero   { color: var(--text-muted); opacity: 0.5; }
+
+    /* ── Refresh Indicator ───────────────────────────────────── */
+    .refresh-indicator {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      background: rgba(82,196,126,0.15);
+      color: var(--green);
+      border: 1px solid rgba(82,196,126,0.3);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      display: none;
+      z-index: 999;
+      animation: pulse 1.5s infinite;
+    }
+    .refresh-indicator.show { display: block; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    /* ── View Tabs (Detail / Pivot) ──────────────────────────── */
+    .view-tabs {
+      display: flex; gap: 4px;
+      background: var(--surface2);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      padding: 3px;
+    }
+    .view-tab {
+      padding: 5px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: var(--transition);
+    }
+    .view-tab.active { background: var(--surface3); color: var(--text); }
+
+    /* ── Footer ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 12px 20px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      position: relative; z-index: 1;
+    }
+    footer a { color: var(--gold); text-decoration: none; }
+
+    /* ── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .header { padding: 0 1rem; flex-wrap: wrap; height: auto; padding-top: 10px; padding-bottom: 10px; }
+      .dash-tabs { order: 3; width: 100%; }
+      .dash-tab { flex: 1; text-align: center; }
+      .filters-grid { flex-direction: column; }
+      .filter-item select, .filter-item input { min-width: 100%; }
+      .table-wrap { max-height: calc(100vh - 280px); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo">THORE <span>Dashboard</span></div>
+    <div id="dashTabs" class="dash-tabs" style="display:none;">
+      <button class="dash-tab active" onclick="switchDashboard('visits')">📋 Visits</button>
+      <button class="dash-tab" onclick="switchDashboard('fnclients')">🏆 FN Clients</button>
+    </div>
+  </div>
+  <div class="header-right">
+    <div id="connStatus" class="status-pill online"><span>●</span> Online</div>
+    <a href="index.html" style="color:var(--text-muted);font-size:0.78rem;text-decoration:none;">← Form</a>
+    <div class="profile-wrap" id="profileWrap" style="display:none;">
+      <div class="profile-avatar" onclick="toggleProfile()" id="profileAvatar">?</div>
+      <div class="profile-dropdown" id="profileDropdown">
+        <div class="pd-item username" id="pdUsername">—</div>
+        <div class="pd-item" onclick="window.open('index.html')">📋 Friday Lineup Form</div>
+        <div class="pd-item logout" onclick="logout()">Sign Out</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="refresh-indicator" id="refreshInd">🔄 Refreshing…</div>
+
+<div class="content">
+
+  <!-- Login Panel -->
+  <div id="loginPanel">
+    <div class="login-card">
+      <div class="login-title">Welcome Back</div>
+      <div class="login-sub">Sign in to access your dashboard</div>
+      <div class="form-field">
+        <label>Role</label>
+        <select id="role">
+          <option>Team Lead</option>
+          <option>Manager</option>
+          <option>Admin</option>
+          <option>MD/CEO</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Username</label>
+        <input id="username" type="text" placeholder="Enter username" autocomplete="username">
+      </div>
+      <div class="form-field">
+        <label>Password</label>
+        <input id="password" type="password" placeholder="Enter password" autocomplete="current-password">
+      </div>
+      <button class="login-btn" id="loginBtn" onclick="login()">Sign In</button>
+      <div class="login-status" id="loginStatus"></div>
+    </div>
+  </div>
+
+  <!-- Dashboard Panel -->
+  <div id="dashPanel">
+
+    <!-- Visits Dashboard -->
+    <div id="visitsDash">
+      <!-- Filters -->
+      <div class="filters-bar">
+        <div class="filters-grid">
+          <div class="filter-item">
+            <label>Project</label>
+            <select id="v-projFilter" onchange="applyVisitFilters()"><option value="">All Projects</option></select>
+          </div>
+          <div class="filter-item">
+            <label>Team Lead</label>
+            <select id="v-tlFilter" onchange="applyVisitFilters()"><option value="">All Team Leads</option></select>
+          </div>
+          <div class="filter-item">
+            <label>Employee</label>
+            <select id="v-empFilter" onchange="applyVisitFilters()"><option value="">All Employees</option></select>
+          </div>
+          <div class="filter-item">
+            <label>From Date</label>
+            <input type="date" id="v-fromDate" onchange="applyVisitFilters()">
+          </div>
+          <div class="filter-item">
+            <label>To Date</label>
+            <input type="date" id="v-toDate" onchange="applyVisitFilters()">
+          </div>
+          <div class="filter-item">
+            <div style="margin-bottom:5px;height:14px;"></div>
+            <div style="display:flex;gap:8px;">
+              <button class="clear-btn" onclick="clearVisitFilters()">Clear</button>
+              <!-- View tabs -->
+              <div class="view-tabs">
+                <button class="view-tab active" id="v-detailTab" onclick="switchVisitView('detail')">Detail</button>
+                <button class="view-tab" id="v-pivotTab" onclick="switchVisitView('pivot')">Pivot</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-meta">
+        <div class="row-count" id="v-rowCount">Loading…</div>
+        <div class="last-updated" id="v-lastUpdated"></div>
+      </div>
+
+      <!-- Detail Table -->
+      <div id="v-detailView" class="table-wrap">
+        <table id="v-table">
+          <thead>
+            <tr>
+              <th class="sortable" onclick="sortVisits(0)">Cluster</th>
+              <th class="sortable" onclick="sortVisits(1)">Team Lead</th>
+              <th class="sortable" onclick="sortVisits(2)">SE</th>
+              <th class="sortable" onclick="sortVisits(3)">Customer</th>
+              <th>Phone</th>
+              <th class="sortable" onclick="sortVisits(5)">Project</th>
+              <th class="sortable" onclick="sortVisits(6)">Developer</th>
+              <th class="sortable" onclick="sortVisits(7)">Visit Date</th>
+              <th>Visit Time</th>
+              <th>Requirements</th>
+              <th>Closure</th>
+              <th>Backup</th>
+              <th>Convert</th>
+            </tr>
+          </thead>
+          <tbody id="v-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- Pivot Table -->
+      <div id="v-pivotView" class="table-wrap" style="display:none;">
+        <table id="v-pivot">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div><!-- #visitsDash -->
+
+    <!-- FN Clients Dashboard -->
+    <div id="fnDash" style="display:none;">
+      <!-- Filters -->
+      <div class="filters-bar">
+        <div class="filters-grid">
+          <div class="filter-item">
+            <label>Project</label>
+            <select id="fn-projFilter" onchange="applyFNFilters()"><option value="">All Projects</option></select>
+          </div>
+          <div class="filter-item">
+            <label>Team Lead</label>
+            <select id="fn-tlFilter" onchange="applyFNFilters()"><option value="">All Team Leads</option></select>
+          </div>
+          <div class="filter-item">
+            <label>Employee</label>
+            <select id="fn-empFilter" onchange="applyFNFilters()"><option value="">All Employees</option></select>
+          </div>
+          <div class="filter-item">
+            <label>Status</label>
+            <select id="fn-statusFilter" onchange="applyFNFilters()">
+              <option value="">All Statuses</option>
+              <option>Hot</option>
+              <option>Warm</option>
+              <option>Cold</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>From Date</label>
+            <input type="date" id="fn-fromDate" onchange="applyFNFilters()">
+          </div>
+          <div class="filter-item">
+            <label>To Date</label>
+            <input type="date" id="fn-toDate" onchange="applyFNFilters()">
+          </div>
+          <button class="clear-btn" style="align-self:flex-end" onclick="clearFNFilters()">Clear</button>
+        </div>
+      </div>
+
+      <div class="table-meta">
+        <div class="row-count" id="fn-rowCount">Loading…</div>
+        <div class="last-updated" id="fn-lastUpdated"></div>
+      </div>
+
+      <div id="fn-tableView" class="table-wrap">
+        <table id="fn-table">
+          <thead>
+            <tr>
+              <th class="sortable" onclick="sortFN(0)">Cluster</th>
+              <th class="sortable" onclick="sortFN(1)">Team Lead</th>
+              <th class="sortable" onclick="sortFN(2)">SE</th>
+              <th class="sortable" onclick="sortFN(3)">Customer</th>
+              <th>Phone</th>
+              <th class="sortable" onclick="sortFN(5)">Project</th>
+              <th>Config</th>
+              <th>Budget</th>
+              <th>Status</th>
+              <th class="sortable" onclick="sortFN(9)">Visit Date</th>
+              <th>Converted</th>
+            </tr>
+          </thead>
+          <tbody id="fn-tbody"></tbody>
+        </table>
+      </div>
+    </div><!-- #fnDash -->
+
+  </div><!-- #dashPanel -->
+</div><!-- .content -->
+
+<footer>
+  Engineered for excellence by <a href="https://narendraspatil.github.io/NarenP-website/" target="_blank">Operations Department, THORE</a> &nbsp;|&nbsp;
+  Copyright © <span id="yr"></span> All rights reserved.
+</footer>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────
+// Replace with your deployed GAS Web App URL
+const GAS_URL     = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+const FN_FORM_URL = 'fn-clients.html';  // URL of your FN Clients form (on GitHub)
+
+// ── SESSION KEYS ──────────────────────────────────────────────
+const SK = { role:'d_role', user:'d_user', pass:'d_pass', time:'d_time' };
+
+// ── STATE ─────────────────────────────────────────────────────
+let auth             = null;
+let refreshTimer     = null;
+let isRefreshing     = false;
+let activeDash       = 'visits';   // 'visits' | 'fnclients'
+let currentVisitView = 'detail';
+
+// Visits
+let visitsAll = [], visitsFiltered = [];
+let vSortCol = -1, vSortDir = 'asc';
+
+// FN Clients
+let fnAll = [], fnFiltered = [];
+let fnSortCol = -1, fnSortDir = 'asc';
+
+// ── BOOT ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  checkStoredSession();
+});
+
+// ── AUTH ──────────────────────────────────────────────────────
+function login() {
+  const role = document.getElementById('role').value.trim();
+  const user = document.getElementById('username').value.trim();
+  const pass = document.getElementById('password').value;
+  if (!user || !pass) { setLoginStatus('Enter username and password', true); return; }
+  setLoginStatus('Checking credentials…');
+  document.getElementById('loginBtn').disabled = true;
+
+  jsonpFetch({ action: 'getVisitData', role, username: user, password: pass }, data => {
+    document.getElementById('loginBtn').disabled = false;
+    if (!data.ok) { setLoginStatus(data.error || 'Invalid credentials', true); return; }
+    handleLoginSuccess(role, user, pass, data.data);
+  }, err => {
+    document.getElementById('loginBtn').disabled = false;
+    setLoginStatus('Network error. Please try again.', true);
+  });
+}
+
+function handleLoginSuccess(role, user, pass, visitRows) {
+  auth = { role, user, pass };
+  sessionStorage.setItem(SK.role, role);
+  sessionStorage.setItem(SK.user, user);
+  sessionStorage.setItem(SK.pass, pass);
+  sessionStorage.setItem(SK.time, Date.now().toString());
+
+  // Show UI
+  document.getElementById('loginPanel').style.display = 'none';
+  document.getElementById('dashPanel').style.display  = 'flex';
+  document.getElementById('dashPanel').style.flexDirection = 'column';
+  document.getElementById('dashTabs').style.display   = 'flex';
+  document.getElementById('profileWrap').style.display = 'block';
+  document.getElementById('profileAvatar').textContent = getInitials(user);
+  document.getElementById('pdUsername').textContent    = user;
+  setLoginStatus('');
+
+  renderVisitData(visitRows);
+  startAutoRefresh();
+  setStatus(true);
+}
+
+function checkStoredSession() {
+  const role = sessionStorage.getItem(SK.role);
+  const user = sessionStorage.getItem(SK.user);
+  const pass = sessionStorage.getItem(SK.pass);
+  const time = parseInt(sessionStorage.getItem(SK.time) || '0');
+  if (role && user && pass && Date.now() - time < 8 * 3600 * 1000) {
+    setLoginStatus('Auto-logging in…');
+    jsonpFetch({ action: 'getVisitData', role, username: user, password: pass }, data => {
+      if (!data.ok) { clearSession(); setLoginStatus('Session expired, please log in.', true); return; }
+      document.getElementById('role').value     = role;
+      document.getElementById('username').value = user;
+      handleLoginSuccess(role, user, pass, data.data);
+    }, () => setLoginStatus(''));
+  }
+}
+
+function logout() {
+  auth = null;
+  clearSession();
+  if (refreshTimer) clearInterval(refreshTimer);
+  document.getElementById('dashPanel').style.display   = 'none';
+  document.getElementById('dashTabs').style.display    = 'none';
+  document.getElementById('profileWrap').style.display = 'none';
+  document.getElementById('loginPanel').style.display  = 'flex';
+  document.getElementById('profileDropdown').classList.remove('show');
+  setStatus(true);
+}
+
+function clearSession() { Object.values(SK).forEach(k => sessionStorage.removeItem(k)); }
+
+function setLoginStatus(msg, isErr) {
+  const el = document.getElementById('loginStatus');
+  el.textContent = msg;
+  el.className   = 'login-status' + (isErr ? ' err' : '');
+}
+
+// ── DASHBOARD SWITCHING ───────────────────────────────────────
+function switchDashboard(which) {
+  activeDash = which;
+  document.querySelectorAll('.dash-tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && which === 'visits') || (i === 1 && which === 'fnclients'));
+  });
+  document.getElementById('visitsDash').style.display = which === 'visits'    ? 'block' : 'none';
+  document.getElementById('fnDash').style.display     = which === 'fnclients' ? 'block' : 'none';
+
+  // Load FN data on first switch
+  if (which === 'fnclients' && fnAll.length === 0 && auth) {
+    loadFNData();
+  }
+}
+
+// ── AUTO REFRESH ──────────────────────────────────────────────
+function startAutoRefresh() {
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = setInterval(() => { if (!isRefreshing && auth) refreshAll(); }, 30000);
+}
+
+function refreshAll() {
+  if (!auth || isRefreshing) return;
+  isRefreshing = true;
+  document.getElementById('refreshInd').classList.add('show');
+
+  jsonpFetch({ action: 'getVisitData', role: auth.role, username: auth.user, password: auth.pass }, data => {
+    if (data.ok) renderVisitData(data.data);
+    // Also refresh FN if it was loaded
+    if (fnAll.length > 0) {
+      jsonpFetch({ action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => {
+        if (d.ok) renderFNData(d.data);
+        done();
+      }, done);
+    } else { done(); }
+    setStatus(true);
+  }, () => { setStatus(false); done(); });
+
+  function done() {
+    isRefreshing = false;
+    document.getElementById('refreshInd').classList.remove('show');
+  }
+}
+
+function loadFNData() {
+  document.getElementById('fn-rowCount').textContent = 'Loading…';
+  jsonpFetch({ action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => {
+    if (d.ok) renderFNData(d.data);
+    else document.getElementById('fn-rowCount').textContent = 'Failed to load FN data.';
+  }, () => { document.getElementById('fn-rowCount').textContent = 'Network error loading FN data.'; });
+}
+
+// ── VISITS RENDERING ──────────────────────────────────────────
+function renderVisitData(rows) {
+  visitsAll = rows.map(r => ({ ...r, visitDate: fmtDate(r.visitDate) }));
+  visitsFiltered = [...visitsAll];
+  populateVisitFilters(visitsAll);
+  applyVisitFilters();
+  document.getElementById('v-lastUpdated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+}
+
+function applyVisitFilters() {
+  const proj   = document.getElementById('v-projFilter').value;
+  const tl     = document.getElementById('v-tlFilter').value;
+  const emp    = document.getElementById('v-empFilter').value;
+  const from   = document.getElementById('v-fromDate').value;
+  const to     = document.getElementById('v-toDate').value;
+
+  visitsFiltered = visitsAll.filter(r => {
+    if (proj && r.project  !== proj) return false;
+    if (tl   && r.teamLead !== tl)   return false;
+    if (emp  && r.employee !== emp)   return false;
+    if (from && fmtDate(r.visitDate) < from) return false;
+    if (to   && fmtDate(r.visitDate) > to)   return false;
+    return true;
+  });
+
+  if (vSortCol >= 0) applySortVisits();
+  if (currentVisitView === 'detail') renderVisitTable(visitsFiltered);
+  else renderVisitPivot(visitsFiltered);
+}
+
+function clearVisitFilters() {
+  ['v-projFilter','v-tlFilter','v-empFilter','v-fromDate','v-toDate']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  visitsFiltered = [...visitsAll];
+  if (currentVisitView === 'detail') renderVisitTable(visitsFiltered);
+  else renderVisitPivot(visitsFiltered);
+}
+
+function switchVisitView(v) {
+  currentVisitView = v;
+  document.getElementById('v-detailTab').classList.toggle('active', v === 'detail');
+  document.getElementById('v-pivotTab').classList.toggle('active', v === 'pivot');
+  document.getElementById('v-detailView').style.display = v === 'detail' ? 'block' : 'none';
+  document.getElementById('v-pivotView').style.display  = v === 'pivot'  ? 'block' : 'none';
+  if (v === 'detail') renderVisitTable(visitsFiltered);
+  else renderVisitPivot(visitsFiltered);
+}
+
+function renderVisitTable(rows) {
+  const tbody = document.getElementById('v-tbody');
+  document.getElementById('v-rowCount').textContent = `${rows.length} visit(s)`;
+
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="13" class="no-data">No matching records found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      <td>${esc(r.cluster)}</td>
+      <td>${esc(r.teamLead)}</td>
+      <td>${esc(r.employee)}</td>
+      <td>${esc(r.customer)}</td>
+      <td>${esc(r.phone)}</td>
+      <td>${esc(r.project)}</td>
+      <td>${esc(r.developer)}</td>
+      <td>${esc(r.visitDate)}</td>
+      <td>${esc(r.visitTime)}</td>
+      <td style="max-width:140px;white-space:normal;">${esc(r.requirement)}</td>
+      <td>${esc(r.closure)}</td>
+      <td>${r.backup === 'Yes' ? '<span class="badge badge-yes">Yes</span>' : r.backup ? '<span class="badge badge-no">No</span>' : ''}</td>
+      <td><button class="convert-btn" onclick="convertToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})">⚡ Convert</button></td>
+    </tr>`).join('');
+}
+
+function renderVisitPivot(rows) {
+  const dates  = [...new Set(rows.map(r => fmtDate(r.visitDate)).filter(Boolean))].sort();
+  const thead  = document.querySelector('#v-pivot thead');
+  const tbody  = document.querySelector('#v-pivot tbody');
+  thead.innerHTML = '';
+  tbody.innerHTML = '';
+
+  const hr = document.createElement('tr');
+  hr.innerHTML = '<th>Team Lead</th><th>Employee</th>' +
+    dates.map(d => `<th>${fmtDateDay(d)}</th>`).join('') + '<th>Total</th>';
+  thead.appendChild(hr);
+
+  const grouped = {};
+  rows.forEach(r => {
+    const d   = fmtDate(r.visitDate); if (!d) return;
+    const key = r.teamLead + '|' + r.employee;
+    if (!grouped[key]) grouped[key] = { teamLead: r.teamLead, employee: r.employee, counts: {} };
+    grouped[key].counts[d] = (grouped[key].counts[d] || 0) + 1;
+  });
+
+  Object.values(grouped).forEach(g => {
+    let total = 0;
+    const tr  = document.createElement('tr');
+    tr.innerHTML = `<td>${esc(g.teamLead)}</td><td>${esc(g.employee)}</td>` +
+      dates.map(d => {
+        const v = g.counts[d] || 0; total += v;
+        return `<td class="${v === 0 ? 'zero' : ''}">${v || '–'}</td>`;
+      }).join('') + `<td class="total">${total}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('v-rowCount').textContent = `${Object.keys(grouped).length} employee(s) — pivot`;
+}
+
+function populateVisitFilters(rows) {
+  fillSelect('v-projFilter', [...new Set(rows.map(r => r.project).filter(Boolean))].sort(), 'All Projects');
+  fillSelect('v-tlFilter',   [...new Set(rows.map(r => r.teamLead).filter(Boolean))].sort(), 'All Team Leads');
+  fillSelect('v-empFilter',  [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(), 'All Employees');
+}
+
+// ── VISITS SORT ───────────────────────────────────────────────
+function sortVisits(col) {
+  if (vSortCol === col) vSortDir = vSortDir === 'asc' ? 'desc' : 'asc';
+  else { vSortCol = col; vSortDir = 'asc'; }
+  const ths = document.querySelectorAll('#v-table th');
+  ths.forEach((th, i) => { th.classList.remove('asc','desc'); if (i === col) th.classList.add(vSortDir); });
+  applySortVisits();
+  renderVisitTable(visitsFiltered);
+}
+
+function applySortVisits() {
+  const keys = ['cluster','teamLead','employee','customer','phone','project','developer','visitDate','visitTime'];
+  const key  = keys[vSortCol] || 'visitDate';
+  visitsFiltered.sort((a, b) => {
+    const v1 = a[key] || ''; const v2 = b[key] || '';
+    return vSortDir === 'asc' ? v1.localeCompare(v2) : v2.localeCompare(v1);
+  });
+}
+
+// ── FN CLIENTS RENDERING ─────────────────────────────────────
+function renderFNData(rows) {
+  fnAll      = rows.map(r => ({ ...r, visitDate: fmtDate(r.visitDate) }));
+  fnFiltered = [...fnAll];
+  populateFNFilters(fnAll);
+  applyFNFilters();
+  document.getElementById('fn-lastUpdated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+}
+
+function applyFNFilters() {
+  const proj   = document.getElementById('fn-projFilter').value;
+  const tl     = document.getElementById('fn-tlFilter').value;
+  const emp    = document.getElementById('fn-empFilter').value;
+  const status = document.getElementById('fn-statusFilter').value;
+  const from   = document.getElementById('fn-fromDate').value;
+  const to     = document.getElementById('fn-toDate').value;
+
+  fnFiltered = fnAll.filter(r => {
+    if (proj   && r.project  !== proj)   return false;
+    if (tl     && r.teamLead !== tl)     return false;
+    if (emp    && r.employee !== emp)     return false;
+    if (status && r.status   !== status) return false;
+    if (from   && fmtDate(r.visitDate) < from) return false;
+    if (to     && fmtDate(r.visitDate) > to)   return false;
+    return true;
+  });
+
+  if (fnSortCol >= 0) applySortFN();
+  renderFNTable(fnFiltered);
+}
+
+function clearFNFilters() {
+  ['fn-projFilter','fn-tlFilter','fn-empFilter','fn-statusFilter','fn-fromDate','fn-toDate']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  fnFiltered = [...fnAll];
+  renderFNTable(fnFiltered);
+}
+
+function renderFNTable(rows) {
+  const tbody = document.getElementById('fn-tbody');
+  document.getElementById('fn-rowCount').textContent = `${rows.length} FN client(s)`;
+
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="11" class="no-data">No FN clients found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      <td>${esc(r.cluster)}</td>
+      <td>${esc(r.teamLead)}</td>
+      <td>${esc(r.employee)}</td>
+      <td>${esc(r.customer)}</td>
+      <td>${esc(r.phone)}</td>
+      <td>${esc(r.project)}</td>
+      <td>${esc(r.configuration)}</td>
+      <td>${esc(r.budget)}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td>${esc(r.visitDate)}</td>
+      <td>${r.converted === 'Yes' ? '<span class="badge badge-conv">Converted</span>' : '—'}</td>
+    </tr>`).join('');
+}
+
+function populateFNFilters(rows) {
+  fillSelect('fn-projFilter',   [...new Set(rows.map(r => r.project).filter(Boolean))].sort(), 'All Projects');
+  fillSelect('fn-tlFilter',     [...new Set(rows.map(r => r.teamLead).filter(Boolean))].sort(), 'All Team Leads');
+  fillSelect('fn-empFilter',    [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(), 'All Employees');
+}
+
+function sortFN(col) {
+  if (fnSortCol === col) fnSortDir = fnSortDir === 'asc' ? 'desc' : 'asc';
+  else { fnSortCol = col; fnSortDir = 'asc'; }
+  const ths = document.querySelectorAll('#fn-table th');
+  ths.forEach((th, i) => { th.classList.remove('asc','desc'); if (i === col) th.classList.add(fnSortDir); });
+  applySortFN();
+  renderFNTable(fnFiltered);
+}
+
+function applySortFN() {
+  const keys = ['cluster','teamLead','employee','customer','phone','project','configuration','budget','status','visitDate'];
+  const key  = keys[fnSortCol] || 'visitDate';
+  fnFiltered.sort((a, b) => {
+    const v1 = a[key] || ''; const v2 = b[key] || '';
+    return fnSortDir === 'asc' ? v1.localeCompare(v2) : v2.localeCompare(v1);
+  });
+}
+
+// ── CONVERT TO FN CLIENT ──────────────────────────────────────
+function convertToFN(row) {
+  // Encode row data as URL params and open fn-clients.html with prefill
+  const params = new URLSearchParams({
+    prefill: '1',
+    customerName:     row.customer    || '',
+    contactNumber:    row.phone       || '',
+    salesExec:        row.employee    || '',
+    teamLead:         row.teamLead    || '',
+    cluster:          row.cluster     || '',
+    projectName:      row.project     || '',
+    developerName:    row.developer   || '',
+    visitDate:        row.visitDate   || '',
+    requirement:      row.requirement || '',
+    convertedFromVisit: 'Yes'
+  });
+  window.open(FN_FORM_URL + '?' + params.toString(), '_blank');
+}
+
+// ── UI HELPERS ─────────────────────────────────────────────────
+function statusBadge(s) {
+  if (!s) return '—';
+  const cls = { Hot: 'badge-hot', Warm: 'badge-warm', Cold: 'badge-cold' }[s] || '';
+  return `<span class="badge ${cls}">${esc(s)}</span>`;
+}
+
+function fillSelect(id, values, placeholder) {
+  const sel  = document.getElementById(id);
+  const curr = sel.value;
+  sel.innerHTML = `<option value="">${placeholder}</option>`;
+  values.forEach(v => sel.innerHTML += `<option value="${esc(v)}">${esc(v)}</option>`);
+  if (curr) sel.value = curr;
+}
+
+function esc(s) {
+  return String(s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function fmtDate(s) {
+  if (!s) return '';
+  const d = new Date(s);
+  if (isNaN(d)) return s;
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function fmtDateDay(s) {
+  const d = new Date(s);
+  if (isNaN(d)) return s;
+  return s + ' (' + ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()] + ')';
+}
+
+function getInitials(u) {
+  const n = u.split('@')[0].split(/[.\-_]/);
+  return n.length >= 2 ? (n[0][0]+n[1][0]).toUpperCase() : u.slice(0,2).toUpperCase();
+}
+
+function setStatus(online) {
+  const el  = document.getElementById('connStatus');
+  el.className = 'status-pill ' + (online ? 'online' : 'offline');
+  el.innerHTML = `<span>●</span> ${online ? 'Online' : 'Connection issues'}`;
+}
+
+function toggleProfile() {
+  document.getElementById('profileDropdown').classList.toggle('show');
+}
+
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('profileWrap');
+  if (wrap && !wrap.contains(e.target)) document.getElementById('profileDropdown').classList.remove('show');
+});
+
+// ── JSONP FETCH HELPER ────────────────────────────────────────
+function jsonpFetch(params, onSuccess, onError) {
+  const cbName = '__cb_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+  const script = document.createElement('script');
+  const qs     = Object.entries({ ...params, callback: cbName })
+                       .map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
+
+  const timer = setTimeout(() => { cleanup(); if (onError) onError(new Error('Timeout')); }, 15000);
+
+  window[cbName] = data => { cleanup(); onSuccess(data); };
+  script.onerror = () => { cleanup(); if (onError) onError(new Error('Load failed')); };
+
+  function cleanup() {
+    clearTimeout(timer);
+    delete window[cbName];
+    if (script.parentNode) script.parentNode.removeChild(script);
+  }
+
+  script.src = GAS_URL + '?' + qs;
+  document.head.appendChild(script);
+}
+
+// ── PAGE VISIBILITY HANDLING ──────────────────────────────────
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { if (refreshTimer) clearInterval(refreshTimer); }
+  else if (auth) { startAutoRefresh(); setTimeout(refreshAll, 1000); }
+});
+window.addEventListener('online',  () => { setStatus(true);  if (auth && !refreshTimer) startAutoRefresh(); });
+window.addEventListener('offline', () => setStatus(false));
+</script>
+</body>
+</html>
