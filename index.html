@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>THORE — Friday Lineup Form</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+  <style>
+    /* ── CSS Variables ─────────────────────────────────────── */
+    :root {
+      --bg:          #0e0f14;
+      --surface:     #16181f;
+      --surface2:    #1d1f28;
+      --surface3:    #252834;
+      --border:      rgba(255,255,255,0.07);
+      --border-mid:  rgba(255,255,255,0.13);
+      --gold:        #c9a84c;
+      --gold-light:  #f0d080;
+      --gold-dim:    rgba(201,168,76,0.18);
+      --red:         #e05c5c;
+      --green:       #52c47e;
+      --text:        #f0ede6;
+      --text-muted:  #7a7a8e;
+      --text-dim:    #a0a0b4;
+      --radius:      14px;
+      --radius-sm:   8px;
+      --shadow:      0 8px 32px rgba(0,0,0,0.45);
+      --transition:  0.22s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Subtle grid texture on bg */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Loading Screen ──────────────────────────────────────── */
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      gap: 24px;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    #loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+    .loading-logo {
+      font-family: 'Fraunces', serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.12em;
+    }
+    .loading-bar {
+      width: 180px;
+      height: 2px;
+      background: var(--surface3);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .loading-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      animation: loadFill 1.8s ease forwards;
+    }
+    @keyframes loadFill { from { width: 0; } to { width: 100%; } }
+    .loading-sub { font-size: 0.8rem; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
+
+    /* ── Page Layout ──────────────────────────────────────────── */
+    .page-wrapper { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* ── Header ──────────────────────────────────────────────── */
+    .main-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(14,15,20,0.88);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0.9rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .header-brand img { height: 42px; width: auto; border-radius: 6px; }
+    .brand-text h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1.1;
+      letter-spacing: 0.05em;
+    }
+    .brand-text p { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; }
+
+    .header-right { display: flex; align-items: center; gap: 1.2rem; }
+
+    .countdown-box { text-align: right; }
+    .countdown-label { font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.07em; text-transform: uppercase; }
+    #timer { font-size: 0.85rem; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+
+    .dash-btn {
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      color: var(--text-dim);
+      padding: 0.5rem 1.1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: 'Outfit', sans-serif;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .dash-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* ── Main Content ─────────────────────────────────────────── */
+    main { flex: 1; max-width: 900px; margin: 0 auto; width: 100%; padding: 2rem 1.5rem 4rem; }
+
+    /* ── Form Container ───────────────────────────────────────── */
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .form-head {
+      background: linear-gradient(135deg, #1a1510 0%, #0e0a06 100%);
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .form-head::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% -20%, rgba(201,168,76,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .form-head-title {
+      font-family: 'Fraunces', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.06em;
+      position: relative;
+    }
+    .form-head-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      position: relative;
+    }
+
+    .form-body { padding: 2rem; }
+
+    /* ── Section Dividers ──────────────────────────────────────── */
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 1.8rem 0 1.2rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .section-title::before, .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-mid);
+    }
+    .section-title:first-child { margin-top: 0; }
+
+    /* ── Grid Layouts ──────────────────────────────────────────── */
+    .form-grid { display: grid; gap: 1.2rem; }
+    .row-2 { grid-template-columns: 1fr 1fr; }
+    .row-3 { grid-template-columns: 1fr 1fr 1fr; }
+    @media (max-width: 600px) { .row-2, .row-3 { grid-template-columns: 1fr; } }
+
+    /* ── Field Styles ──────────────────────────────────────────── */
+    .field { display: flex; flex-direction: column; gap: 0.45rem; }
+    .field label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+    .req { color: var(--gold); margin-left: 2px; }
+
+    .input-wrap { position: relative; }
+
+    input[type="text"], input[type="tel"], input[type="date"],
+    input[type="time"], input[type="number"], select, textarea {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      background: var(--surface2);
+      border: 1.5px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: var(--transition);
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--gold);
+      background: var(--surface3);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
+    }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); font-size: 0.88rem; }
+    input[readonly] {
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: default;
+      border-color: var(--border);
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237a7a8e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+    select option { background: var(--surface2); }
+    textarea { resize: vertical; min-height: 110px; }
+
+    /* ── Autocomplete ───────────────────────────────────────────── */
+    .autocomplete-items {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0; right: 0;
+      z-index: 999;
+      max-height: 210px;
+      overflow-y: auto;
+      background: var(--surface3);
+      border: 1.5px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-mid) transparent;
+    }
+    .autocomplete-items div {
+      padding: 0.7rem 1rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .autocomplete-items div:last-child { border-bottom: none; }
+    .autocomplete-items div:hover, .autocomplete-active {
+      background: var(--gold-dim);
+      color: var(--gold-light);
+    }
+    .autocomplete-items strong { color: var(--gold); }
+
+    /* ── Checkboxes ─────────────────────────────────────────────── */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+      gap: 0.7rem;
+    }
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.7rem 0.9rem;
+      background: var(--surface2);
+      border: 1.5px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      user-select: none;
+    }
+    .checkbox-item:hover { border-color: var(--gold); background: var(--surface3); }
+    .checkbox-item input[type="checkbox"] {
+      width: 18px; height: 18px;
+      appearance: none;
+      border: 2px solid var(--border-mid);
+      border-radius: 4px;
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: var(--transition);
+    }
+    .checkbox-item input[type="checkbox"]:checked {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+    .checkbox-item input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      color: #000;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .checkbox-item label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: none;
+      letter-spacing: normal;
+      cursor: pointer;
+      color: var(--text-dim);
+    }
+    .checkbox-item:has(input:checked) { border-color: var(--gold); background: var(--gold-dim); }
+    .checkbox-item:has(input:checked) label { color: var(--gold-light); }
+
+    /* ── Buttons ────────────────────────────────────────────────── */
+    .btn-group { display: flex; gap: 0.9rem; margin-top: 1.8rem; }
+    .btn {
+      flex: 1;
+      padding: 0.95rem 1.5rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      color: #0e0f14;
+    }
+    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(201,168,76,0.3); }
+    .btn-secondary {
+      background: transparent;
+      border: 1.5px solid var(--border-mid);
+      color: var(--text-muted);
+    }
+    .btn-secondary:hover { border-color: var(--text-muted); color: var(--text); }
+
+    /* ── Validation Error ───────────────────────────────────────── */
+    input.invalid, select.invalid, textarea.invalid {
+      border-color: var(--red) !important;
+      box-shadow: 0 0 0 3px rgba(224,92,92,0.1) !important;
+    }
+
+    /* ── Toast / Popup ──────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      z-index: 9999;
+      background: var(--surface3);
+      border: 1px solid var(--border-mid);
+      color: var(--text);
+      padding: 0.85rem 1.5rem;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      white-space: nowrap;
+      max-width: 90vw;
+      text-align: center;
+      pointer-events: none;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+    #toast.success { background: rgba(82,196,126,0.15); border-color: rgba(82,196,126,0.4); color: var(--green); }
+    #toast.error   { background: rgba(224,92,92,0.15); border-color: rgba(224,92,92,0.4); color: var(--red); }
+
+    /* ── Status Gate ────────────────────────────────────────────── */
+    #status-gate {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      gap: 1.5rem;
+      text-align: center;
+      padding: 2rem;
+    }
+    #status-gate.visible { display: flex; }
+    .gate-icon { font-size: 3.5rem; }
+    .gate-title { font-family: 'Fraunces', serif; font-size: 1.6rem; color: var(--gold); }
+    .gate-msg { color: var(--text-muted); max-width: 420px; font-size: 0.95rem; }
+    .gate-timer { font-size: 1.2rem; font-weight: 700; color: var(--red); font-variant-numeric: tabular-nums; }
+
+    /* ── Footer ──────────────────────────────────────────────────── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 1.5rem 2rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    footer a { color: var(--gold); text-decoration: none; }
+    footer a:hover { color: var(--gold-light); }
+
+    /* ── Flatpickr dark override ────────────────────────────────── */
+    .flatpickr-calendar {
+      background: var(--surface3) !important;
+      border-color: var(--border-mid) !important;
+      color: var(--text) !important;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6) !important;
+    }
+    .flatpickr-time input { background: transparent !important; color: var(--text) !important; }
+    .flatpickr-time .flatpickr-am-pm { color: var(--text-dim) !important; }
+    .numInputWrapper { background: transparent !important; }
+    .numInputWrapper span.arrowUp:after { border-bottom-color: var(--text-muted) !important; }
+    .numInputWrapper span.arrowDown:after { border-top-color: var(--text-muted) !important; }
+
+    /* ── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .header-inner { padding: 0.75rem 1rem; }
+      .brand-text h1 { font-size: 1.1rem; }
+      main { padding: 1.2rem 0.75rem 3rem; }
+      .form-body { padding: 1.4rem 1rem; }
+      .form-head { padding: 2rem 1rem; }
+      .form-head-title { font-size: 1.5rem; }
+      .btn-group { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="loading-screen">
+  <div class="loading-logo">THORE</div>
+  <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+  <div class="loading-sub">Loading Friday Lineup Form…</div>
+</div>
+
+<div class="page-wrapper">
+
+  <!-- Header -->
+  <header class="main-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <img src="https://i.postimg.cc/g25bQs8t/image.png" alt="THORE Logo">
+        <div class="brand-text">
+          <h1>THORE</h1>
+          <p>The House of Real Estate</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="countdown-box">
+          <div class="countdown-label">Closes at 9:00 PM</div>
+          <div id="timer">⏳ --</div>
+        </div>
+        <button class="dash-btn" onclick="openDashboard()">Dashboard ↗</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main>
+
+    <!-- Status Gate (closed / error state) -->
+    <div id="status-gate">
+      <div class="gate-icon" id="gate-icon">🔒</div>
+      <div class="gate-title" id="gate-title">Form Closed</div>
+      <div class="gate-msg"  id="gate-msg">The Friday Lineup Form is currently closed.</div>
+      <div class="gate-timer" id="gate-timer"></div>
+    </div>
+
+    <!-- The actual form -->
+    <div id="form-wrapper">
+      <div class="form-card">
+        <div class="form-head">
+          <div class="form-head-title">Friday Lineup Entry</div>
+          <div class="form-head-sub">Complete your weekly sales visit planning</div>
+        </div>
+
+        <div class="form-body">
+          <form id="form" autocomplete="off" novalidate onsubmit="event.preventDefault(); submitForm();">
+
+            <div class="section-title">Sales Executive</div>
+            <div class="form-grid row-2">
+              <div class="field">
+                <label for="employee">SE Name <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <input type="text" id="employee" placeholder="Start typing name…" autocomplete="off">
+                </div>
+              </div>
+              <div class="field">
+                <label for="cluster">Cluster</label>
+                <input type="text" id="cluster" placeholder="Auto-filled" readonly>
+              </div>
+            </div>
+            <div class="form-grid" style="margin-top:1.2rem">
+              <div class="field">
+                <label for="teamLead">Team Leader Name</label>
+                <input type="text" id="teamLead" placeholder="Auto-filled based on SE" readonly>
+              </div>
+            </div>
+
+            <div class="section-title">Customer Details</div>
+            <div class="form-grid row-2">
+              <div class="field">
+                <label for="cname">Customer Name <span class="req">*</span></label>
+                <input type="text" id="cname" placeholder="Full customer name" autocomplete="off">
+              </div>
+              <div class="field">
+                <label for="phone">Phone Number <span class="req">*</span></label>
+                <input type="text" id="phone" placeholder="10-digit mobile" inputmode="numeric" maxlength="10">
+              </div>
+            </div>
+
+            <div class="section-title">Visit Details</div>
+            <div class="form-grid row-2">
+              <div class="field">
+                <label for="project">Project Name <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <input type="text" id="project" placeholder="Type to search projects…" autocomplete="off">
+                </div>
+              </div>
+              <div class="field">
+                <label for="developer">Developer Name <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <input type="text" id="developer" placeholder="Auto-fills for known projects…" autocomplete="off">
+                </div>
+              </div>
+            </div>
+            <div class="form-grid row-2" style="margin-top:1.2rem">
+              <div class="field">
+                <label for="visitDate">Visit Date <span class="req">*</span></label>
+                <input type="date" id="visitDate">
+              </div>
+              <div class="field">
+                <label for="visitTime">Visit Time <span class="req">*</span></label>
+                <input type="text" id="visitTime" placeholder="Click to pick time">
+              </div>
+            </div>
+
+            <div class="section-title">Property Requirements</div>
+            <div class="checkbox-grid">
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="1 BHK"><label>1 BHK</label></label>
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="2 BHK"><label>2 BHK</label></label>
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="3 BHK"><label>3 BHK</label></label>
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="4 BHK"><label>4 BHK</label></label>
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="Simplex"><label>Simplex</label></label>
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="Duplex"><label>Duplex</label></label>
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="Commercial Property"><label>Commercial</label></label>
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="Plot"><label>Plot</label></label>
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="Villa"><label>Villa</label></label>
+            </div>
+
+            <div class="section-title">Assessment</div>
+            <div class="form-grid row-2">
+              <div class="field">
+                <label for="closure">Closure Chances <span class="req">*</span></label>
+                <select id="closure">
+                  <option value="" disabled selected>Select rating</option>
+                  <option>Excellent</option>
+                  <option>Very good</option>
+                  <option>Good</option>
+                  <option>Fair</option>
+                  <option>Poor</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="backup">Backup Available <span class="req">*</span></label>
+                <select id="backup">
+                  <option value="" disabled selected>Select</option>
+                  <option>Yes</option>
+                  <option>No</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="section-title">Remarks</div>
+            <div class="field">
+              <label for="remark">Detailed Remarks <span class="req">*</span></label>
+              <textarea id="remark" placeholder="Budget range, preferred locality, specific requirements, timeline…"></textarea>
+            </div>
+
+            <div class="btn-group">
+              <button type="submit" class="btn btn-primary">Submit Entry</button>
+              <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
+            </div>
+
+          </form>
+        </div><!-- .form-body -->
+      </div><!-- .form-card -->
+    </div><!-- #form-wrapper -->
+
+  </main>
+
+  <footer>
+    <p>Copyright © <span id="currentYear"></span> The House of Real Estate, Pune. All rights reserved.</p>
+    <p style="margin-top:4px">Engineered by <a href="https://narendraspatil.github.io/NarenP-website/" target="_blank">Operations Department, THORE</a></p>
+  </footer>
+
+</div><!-- .page-wrapper -->
+
+<div id="toast"></div>
+
+<script>
+  // ── CONFIG ────────────────────────────────────────────────────
+  // Replace with your deployed GAS Web App URL
+  const GAS_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+  const DASHBOARD_URL = 'dashboard.html';
+
+  // ── STATE ─────────────────────────────────────────────────────
+  let masterData = {};
+  let projectMap = {};
+
+  // ── BOOT ──────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+    startCountdown();
+    scheduleAutoClose();
+    checkFormStatus();
+  });
+
+  window.addEventListener('load', () => {
+    setTimeout(() => document.getElementById('loading-screen').classList.add('hidden'), 2000);
+  });
+
+  function openDashboard() {
+    window.open(DASHBOARD_URL, '_blank');
+  }
+
+  // ── FORM STATUS CHECK ─────────────────────────────────────────
+  function checkFormStatus() {
+    jsonpFetch({ action: 'getFormStatus' }, data => {
+      if (!data.ok) { showGate('error'); return; }
+      if (data.formStatus === 'open') {
+        document.getElementById('form-wrapper').style.display = 'block';
+        document.getElementById('status-gate').classList.remove('visible');
+        loadMasterData();
+      } else {
+        showGate('closed', data.message);
+      }
+    }, () => showGate('error'));
+  }
+
+  function showGate(type, message) {
+    document.getElementById('form-wrapper').style.display = 'none';
+    const gate = document.getElementById('status-gate');
+    gate.classList.add('visible');
+
+    if (type === 'closed') {
+      document.getElementById('gate-icon').textContent   = '🔒';
+      document.getElementById('gate-title').textContent  = 'Form Closed';
+      document.getElementById('gate-msg').textContent    = message || 'The Friday Lineup Form is currently closed.';
+      startGateCountdown();
+    } else {
+      document.getElementById('gate-icon').textContent   = '⚠️';
+      document.getElementById('gate-title').textContent  = 'Unable to Load';
+      document.getElementById('gate-msg').textContent    = 'Could not connect to the form. Please check your connection and refresh.';
+    }
+  }
+
+  function startGateCountdown() {
+    const now  = new Date();
+    const next = new Date();
+    const days = (5 - now.getDay() + 7) % 7 || 7;
+    next.setDate(now.getDate() + days);
+    next.setHours(10, 0, 0, 0);
+
+    const el = document.getElementById('gate-timer');
+    const tick = () => {
+      const diff = Math.max(0, next - new Date());
+      if (!diff) { el.textContent = 'Opens shortly — refresh the page!'; return; }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000)  / 60000);
+      const s = Math.floor((diff % 60000)    / 1000);
+      el.textContent = `Opens in: ${d}d ${h}h ${m}m ${s}s`;
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  // ── LOAD MASTER DATA ─────────────────────────────────────────
+  function loadMasterData() {
+    jsonpFetch({ action: 'getMasterData' }, data => {
+      if (!data.ok) { showToast('Failed to load form data', 'error'); return; }
+      masterData = data;
+
+      // Build project → developer map
+      (data.projects || []).forEach(p => { projectMap[p.projectName] = p.developerName || ''; });
+
+      // Build employee lookup arrays
+      const empNames  = (data.employees || []).map(e => e.name);
+      const projNames = (data.projects  || []).map(p => p.projectName);
+      const devNames  = data.developerList || [];
+
+      autocomplete(document.getElementById('employee'), empNames);
+      autocomplete(document.getElementById('project'),  projNames);
+      autocomplete(document.getElementById('developer'), devNames);
+
+      // Employee change → auto-fill TL + cluster
+      const empInput = document.getElementById('employee');
+      empInput.addEventListener('change', syncEmployee);
+      empInput.addEventListener('blur',   syncEmployee);
+      empInput.addEventListener('input',  () => {
+        document.getElementById('teamLead').value = '';
+        document.getElementById('cluster').value  = '';
+      });
+
+      // Project change → auto-fill developer
+      const projInput = document.getElementById('project');
+      projInput.addEventListener('blur', syncProject);
+
+      // Time picker
+      flatpickr('#visitTime', {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: 'h:i K',
+        time_24hr:  false,
+        theme:      'dark'
+      });
+    }, () => showToast('Network error loading form data', 'error'));
+  }
+
+  function syncEmployee() {
+    const emp  = (document.getElementById('employee').value || '').trim();
+    const found = (masterData.employees || []).find(e => e.name === emp);
+    document.getElementById('teamLead').value = found ? found.teamLead : '';
+    document.getElementById('cluster').value  = found ? found.cluster  : '';
+  }
+
+  function syncProject() {
+    const proj     = (document.getElementById('project').value || '').trim();
+    const devEl    = document.getElementById('developer');
+    const devValue = projectMap[proj];
+    if (devValue !== undefined) {
+      devEl.value    = devValue;
+      devEl.readOnly = !!devValue;
+    } else {
+      devEl.readOnly = false;
+    }
+  }
+
+  // ── AUTOCOMPLETE ─────────────────────────────────────────────
+  function autocomplete(inp, arr) {
+    let focus = -1;
+
+    inp.addEventListener('input', function () {
+      closeAll();
+      if (!this.value) return;
+      focus = -1;
+      const box = document.createElement('div');
+      box.className = 'autocomplete-items';
+
+      const term = this.value.toLowerCase();
+      let count  = 0;
+      for (const item of arr) {
+        if (!item.toLowerCase().includes(term)) continue;
+        if (++count > 50) break;
+        const d  = document.createElement('div');
+        const ix = item.toLowerCase().indexOf(term);
+        d.innerHTML =
+          escHtml(item.substr(0, ix)) +
+          '<strong>' + escHtml(item.substr(ix, this.value.length)) + '</strong>' +
+          escHtml(item.substr(ix + this.value.length));
+        d.addEventListener('mousedown', () => {
+          inp.value = item;
+          closeAll();
+          inp.dispatchEvent(new Event('change'));
+        });
+        box.appendChild(d);
+      }
+      if (count === 0) return;
+      inp.parentNode.appendChild(box);
+    });
+
+    inp.addEventListener('keydown', function (e) {
+      const box = this.parentNode.querySelector('.autocomplete-items');
+      if (!box) return;
+      const items = box.querySelectorAll('div');
+      if (e.key === 'ArrowDown') { focus = Math.min(focus + 1, items.length - 1); setActive(items); }
+      else if (e.key === 'ArrowUp') { focus = Math.max(focus - 1, 0); setActive(items); }
+      else if (e.key === 'Enter') { e.preventDefault(); if (focus > -1) items[focus].dispatchEvent(new Event('mousedown')); }
+      else if (e.key === 'Escape') closeAll();
+    });
+
+    function setActive(items) {
+      items.forEach((it, i) => it.classList.toggle('autocomplete-active', i === focus));
+    }
+
+    function closeAll() {
+      document.querySelectorAll('.autocomplete-items').forEach(el => el.remove());
+    }
+
+    document.addEventListener('click', e => { if (!inp.parentNode.contains(e.target)) closeAll(); });
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  // ── SUBMIT ────────────────────────────────────────────────────
+  function submitForm() {
+    const now    = new Date();
+    const cutoff = new Date(); cutoff.setHours(21, 0, 0, 0);
+    if (now > cutoff) { showToast('Form submission is closed after 9:00 PM', 'error'); return; }
+
+    const employee  = (document.getElementById('employee').value  || '').trim();
+    const teamLead  = document.getElementById('teamLead').value;
+    const cluster   = document.getElementById('cluster').value;
+    const cname     = (document.getElementById('cname').value     || '').trim();
+    const phone     = (document.getElementById('phone').value     || '').trim();
+    const project   = (document.getElementById('project').value   || '').trim();
+    const developer = (document.getElementById('developer').value || '').trim();
+    const visitDate = document.getElementById('visitDate').value;
+    const visitTime = document.getElementById('visitTime').value;
+    const closure   = document.getElementById('closure').value;
+    const backup    = document.getElementById('backup').value;
+    const remark    = (document.getElementById('remark').value    || '').trim();
+    const requirement = [...document.querySelectorAll('input[name="requirement"]:checked')].map(c => c.value);
+
+    // Validate
+    if (!employee || !(masterData.employees || []).find(e => e.name === employee)) {
+      showToast('Please select a valid Sales Executive from suggestions', 'error'); return;
+    }
+    if (!teamLead || !cluster) {
+      syncEmployee();
+      if (!document.getElementById('teamLead').value) {
+        showToast('TL/Cluster mapping not found. Contact admin.', 'error'); return;
+      }
+    }
+    if (!cname || !phone || !project || !developer || !visitDate || !visitTime || !closure || !backup || !remark) {
+      showToast('Please fill all required fields', 'error'); return;
+    }
+    if (!/^\d{10}$/.test(phone)) { showToast('Enter a valid 10-digit phone number', 'error'); return; }
+    if (requirement.length === 0) { showToast('Select at least one property requirement', 'error'); return; }
+
+    const btn = document.getElementById('form').querySelector('.btn-primary');
+    btn.textContent = 'Submitting…';
+    btn.disabled    = true;
+
+    const payload = JSON.stringify({
+      action: 'submitVisit',
+      employee, customerName: cname, phone, project, developer,
+      visitDate, visitTime, requirement, closure, backup, remark
+    });
+
+    fetch(GAS_URL, {
+      method:  'POST',
+      mode:    'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body:    'data=' + encodeURIComponent(payload)
+    })
+    .then(() => {
+      showToast('Form submitted successfully!', 'success');
+      document.getElementById('form').reset();
+      document.getElementById('teamLead').value = '';
+      document.getElementById('cluster').value  = '';
+      const devEl = document.getElementById('developer');
+      devEl.value    = '';
+      devEl.readOnly = false;
+    })
+    .catch(() => showToast('Submission failed. Please try again.', 'error'))
+    .finally(() => {
+      btn.textContent = 'Submit Entry';
+      btn.disabled    = false;
+    });
+  }
+
+  function resetForm() {
+    document.getElementById('form').reset();
+    document.getElementById('teamLead').value = '';
+    document.getElementById('cluster').value  = '';
+    const devEl = document.getElementById('developer');
+    devEl.value    = '';
+    devEl.readOnly = false;
+  }
+
+  // ── COUNTDOWN TIMER (header) ──────────────────────────────────
+  function startCountdown() {
+    const target = new Date(); target.setHours(21, 0, 0, 0);
+    const el     = document.getElementById('timer');
+    const tick   = () => {
+      const diff = target - new Date();
+      if (diff <= 0) { el.textContent = 'Closed'; return; }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      el.textContent = `${h}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  function scheduleAutoClose() {
+    const now     = new Date();
+    const close   = new Date(); close.setHours(21, 0, 0, 0);
+    const diff    = close - now;
+    if (diff > 0) setTimeout(() => location.reload(), diff);
+  }
+
+  // ── JSONP FETCH HELPER ────────────────────────────────────────
+  function jsonpFetch(params, onSuccess, onError) {
+    const cbName = '__cb_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+    const script = document.createElement('script');
+    const qs     = Object.entries({ ...params, callback: cbName })
+                         .map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
+
+    const timer = setTimeout(() => {
+      cleanup();
+      if (onError) onError(new Error('Timeout'));
+    }, 12000);
+
+    window[cbName] = data => { cleanup(); onSuccess(data); };
+    script.onerror = () => { cleanup(); if (onError) onError(new Error('Script load failed')); };
+
+    function cleanup() {
+      clearTimeout(timer);
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    script.src = GAS_URL + '?' + qs;
+    document.head.appendChild(script);
+  }
+
+  // ── TOAST ──────────────────────────────────────────────────────
+  let toastTimer;
+  function showToast(msg, type = '') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className   = ['show', type].filter(Boolean).join(' ');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.className = ''; }, 4000);
+  }
+</script>
+</body>
+</html>
