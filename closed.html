@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THORE — Form Closed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0e0f14; --surface: #16181f; --surface2: #1d1f28;
+      --border: rgba(255,255,255,0.07); --border-mid: rgba(255,255,255,0.13);
+      --gold: #c9a84c; --gold-light: #f0d080; --gold-dim: rgba(201,168,76,0.15);
+      --red: #e05c5c; --text: #f0ede6; --text-muted: #7a7a8e; --text-dim: #a0a0b4;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none; z-index: 0;
+    }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(14,15,20,0.92);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.9rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 700; color: var(--gold); letter-spacing: 0.06em; }
+    .logo small { font-family: 'Outfit', sans-serif; font-size: 0.65rem; font-weight: 400; color: var(--text-muted); display: block; letter-spacing: 0.05em; text-transform: uppercase; }
+
+    main {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 2rem; position: relative; z-index: 1;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border-mid);
+      border-radius: 20px;
+      padding: 3rem 2.5rem;
+      max-width: 480px; width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      animation: slideUp 0.5s ease;
+    }
+    @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+    .icon { font-size: 4rem; margin-bottom: 1.2rem; }
+
+    .card-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.8rem; font-weight: 700;
+      color: var(--gold); margin-bottom: 0.5rem;
+    }
+    .card-sub { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 2rem; line-height: 1.7; }
+
+    .timer-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 8px; }
+    .timer-box {
+      background: var(--surface2);
+      border: 1px solid var(--border-mid);
+      border-radius: 12px;
+      padding: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    #countdown {
+      font-size: 1.6rem; font-weight: 800;
+      color: var(--red);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.04em;
+    }
+
+    /* Segmented timer blocks */
+    .timer-segments {
+      display: flex; gap: 10px; justify-content: center; align-items: flex-end;
+    }
+    .seg { text-align: center; }
+    .seg-val {
+      font-size: 2rem; font-weight: 800;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+    .seg-label { font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 4px; }
+    .seg-sep { font-size: 1.8rem; font-weight: 300; color: var(--text-muted); padding-bottom: 6px; line-height: 1; }
+
+    .contact-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+    .contact-box strong { color: var(--text); font-weight: 600; }
+
+    .dash-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.7rem 1.6rem;
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      letter-spacing: 0.04em;
+    }
+    .dash-link:hover { border-color: var(--gold); color: var(--gold); }
+
+    footer {
+      position: relative; z-index: 1;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 1.2rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    footer a { color: var(--gold); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">THORE <small>The House of Real Estate</small></div>
+  </header>
+
+  <main>
+    <div class="card">
+      <div class="icon">🔒</div>
+      <div class="card-title">Form Closed</div>
+      <div class="card-sub">The Friday Lineup Form is currently closed.<br>It opens every <strong>Friday from 10:00 AM to 9:00 PM</strong>.</div>
+
+      <div class="timer-label">Opens in</div>
+      <div class="timer-box">
+        <div class="timer-segments">
+          <div class="seg"><div class="seg-val" id="s-days">--</div><div class="seg-label">Days</div></div>
+          <div class="seg-sep">:</div>
+          <div class="seg"><div class="seg-val" id="s-hrs">--</div><div class="seg-label">Hours</div></div>
+          <div class="seg-sep">:</div>
+          <div class="seg"><div class="seg-val" id="s-mins">--</div><div class="seg-label">Mins</div></div>
+          <div class="seg-sep">:</div>
+          <div class="seg"><div class="seg-val" id="s-secs">--</div><div class="seg-label">Secs</div></div>
+        </div>
+      </div>
+
+      <div class="contact-box">
+        <strong>Need assistance?</strong><br>
+        Contact the Operations Department, THORE
+      </div>
+
+      <a class="dash-link" href="dashboard.html">View Dashboard →</a>
+    </div>
+  </main>
+
+  <footer>
+    Engineered by <a href="https://narendraspatil.github.io/NarenP-website/" target="_blank">Operations Department, THORE</a> &nbsp;|&nbsp;
+    Copyright © <span id="yr"></span> All rights reserved.
+  </footer>
+
+  <script>
+    document.getElementById('yr').textContent = new Date().getFullYear();
+
+    function getNextFridayOpen() {
+      const now  = new Date();
+      const next = new Date(now);
+      const day  = now.getDay(); // 0=Sun…6=Sat
+      // If today is Friday and before 10AM, open time is today at 10AM
+      if (day === 5 && now.getHours() < 10) {
+        next.setHours(10, 0, 0, 0);
+      } else {
+        const daysAhead = (5 - day + 7) % 7 || 7;
+        next.setDate(now.getDate() + daysAhead);
+        next.setHours(10, 0, 0, 0);
+      }
+      return next;
+    }
+
+    const target = getNextFridayOpen();
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function tick() {
+      const now  = new Date();
+      const diff = Math.max(0, target - now);
+
+      if (diff === 0) {
+        document.querySelector('.timer-segments').innerHTML =
+          '<div style="color:var(--green);font-weight:700;font-size:1rem;">Form opens shortly — refresh the page!</div>';
+        return;
+      }
+
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000)  / 60000);
+      const s = Math.floor((diff % 60000)    / 1000);
+
+      document.getElementById('s-days').textContent = pad(d);
+      document.getElementById('s-hrs').textContent  = pad(h);
+      document.getElementById('s-mins').textContent = pad(m);
+      document.getElementById('s-secs').textContent = pad(s);
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>
