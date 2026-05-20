@@ -461,6 +461,7 @@
       <div class="profile-dropdown" id="profileDropdown">
         <div class="pd-item username" id="pdUsername">—</div>
         <div class="pd-item" onclick="window.open('index.html')">📋 Friday Lineup Form</div>
+        <div class="pd-item" onclick="window.open('https://thore-india.github.io/FN_Clients_Form/index.html')">🏆 FN Clients Form</div>
         <div class="pd-item logout" onclick="logout()">Sign Out</div>
       </div>
     </div>
@@ -653,9 +654,14 @@
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────
-// Replace with your deployed GAS Web App URL
-const GAS_URL     = 'https://script.google.com/macros/s/AKfycbwL4V1nCL4M-BAMbHX0Wupfa_2mxaJXrb_p9japd1ZdAkesb4BUumSJBFGH54js7pe3/exec';
-const FN_FORM_URL = 'fn-clients.html';  // URL of your FN Clients form (on GitHub)
+// Friday Lineup GAS — reads/writes the Friday Lineup spreadsheet
+const GAS_URL    = 'https://script.google.com/macros/s/AKfycbwL4V1nCL4M-BAMbHX0Wupfa_2mxaJXrb_p9japd1ZdAkesb4BUumSJBFGH54js7pe3/exec';
+
+// FN Clients GAS — reads/writes the FN Clients spreadsheet (separate deployment)
+const GAS_URL_FN = 'https://script.google.com/macros/s/AKfycbzvGG3F4nYcsXbxtSGt5brYc1nNqP-87QGWY-bhsJwZlSMzrdrZTcsWMf0A71UFsfgNoQ/exec';
+
+// FN Clients form — hosted in the FN_Clients_Form GitHub repo
+const FN_FORM_URL = 'https://thore-india.github.io/FN_Clients_Form/index.html';
 
 // ── SESSION KEYS ──────────────────────────────────────────────
 const SK = { role:'d_role', user:'d_user', pass:'d_pass', time:'d_time' };
@@ -690,7 +696,7 @@ function login() {
   setLoginStatus('Checking credentials…');
   document.getElementById('loginBtn').disabled = true;
 
-  jsonpFetch({ action: 'getVisitData', role, username: user, password: pass }, data => {
+  jsonpFetch(GAS_URL, { action: 'getVisitData', role, username: user, password: pass }, data => {
     document.getElementById('loginBtn').disabled = false;
     if (!data.ok) { setLoginStatus(data.error || 'Invalid credentials', true); return; }
     handleLoginSuccess(role, user, pass, data.data);
@@ -729,7 +735,7 @@ function checkStoredSession() {
   const time = parseInt(sessionStorage.getItem(SK.time) || '0');
   if (role && user && pass && Date.now() - time < 8 * 3600 * 1000) {
     setLoginStatus('Auto-logging in…');
-    jsonpFetch({ action: 'getVisitData', role, username: user, password: pass }, data => {
+    jsonpFetch(GAS_URL, { action: 'getVisitData', role, username: user, password: pass }, data => {
       if (!data.ok) { clearSession(); setLoginStatus('Session expired, please log in.', true); return; }
       document.getElementById('role').value     = role;
       document.getElementById('username').value = user;
@@ -784,11 +790,11 @@ function refreshAll() {
   isRefreshing = true;
   document.getElementById('refreshInd').classList.add('show');
 
-  jsonpFetch({ action: 'getVisitData', role: auth.role, username: auth.user, password: auth.pass }, data => {
+  jsonpFetch(GAS_URL, { action: 'getVisitData', role: auth.role, username: auth.user, password: auth.pass }, data => {
     if (data.ok) renderVisitData(data.data);
-    // Also refresh FN if it was loaded
+    // Also refresh FN if that tab was already loaded
     if (fnAll.length > 0) {
-      jsonpFetch({ action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => {
+      jsonpFetch(GAS_URL_FN, { action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => {
         if (d.ok) renderFNData(d.data);
         done();
       }, done);
@@ -804,10 +810,11 @@ function refreshAll() {
 
 function loadFNData() {
   document.getElementById('fn-rowCount').textContent = 'Loading…';
-  jsonpFetch({ action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => {
+  // Uses the separate FN Clients GAS URL — different spreadsheet
+  jsonpFetch(GAS_URL_FN, { action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => {
     if (d.ok) renderFNData(d.data);
-    else document.getElementById('fn-rowCount').textContent = 'Failed to load FN data.';
-  }, () => { document.getElementById('fn-rowCount').textContent = 'Network error loading FN data.'; });
+    else document.getElementById('fn-rowCount').textContent = 'Failed to load FN Clients data. Check GAS_URL_FN is deployed.';
+  }, () => { document.getElementById('fn-rowCount').textContent = 'Network error — check GAS_URL_FN in dashboard config.'; });
 }
 
 // ── VISITS RENDERING ──────────────────────────────────────────
@@ -1103,7 +1110,9 @@ document.addEventListener('click', e => {
 });
 
 // ── JSONP FETCH HELPER ────────────────────────────────────────
-function jsonpFetch(params, onSuccess, onError) {
+// url: which GAS endpoint to call (GAS_URL or GAS_URL_FN)
+// params: query params object
+function jsonpFetch(url, params, onSuccess, onError) {
   const cbName = '__cb_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
   const script = document.createElement('script');
   const qs     = Object.entries({ ...params, callback: cbName })
@@ -1120,7 +1129,7 @@ function jsonpFetch(params, onSuccess, onError) {
     if (script.parentNode) script.parentNode.removeChild(script);
   }
 
-  script.src = GAS_URL + '?' + qs;
+  script.src = url + '?' + qs;
   document.head.appendChild(script);
 }
 
