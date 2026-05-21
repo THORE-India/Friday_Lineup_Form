@@ -377,6 +377,145 @@
     /* ── Pivot Table Extras ───────────────────────────────────── */
     td.total  { font-weight: 700; color: var(--gold); }
     td.zero   { color: var(--text-muted); opacity: 0.5; }
+    td.pivot-hot  { font-weight: 700; color: #e05c5c; cursor: pointer; }
+    td.pivot-warm { font-weight: 700; color: #e08c5c; cursor: pointer; }
+    td.pivot-cold { font-weight: 700; color: #5c9be0; cursor: pointer; }
+    td.pivot-hot:hover, td.pivot-warm:hover, td.pivot-cold:hover, td.total.clickable:hover {
+      text-decoration: underline; filter: brightness(1.2);
+    }
+    td.total.clickable { cursor: pointer; }
+
+    /* ── Clickable table rows ─────────────────────────────────── */
+    tr.clickable-row { cursor: pointer; }
+    tr.clickable-row:hover td { background: var(--surface3); color: var(--text); }
+
+    /* ── Detail Modal ─────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+      opacity: 0; visibility: hidden;
+      transition: opacity 0.25s, visibility 0.25s;
+    }
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border-mid);
+      border-radius: 18px;
+      width: 100%; max-width: 560px;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+      transform: translateY(16px);
+      transition: transform 0.25s;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-mid) transparent;
+    }
+    .modal-overlay.open .modal-box { transform: translateY(0); }
+
+    .modal-header {
+      position: sticky; top: 0;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border-mid);
+      padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-radius: 18px 18px 0 0;
+    }
+    .modal-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1rem; font-weight: 700;
+      color: var(--gold);
+    }
+    .modal-close {
+      width: 30px; height: 30px;
+      background: var(--surface3);
+      border: 1px solid var(--border-mid);
+      border-radius: 50%;
+      color: var(--text-muted);
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: var(--transition);
+    }
+    .modal-close:hover { background: rgba(224,92,92,0.15); color: var(--red); border-color: rgba(224,92,92,0.3); }
+
+    .modal-body { padding: 20px; }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .detail-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+    }
+    .detail-item.full { grid-column: 1 / -1; }
+    .detail-label {
+      font-size: 0.62rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-muted); margin-bottom: 4px;
+    }
+    .detail-value {
+      font-size: 0.88rem; font-weight: 500;
+      color: var(--text);
+      word-break: break-word;
+    }
+    .detail-value.gold { color: var(--gold); font-weight: 700; }
+    .detail-value.muted { color: var(--text-muted); font-style: italic; }
+
+    /* ── Drill-down popup (pivot click) ──────────────────────── */
+    .drill-overlay {
+      position: fixed; inset: 0; z-index: 600;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+      opacity: 0; visibility: hidden;
+      transition: opacity 0.2s, visibility 0.2s;
+    }
+    .drill-overlay.open { opacity: 1; visibility: visible; }
+    .drill-box {
+      background: var(--surface);
+      border: 1px solid var(--border-mid);
+      border-radius: 18px;
+      width: 100%; max-width: 900px;
+      max-height: 85vh;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+      transform: translateY(16px);
+      transition: transform 0.2s;
+    }
+    .drill-overlay.open .drill-box { transform: translateY(0); }
+    .drill-header {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border-mid);
+      padding: 14px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .drill-title { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+    .drill-title span { color: var(--gold); }
+    .drill-table-wrap { overflow: auto; flex: 1; scrollbar-width: thin; scrollbar-color: var(--border-mid) transparent; }
+
+    /* ── Revenue placeholder tab ──────────────────────────────── */
+    .revenue-placeholder {
+      flex: 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1rem;
+      color: var(--text-muted);
+      padding: 3rem;
+      text-align: center;
+    }
+    .revenue-placeholder .rev-icon { font-size: 3.5rem; }
+    .revenue-placeholder h2 { font-family: 'Fraunces', serif; font-size: 1.4rem; color: var(--gold); }
+    .revenue-placeholder p { font-size: 0.88rem; max-width: 360px; line-height: 1.7; }
 
     /* ── Refresh Indicator ───────────────────────────────────── */
     .refresh-indicator {
@@ -451,6 +590,7 @@
     <div id="dashTabs" class="dash-tabs" style="display:none;">
       <button class="dash-tab active" onclick="switchDashboard('visits')">📋 Visits</button>
       <button class="dash-tab" onclick="switchDashboard('fnclients')">🏆 FN Clients</button>
+      <button class="dash-tab" onclick="switchDashboard('revenue')">💰 Revenue</button>
     </div>
   </div>
   <div class="header-right">
@@ -585,16 +725,20 @@
       <div class="filters-bar">
         <div class="filters-grid">
           <div class="filter-item">
-            <label>Project</label>
-            <select id="fn-projFilter" onchange="applyFNFilters()"><option value="">All Projects</option></select>
-          </div>
-          <div class="filter-item">
             <label>Team Lead</label>
             <select id="fn-tlFilter" onchange="applyFNFilters()"><option value="">All Team Leads</option></select>
           </div>
           <div class="filter-item">
             <label>Employee</label>
             <select id="fn-empFilter" onchange="applyFNFilters()"><option value="">All Employees</option></select>
+          </div>
+          <div class="filter-item">
+            <label>Project</label>
+            <select id="fn-projFilter" onchange="applyFNFilters()"><option value="">All Projects</option></select>
+          </div>
+          <div class="filter-item">
+            <label>Developer</label>
+            <select id="fn-devFilter" onchange="applyFNFilters()"><option value="">All Developers</option></select>
           </div>
           <div class="filter-item">
             <label>Status</label>
@@ -606,6 +750,14 @@
             </select>
           </div>
           <div class="filter-item">
+            <label>Customer Name</label>
+            <input type="text" id="fn-custFilter" placeholder="Search name…" oninput="applyFNFilters()">
+          </div>
+          <div class="filter-item">
+            <label>Phone Number</label>
+            <input type="text" id="fn-phoneFilter" placeholder="Search phone…" oninput="applyFNFilters()">
+          </div>
+          <div class="filter-item">
             <label>From Date</label>
             <input type="date" id="fn-fromDate" onchange="applyFNFilters()">
           </div>
@@ -613,7 +765,16 @@
             <label>To Date</label>
             <input type="date" id="fn-toDate" onchange="applyFNFilters()">
           </div>
-          <button class="clear-btn" style="align-self:flex-end" onclick="clearFNFilters()">Clear</button>
+          <div class="filter-item">
+            <div style="height:18px;"></div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <button class="clear-btn" onclick="clearFNFilters()">Clear</button>
+              <div class="view-tabs">
+                <button class="view-tab active" id="fn-detailTab" onclick="switchFNView('detail')">Detail</button>
+                <button class="view-tab" id="fn-pivotTab" onclick="switchFNView('pivot')">Pivot</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -622,7 +783,8 @@
         <div class="last-updated" id="fn-lastUpdated"></div>
       </div>
 
-      <div id="fn-tableView" class="table-wrap">
+      <!-- Detail Table -->
+      <div id="fn-detailView" class="table-wrap">
         <table id="fn-table">
           <thead>
             <tr>
@@ -632,20 +794,71 @@
               <th class="sortable" onclick="sortFN(3)">Customer</th>
               <th>Phone</th>
               <th class="sortable" onclick="sortFN(5)">Project</th>
+              <th>Developer</th>
               <th>Config</th>
               <th>Budget</th>
               <th>Status</th>
-              <th class="sortable" onclick="sortFN(9)">Visit Date</th>
-              <th>Converted</th>
+              <th class="sortable" onclick="sortFN(10)">Visit Date</th>
             </tr>
           </thead>
           <tbody id="fn-tbody"></tbody>
         </table>
       </div>
+
+      <!-- Pivot Table -->
+      <div id="fn-pivotView" class="table-wrap" style="display:none;">
+        <table id="fn-pivot">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div><!-- #fnDash -->
+
+    <!-- Revenue Dashboard (placeholder) -->
+    <div id="revDash" style="display:none; flex:1;">
+      <div class="revenue-placeholder">
+        <div class="rev-icon">💰</div>
+        <h2>Revenue Dashboard</h2>
+        <p>Revenue analytics and reporting features are coming soon. This section will display closed deal values, team revenue targets, and performance breakdowns.</p>
+      </div>
+    </div>
 
   </div><!-- #dashPanel -->
 </div><!-- .content -->
+
+<!-- Detail View Modal -->
+<div class="modal-overlay" id="detailModal" onclick="closeDetailModal(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="modalCustomerName">Client Details</div>
+      <div class="modal-close" onclick="closeDetailModal()">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="detail-grid" id="detailGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Drill-down Modal (pivot click) -->
+<div class="drill-overlay" id="drillModal" onclick="closeDrillModal(event)">
+  <div class="drill-box">
+    <div class="drill-header">
+      <div class="drill-title" id="drillTitle">Clients</div>
+      <div class="modal-close" onclick="closeDrillModal()">✕</div>
+    </div>
+    <div class="drill-table-wrap">
+      <table id="drill-table">
+        <thead>
+          <tr>
+            <th>Team Lead</th><th>SE</th><th>Customer</th><th>Phone</th>
+            <th>Project</th><th>Budget</th><th>Status</th><th>Visit Date</th>
+          </tr>
+        </thead>
+        <tbody id="drill-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
 <footer>
   Engineered for excellence by <a href="https://narendraspatil.github.io/NarenP-website/" target="_blank">Operations Department, THORE</a> &nbsp;|&nbsp;
@@ -768,10 +981,15 @@ function setLoginStatus(msg, isErr) {
 function switchDashboard(which) {
   activeDash = which;
   document.querySelectorAll('.dash-tab').forEach((t, i) => {
-    t.classList.toggle('active', (i === 0 && which === 'visits') || (i === 1 && which === 'fnclients'));
+    t.classList.toggle('active',
+      (i === 0 && which === 'visits') ||
+      (i === 1 && which === 'fnclients') ||
+      (i === 2 && which === 'revenue')
+    );
   });
   document.getElementById('visitsDash').style.display = which === 'visits'    ? 'block' : 'none';
   document.getElementById('fnDash').style.display     = which === 'fnclients' ? 'block' : 'none';
+  document.getElementById('revDash').style.display    = which === 'revenue'   ? 'flex'  : 'none';
 
   // Load FN data on first switch
   if (which === 'fnclients' && fnAll.length === 0 && auth) {
@@ -952,6 +1170,8 @@ function applySortVisits() {
 }
 
 // ── FN CLIENTS RENDERING ─────────────────────────────────────
+let fnView = 'detail'; // 'detail' | 'pivot'
+
 function renderFNData(rows) {
   fnAll      = rows.map(r => ({ ...r, visitDate: fmtDate(r.visitDate) }));
   fnFiltered = [...fnAll];
@@ -961,32 +1181,51 @@ function renderFNData(rows) {
 }
 
 function applyFNFilters() {
-  const proj   = document.getElementById('fn-projFilter').value;
   const tl     = document.getElementById('fn-tlFilter').value;
   const emp    = document.getElementById('fn-empFilter').value;
+  const proj   = document.getElementById('fn-projFilter').value;
+  const dev    = document.getElementById('fn-devFilter').value;
   const status = document.getElementById('fn-statusFilter').value;
+  const cust   = (document.getElementById('fn-custFilter').value  || '').trim().toLowerCase();
+  const phone  = (document.getElementById('fn-phoneFilter').value || '').trim();
   const from   = document.getElementById('fn-fromDate').value;
   const to     = document.getElementById('fn-toDate').value;
 
   fnFiltered = fnAll.filter(r => {
-    if (proj   && r.project  !== proj)   return false;
-    if (tl     && r.teamLead !== tl)     return false;
-    if (emp    && r.employee !== emp)     return false;
-    if (status && r.status   !== status) return false;
+    if (tl     && r.teamLead  !== tl)     return false;
+    if (emp    && r.employee  !== emp)     return false;
+    if (proj   && r.project   !== proj)   return false;
+    if (dev    && r.developer !== dev)    return false;
+    if (status && r.status    !== status) return false;
+    if (cust   && !r.customer.toLowerCase().includes(cust))  return false;
+    if (phone  && !r.phone.includes(phone))                  return false;
     if (from   && fmtDate(r.visitDate) < from) return false;
     if (to     && fmtDate(r.visitDate) > to)   return false;
     return true;
   });
 
   if (fnSortCol >= 0) applySortFN();
-  renderFNTable(fnFiltered);
+  if (fnView === 'detail') renderFNTable(fnFiltered);
+  else renderFNPivot(fnFiltered);
 }
 
 function clearFNFilters() {
-  ['fn-projFilter','fn-tlFilter','fn-empFilter','fn-statusFilter','fn-fromDate','fn-toDate']
+  ['fn-tlFilter','fn-empFilter','fn-projFilter','fn-devFilter',
+   'fn-statusFilter','fn-custFilter','fn-phoneFilter','fn-fromDate','fn-toDate']
     .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   fnFiltered = [...fnAll];
-  renderFNTable(fnFiltered);
+  if (fnView === 'detail') renderFNTable(fnFiltered);
+  else renderFNPivot(fnFiltered);
+}
+
+function switchFNView(v) {
+  fnView = v;
+  document.getElementById('fn-detailTab').classList.toggle('active', v === 'detail');
+  document.getElementById('fn-pivotTab').classList.toggle('active', v === 'pivot');
+  document.getElementById('fn-detailView').style.display = v === 'detail' ? 'block' : 'none';
+  document.getElementById('fn-pivotView').style.display  = v === 'pivot'  ? 'block' : 'none';
+  if (v === 'detail') renderFNTable(fnFiltered);
+  else renderFNPivot(fnFiltered);
 }
 
 function renderFNTable(rows) {
@@ -998,26 +1237,87 @@ function renderFNTable(rows) {
     return;
   }
 
-  tbody.innerHTML = rows.map(r => `
-    <tr>
+  tbody.innerHTML = rows.map((r, i) => `
+    <tr class="clickable-row" onclick="openDetailModal(fnFiltered[${i}])">
       <td>${esc(r.cluster)}</td>
       <td>${esc(r.teamLead)}</td>
       <td>${esc(r.employee)}</td>
-      <td>${esc(r.customer)}</td>
+      <td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td>
       <td>${esc(r.phone)}</td>
       <td>${esc(r.project)}</td>
+      <td>${esc(r.developer || r.builderSourcingName || '—')}</td>
       <td>${esc(r.configuration)}</td>
       <td>${esc(r.budget)}</td>
       <td>${statusBadge(r.status)}</td>
       <td>${esc(r.visitDate)}</td>
-      <td>${r.converted === 'Yes' ? '<span class="badge badge-conv">Converted</span>' : '—'}</td>
     </tr>`).join('');
 }
 
+function renderFNPivot(rows) {
+  const thead = document.querySelector('#fn-pivot thead');
+  const tbody = document.querySelector('#fn-pivot tbody');
+  thead.innerHTML = '';
+  tbody.innerHTML = '';
+
+  const hr = document.createElement('tr');
+  hr.innerHTML = `<th>Team Lead</th><th>Employee</th>
+    <th style="color:#e05c5c">🔴 Hot</th>
+    <th style="color:#e08c5c">🟠 Warm</th>
+    <th style="color:#5c9be0">🔵 Cold</th>
+    <th>Total</th>`;
+  thead.appendChild(hr);
+
+  // Group by TL + Employee
+  const grouped = {};
+  rows.forEach(r => {
+    const key = (r.teamLead || '—') + '||' + (r.employee || '—');
+    if (!grouped[key]) grouped[key] = { teamLead: r.teamLead || '—', employee: r.employee || '—', Hot: 0, Warm: 0, Cold: 0, rows: { Hot: [], Warm: [], Cold: [] } };
+    const s = r.status;
+    if (s === 'Hot' || s === 'Warm' || s === 'Cold') {
+      grouped[key][s]++;
+      grouped[key].rows[s].push(r);
+    }
+  });
+
+  // Sort by TL then employee
+  const entries = Object.values(grouped).sort((a, b) =>
+    a.teamLead.localeCompare(b.teamLead) || a.employee.localeCompare(b.employee)
+  );
+
+  if (!entries.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="no-data">No data for pivot</td></tr>`;
+    document.getElementById('fn-rowCount').textContent = '0 FN client(s) — pivot';
+    return;
+  }
+
+  entries.forEach(g => {
+    const total = g.Hot + g.Warm + g.Cold;
+    const allRows = [...g.rows.Hot, ...g.rows.Warm, ...g.rows.Cold];
+    const tr = document.createElement('tr');
+
+    const mkCell = (count, statusClass, statusLabel, rowsArr) => {
+      if (count === 0) return `<td class="zero">–</td>`;
+      return `<td class="pivot-${statusClass.toLowerCase()}" onclick="openDrillModal(event,'${esc(g.employee)}','${statusLabel}')">${count}</td>`;
+    };
+
+    tr.innerHTML =
+      `<td>${esc(g.teamLead)}</td>` +
+      `<td style="font-weight:600">${esc(g.employee)}</td>` +
+      mkCell(g.Hot,  'hot',  'Hot',  g.rows.Hot) +
+      mkCell(g.Warm, 'warm', 'Warm', g.rows.Warm) +
+      mkCell(g.Cold, 'cold', 'Cold', g.rows.Cold) +
+      `<td class="total ${total > 0 ? 'clickable' : ''}" ${total > 0 ? `onclick="openDrillModal(event,'${esc(g.employee)}','All')"` : ''}>${total || '–'}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('fn-rowCount').textContent = `${entries.length} employee(s) — pivot`;
+}
+
 function populateFNFilters(rows) {
-  fillSelect('fn-projFilter',   [...new Set(rows.map(r => r.project).filter(Boolean))].sort(), 'All Projects');
-  fillSelect('fn-tlFilter',     [...new Set(rows.map(r => r.teamLead).filter(Boolean))].sort(), 'All Team Leads');
-  fillSelect('fn-empFilter',    [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(), 'All Employees');
+  fillSelect('fn-tlFilter',     [...new Set(rows.map(r => r.teamLead).filter(Boolean))].sort(),   'All Team Leads');
+  fillSelect('fn-empFilter',    [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(),   'All Employees');
+  fillSelect('fn-projFilter',   [...new Set(rows.map(r => r.project).filter(Boolean))].sort(),    'All Projects');
+  fillSelect('fn-devFilter',    [...new Set(rows.map(r => r.developer || r.builderSourcingName).filter(Boolean))].sort(), 'All Developers');
 }
 
 function sortFN(col) {
@@ -1030,12 +1330,116 @@ function sortFN(col) {
 }
 
 function applySortFN() {
-  const keys = ['cluster','teamLead','employee','customer','phone','project','configuration','budget','status','visitDate'];
+  const keys = ['cluster','teamLead','employee','customer','phone','project','developer','configuration','budget','status','visitDate'];
   const key  = keys[fnSortCol] || 'visitDate';
   fnFiltered.sort((a, b) => {
     const v1 = a[key] || ''; const v2 = b[key] || '';
     return fnSortDir === 'asc' ? v1.localeCompare(v2) : v2.localeCompare(v1);
   });
+}
+
+// ── DETAIL MODAL ──────────────────────────────────────────────
+function openDetailModal(r) {
+  document.getElementById('modalCustomerName').textContent = r.customer || 'Client Details';
+
+  // Format the timestamp into a readable "Created On" string
+  let createdOn = '—';
+  if (r.timestamp) {
+    try {
+      const d = new Date(r.timestamp);
+      if (!isNaN(d)) {
+        createdOn = d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) +
+                    ' ' + d.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', hour12:true });
+      } else {
+        createdOn = r.timestamp;
+      }
+    } catch (_) { createdOn = r.timestamp; }
+  }
+
+  const fields = [
+    { label: 'Created On',                    value: createdOn,                              full: false, gold: true },
+    { label: 'Status',                         value: r.status,                               full: false, badge: true },
+    { label: 'Cluster',                        value: r.cluster,                              full: false },
+    { label: 'PNL Head',                       value: r.pnlHead,                              full: false },
+    { label: 'Team Leader',                    value: r.teamLead,                             full: false },
+    { label: 'Sales Executive',                value: r.employee,                             full: false },
+    { label: 'Customer Name',                  value: r.customer,                             full: false },
+    { label: 'Contact Number',                 value: r.phone,                                full: false },
+    { label: 'Property Type',                  value: r.propertyType,                         full: false },
+    { label: 'Configuration',                  value: r.configuration,                        full: false },
+    { label: 'Budget',                         value: r.budget ? '₹ ' + r.budget : '',       full: false },
+    { label: 'Visit Date',                     value: r.visitDate,                            full: false },
+    { label: 'Project Name',                   value: r.project,                              full: false },
+    { label: 'Developer / Builder',            value: r.developer || r.builderSourcingName,   full: false },
+    { label: 'Builder Sourcing Manager',       value: r.builderSourcingName,                  full: false },
+    { label: 'Sourcing Manager Contact',       value: r.builderSourcingContact,               full: false },
+    { label: 'Builder Closing Manager',        value: r.builderClosingName,                   full: false },
+    { label: 'Remarks',                        value: r.remark,                               full: true  },
+    { label: 'Operations Remark',              value: r.operationsRemark,                     full: true  },
+  ];
+
+  const grid = document.getElementById('detailGrid');
+  grid.innerHTML = fields.map(f => {
+    const val = f.value ? String(f.value).trim() : '';
+    const display = val
+      ? (f.badge ? statusBadge(val) : `<div class="detail-value ${f.gold ? 'gold' : ''}">${esc(val)}</div>`)
+      : `<div class="detail-value muted">—</div>`;
+    return `<div class="detail-item ${f.full ? 'full' : ''}">
+      <div class="detail-label">${f.label}</div>
+      ${display}
+    </div>`;
+  }).join('');
+
+  document.getElementById('detailModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDetailModal(e) {
+  if (e && e.target !== document.getElementById('detailModal')) return;
+  document.getElementById('detailModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── PIVOT DRILL-DOWN MODAL ────────────────────────────────────
+function openDrillModal(e, employeeName, statusLabel) {
+  e.stopPropagation();
+
+  // Find the matching rows from fnFiltered
+  const drillRows = fnFiltered.filter(r => {
+    if (r.employee !== employeeName) return false;
+    if (statusLabel === 'All') return r.status === 'Hot' || r.status === 'Warm' || r.status === 'Cold';
+    return r.status === statusLabel;
+  });
+
+  const statusColor = { Hot: '#e05c5c', Warm: '#e08c5c', Cold: '#5c9be0', All: 'var(--gold)' }[statusLabel] || 'var(--text)';
+  document.getElementById('drillTitle').innerHTML =
+    `<span style="color:${statusColor}">${esc(statusLabel)}</span> clients — ${esc(employeeName)} (${drillRows.length})`;
+
+  const tbody = document.getElementById('drill-tbody');
+  if (!drillRows.length) {
+    tbody.innerHTML = `<tr><td colspan="8" class="no-data">No records</td></tr>`;
+  } else {
+    tbody.innerHTML = drillRows.map((r, i) => `
+      <tr class="clickable-row" onclick="openDetailModal(fnFiltered.find(x=>x.customer===\`${r.customer.replace(/`/g,"'")}\`&&x.phone===\`${r.phone}\`)||fnFiltered[0])">
+        <td>${esc(r.teamLead)}</td>
+        <td>${esc(r.employee)}</td>
+        <td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td>
+        <td>${esc(r.phone)}</td>
+        <td>${esc(r.project)}</td>
+        <td>${esc(r.budget)}</td>
+        <td>${statusBadge(r.status)}</td>
+        <td>${esc(r.visitDate)}</td>
+      </tr>`).join('');
+  }
+
+  document.getElementById('drillModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDrillModal(e) {
+  if (e && e.target !== document.getElementById('drillModal')) return;
+  document.getElementById('drillModal').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 // ── CONVERT TO FN CLIENT ──────────────────────────────────────
@@ -1140,6 +1544,15 @@ document.addEventListener('visibilitychange', () => {
 });
 window.addEventListener('online',  () => { setStatus(true);  if (auth && !refreshTimer) startAutoRefresh(); });
 window.addEventListener('offline', () => setStatus(false));
+
+// ── ESC closes modals ─────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.getElementById('drillModal').classList.remove('open');
+    document.getElementById('detailModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+});
 </script>
 </body>
 </html>
