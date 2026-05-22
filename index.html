@@ -710,23 +710,55 @@
     }
   }
 
-  function startGateCountdown() {
-    const now  = new Date();
-    const next = new Date();
-    const days = (5 - now.getDay() + 7) % 7 || 7;
-    next.setDate(now.getDate() + days);
-    next.setHours(10, 0, 0, 0);
+  // function startGateCountdown() {
+  //   const now  = new Date();
+  //   const next = new Date();
+  //   const days = (5 - now.getDay() + 7) % 7 || 7;
+  //   next.setDate(now.getDate() + days);
+  //   next.setHours(10, 0, 0, 0);
 
+  //   const el = document.getElementById('gate-timer');
+  //   const tick = () => {
+  //     const diff = Math.max(0, next - new Date());
+  //     if (!diff) { el.textContent = 'Opens shortly — refresh the page!'; return; }
+  //     const d = Math.floor(diff / 86400000);
+  //     const h = Math.floor((diff % 86400000) / 3600000);
+  //     const m = Math.floor((diff % 3600000)  / 60000);
+  //     const s = Math.floor((diff % 60000)    / 1000);
+  //     el.textContent = `Opens in: ${d}d ${h}h ${m}m ${s}s`;
+  //   };
+  //   tick();
+  //   setInterval(tick, 1000);
+  // }
+  
+  function startGateCountdown() {
     const el = document.getElementById('gate-timer');
-    const tick = () => {
-      const diff = Math.max(0, next - new Date());
-      if (!diff) { el.textContent = 'Opens shortly — refresh the page!'; return; }
+  
+    function tick() {
+      const now = new Date();
+  
+      // Next Friday 10 AM
+      const next = new Date(now);
+      const daysUntilFriday = (5 - now.getDay() + 7) % 7 || 7;
+  
+      next.setDate(now.getDate() + daysUntilFriday);
+      next.setHours(10, 0, 0, 0);
+  
+      const diff = next - now;
+  
+      if (diff <= 0) {
+        el.textContent = 'Opening shortly... Refresh page';
+        return;
+      }
+  
       const d = Math.floor(diff / 86400000);
       const h = Math.floor((diff % 86400000) / 3600000);
-      const m = Math.floor((diff % 3600000)  / 60000);
-      const s = Math.floor((diff % 60000)    / 1000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+  
       el.textContent = `Opens in: ${d}d ${h}h ${m}m ${s}s`;
-    };
+    }
+  
     tick();
     setInterval(tick, 1000);
   }
