@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +9,31 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
 
   <style>
+    /* ── LIGHT THEME (default) ───────────────────────────────── */
     :root {
+      --bg:         #f0f2f7;
+      --surface:    #ffffff;
+      --surface2:   #f5f6fa;
+      --surface3:   #eaecf3;
+      --border:     rgba(0,0,0,0.07);
+      --border-mid: rgba(0,0,0,0.13);
+      --gold:       #a07820;
+      --gold-light: #c9a84c;
+      --gold-dim:   rgba(160,120,32,0.10);
+      --red:        #c0271a;
+      --green:      #1e7c47;
+      --blue:       #1a4fa0;
+      --orange:     #b85c00;
+      --text:       #1a1a2e;
+      --text-muted: #6b6b80;
+      --text-dim:   #4a4a60;
+      --radius:     12px;
+      --radius-sm:  8px;
+      --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ── DARK THEME ──────────────────────────────────────────── */
+    [data-theme="dark"] {
       --bg:         #0e0f14;
       --surface:    #16181f;
       --surface2:   #1d1f28;
@@ -26,9 +50,6 @@
       --text:       #f0ede6;
       --text-muted: #7a7a8e;
       --text-dim:   #a0a0b4;
-      --radius:     12px;
-      --radius-sm:  8px;
-      --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -571,13 +592,54 @@
     footer a { color: var(--gold); text-decoration: none; }
 
     /* ── Responsive ─────────────────────────────────────────────── */
+    /* Theme toggle */
+    .theme-toggle {
+      width: 34px; height: 34px;
+      background: var(--surface2);
+      border: 1px solid var(--border-mid);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: var(--transition);
+      font-size: 1rem; flex-shrink: 0; color: var(--text-muted);
+    }
+    .theme-toggle:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* Prevent iOS zoom on inputs */
+    .form-field input, .form-field select,
+    .filter-item select, .filter-item input { font-size: 16px !important; }
+
     @media (max-width: 768px) {
-      .header { padding: 0 1rem; flex-wrap: wrap; height: auto; padding-top: 10px; padding-bottom: 10px; }
-      .dash-tabs { order: 3; width: 100%; }
-      .dash-tab { flex: 1; text-align: center; }
-      .filters-grid { flex-direction: column; }
-      .filter-item select, .filter-item input { min-width: 100%; }
-      .table-wrap { max-height: calc(100vh - 280px); }
+      .header { padding: 0 0.75rem; height: auto; flex-wrap: wrap; padding-top: 8px; padding-bottom: 8px; gap: 6px; }
+      .header-left { gap: 8px; flex: 1; min-width: 0; }
+      .logo { font-size: 1rem; }
+      .logo span { display: none; }
+      .dash-tabs { order: 3; width: 100%; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+      .dash-tabs::-webkit-scrollbar { display: none; }
+      .dash-tab { flex-shrink: 0; padding: 5px 11px; font-size: 0.7rem; }
+      .header-right { gap: 8px; }
+      .status-pill { display: none; }
+      #loginPanel { padding: 1rem; }
+      .login-card { padding: 1.8rem 1.2rem; border-radius: 14px; }
+      .login-title { font-size: 1.3rem; }
+      .filters-bar { padding: 10px 12px; }
+      .filters-grid { gap: 8px; }
+      .filter-item { width: 100%; }
+      .filter-item select, .filter-item input { min-width: 0; width: 100%; }
+      .table-wrap { max-height: calc(100vh - 260px); }
+      table { font-size: 0.75rem; }
+      th, td { padding: 8px; white-space: nowrap; }
+      .modal-overlay { padding: 0; align-items: flex-end; }
+      .modal-box { max-width: 100%; max-height: 92vh; border-radius: 18px 18px 0 0; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .detail-item.full { grid-column: 1; }
+      .drill-overlay { padding: 0; align-items: flex-end; }
+      .drill-box { max-width: 100%; max-height: 88vh; border-radius: 18px 18px 0 0; }
+      .revenue-placeholder { padding: 2rem 1.2rem; }
+    }
+    @media (max-width: 480px) {
+      .convert-btn { padding: 3px 8px; font-size: 0.65rem; }
+      .badge { padding: 2px 6px; font-size: 0.62rem; }
+      .table-meta { padding: 8px 12px; flex-direction: column; align-items: flex-start; gap: 2px; }
     }
   </style>
 </head>
@@ -589,13 +651,15 @@
     <div class="logo">THORE <span>Dashboard</span></div>
     <div id="dashTabs" class="dash-tabs" style="display:none;">
       <button class="dash-tab active" onclick="switchDashboard('visits')">📋 Visits</button>
+      <button class="dash-tab" onclick="switchDashboard('visitdone')">✅ Visit Done</button>
       <button class="dash-tab" onclick="switchDashboard('fnclients')">🏆 FN Clients</button>
       <button class="dash-tab" onclick="switchDashboard('revenue')">💰 Revenue</button>
     </div>
   </div>
   <div class="header-right">
     <div id="connStatus" class="status-pill online"><span>●</span> Online</div>
-    <a href="index.html" style="color:var(--text-muted);font-size:0.78rem;text-decoration:none;">← Form</a>
+    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+    <a href="index.html" style="color:var(--text-muted);font-size:0.78rem;text-decoration:none;white-space:nowrap;">← Form</a>
     <div class="profile-wrap" id="profileWrap" style="display:none;">
       <div class="profile-avatar" onclick="toggleProfile()" id="profileAvatar">?</div>
       <div class="profile-dropdown" id="profileDropdown">
@@ -648,16 +712,39 @@
       <div class="filters-bar">
         <div class="filters-grid">
           <div class="filter-item">
-            <label>Project</label>
-            <select id="v-projFilter" onchange="applyVisitFilters()"><option value="">All Projects</option></select>
-          </div>
-          <div class="filter-item">
             <label>Team Lead</label>
             <select id="v-tlFilter" onchange="applyVisitFilters()"><option value="">All Team Leads</option></select>
           </div>
           <div class="filter-item">
             <label>Employee</label>
             <select id="v-empFilter" onchange="applyVisitFilters()"><option value="">All Employees</option></select>
+          </div>
+          <div class="filter-item">
+            <label>Project</label>
+            <select id="v-projFilter" onchange="applyVisitFilters()"><option value="">All Projects</option></select>
+          </div>
+          <div class="filter-item">
+            <label>Developer</label>
+            <select id="v-devFilter" onchange="applyVisitFilters()"><option value="">All Developers</option></select>
+          </div>
+          <div class="filter-item">
+            <label>Closure Chances</label>
+            <select id="v-closureFilter" onchange="applyVisitFilters()">
+              <option value="">All</option>
+              <option>Excellent</option>
+              <option>Very good</option>
+              <option>Good</option>
+              <option>Fair</option>
+              <option>Poor</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>Customer Name</label>
+            <input type="text" id="v-custFilter" placeholder="Search name…" oninput="applyVisitFilters()">
+          </div>
+          <div class="filter-item">
+            <label>Phone Number</label>
+            <input type="text" id="v-phoneFilter" placeholder="Search phone…" oninput="applyVisitFilters()">
           </div>
           <div class="filter-item">
             <label>From Date</label>
@@ -671,7 +758,6 @@
             <div style="margin-bottom:5px;height:14px;"></div>
             <div style="display:flex;gap:8px;">
               <button class="clear-btn" onclick="clearVisitFilters()">Clear</button>
-              <!-- View tabs -->
               <div class="view-tabs">
                 <button class="view-tab active" id="v-detailTab" onclick="switchVisitView('detail')">Detail</button>
                 <button class="view-tab" id="v-pivotTab" onclick="switchVisitView('pivot')">Pivot</button>
@@ -718,6 +804,71 @@
         </table>
       </div>
     </div><!-- #visitsDash -->
+
+    <!-- Visit Done Dashboard -->
+    <div id="visitdoneDash" style="display:none;">
+      <div class="filters-bar">
+        <div class="filters-grid">
+          <div class="filter-item">
+            <label>Employee</label>
+            <select id="vd-empFilter" onchange="applyVDFilters()"><option value="">All Employees</option></select>
+          </div>
+          <div class="filter-item">
+            <label>Project</label>
+            <select id="vd-projFilter" onchange="applyVDFilters()"><option value="">All Projects</option></select>
+          </div>
+          <div class="filter-item">
+            <label>Type</label>
+            <select id="vd-typeFilter" onchange="applyVDFilters()">
+              <option value="">All Types</option>
+              <option>Visit</option>
+              <option>VC</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>Customer Name</label>
+            <input type="text" id="vd-custFilter" placeholder="Search name…" oninput="applyVDFilters()">
+          </div>
+          <div class="filter-item">
+            <label>Phone Number</label>
+            <input type="text" id="vd-phoneFilter" placeholder="Search phone…" oninput="applyVDFilters()">
+          </div>
+          <div class="filter-item">
+            <label>From Date</label>
+            <input type="date" id="vd-fromDate" onchange="applyVDFilters()">
+          </div>
+          <div class="filter-item">
+            <label>To Date</label>
+            <input type="date" id="vd-toDate" onchange="applyVDFilters()">
+          </div>
+          <div class="filter-item">
+            <div style="height:18px;"></div>
+            <button class="clear-btn" onclick="clearVDFilters()">Clear</button>
+          </div>
+        </div>
+      </div>
+      <div class="table-meta">
+        <div class="row-count" id="vd-rowCount">Loading…</div>
+        <div class="last-updated" id="vd-lastUpdated"></div>
+      </div>
+      <div class="table-wrap">
+        <table id="vd-table">
+          <thead>
+            <tr>
+              <th class="sortable" onclick="sortVD(0)">Visit Date</th>
+              <th class="sortable" onclick="sortVD(1)">Customer Name</th>
+              <th>Phone</th>
+              <th class="sortable" onclick="sortVD(3)">Sales Executive</th>
+              <th class="sortable" onclick="sortVD(4)">Project</th>
+              <th>Notes</th>
+              <th>Type</th>
+              <th>Convert</th>
+            </tr>
+          </thead>
+          <tbody id="vd-tbody"></tbody>
+        </table>
+      </div>
+    </div><!-- #visitdoneDash -->
 
     <!-- FN Clients Dashboard -->
     <div id="fnDash" style="display:none;">
@@ -890,6 +1041,10 @@ let currentVisitView = 'detail';
 let visitsAll = [], visitsFiltered = [];
 let vSortCol = -1, vSortDir = 'asc';
 
+// Visit Done
+let vdAll = [], vdFiltered = [];
+let vdSortCol = -1, vdSortDir = 'asc';
+
 // FN Clients
 let fnAll = [], fnFiltered = [];
 let fnSortCol = -1, fnSortDir = 'asc';
@@ -980,21 +1135,14 @@ function setLoginStatus(msg, isErr) {
 // ── DASHBOARD SWITCHING ───────────────────────────────────────
 function switchDashboard(which) {
   activeDash = which;
-  document.querySelectorAll('.dash-tab').forEach((t, i) => {
-    t.classList.toggle('active',
-      (i === 0 && which === 'visits') ||
-      (i === 1 && which === 'fnclients') ||
-      (i === 2 && which === 'revenue')
-    );
-  });
-  document.getElementById('visitsDash').style.display = which === 'visits'    ? 'block' : 'none';
-  document.getElementById('fnDash').style.display     = which === 'fnclients' ? 'block' : 'none';
-  document.getElementById('revDash').style.display    = which === 'revenue'   ? 'flex'  : 'none';
-
-  // Load FN data on first switch
-  if (which === 'fnclients' && fnAll.length === 0 && auth) {
-    loadFNData();
-  }
+  const order = ['visits','visitdone','fnclients','revenue'];
+  document.querySelectorAll('.dash-tab').forEach((t, i) => t.classList.toggle('active', order[i] === which));
+  document.getElementById('visitsDash').style.display    = which === 'visits'    ? 'block' : 'none';
+  document.getElementById('visitdoneDash').style.display = which === 'visitdone' ? 'block' : 'none';
+  document.getElementById('fnDash').style.display        = which === 'fnclients' ? 'block' : 'none';
+  document.getElementById('revDash').style.display       = which === 'revenue'   ? 'flex'  : 'none';
+  if (which === 'fnclients' && fnAll.length === 0 && auth) loadFNData();
+  if (which === 'visitdone' && vdAll.length === 0 && auth) loadVDData();
 }
 
 // ── AUTO REFRESH ──────────────────────────────────────────────
@@ -1007,23 +1155,17 @@ function refreshAll() {
   if (!auth || isRefreshing) return;
   isRefreshing = true;
   document.getElementById('refreshInd').classList.add('show');
+  const done = () => { isRefreshing = false; document.getElementById('refreshInd').classList.remove('show'); };
 
   jsonpFetch(GAS_URL, { action: 'getVisitData', role: auth.role, username: auth.user, password: auth.pass }, data => {
     if (data.ok) renderVisitData(data.data);
-    // Also refresh FN if that tab was already loaded
-    if (fnAll.length > 0) {
-      jsonpFetch(GAS_URL_FN, { action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => {
-        if (d.ok) renderFNData(d.data);
-        done();
-      }, done);
-    } else { done(); }
+    let pending = 0;
+    const checkDone = () => { if (--pending <= 0) done(); };
+    if (fnAll.length > 0) { pending++; jsonpFetch(GAS_URL_FN, { action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => { if (d.ok) renderFNData(d.data); checkDone(); }, checkDone); }
+    if (vdAll.length > 0) { pending++; jsonpFetch(GAS_URL, { action: 'getVisitDoneData', role: auth.role, username: auth.user, password: auth.pass }, d => { if (d.ok) renderVDData(d.data); checkDone(); }, checkDone); }
+    if (pending === 0) done();
     setStatus(true);
   }, () => { setStatus(false); done(); });
-
-  function done() {
-    isRefreshing = false;
-    document.getElementById('refreshInd').classList.remove('show');
-  }
 }
 
 function loadFNData() {
@@ -1045,18 +1187,26 @@ function renderVisitData(rows) {
 }
 
 function applyVisitFilters() {
-  const proj   = document.getElementById('v-projFilter').value;
-  const tl     = document.getElementById('v-tlFilter').value;
-  const emp    = document.getElementById('v-empFilter').value;
-  const from   = document.getElementById('v-fromDate').value;
-  const to     = document.getElementById('v-toDate').value;
+  const tl      = document.getElementById('v-tlFilter').value;
+  const emp     = document.getElementById('v-empFilter').value;
+  const proj    = document.getElementById('v-projFilter').value;
+  const dev     = document.getElementById('v-devFilter').value;
+  const closure = document.getElementById('v-closureFilter').value;
+  const cust    = (document.getElementById('v-custFilter').value  || '').trim().toLowerCase();
+  const phone   = (document.getElementById('v-phoneFilter').value || '').trim();
+  const from    = document.getElementById('v-fromDate').value;
+  const to      = document.getElementById('v-toDate').value;
 
   visitsFiltered = visitsAll.filter(r => {
-    if (proj && r.project  !== proj) return false;
-    if (tl   && r.teamLead !== tl)   return false;
-    if (emp  && r.employee !== emp)   return false;
-    if (from && fmtDate(r.visitDate) < from) return false;
-    if (to   && fmtDate(r.visitDate) > to)   return false;
+    if (tl      && r.teamLead  !== tl)      return false;
+    if (emp     && r.employee  !== emp)     return false;
+    if (proj    && r.project   !== proj)    return false;
+    if (dev     && r.developer !== dev)     return false;
+    if (closure && r.closure   !== closure) return false;
+    if (cust    && !(r.customer||'').toLowerCase().includes(cust)) return false;
+    if (phone   && !(r.phone||'').includes(phone))                 return false;
+    if (from    && fmtDate(r.visitDate) < from) return false;
+    if (to      && fmtDate(r.visitDate) > to)   return false;
     return true;
   });
 
@@ -1066,7 +1216,8 @@ function applyVisitFilters() {
 }
 
 function clearVisitFilters() {
-  ['v-projFilter','v-tlFilter','v-empFilter','v-fromDate','v-toDate']
+  ['v-tlFilter','v-empFilter','v-projFilter','v-devFilter',
+   'v-closureFilter','v-custFilter','v-phoneFilter','v-fromDate','v-toDate']
     .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   visitsFiltered = [...visitsAll];
   if (currentVisitView === 'detail') renderVisitTable(visitsFiltered);
@@ -1145,9 +1296,10 @@ function renderVisitPivot(rows) {
 }
 
 function populateVisitFilters(rows) {
-  fillSelect('v-projFilter', [...new Set(rows.map(r => r.project).filter(Boolean))].sort(), 'All Projects');
-  fillSelect('v-tlFilter',   [...new Set(rows.map(r => r.teamLead).filter(Boolean))].sort(), 'All Team Leads');
-  fillSelect('v-empFilter',  [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(), 'All Employees');
+  fillSelect('v-tlFilter',   [...new Set(rows.map(r => r.teamLead).filter(Boolean))].sort(),  'All Team Leads');
+  fillSelect('v-empFilter',  [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(),  'All Employees');
+  fillSelect('v-projFilter', [...new Set(rows.map(r => r.project).filter(Boolean))].sort(),   'All Projects');
+  fillSelect('v-devFilter',  [...new Set(rows.map(r => r.developer).filter(Boolean))].sort(), 'All Developers');
 }
 
 // ── VISITS SORT ───────────────────────────────────────────────
@@ -1535,6 +1687,141 @@ function jsonpFetch(url, params, onSuccess, onError) {
 
   script.src = url + '?' + qs;
   document.head.appendChild(script);
+}
+
+// ── THEME TOGGLE ──────────────────────────────────────────────
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  const next = isDark ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  document.getElementById('themeBtn').textContent = next === 'dark' ? '☀️' : '🌙';
+  try { localStorage.setItem('dash_theme', next); } catch(_) {}
+}
+// Restore saved theme immediately
+(function() {
+  try {
+    const saved = localStorage.getItem('dash_theme');
+    if (saved) {
+      document.documentElement.setAttribute('data-theme', saved);
+      document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('themeBtn');
+        if (btn) btn.textContent = saved === 'dark' ? '☀️' : '🌙';
+      });
+    }
+  } catch(_) {}
+})();
+
+// ── VISIT DONE ────────────────────────────────────────────────
+// Reads "Visit Done" sheet in Friday Lineup spreadsheet.
+// Columns: Visit Date | Customer Name | Customer Number |
+//          Sales Executive Name | Project Name | Notes | Type
+
+function loadVDData() {
+  document.getElementById('vd-rowCount').textContent = 'Loading…';
+  jsonpFetch(GAS_URL, { action: 'getVisitDoneData', role: auth.role, username: auth.user, password: auth.pass }, d => {
+    if (d.ok) renderVDData(d.data);
+    else document.getElementById('vd-rowCount').textContent =
+      'Failed to load. Ensure "Visit Done" sheet exists and GAS is redeployed.';
+  }, () => { document.getElementById('vd-rowCount').textContent = 'Network error loading Visit Done data.'; });
+}
+
+function renderVDData(rows) {
+  vdAll      = rows.map(r => ({ ...r, visitDate: fmtDate(r.visitDate) }));
+  vdFiltered = [...vdAll];
+  populateVDFilters(vdAll);
+  applyVDFilters();
+  document.getElementById('vd-lastUpdated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+}
+
+function applyVDFilters() {
+  const emp   = document.getElementById('vd-empFilter').value;
+  const proj  = document.getElementById('vd-projFilter').value;
+  const type  = document.getElementById('vd-typeFilter').value;
+  const cust  = (document.getElementById('vd-custFilter').value  || '').trim().toLowerCase();
+  const phone = (document.getElementById('vd-phoneFilter').value || '').trim();
+  const from  = document.getElementById('vd-fromDate').value;
+  const to    = document.getElementById('vd-toDate').value;
+
+  vdFiltered = vdAll.filter(r => {
+    if (emp   && r.employee !== emp)  return false;
+    if (proj  && r.project  !== proj) return false;
+    if (type  && r.type     !== type) return false;
+    if (cust  && !(r.customer||'').toLowerCase().includes(cust)) return false;
+    if (phone && !(r.phone||'').includes(phone))                 return false;
+    if (from  && fmtDate(r.visitDate) < from) return false;
+    if (to    && fmtDate(r.visitDate) > to)   return false;
+    return true;
+  });
+
+  if (vdSortCol >= 0) applySortVD();
+  renderVDTable(vdFiltered);
+}
+
+function clearVDFilters() {
+  ['vd-empFilter','vd-projFilter','vd-typeFilter',
+   'vd-custFilter','vd-phoneFilter','vd-fromDate','vd-toDate']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  vdFiltered = [...vdAll];
+  renderVDTable(vdFiltered);
+}
+
+function renderVDTable(rows) {
+  const tbody = document.getElementById('vd-tbody');
+  document.getElementById('vd-rowCount').textContent = `${rows.length} visit(s) done`;
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="8" class="no-data">No records found</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      <td>${esc(r.visitDate)}</td>
+      <td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td>
+      <td>${esc(r.phone)}</td>
+      <td>${esc(r.employee)}</td>
+      <td>${esc(r.project)}</td>
+      <td style="max-width:160px;white-space:normal;font-size:0.78rem;color:var(--text-dim)">${esc(r.notes)}</td>
+      <td>${r.type ? `<span class="badge ${r.type === 'Visit' ? 'badge-yes' : 'badge-cold'}">${esc(r.type)}</span>` : '—'}</td>
+      <td><button class="convert-btn" onclick="convertVDToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})">⚡ Convert</button></td>
+    </tr>`).join('');
+}
+
+function populateVDFilters(rows) {
+  fillSelect('vd-empFilter',  [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(), 'All Employees');
+  fillSelect('vd-projFilter', [...new Set(rows.map(r => r.project).filter(Boolean))].sort(),  'All Projects');
+}
+
+function sortVD(col) {
+  if (vdSortCol === col) vdSortDir = vdSortDir === 'asc' ? 'desc' : 'asc';
+  else { vdSortCol = col; vdSortDir = 'asc'; }
+  document.querySelectorAll('#vd-table th').forEach((th, i) => {
+    th.classList.remove('asc','desc');
+    if (i === col) th.classList.add(vdSortDir);
+  });
+  applySortVD();
+  renderVDTable(vdFiltered);
+}
+
+function applySortVD() {
+  const keys = ['visitDate','customer','phone','employee','project','notes','type'];
+  const key  = keys[vdSortCol] || 'visitDate';
+  vdFiltered.sort((a, b) => {
+    const v1 = a[key] || ''; const v2 = b[key] || '';
+    return vdSortDir === 'asc' ? v1.localeCompare(v2) : v2.localeCompare(v1);
+  });
+}
+
+function convertVDToFN(row) {
+  const params = new URLSearchParams({
+    prefill:            '1',
+    customerName:       row.customer  || '',
+    contactNumber:      row.phone     || '',
+    salesExec:          row.employee  || '',
+    projectName:        row.project   || '',
+    visitDate:          row.visitDate || '',
+    convertedFromVisit: 'Yes'
+  });
+  window.open(FN_FORM_URL + '?' + params.toString(), '_blank');
 }
 
 // ── PAGE VISIBILITY HANDLING ──────────────────────────────────
