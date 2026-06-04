@@ -686,6 +686,7 @@
         <select id="role">
           <option>Team Lead</option>
           <option>Manager</option>
+          <option>PNL Head</option>
           <option>Admin</option>
           <option>MD/CEO</option>
         </select>
@@ -711,6 +712,10 @@
       <!-- Filters -->
       <div class="filters-bar">
         <div class="filters-grid">
+          <div class="filter-item">
+            <label>PNL Head</label>
+            <select id="v-pnlFilter" onchange="applyVisitFilters()"><option value="">All PNL Heads</option></select>
+          </div>
           <div class="filter-item">
             <label>Team Lead</label>
             <select id="v-tlFilter" onchange="applyVisitFilters()"><option value="">All Team Leads</option></select>
@@ -810,12 +815,24 @@
       <div class="filters-bar">
         <div class="filters-grid">
           <div class="filter-item">
+            <label>PNL Head</label>
+            <select id="vd-pnlFilter" onchange="applyVDFilters()"><option value="">All PNL Heads</option></select>
+          </div>
+          <div class="filter-item">
+            <label>Team Lead</label>
+            <select id="vd-tlFilter" onchange="applyVDFilters()"><option value="">All Team Leads</option></select>
+          </div>
+          <div class="filter-item">
             <label>Employee</label>
             <select id="vd-empFilter" onchange="applyVDFilters()"><option value="">All Employees</option></select>
           </div>
           <div class="filter-item">
             <label>Project</label>
             <select id="vd-projFilter" onchange="applyVDFilters()"><option value="">All Projects</option></select>
+          </div>
+          <div class="filter-item">
+            <label>Developer</label>
+            <select id="vd-devFilter" onchange="applyVDFilters()"><option value="">All Developers</option></select>
           </div>
           <div class="filter-item">
             <label>Type</label>
@@ -858,8 +875,10 @@
               <th class="sortable" onclick="sortVD(0)">Visit Date</th>
               <th class="sortable" onclick="sortVD(1)">Customer Name</th>
               <th>Phone</th>
-              <th class="sortable" onclick="sortVD(3)">Sales Executive</th>
-              <th class="sortable" onclick="sortVD(4)">Project</th>
+              <th class="sortable" onclick="sortVD(3)">Team Lead</th>
+              <th class="sortable" onclick="sortVD(4)">Sales Executive</th>
+              <th class="sortable" onclick="sortVD(5)">Project</th>
+              <th>Developer</th>
               <th>Notes</th>
               <th>Type</th>
               <th>Convert</th>
@@ -875,6 +894,10 @@
       <!-- Filters -->
       <div class="filters-bar">
         <div class="filters-grid">
+          <div class="filter-item">
+            <label>PNL Head</label>
+            <select id="fn-pnlFilter" onchange="applyFNFilters()"><option value="">All PNL Heads</option></select>
+          </div>
           <div class="filter-item">
             <label>Team Lead</label>
             <select id="fn-tlFilter" onchange="applyFNFilters()"><option value="">All Team Leads</option></select>
@@ -1187,6 +1210,7 @@ function renderVisitData(rows) {
 }
 
 function applyVisitFilters() {
+  const pnl     = document.getElementById('v-pnlFilter').value;
   const tl      = document.getElementById('v-tlFilter').value;
   const emp     = document.getElementById('v-empFilter').value;
   const proj    = document.getElementById('v-projFilter').value;
@@ -1198,6 +1222,7 @@ function applyVisitFilters() {
   const to      = document.getElementById('v-toDate').value;
 
   visitsFiltered = visitsAll.filter(r => {
+    if (pnl     && r.pnlHead   !== pnl)     return false;
     if (tl      && r.teamLead  !== tl)      return false;
     if (emp     && r.employee  !== emp)     return false;
     if (proj    && r.project   !== proj)    return false;
@@ -1216,7 +1241,7 @@ function applyVisitFilters() {
 }
 
 function clearVisitFilters() {
-  ['v-tlFilter','v-empFilter','v-projFilter','v-devFilter',
+  ['v-pnlFilter','v-tlFilter','v-empFilter','v-projFilter','v-devFilter',
    'v-closureFilter','v-custFilter','v-phoneFilter','v-fromDate','v-toDate']
     .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   visitsFiltered = [...visitsAll];
@@ -1296,6 +1321,7 @@ function renderVisitPivot(rows) {
 }
 
 function populateVisitFilters(rows) {
+  fillSelect('v-pnlFilter',  [...new Set(rows.map(r => r.pnlHead).filter(Boolean))].sort(),   'All PNL Heads');
   fillSelect('v-tlFilter',   [...new Set(rows.map(r => r.teamLead).filter(Boolean))].sort(),  'All Team Leads');
   fillSelect('v-empFilter',  [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(),  'All Employees');
   fillSelect('v-projFilter', [...new Set(rows.map(r => r.project).filter(Boolean))].sort(),   'All Projects');
@@ -1333,6 +1359,7 @@ function renderFNData(rows) {
 }
 
 function applyFNFilters() {
+  const pnl    = document.getElementById('fn-pnlFilter').value;
   const tl     = document.getElementById('fn-tlFilter').value;
   const emp    = document.getElementById('fn-empFilter').value;
   const proj   = document.getElementById('fn-projFilter').value;
@@ -1344,13 +1371,14 @@ function applyFNFilters() {
   const to     = document.getElementById('fn-toDate').value;
 
   fnFiltered = fnAll.filter(r => {
+    if (pnl    && r.pnlHead   !== pnl)    return false;
     if (tl     && r.teamLead  !== tl)     return false;
-    if (emp    && r.employee  !== emp)     return false;
+    if (emp    && r.employee  !== emp)    return false;
     if (proj   && r.project   !== proj)   return false;
     if (dev    && r.developer !== dev)    return false;
     if (status && r.status    !== status) return false;
-    if (cust   && !r.customer.toLowerCase().includes(cust))  return false;
-    if (phone  && !r.phone.includes(phone))                  return false;
+    if (cust   && !(r.customer||'').toLowerCase().includes(cust)) return false;
+    if (phone  && !(r.phone||'').includes(phone))                 return false;
     if (from   && fmtDate(r.visitDate) < from) return false;
     if (to     && fmtDate(r.visitDate) > to)   return false;
     return true;
@@ -1362,7 +1390,7 @@ function applyFNFilters() {
 }
 
 function clearFNFilters() {
-  ['fn-tlFilter','fn-empFilter','fn-projFilter','fn-devFilter',
+  ['fn-pnlFilter','fn-tlFilter','fn-empFilter','fn-projFilter','fn-devFilter',
    'fn-statusFilter','fn-custFilter','fn-phoneFilter','fn-fromDate','fn-toDate']
     .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   fnFiltered = [...fnAll];
@@ -1466,10 +1494,11 @@ function renderFNPivot(rows) {
 }
 
 function populateFNFilters(rows) {
-  fillSelect('fn-tlFilter',     [...new Set(rows.map(r => r.teamLead).filter(Boolean))].sort(),   'All Team Leads');
-  fillSelect('fn-empFilter',    [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(),   'All Employees');
-  fillSelect('fn-projFilter',   [...new Set(rows.map(r => r.project).filter(Boolean))].sort(),    'All Projects');
-  fillSelect('fn-devFilter',    [...new Set(rows.map(r => r.developer || r.builderSourcingName).filter(Boolean))].sort(), 'All Developers');
+  fillSelect('fn-pnlFilter',  [...new Set(rows.map(r => r.pnlHead).filter(Boolean))].sort(),                         'All PNL Heads');
+  fillSelect('fn-tlFilter',   [...new Set(rows.map(r => r.teamLead).filter(Boolean))].sort(),                        'All Team Leads');
+  fillSelect('fn-empFilter',  [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(),                        'All Employees');
+  fillSelect('fn-projFilter', [...new Set(rows.map(r => r.project).filter(Boolean))].sort(),                         'All Projects');
+  fillSelect('fn-devFilter',  [...new Set(rows.map(r => r.developer || r.builderSourcingName).filter(Boolean))].sort(), 'All Developers');
 }
 
 function sortFN(col) {
@@ -1735,8 +1764,11 @@ function renderVDData(rows) {
 }
 
 function applyVDFilters() {
+  const pnl   = document.getElementById('vd-pnlFilter').value;
+  const tl    = document.getElementById('vd-tlFilter').value;
   const emp   = document.getElementById('vd-empFilter').value;
   const proj  = document.getElementById('vd-projFilter').value;
+  const dev   = document.getElementById('vd-devFilter').value;
   const type  = document.getElementById('vd-typeFilter').value;
   const cust  = (document.getElementById('vd-custFilter').value  || '').trim().toLowerCase();
   const phone = (document.getElementById('vd-phoneFilter').value || '').trim();
@@ -1744,9 +1776,12 @@ function applyVDFilters() {
   const to    = document.getElementById('vd-toDate').value;
 
   vdFiltered = vdAll.filter(r => {
-    if (emp   && r.employee !== emp)  return false;
-    if (proj  && r.project  !== proj) return false;
-    if (type  && r.type     !== type) return false;
+    if (pnl   && r.pnlHead   !== pnl)   return false;
+    if (tl    && r.teamLead  !== tl)    return false;
+    if (emp   && r.employee  !== emp)   return false;
+    if (proj  && r.project   !== proj)  return false;
+    if (dev   && r.developer !== dev)   return false;
+    if (type  && r.type      !== type)  return false;
     if (cust  && !(r.customer||'').toLowerCase().includes(cust)) return false;
     if (phone && !(r.phone||'').includes(phone))                 return false;
     if (from  && fmtDate(r.visitDate) < from) return false;
@@ -1759,8 +1794,8 @@ function applyVDFilters() {
 }
 
 function clearVDFilters() {
-  ['vd-empFilter','vd-projFilter','vd-typeFilter',
-   'vd-custFilter','vd-phoneFilter','vd-fromDate','vd-toDate']
+  ['vd-pnlFilter','vd-tlFilter','vd-empFilter','vd-projFilter','vd-devFilter',
+   'vd-typeFilter','vd-custFilter','vd-phoneFilter','vd-fromDate','vd-toDate']
     .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
   vdFiltered = [...vdAll];
   renderVDTable(vdFiltered);
@@ -1770,7 +1805,7 @@ function renderVDTable(rows) {
   const tbody = document.getElementById('vd-tbody');
   document.getElementById('vd-rowCount').textContent = `${rows.length} visit(s) done`;
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="8" class="no-data">No records found</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="10" class="no-data">No records found</td></tr>`;
     return;
   }
   tbody.innerHTML = rows.map(r => `
@@ -1778,8 +1813,10 @@ function renderVDTable(rows) {
       <td>${esc(r.visitDate)}</td>
       <td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td>
       <td>${esc(r.phone)}</td>
+      <td>${esc(r.teamLead)}</td>
       <td>${esc(r.employee)}</td>
       <td>${esc(r.project)}</td>
+      <td>${esc(r.developer)}</td>
       <td style="max-width:160px;white-space:normal;font-size:0.78rem;color:var(--text-dim)">${esc(r.notes)}</td>
       <td>${r.type ? `<span class="badge ${r.type === 'Visit' ? 'badge-yes' : 'badge-cold'}">${esc(r.type)}</span>` : '—'}</td>
       <td><button class="convert-btn" onclick="convertVDToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})">⚡ Convert</button></td>
@@ -1787,8 +1824,11 @@ function renderVDTable(rows) {
 }
 
 function populateVDFilters(rows) {
-  fillSelect('vd-empFilter',  [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(), 'All Employees');
-  fillSelect('vd-projFilter', [...new Set(rows.map(r => r.project).filter(Boolean))].sort(),  'All Projects');
+  fillSelect('vd-pnlFilter',  [...new Set(rows.map(r => r.pnlHead).filter(Boolean))].sort(),   'All PNL Heads');
+  fillSelect('vd-tlFilter',   [...new Set(rows.map(r => r.teamLead).filter(Boolean))].sort(),  'All Team Leads');
+  fillSelect('vd-empFilter',  [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(),  'All Employees');
+  fillSelect('vd-projFilter', [...new Set(rows.map(r => r.project).filter(Boolean))].sort(),   'All Projects');
+  fillSelect('vd-devFilter',  [...new Set(rows.map(r => r.developer).filter(Boolean))].sort(), 'All Developers');
 }
 
 function sortVD(col) {
@@ -1803,7 +1843,7 @@ function sortVD(col) {
 }
 
 function applySortVD() {
-  const keys = ['visitDate','customer','phone','employee','project','notes','type'];
+  const keys = ['visitDate','customer','phone','teamLead','employee','project','developer','notes','type'];
   const key  = keys[vdSortCol] || 'visitDate';
   vdFiltered.sort((a, b) => {
     const v1 = a[key] || ''; const v2 = b[key] || '';
@@ -1817,7 +1857,10 @@ function convertVDToFN(row) {
     customerName:       row.customer  || '',
     contactNumber:      row.phone     || '',
     salesExec:          row.employee  || '',
+    teamLead:           row.teamLead  || '',
+    cluster:            row.cluster   || '',
     projectName:        row.project   || '',
+    developerName:      row.developer || '',
     visitDate:          row.visitDate || '',
     convertedFromVisit: 'Yes'
   });
