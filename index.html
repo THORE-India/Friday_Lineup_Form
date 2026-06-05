@@ -793,6 +793,16 @@
       // Project change → auto-fill developer
       const projInput = document.getElementById('project');
       projInput.addEventListener('blur', syncProject);
+      projInput.addEventListener('blur', () => {
+        const proj = projInput.value.trim();
+      
+        if (proj && !projectMap.hasOwnProperty(proj)) {
+          showToast(
+            'This project is not available in the system. Please contact Operations Department to add the project.',
+            'error'
+          );
+        }
+      });
 
       // Time picker
       flatpickr('#visitTime', {
@@ -905,6 +915,13 @@
     // Validate
     if (!employee || !(masterData.employees || []).find(e => e.name === employee)) {
       showToast('Please select a valid Sales Executive from suggestions', 'error'); return;
+    }
+    if (!projectMap.hasOwnProperty(project)) {
+      showToast(
+        'This project is not available in the system. Please contact Operations Department to add the project.',
+        'error'
+      );
+      return;
     }
     if (!teamLead || !cluster) {
       syncEmployee();
