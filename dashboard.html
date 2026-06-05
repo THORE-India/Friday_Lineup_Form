@@ -1067,7 +1067,7 @@
               <th class="sortable" onclick="sortFN(1)">Team Lead</th>
               <th class="sortable" onclick="sortFN(2)">SE</th>
               <th class="sortable" onclick="sortFN(3)">Customer</th>
-              <th>Phone</th>
+              <th class="sortable" onclick="sortFN(4)">Created Date</th>
               <th class="sortable" onclick="sortFN(5)">Project</th>
               <th>Developer</th>
               <th>Config</th>
@@ -1547,20 +1547,30 @@ function renderFNTable(rows) {
     return;
   }
 
-  tbody.innerHTML = rows.map((r, i) => `
+  tbody.innerHTML = rows.map((r, i) => {
+    let createdDateStr = '—';
+    if (r.timestamp) {
+      try {
+        const d = new Date(r.timestamp);
+        if (!isNaN(d)) createdDateStr = d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+        else createdDateStr = r.timestamp;
+      } catch(_) { createdDateStr = r.timestamp; }
+    }
+    return `
     <tr class="clickable-row" onclick="openDetailModal(fnFiltered[${i}])">
       <td>${esc(r.cluster)}</td>
       <td>${esc(r.teamLead)}</td>
       <td>${esc(r.employee)}</td>
       <td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td>
-      <td>${esc(r.phone)}</td>
+      <td style="white-space:nowrap">${esc(createdDateStr)}</td>
       <td>${esc(r.project)}</td>
       <td>${esc(r.developer || r.builderSourcingName || '—')}</td>
       <td>${esc(r.configuration)}</td>
       <td>${esc(r.budget)}</td>
       <td>${statusBadge(r.status)}</td>
       <td>${esc(r.visitDate)}</td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 
 function renderFNPivot(rows) {
@@ -1641,9 +1651,15 @@ function sortFN(col) {
 }
 
 function applySortFN() {
-  const keys = ['cluster','teamLead','employee','customer','phone','project','developer','configuration','budget','status','visitDate'];
-  const key  = keys[fnSortCol] || 'visitDate';
+  const keys = ['cluster','teamLead','employee','customer','timestamp','project','developer','configuration','budget','status','visitDate'];
+  const key  = keys[fnSortCol] || 'timestamp';
   fnFiltered.sort((a, b) => {
+    // For timestamp, sort as actual dates for correct chronological order
+    if (key === 'timestamp') {
+      const d1 = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+      const d2 = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+      return fnSortDir === 'asc' ? d1 - d2 : d2 - d1;
+    }
     const v1 = a[key] || ''; const v2 = b[key] || '';
     return fnSortDir === 'asc' ? v1.localeCompare(v2) : v2.localeCompare(v1);
   });
