@@ -638,6 +638,84 @@
     }
     footer a { color: var(--gold); text-decoration: none; }
 
+    /* ── Admin Edit Panel ───────────────────────────────────────── */
+    .admin-edit-panel {
+      margin-top: 1.2rem;
+      padding: 1.1rem 1.2rem;
+      background: var(--surface2);
+      border: 1.5px solid var(--gold-dim);
+      border-radius: var(--radius);
+    }
+    .admin-edit-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .admin-edit-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+    .admin-edit-row.full { grid-template-columns: 1fr; }
+    .admin-edit-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 4px;
+    }
+    .admin-edit-select, .admin-edit-textarea {
+      width: 100%;
+      padding: 8px 10px;
+      background: var(--surface);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      transition: border-color var(--transition);
+      outline: none;
+    }
+    .admin-edit-select:focus, .admin-edit-textarea:focus {
+      border-color: var(--gold);
+    }
+    .admin-edit-textarea {
+      min-height: 72px;
+      resize: vertical;
+    }
+    .admin-save-btn {
+      width: 100%;
+      padding: 10px;
+      background: var(--gold);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity var(--transition);
+      margin-top: 2px;
+    }
+    .admin-save-btn:hover { opacity: 0.88; }
+    .admin-save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .admin-save-status {
+      font-size: 0.78rem;
+      margin-top: 6px;
+      min-height: 18px;
+      text-align: center;
+    }
+    .admin-save-status.ok  { color: var(--green); }
+    .admin-save-status.err { color: var(--red); }
+
     /* ── Responsive ─────────────────────────────────────────────── */
     /* Theme toggle */
     .theme-toggle {
@@ -1032,6 +1110,34 @@
     </div>
     <div class="modal-body">
       <div class="detail-grid" id="detailGrid"></div>
+
+      <!-- Admin Edit Panel — shown only to Admin / MD/CEO -->
+      <div class="admin-edit-panel" id="adminEditPanel" style="display:none;">
+        <div class="admin-edit-title">✏️ Operations Update</div>
+        <div class="admin-edit-row">
+          <div>
+            <div class="admin-edit-label">Change Status</div>
+            <select class="admin-edit-select" id="adminStatusSelect">
+              <option value="">— Keep current —</option>
+              <option value="Hot">🔴 Hot</option>
+              <option value="Warm">🟠 Warm</option>
+              <option value="Cold">🔵 Cold</option>
+            </select>
+          </div>
+          <div>
+            <div class="admin-edit-label">Current Status</div>
+            <div id="adminCurrentStatus" style="padding:8px 0;font-weight:600;font-size:0.9rem;color:var(--text-dim)">—</div>
+          </div>
+        </div>
+        <div class="admin-edit-row full">
+          <div>
+            <div class="admin-edit-label">Operations Remark</div>
+            <textarea class="admin-edit-textarea" id="adminRemarkInput" placeholder="Add a new operations remark…"></textarea>
+          </div>
+        </div>
+        <button class="admin-save-btn" id="adminSaveBtn" onclick="saveAdminUpdate()">Save Update</button>
+        <div class="admin-save-status" id="adminSaveStatus"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -1595,6 +1701,21 @@ function openDetailModal(r) {
     </div>`;
   }).join('');
 
+  // Store current record for admin edit
+  window._currentDetailRecord = r;
+
+  // Show admin edit panel for Admin / MD/CEO roles
+  const isAdmin = auth && ['admin','md/ceo','md','ceo','management'].includes(auth.role.toLowerCase());
+  const adminPanel = document.getElementById('adminEditPanel');
+  adminPanel.style.display = isAdmin ? 'block' : 'none';
+  if (isAdmin) {
+    document.getElementById('adminStatusSelect').value = '';
+    document.getElementById('adminRemarkInput').value  = '';
+    document.getElementById('adminCurrentStatus').textContent = r.status || '—';
+    document.getElementById('adminSaveStatus').textContent    = '';
+    document.getElementById('adminSaveBtn').disabled = false;
+  }
+
   document.getElementById('detailModal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -1717,6 +1838,95 @@ document.addEventListener('click', e => {
   const wrap = document.getElementById('profileWrap');
   if (wrap && !wrap.contains(e.target)) document.getElementById('profileDropdown').classList.remove('show');
 });
+
+// ── ADMIN: UPDATE FN CLIENT STATUS + OPERATIONS REMARK ───────
+function saveAdminUpdate() {
+  const r = window._currentDetailRecord;
+  if (!r) return;
+
+  const newStatus  = document.getElementById('adminStatusSelect').value;
+  const newRemark  = document.getElementById('adminRemarkInput').value.trim();
+
+  if (!newStatus && !newRemark) {
+    setAdminSaveStatus('Please change the status or add a remark before saving.', true);
+    return;
+  }
+
+  // Build the today date string  dd mmm yyyy
+  const today = new Date();
+  const dayStr = today.toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+
+  // Compose appended operations remark
+  const parts = [];
+  if ((r.operationsRemark || '').trim()) parts.push(r.operationsRemark.trim());
+  if (newStatus && newStatus !== r.status) {
+    parts.push(`${dayStr} - Status changed from "${r.status || 'None'}" to "${newStatus}"`);
+  }
+  if (newRemark) {
+    parts.push(`${dayStr} - ${newRemark}`);
+  }
+  const combinedRemark = parts.join(', ');
+
+  document.getElementById('adminSaveBtn').disabled = true;
+  setAdminSaveStatus('Saving…');
+
+  // POST to GAS
+  const payload = JSON.stringify({
+    action:            'updateFNClient',
+    rowIndex:          r.rowIndex,
+    newStatus:         newStatus || r.status,
+    operationsRemark:  combinedRemark,
+    customerName:      r.customer || '',   // sent for GAS row-verification
+    phone:             r.phone    || '',   // sent for GAS row-verification
+    username:          auth.user,
+    password:          auth.pass,
+    role:              auth.role
+  });
+
+  const formData = 'data=' + encodeURIComponent(payload);
+  fetch(GAS_URL, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body:    formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.ok) {
+      // Update local record so modal reflects the change immediately
+      if (newStatus) r.status = newStatus;
+      r.operationsRemark = combinedRemark;
+      document.getElementById('adminCurrentStatus').textContent = r.status || '—';
+      document.getElementById('adminStatusSelect').value = '';
+      document.getElementById('adminRemarkInput').value  = '';
+
+      // Also refresh the in-memory arrays so table & pivot reflect new status
+      const updateInArray = arr => {
+        const found = arr.find(x => x.rowIndex === r.rowIndex);
+        if (found) { if (newStatus) found.status = r.status; found.operationsRemark = r.operationsRemark; }
+      };
+      updateInArray(fnAll);
+      updateInArray(fnFiltered);
+      if (fnView === 'detail') renderFNTable(fnFiltered);
+      else renderFNPivot(fnFiltered);
+
+      setAdminSaveStatus('✓ Saved successfully!', false);
+      document.getElementById('adminSaveBtn').disabled = false;
+    } else {
+      setAdminSaveStatus('Error: ' + (data.error || 'Unknown error'), true);
+      document.getElementById('adminSaveBtn').disabled = false;
+    }
+  })
+  .catch(err => {
+    setAdminSaveStatus('Network error. Please retry.', true);
+    document.getElementById('adminSaveBtn').disabled = false;
+  });
+}
+
+function setAdminSaveStatus(msg, isErr) {
+  const el = document.getElementById('adminSaveStatus');
+  el.textContent = msg;
+  el.className   = 'admin-save-status' + (isErr === false ? ' ok' : isErr ? ' err' : '');
+}
 
 // ── JSONP FETCH HELPER ────────────────────────────────────────
 // url: GAS endpoint to call (all requests now go to GAS_URL)
