@@ -1045,7 +1045,9 @@
 const GAS_URL    = 'https://script.google.com/macros/s/AKfycbwL4V1nCL4M-BAMbHX0Wupfa_2mxaJXrb_p9japd1ZdAkesb4BUumSJBFGH54js7pe3/exec';
 
 // FN Clients GAS — reads/writes the FN Clients spreadsheet (separate deployment)
-const GAS_URL_FN = 'https://script.google.com/macros/s/AKfycbzvGG3F4nYcsXbxtSGt5brYc1nNqP-87QGWY-bhsJwZlSMzrdrZTcsWMf0A71UFsfgNoQ/exec';
+// FN Clients data now reads from Friday Lineup GAS (single source of truth).
+// GAS_URL_FN is no longer needed — both Visits and FN Clients data come from GAS_URL.
+// The old FN Clients GAS still receives forwarded copies server-side (handled by code.gs).
 
 // FN Clients form — hosted in the FN_Clients_Form GitHub repo
 const FN_FORM_URL = 'https://thore-india.github.io/FN_Clients_Form/index.html';
@@ -1184,7 +1186,7 @@ function refreshAll() {
     if (data.ok) renderVisitData(data.data);
     let pending = 0;
     const checkDone = () => { if (--pending <= 0) done(); };
-    if (fnAll.length > 0) { pending++; jsonpFetch(GAS_URL_FN, { action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => { if (d.ok) renderFNData(d.data); checkDone(); }, checkDone); }
+    if (fnAll.length > 0) { pending++; jsonpFetch(GAS_URL, { action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => { if (d.ok) renderFNData(d.data); checkDone(); }, checkDone); }
     if (vdAll.length > 0) { pending++; jsonpFetch(GAS_URL, { action: 'getVisitDoneData', role: auth.role, username: auth.user, password: auth.pass }, d => { if (d.ok) renderVDData(d.data); checkDone(); }, checkDone); }
     if (pending === 0) done();
     setStatus(true);
@@ -1193,11 +1195,10 @@ function refreshAll() {
 
 function loadFNData() {
   document.getElementById('fn-rowCount').textContent = 'Loading…';
-  // Uses the separate FN Clients GAS URL — different spreadsheet
-  jsonpFetch(GAS_URL_FN, { action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => {
+  jsonpFetch(GAS_URL, { action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => {
     if (d.ok) renderFNData(d.data);
-    else document.getElementById('fn-rowCount').textContent = 'Failed to load FN Clients data. Check GAS_URL_FN is deployed.';
-  }, () => { document.getElementById('fn-rowCount').textContent = 'Network error — check GAS_URL_FN in dashboard config.'; });
+    else document.getElementById('fn-rowCount').textContent = 'Failed to load FN Clients data: ' + (d.error || 'unknown error');
+  }, () => { document.getElementById('fn-rowCount').textContent = 'Network error loading FN Clients data.'; });
 }
 
 // ── VISITS RENDERING ──────────────────────────────────────────
@@ -1695,7 +1696,7 @@ document.addEventListener('click', e => {
 });
 
 // ── JSONP FETCH HELPER ────────────────────────────────────────
-// url: which GAS endpoint to call (GAS_URL or GAS_URL_FN)
+// url: GAS endpoint to call (all requests now go to GAS_URL)
 // params: query params object
 function jsonpFetch(url, params, onSuccess, onError) {
   const cbName = '__cb_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
