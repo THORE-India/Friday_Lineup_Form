@@ -257,95 +257,171 @@
     #dashPanel { display: none; flex-direction: column; flex: 1; }
 
     /* ── Filters Bar ──────────────────────────────────────────── */
-    /* PREMIUM FILTER BAR */
-
+    /* ── Compact Filter Bar ──────────────────────────────────── */
     .filters-bar {
-      margin: 12px 14px;
-      padding: 18px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      box-shadow:
-        0 4px 20px rgba(0,0,0,0.18),
-        inset 0 1px 0 rgba(255,255,255,0.05);
+      margin: 10px 14px;
+      padding: 8px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
     }
     
-    .filters-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
-      gap: 10px;
-      align-items: end;
-    }
-    
-    .filter-item {
+    .fbar-row {
       display: flex;
-      flex-direction: column;
+      align-items: center;
       gap: 6px;
+      flex-wrap: nowrap;
+      overflow: visible;
     }
     
-    .filter-item label {
-      font-size: 0.40rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--gold);
+    .fbar-sep {
+      width: 1px;
+      height: 18px;
+      background: var(--border-mid);
+      flex-shrink: 0;
     }
     
-    .filter-item select,
-    .filter-item input {
-      height: 38px;
-      padding: 0 12px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 12px;
+    .fbar-select, .fbar-input {
+      height: 30px;
+      padding: 0 26px 0 9px;
+      border-radius: 6px;
+      border: 1px solid var(--border-mid);
+      background: var(--surface);
       color: var(--text);
       font-family: 'Outfit', sans-serif;
-      font-size: 0.76rem;
-      font-weight: 500;
-      transition: all 0.25s ease;
+      font-size: 13px;
+      outline: none;
+      flex-shrink: 0;
+      transition: border-color 0.15s;
+      -webkit-appearance: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%237a7a8e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 7px center;
+      cursor: pointer;
+      font-size: 16px !important;
     }
     
-    .filter-item select:hover,
-    .filter-item input:hover {
-      border-color: rgba(201,168,76,0.35);
+    .fbar-input {
+      padding: 0 9px;
+      background-image: none;
+      min-width: 0;
+      flex: 1 1 120px;
     }
     
-    .filter-item select:focus,
-    .filter-item input:focus {
-      border-color: var(--gold);
-      background: rgba(201,168,76,0.06);
-      box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
-    }
+    .fbar-select:hover, .fbar-input:hover { border-color: var(--gold); }
+    .fbar-select:focus, .fbar-input:focus { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(201,168,76,0.12); }
+    .fbar-select.active { border-color: var(--gold); background-color: var(--gold-dim); color: var(--gold); }
     
-    .filter-item select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7a8e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; padding-right: 28px; }
-    .filter-item select option { background: var(--surface2); }
-    .filter-item select:focus, .filter-item input:focus { border-color: var(--gold); }
-
-    .clear-btn {
-      padding: 7px 16px;
-      background: transparent;
+    .fbar-date {
+      height: 30px;
+      padding: 0 7px;
+      border-radius: 6px;
       border: 1px solid var(--border-mid);
-      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
+      outline: none;
+      width: 118px;
+      flex-shrink: 0;
+      font-size: 16px !important;
+    }
+    .fbar-date:hover { border-color: var(--gold); }
+    
+    .fbar-more {
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-mid);
+      background: transparent;
       color: var(--text-muted);
-      font-size: 0.8rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 12px;
       font-weight: 600;
       cursor: pointer;
-      transition: var(--transition);
+      flex-shrink: 0;
+      display: flex; align-items: center; gap: 4px;
+      transition: all 0.15s;
+      letter-spacing: 0.03em;
+    }
+    .fbar-more:hover { border-color: var(--text-muted); color: var(--text); }
+    .fbar-more.open { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+    .fbar-more-badge {
+      background: rgba(224,92,92,0.2);
+      color: var(--red);
+      font-size: 9px;
+      font-weight: 700;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    
+    .fbar-clear {
+      height: 30px;
+      padding: 0 8px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
       font-family: 'Outfit', sans-serif;
-      align-self: flex-end;
+      font-size: 12px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: color 0.15s;
     }
-    .clear-btn:hover { border-color: var(--text-muted); color: var(--text); }
-
-    @media(max-width:768px){
-        .filter-control,
-        .filter-control select,
-        .filter-control input{
-            font-size:12px;
-        }
+    .fbar-clear:hover { color: var(--red); }
+    
+    .fbar-drawer {
+      display: none;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 8px;
     }
-
+    .fbar-drawer.open { display: grid; }
+    .fbar-drawer-group { display: flex; flex-direction: column; gap: 3px; }
+    .fbar-drawer-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .fbar-drawer .fbar-select,
+    .fbar-drawer .fbar-input { width: 100%; flex: none; height: 28px; font-size: 13px !important; }
+    
+    .fbar-chips {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-top: 7px;
+    }
+    .fbar-chip {
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 20px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(201,168,76,0.3);
+      color: var(--gold);
+      font-size: 11px;
+      font-family: 'Outfit', sans-serif;
+      display: flex; align-items: center; gap: 4px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .fbar-chip:hover { opacity: 0.75; }
+    
+    /* view tabs — keep but slim down */
+    .view-tabs { display: flex; gap: 3px; background: var(--surface); border: 1px solid var(--border-mid); border-radius: 6px; padding: 2px; }
+    .view-tab { padding: 4px 10px; border: none; background: transparent; color: var(--text-muted); font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 600; cursor: pointer; border-radius: 4px; transition: var(--transition); }
+    .view-tab.active { background: var(--surface3); color: var(--text); }
+    
+    @media (max-width: 768px) {
+      .fbar-row { flex-wrap: wrap; }
+      .fbar-date { width: 100%; }
+      .fbar-input { flex: 1 1 100px; }
+    }
     /* ── Table Header ─────────────────────────────────────────── */
     .table-meta {
       padding: 12px 20px;
@@ -930,49 +1006,46 @@
     <!-- Visit Done Dashboard -->
     <div id="visitdoneDash" style="display:none;">
       <div class="filters-bar">
-        <div class="filters-grid">
-          <div class="filter-item">
-            <select id="vd-pnlFilter" onchange="applyVDFilters()"><option value="">All PNL Heads</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="vd-tlFilter" onchange="applyVDFilters()"><option value="">All Team Leads</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="vd-empFilter" onchange="applyVDFilters()"><option value="">All Employees</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="vd-projFilter" onchange="applyVDFilters()"><option value="">All Projects</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="vd-devFilter" onchange="applyVDFilters()"><option value="">All Developers</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="vd-typeFilter" onchange="applyVDFilters()">
-              <option value="">All Types</option>
-              <option>Visit</option>
-              <option>VC</option>
-            </select>
-          </div>
-          <div class="filter-item">
-            <input type="text" id="vd-custFilter" placeholder="Customer Name Search…" oninput="applyVDFilters()">
-          </div>
-          <div class="filter-item">
-            <input type="text" id="vd-phoneFilter" placeholder="Phone Number Search…" oninput="applyVDFilters()">
-          </div>
-          <div class="filter-item">
-            <label>From Date</label>
-            <input type="date" id="vd-fromDate" onchange="applyVDFilters()">
-          </div>
-          <div class="filter-item">
-            <label>To Date</label>
-            <input type="date" id="vd-toDate" onchange="applyVDFilters()">
-          </div>
-          <div class="filter-item">
-            <div style="height:18px;"></div>
-            <button class="clear-btn" onclick="clearVDFilters()">Clear</button>
-          </div>
-        </div>
-      </div>
+  <div class="fbar-row">
+    <select class="fbar-select" id="v-pnlFilter" onchange="applyVisitFilters()"><option value="">All PNL heads</option></select>
+    <select class="fbar-select" id="v-tlFilter" onchange="applyVisitFilters()"><option value="">All TLs</option></select>
+    <select class="fbar-select" id="v-empFilter" onchange="applyVisitFilters()"><option value="">All SEs</option></select>
+    <div class="fbar-sep"></div>
+    <input class="fbar-input" type="text" id="v-custFilter" placeholder="Search customer…" oninput="applyVisitFilters(); updateVChips()">
+    <div class="fbar-sep"></div>
+    <input class="fbar-date" type="date" id="v-fromDate" onchange="applyVisitFilters()">
+    <input class="fbar-date" type="date" id="v-toDate" onchange="applyVisitFilters()">
+    <div class="fbar-sep"></div>
+    <button class="fbar-more" id="v-moreBtn" onclick="toggleVDrawer()">⚙ More</button>
+    <div class="view-tabs">
+      <button class="view-tab active" id="v-detailTab" onclick="switchVisitView('detail')">Detail</button>
+      <button class="view-tab" id="v-pivotTab" onclick="switchVisitView('pivot')">Pivot</button>
+    </div>
+    <button class="fbar-clear" onclick="clearVisitFilters()">Clear</button>
+  </div>
+  <div class="fbar-drawer" id="v-drawer">
+    <div class="fbar-drawer-group">
+      <div class="fbar-drawer-label">Project</div>
+      <select class="fbar-select" id="v-projFilter" onchange="applyVisitFilters()"><option value="">All projects</option></select>
+    </div>
+    <div class="fbar-drawer-group">
+      <div class="fbar-drawer-label">Developer</div>
+      <select class="fbar-select" id="v-devFilter" onchange="applyVisitFilters()"><option value="">All developers</option></select>
+    </div>
+    <div class="fbar-drawer-group">
+      <div class="fbar-drawer-label">Closure chances</div>
+      <select class="fbar-select" id="v-closureFilter" onchange="applyVisitFilters()">
+        <option value="">Any</option>
+        <option>Excellent</option><option>Very good</option><option>Good</option><option>Fair</option><option>Poor</option>
+      </select>
+    </div>
+    <div class="fbar-drawer-group">
+      <div class="fbar-drawer-label">Phone</div>
+      <input class="fbar-input" type="text" id="v-phoneFilter" placeholder="Search number…" oninput="applyVisitFilters()">
+    </div>
+  </div>
+  <div class="fbar-chips" id="v-chips"></div>
+</div>
       <div class="table-meta">
         <div class="row-count" id="vd-rowCount">Loading…</div>
         <div class="last-updated" id="vd-lastUpdated"></div>
