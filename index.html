@@ -611,11 +611,11 @@
                 </select>
               </div>
               <div class="field">
-                <label for="backup">Backup Available <span class="req">*</span></label>
-                <select id="backup">
-                  <option value="" disabled selected>Select</option>
-                  <option>Yes</option>
-                  <option>No</option>
+                <label for="visitType">Type <span class="req">*</span></label>
+                <select id="visitType">
+                  <option value="" disabled selected>Select type</option>
+                  <option>Visit</option>
+                  <option>VC</option>
                 </select>
               </div>
             </div>
@@ -908,7 +908,7 @@
     const visitDate = document.getElementById('visitDate').value;
     const visitTime = document.getElementById('visitTime').value;
     const closure   = document.getElementById('closure').value;
-    const backup    = document.getElementById('backup').value;
+    const visitType = document.getElementById('visitType').value;
     const remark    = (document.getElementById('remark').value    || '').trim();
     const requirement = [...document.querySelectorAll('input[name="requirement"]:checked')].map(c => c.value);
 
@@ -929,7 +929,7 @@
         showToast('TL/Cluster mapping not found. Contact admin.', 'error'); return;
       }
     }
-    if (!cname || !phone || !project || !developer || !visitDate || !visitTime || !closure || !backup || !remark) {
+    if (!cname || !phone || !project || !developer || !visitDate || !visitTime || !closure || !visitType || !remark) {
       showToast('Please fill all required fields', 'error'); return;
     }
     if (!/^\d{10}$/.test(phone)) { showToast('Enter a valid 10-digit phone number', 'error'); return; }
