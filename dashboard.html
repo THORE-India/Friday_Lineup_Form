@@ -1531,6 +1531,25 @@ function populateVisitFilters(rows) {
   fillSelect('v-devFilter',  [...new Set(rows.map(r => r.developer).filter(Boolean))].sort(), 'All Developers');
 }
 
+  function toggleVDrawer() {
+  const btn = document.getElementById('v-moreBtn');
+  const drawer = document.getElementById('v-drawer');
+  btn.classList.toggle('open');
+  drawer.classList.toggle('open');
+}
+
+// Optionally add chip helpers per tab — chips auto-update on filter change
+function updateVChips() {
+  const chips = document.getElementById('v-chips');
+  if (!chips) return;
+  const active = [];
+  const cust = document.getElementById('v-custFilter').value;
+  if (cust) active.push({label: 'Customer: ' + cust, clear: () => { document.getElementById('v-custFilter').value=''; applyVisitFilters(); }});
+  const tl = document.getElementById('v-tlFilter').value;
+  if (tl) active.push({label: 'TL: ' + tl, clear: () => { document.getElementById('v-tlFilter').value=''; applyVisitFilters(); }});
+  chips.innerHTML = active.map((c,i) => `<div class="fbar-chip" onclick="(${c.clear.toString()})()">${c.label} ✕</div>`).join('');
+}
+
 // ── VISITS SORT ───────────────────────────────────────────────
 function sortVisits(col) {
   if (vSortCol === col) vSortDir = vSortDir === 'asc' ? 'desc' : 'asc';
