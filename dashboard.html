@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,2402 +7,1517 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            serif: ['Fraunces', 'serif'],
+          },
+          colors: {
+            brand: {
+              gold: '#a07820',
+              'gold-light': '#c9a84c',
+              'gold-dim': 'rgba(160,120,32,0.10)'
+            }
+          }
+        }
+      }
+    }
+  </script>
 
   <style>
-    /* ── LIGHT THEME (default) ───────────────────────────────── */
-    :root {
-      --bg:         #f0f2f7;
-      --surface:    #ffffff;
-      --surface2:   #f5f6fa;
-      --surface3:   #eaecf3;
-      --border:     rgba(0,0,0,0.07);
-      --border-mid: rgba(0,0,0,0.13);
-      --gold:       #a07820;
-      --gold-light: #c9a84c;
-      --gold-dim:   rgba(160,120,32,0.10);
-      --red:        #c0271a;
-      --green:      #1e7c47;
-      --blue:       #1a4fa0;
-      --orange:     #b85c00;
-      --teal:       #0e7c6a;
-      --text:       #1a1a2e;
-      --text-muted: #6b6b80;
-      --text-dim:   #4a4a60;
-      --radius:     12px;
-      --radius-sm:  8px;
-      --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
-    }
-
-    /* ── DARK THEME ──────────────────────────────────────────── */
-    [data-theme="dark"] {
-      --bg:         #0e0f14;
-      --surface:    #16181f;
-      --surface2:   #1d1f28;
-      --surface3:   #252834;
-      --border:     rgba(255,255,255,0.07);
-      --border-mid: rgba(255,255,255,0.13);
-      --gold:       #c9a84c;
-      --gold-light: #f0d080;
-      --gold-dim:   rgba(201,168,76,0.15);
-      --red:        #e05c5c;
-      --green:      #52c47e;
-      --blue:       #5c9be0;
-      --orange:     #e08c5c;
-      --teal:       #34c4a8;
-      --text:       #f0ede6;
-      --text-muted: #7a7a8e;
-      --text-dim:   #a0a0b4;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
-
+    /* Fixed overrides for cross-browser visual refinement */
     body {
-      font-family: 'Outfit', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none; z-index: 0;
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.5);
     }
-
-    /* ── Header ──────────────────────────────────────────────── */
-    .header {
-      position: sticky; top: 0; z-index: 200;
-      background: rgba(14,15,20,0.92);
-      backdrop-filter: blur(18px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 1.5rem;
-      height: 60px;
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 1rem;
+    .dark input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
     }
-
-    .header-left { display: flex; align-items: center; gap: 1rem; }
-    .logo {
-      font-family: 'Fraunces', serif;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--gold);
-      letter-spacing: 0.08em;
-      white-space: nowrap;
-    }
-    .logo span { color: var(--text-muted); font-size: 0.7rem; font-weight: 400; font-family: 'Outfit', sans-serif; letter-spacing: 0.04em; display: block; margin-top: -2px; }
-
-    .dash-tabs {
-      display: flex;
-      gap: 4px;
-      background: var(--surface2);
-      border: 1px solid var(--border-mid);
-      border-radius: var(--radius-sm);
-      padding: 4px;
-    }
-    .dash-tab {
-      padding: 6px 16px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.78rem;
-      font-weight: 600;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: var(--transition);
-      letter-spacing: 0.04em;
-      white-space: nowrap;
-    }
-    .dash-tab.active {
-      background: var(--gold);
-      color: #0e0f14;
-    }
-    .dash-tab:not(.active):hover { color: var(--text); }
-
-    .header-right { display: flex; align-items: center; gap: 12px; }
-
-    .status-pill {
-      display: flex; align-items: center; gap: 6px;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-    }
-    .status-pill.online  { background: rgba(82,196,126,0.12); color: var(--green); }
-    .status-pill.offline { background: rgba(224,92,92,0.12);  color: var(--red);   }
-
-    .profile-wrap { position: relative; }
-    .profile-avatar {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-      display: flex; align-items: center; justify-content: center;
-      color: #0e0f14;
-      font-weight: 800;
-      font-size: 0.78rem;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: var(--transition);
-    }
-    .profile-avatar:hover { border-color: var(--gold); }
-    .profile-dropdown {
-      position: absolute; top: 46px; right: 0;
-      background: var(--surface2);
-      border: 1px solid var(--border-mid);
-      border-radius: var(--radius);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
-      min-width: 200px;
-      display: none; z-index: 999;
-      overflow: hidden;
-    }
-    .profile-dropdown.show { display: block; }
-    .pd-item {
-      padding: 11px 16px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      border-bottom: 1px solid var(--border);
-      transition: background 0.15s;
-      color: var(--text-dim);
-    }
-    .pd-item:last-child { border-bottom: none; }
-    .pd-item:hover { background: var(--surface3); color: var(--text); }
-    .pd-item.username { font-weight: 700; color: var(--text); cursor: default; }
-    .pd-item.username:hover { background: transparent; }
-    .pd-item.logout { color: var(--red); }
-    .pd-item.logout:hover { background: rgba(224,92,92,0.08); }
-
-    /* ── Layout ───────────────────────────────────────────────── */
-    .content { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; }
-
-    /* ── Login Card ───────────────────────────────────────────── */
-    #loginPanel {
-      display: flex; align-items: center; justify-content: center;
-      min-height: calc(100vh - 60px);
-      padding: 2rem;
-    }
-    .login-card {
-      background: var(--surface);
-      border: 1px solid var(--border-mid);
-      border-radius: 20px;
-      padding: 2.5rem 2rem;
-      width: 100%;
-      max-width: 420px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    }
-    .login-title {
-      font-family: 'Fraunces', serif;
-      font-size: 1.6rem;
-      color: var(--gold);
-      text-align: center;
-      margin-bottom: 0.4rem;
-    }
-    .login-sub { text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2rem; }
-
-    .form-field { margin-bottom: 1.1rem; }
-    .form-field label { display: block; font-size: 0.72rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 6px; }
-    .form-field input, .form-field select {
-      width: 100%;
-      padding: 0.8rem 1rem;
-      background: var(--surface2);
-      border: 1.5px solid var(--border-mid);
-      border-radius: var(--radius-sm);
-      color: var(--text);
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.95rem;
-      outline: none;
-      transition: var(--transition);
-      -webkit-appearance: none; appearance: none;
-    }
-    .form-field input:focus, .form-field select:focus { border-color: var(--gold); background: var(--surface3); box-shadow: 0 0 0 3px rgba(201,168,76,0.1); }
-    .form-field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237a7a8e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
-    .form-field select option { background: var(--surface2); }
-
-    .login-btn {
-      width: 100%;
-      padding: 0.9rem;
-      background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      border: none;
-      border-radius: var(--radius-sm);
-      color: #0e0f14;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 800;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: var(--transition);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-top: 0.4rem;
-    }
-    .login-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
-    .login-btn:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
-
-    .login-status {
-      text-align: center;
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      margin-top: 14px;
-      min-height: 20px;
-    }
-    .login-status.err { color: var(--red); }
-
-    /* ── Dashboard Panel ─────────────────────────────────────── */
-    #dashPanel { display: none; flex-direction: column; flex: 1; }
-
-    /* ── Filters Bar ──────────────────────────────────────────── */
-    .filters-bar {
-      margin: 12px 14px;
-      padding: 18px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      box-shadow:
-        0 4px 20px rgba(0,0,0,0.18),
-        inset 0 1px 0 rgba(255,255,255,0.05);
-    }
-    
-    .filters-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
-      gap: 10px;
-      align-items: end;
-    }
-    
-    .filter-item {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    
-    .filter-item label {
-      font-size: 0.40rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--gold);
-    }
-    
-    .filter-item select,
-    .filter-item input {
-      height: 38px;
-      padding: 0 12px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 12px;
-      color: var(--text);
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.76rem;
-      font-weight: 500;
-      transition: all 0.25s ease;
-    }
-    
-    .filter-item select:hover,
-    .filter-item input:hover {
-      border-color: rgba(201,168,76,0.35);
-    }
-    
-    .filter-item select:focus,
-    .filter-item input:focus {
-      border-color: var(--gold);
-      background: rgba(201,168,76,0.06);
-      box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
-    }
-    
-    .filter-item select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7a8e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; padding-right: 28px; }
-    .filter-item select option { background: var(--surface2); }
-    .filter-item select:focus, .filter-item input:focus { border-color: var(--gold); }
-
-    /* ── Multi-Select Status Filter ─────────────────────────── */
-    .ms-wrap {
-      position: relative;
-    }
-    .ms-trigger {
-      height: 38px;
-      padding: 0 28px 0 12px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 12px;
-      color: var(--text);
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.76rem;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.25s ease;
-      user-select: none;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      position: relative;
-    }
-    .ms-trigger::after {
-      content: '';
-      position: absolute;
-      right: 10px; top: 50%;
-      transform: translateY(-50%);
-      width: 12px; height: 12px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7a8e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: center;
-    }
-    .ms-trigger:hover { border-color: rgba(201,168,76,0.35); }
-    .ms-trigger.open  { border-color: var(--gold); background: rgba(201,168,76,0.06); }
-
-    .ms-dropdown {
-      position: absolute;
-      top: calc(100% + 6px);
-      left: 0;
-      min-width: 180px;
-      background: var(--surface2);
-      border: 1.5px solid var(--border-mid);
-      border-radius: 12px;
-      box-shadow: 0 12px 36px rgba(0,0,0,0.45);
-      z-index: 300;
-      overflow: hidden;
-      display: none;
-    }
-    .ms-dropdown.open { display: block; }
-
-    .ms-option {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      cursor: pointer;
-      font-size: 0.82rem;
-      font-weight: 500;
-      border-bottom: 1px solid var(--border);
-      transition: background 0.15s;
-      color: var(--text-dim);
-    }
-    .ms-option:last-child { border-bottom: none; }
-    .ms-option:hover { background: var(--surface3); color: var(--text); }
-    .ms-option.selected { background: var(--gold-dim); color: var(--text); }
-
-    .ms-checkbox {
-      width: 16px; height: 16px;
-      border: 2px solid var(--border-mid);
-      border-radius: 4px;
-      background: transparent;
-      flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.15s;
-    }
-    .ms-option.selected .ms-checkbox {
-      background: var(--gold);
-      border-color: var(--gold);
-    }
-    .ms-option.selected .ms-checkbox::after {
-      content: '✓';
-      font-size: 10px;
-      font-weight: 700;
-      color: #0e0f14;
-      line-height: 1;
-    }
-
-    /* Pre-filter banner */
-    .prefilter-note {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      margin: 0 14px 0;
-      background: rgba(201,168,76,0.08);
-      border: 1px solid rgba(201,168,76,0.2);
-      border-radius: 10px;
-      font-size: 0.76rem;
-      color: var(--gold);
-      font-weight: 500;
-    }
-    .prefilter-note button {
-      margin-left: auto;
-      padding: 3px 10px;
-      background: rgba(201,168,76,0.15);
-      border: 1px solid rgba(201,168,76,0.3);
-      border-radius: 6px;
-      color: var(--gold);
-      font-size: 0.7rem;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: 'Outfit', sans-serif;
-      transition: var(--transition);
-      white-space: nowrap;
-    }
-    .prefilter-note button:hover { background: rgba(201,168,76,0.25); }
-
-    /* Loan dept banner */
-    .loan-dept-banner {
-      display: none;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      margin: 0 14px 0;
-      background: rgba(52,196,168,0.08);
-      border: 1px solid rgba(52,196,168,0.25);
-      border-radius: 10px;
-      font-size: 0.76rem;
-      color: var(--teal);
-      font-weight: 600;
-    }
-
-    .clear-btn {
-      padding: 7px 16px;
-      background: transparent;
-      border: 1px solid var(--border-mid);
-      border-radius: var(--radius-sm);
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      font-family: 'Outfit', sans-serif;
-      align-self: flex-end;
-    }
-    .clear-btn:hover { border-color: var(--text-muted); color: var(--text); }
-
-    @media(max-width:768px){
-      .filter-item select, .filter-item input { font-size: 12px; }
-    }
-
-    /* ── Table Header ─────────────────────────────────────────── */
-    .table-meta {
-      padding: 12px 20px;
-      display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid var(--border);
-      background: var(--surface);
-    }
-    .row-count { font-size: 0.8rem; color: var(--text-muted); }
-    .last-updated { font-size: 0.72rem; color: var(--text-muted); }
-
-    /* ── Table ────────────────────────────────────────────────── */
-    .table-wrap {
-      flex: 1;
-      overflow: auto;
-      max-height: calc(100vh - 220px);
-      scrollbar-width: thin;
-      scrollbar-color: var(--border-mid) transparent;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.82rem;
-      background: var(--surface);
-    }
-    thead { position: sticky; top: 0; z-index: 10; }
-    th {
-      background: var(--surface2);
-      padding: 11px 12px;
-      text-align: left;
-      font-weight: 600;
-      font-size: 0.7rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--border-mid);
-      white-space: nowrap;
-    }
-    th.sortable { cursor: pointer; user-select: none; transition: color 0.15s; }
-    th.sortable:hover { color: var(--gold); }
-    th.sortable::after { content: ' ↕'; opacity: 0.3; font-size: 0.65rem; }
-    th.asc::after  { content: ' ▲'; opacity: 1; color: var(--gold); }
-    th.desc::after { content: ' ▼'; opacity: 1; color: var(--gold); }
-
-    td {
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
-      color: var(--text-dim);
-      vertical-align: middle;
-    }
-    tr:hover td { background: var(--surface2); color: var(--text); }
-
-    .no-data {
-      padding: 50px 20px;
-      text-align: center;
-      color: var(--text-muted);
-      font-style: italic;
-    }
-
-    /* ── Status badges ──────────────────────────────────────────── */
-    .badge {
-      display: inline-block;
-      padding: 2px 9px;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-    }
-    .badge-hot    { background: rgba(224,92,92,0.15);  color: #e05c5c; }
-    .badge-warm   { background: rgba(224,140,92,0.15); color: #e08c5c; }
-    .badge-cold   { background: rgba(92,155,224,0.15); color: #5c9be0; }
-    .badge-lost   { background: rgba(120,120,150,0.15); color: #9090b8; }
-    .badge-booked { background: rgba(52,196,126,0.15); color: #34c47a; }
-    .badge-yes    { background: rgba(82,196,126,0.15); color: #52c47e; }
-    .badge-no     { background: rgba(224,92,92,0.12);  color: #e05c5c; }
-    .badge-conv   { background: rgba(201,168,76,0.15); color: var(--gold); }
-
-    /* ── Convert Button ──────────────────────────────────────────── */
-    .convert-btn {
-      padding: 4px 12px;
-      background: transparent;
-      border: 1px solid rgba(201,168,76,0.4);
-      border-radius: 20px;
-      color: var(--gold);
-      font-size: 0.72rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: var(--transition);
-      font-family: 'Outfit', sans-serif;
-      white-space: nowrap;
-      letter-spacing: 0.03em;
-    }
-    .convert-btn:hover {
-      background: var(--gold-dim);
-      border-color: var(--gold);
-      box-shadow: 0 0 8px rgba(201,168,76,0.2);
-    }
-
-    /* ── Pivot Table Extras ───────────────────────────────────── */
-    td.total  { font-weight: 700; color: var(--gold); }
-    td.zero   { color: var(--text-muted); opacity: 0.5; }
-    td.pivot-hot  { font-weight: 700; color: #e05c5c; cursor: pointer; }
-    td.pivot-warm { font-weight: 700; color: #e08c5c; cursor: pointer; }
-    td.pivot-cold { font-weight: 700; color: #5c9be0; cursor: pointer; }
-    td.pivot-hot:hover, td.pivot-warm:hover, td.pivot-cold:hover, td.total.clickable:hover {
-      text-decoration: underline; filter: brightness(1.2);
-    }
-    td.total.clickable { cursor: pointer; }
-
-    tr.clickable-row { cursor: pointer; }
-    tr.clickable-row:hover td { background: var(--surface3); color: var(--text); }
-
-    /* ── Detail Modal ─────────────────────────────────────────── */
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 500;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(6px);
-      display: flex; align-items: center; justify-content: center;
-      padding: 1.5rem;
-      opacity: 0; visibility: hidden;
-      transition: opacity 0.25s, visibility 0.25s;
-    }
-    .modal-overlay.open { opacity: 1; visibility: visible; }
-
-    .modal-box {
-      background: var(--surface);
-      border: 1px solid var(--border-mid);
-      border-radius: 18px;
-      width: 100%; max-width: 560px;
-      max-height: 88vh;
-      overflow-y: auto;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.7);
-      transform: translateY(16px);
-      transition: transform 0.25s;
-      scrollbar-width: thin;
-      scrollbar-color: var(--border-mid) transparent;
-    }
-    .modal-overlay.open .modal-box { transform: translateY(0); }
-
-    .modal-header {
-      position: sticky; top: 0;
-      background: var(--surface2);
-      border-bottom: 1px solid var(--border-mid);
-      padding: 16px 20px;
-      display: flex; align-items: center; justify-content: space-between;
-      border-radius: 18px 18px 0 0;
-    }
-    .modal-title {
-      font-family: 'Fraunces', serif;
-      font-size: 1rem; font-weight: 700;
-      color: var(--gold);
-    }
-    .modal-close {
-      width: 30px; height: 30px;
-      background: var(--surface3);
-      border: 1px solid var(--border-mid);
-      border-radius: 50%;
-      color: var(--text-muted);
-      font-size: 1rem;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: var(--transition);
-    }
-    .modal-close:hover { background: rgba(224,92,92,0.15); color: var(--red); border-color: rgba(224,92,92,0.3); }
-
-    .modal-body { padding: 20px; }
-
-    .detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .detail-item {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
-    }
-    .detail-item.full { grid-column: 1 / -1; }
-    .detail-label {
-      font-size: 0.62rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.08em;
-      color: var(--text-muted); margin-bottom: 4px;
-    }
-    .detail-value {
-      font-size: 0.88rem; font-weight: 500;
-      color: var(--text);
-      word-break: break-word;
-    }
-    .detail-value.gold { color: var(--gold); font-weight: 700; }
-    .detail-value.muted { color: var(--text-muted); font-style: italic; }
-
-    /* ── Drill-down popup ──────────────────────────────────────── */
-    .drill-overlay {
-      position: fixed; inset: 0; z-index: 600;
-      background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(6px);
-      display: flex; align-items: center; justify-content: center;
-      padding: 1.5rem;
-      opacity: 0; visibility: hidden;
-      transition: opacity 0.2s, visibility 0.2s;
-    }
-    .drill-overlay.open { opacity: 1; visibility: visible; }
-    .drill-box {
-      background: var(--surface);
-      border: 1px solid var(--border-mid);
-      border-radius: 18px;
-      width: 100%; max-width: 900px;
-      max-height: 85vh;
-      overflow: hidden;
-      display: flex; flex-direction: column;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.7);
-      transform: translateY(16px);
-      transition: transform 0.2s;
-    }
-    .drill-overlay.open .drill-box { transform: translateY(0); }
-    .drill-header {
-      background: var(--surface2);
-      border-bottom: 1px solid var(--border-mid);
-      padding: 14px 20px;
-      display: flex; align-items: center; justify-content: space-between;
-      flex-shrink: 0;
-    }
-    .drill-title { font-size: 0.88rem; font-weight: 700; color: var(--text); }
-    .drill-title span { color: var(--gold); }
-    .drill-table-wrap { overflow: auto; flex: 1; scrollbar-width: thin; scrollbar-color: var(--border-mid) transparent; }
-
-    /* ── Revenue placeholder ──────────────────────────────────── */
-    .revenue-placeholder {
-      flex: 1;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 1rem;
-      color: var(--text-muted);
-      padding: 3rem;
-      text-align: center;
-    }
-    .revenue-placeholder .rev-icon { font-size: 3.5rem; }
-    .revenue-placeholder h2 { font-family: 'Fraunces', serif; font-size: 1.4rem; color: var(--gold); }
-    .revenue-placeholder p { font-size: 0.88rem; max-width: 360px; line-height: 1.7; }
-
-    /* ── Refresh Indicator ───────────────────────────────────── */
-    .refresh-indicator {
-      position: fixed;
-      top: 70px;
-      right: 20px;
-      background: rgba(82,196,126,0.15);
-      color: var(--green);
-      border: 1px solid rgba(82,196,126,0.3);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      display: none;
-      z-index: 999;
-      animation: pulse 1.5s infinite;
-    }
-    .refresh-indicator.show { display: block; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-    /* ── View Tabs ───────────────────────────────────────────── */
-    .view-tabs {
-      display: flex; gap: 4px;
-      background: var(--surface2);
-      border: 1px solid var(--border-mid);
-      border-radius: var(--radius-sm);
-      padding: 3px;
-    }
-    .view-tab {
-      padding: 5px 12px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 600;
-      cursor: pointer;
-      border-radius: 5px;
-      transition: var(--transition);
-    }
-    .view-tab.active { background: var(--surface3); color: var(--text); }
-
-    /* ── Footer ─────────────────────────────────────────────────── */
-    footer {
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      padding: 12px 20px;
-      text-align: center;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      position: relative; z-index: 1;
-    }
-    footer a { color: var(--gold); text-decoration: none; }
-
-    /* ── Admin Edit Panel ───────────────────────────────────────── */
-    .admin-edit-panel {
-      margin-top: 1.2rem;
-      padding: 1.1rem 1.2rem;
-      background: var(--surface2);
-      border: 1.5px solid var(--gold-dim);
-      border-radius: var(--radius);
-    }
-    .admin-edit-title {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--gold);
-      text-transform: uppercase;
-      margin-bottom: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .admin-edit-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.8rem;
-      margin-bottom: 0.8rem;
-    }
-    .admin-edit-row.full { grid-template-columns: 1fr; }
-    .admin-edit-label {
-      font-size: 0.68rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      margin-bottom: 4px;
-    }
-    .admin-edit-select, .admin-edit-textarea {
-      width: 100%;
-      padding: 8px 10px;
-      background: var(--surface);
-      border: 1px solid var(--border-mid);
-      border-radius: var(--radius-sm);
-      color: var(--text);
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.85rem;
-      transition: border-color var(--transition);
-      outline: none;
-    }
-    .admin-edit-select:focus, .admin-edit-textarea:focus { border-color: var(--gold); }
-    .admin-edit-textarea { min-height: 72px; resize: vertical; }
-    .admin-save-btn {
-      width: 100%;
-      padding: 10px;
-      background: var(--gold);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity var(--transition);
-      margin-top: 2px;
-    }
-    .admin-save-btn:hover { opacity: 0.88; }
-    .admin-save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .admin-save-status {
-      font-size: 0.78rem;
-      margin-top: 6px;
-      min-height: 18px;
-      text-align: center;
-    }
-    .admin-save-status.ok  { color: var(--green); }
-    .admin-save-status.err { color: var(--red); }
-
-    /* Theme toggle */
-    .theme-toggle {
-      width: 34px; height: 34px;
-      background: var(--surface2);
-      border: 1px solid var(--border-mid);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: var(--transition);
-      font-size: 1rem; flex-shrink: 0; color: var(--text-muted);
-    }
-    .theme-toggle:hover { border-color: var(--gold); color: var(--gold); }
-
-    .form-field input, .form-field select,
-    .filter-item select, .filter-item input { font-size: 16px !important; }
-
-    @media (max-width: 768px) {
-      .header { padding: 0 0.75rem; height: auto; flex-wrap: wrap; padding-top: 8px; padding-bottom: 8px; gap: 6px; }
-      .header-left { gap: 8px; flex: 1; min-width: 0; }
-      .logo { font-size: 1rem; }
-      .logo span { display: none; }
-      .dash-tabs { order: 3; width: 100%; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-      .dash-tabs::-webkit-scrollbar { display: none; }
-      .dash-tab { flex-shrink: 0; padding: 5px 11px; font-size: 0.7rem; }
-      .header-right { gap: 8px; }
-      .status-pill { display: none; }
-      #loginPanel { padding: 1rem; }
-      .login-card { padding: 1.8rem 1.2rem; border-radius: 14px; }
-      .login-title { font-size: 1.3rem; }
-      .filters-bar { padding: 10px 12px; }
-      .filters-grid { gap: 8px; }
-      .filter-item { width: 100%; }
-      .filter-item select, .filter-item input { min-width: 0; width: 100%; }
-      .table-wrap { max-height: calc(100vh - 260px); }
-      table { font-size: 0.75rem; }
-      th, td { padding: 8px; white-space: nowrap; }
-      .modal-overlay { padding: 0; align-items: flex-end; }
-      .modal-box { max-width: 100%; max-height: 92vh; border-radius: 18px 18px 0 0; }
-      .detail-grid { grid-template-columns: 1fr; }
-      .detail-item.full { grid-column: 1; }
-      .drill-overlay { padding: 0; align-items: flex-end; }
-      .drill-box { max-width: 100%; max-height: 88vh; border-radius: 18px 18px 0 0; }
-    }
-    @media (max-width: 480px) {
-      .convert-btn { padding: 3px 8px; font-size: 0.65rem; }
-      .badge { padding: 2px 6px; font-size: 0.62rem; }
-      .table-meta { padding: 8px 12px; flex-direction: column; align-items: flex-start; gap: 2px; }
-    }
+    /* Hide scrollbars for visual neatness while maintaining behavior */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col antialiased selection:bg-brand-gold/30">
 
-<!-- Header -->
-<div class="header">
-  <div class="header-left">
-    <div class="logo">THORE <span>Dashboard</span></div>
-    <div id="dashTabs" class="dash-tabs" style="display:none;">
-      <button class="dash-tab active" onclick="switchDashboard('visits')">📋 Friday Lineup</button>
-      <button class="dash-tab" onclick="switchDashboard('visitdone')">✅ Visit Done</button>
-      <button class="dash-tab" onclick="switchDashboard('fnclients')">🏆 FN Clients</button>
-      <button class="dash-tab" onclick="switchDashboard('revenue')">💰 Revenue</button>
+  <header class="sticky top-0 z-50 w-full border-b border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-6 h-16 flex items-center justify-between gap-4">
+    <div class="flex items-center gap-6">
+      <div class="leading-none">
+        <div class="font-serif text-xl font-bold text-brand-gold dark:text-brand-gold-light tracking-wide">THORE</div>
+        <span class="text-[10px] text-slate-400 dark:text-slate-500 font-sans tracking-wider block mt-0.5 uppercase">Management Hub</span>
+      </div>
+      
+      <nav class="hidden md:flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700" id="dashTabs">
+        <button class="dash-tab active px-4 py-1.5 text-xs font-semibold rounded-md tracking-wide transition-all duration-200 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm" onclick="switchDashboard('visits')">VISITS</button>
+        <button class="dash-tab px-4 py-1.5 text-xs font-semibold rounded-md tracking-wide transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" onclick="switchDashboard('visitdone')">VISIT DONE</button>
+        <button class="dash-tab px-4 py-1.5 text-xs font-semibold rounded-md tracking-wide transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" onclick="switchDashboard('fnclients')">FN CLIENTS</button>
+        <button class="dash-tab px-4 py-1.5 text-xs font-semibold rounded-md tracking-wide transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" onclick="switchDashboard('revenue')">REVENUE</button>
+      </nav>
     </div>
-  </div>
-  <div class="header-right">
-    <div id="connStatus" class="status-pill online"><span>●</span> Online</div>
-    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
-    <a href="index.html" style="color:var(--text-muted);font-size:0.78rem;text-decoration:none;white-space:nowrap;">← Form</a>
-    <div class="profile-wrap" id="profileWrap" style="display:none;">
-      <div class="profile-avatar" onclick="toggleProfile()" id="profileAvatar">?</div>
-      <div class="profile-dropdown" id="profileDropdown">
-        <div class="pd-item username" id="pdUsername">—</div>
-        <div class="pd-item" id="pdFormLink" onclick="window.open('index.html')">📋 Friday Lineup Form</div>
-        <div class="pd-item" id="pdFNLink" onclick="window.open('https://thore-india.github.io/FN_Clients_Form/index.html')">🏆 FN Clients Form</div>
-        <div class="pd-item logout" onclick="logout()">Sign Out</div>
+
+    <div class="flex items-center gap-4">
+      <div id="networkStatus" class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium tracking-wide bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/30">
+        <span class="w-2 height-2 w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> ONLINE
+      </div>
+
+      <button id="themeToggleBtn" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-colors" title="Toggle System Theme">
+        <svg id="sunIcon" class="w-4 h-4 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z"/></svg>
+        <svg id="moonIcon" class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 118.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+      </button>
+
+      <div class="relative" id="profileWrap" style="display:none;">
+        <button onclick="toggleProfileDropdown()" class="w-9 h-9 rounded-full bg-gradient-to-tr from-brand-gold to-brand-gold-light flex items-center justify-center text-slate-950 font-extrabold text-xs border-2 border-transparent hover:border-brand-gold transition-all duration-200" id="profileAvatar">U</button>
+        <div id="profileDropdown" class="absolute top-12 right-0 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl min-w-[220px] hidden overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+          <div class="px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+            <span class="text-[10px] text-slate-400 dark:text-slate-500 font-bold tracking-wider block uppercase">Signed In As</span>
+            <div class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-0.5" id="pdUsername">—</div>
+          </div>
+          <button onclick="logout()" class="w-full text-left px-4 py-2.5 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors flex items-center gap-2">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            Sign Out System
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-</div>
+  </header>
 
-<div class="refresh-indicator" id="refreshInd">🔄 Refreshing…</div>
-
-<div class="content">
-
-  <!-- Login Panel -->
-  <div id="loginPanel">
-    <div class="login-card">
-      <div class="login-title">Welcome Back</div>
-      <div class="login-sub">Sign in to access your dashboard</div>
-      <div class="form-field">
-        <label>Role</label>
-        <select id="role">
-          <option>Team Lead</option>
-          <option>Manager</option>
-          <option>PNL Head</option>
-          <option>Admin</option>
-          <option>MD/CEO</option>
-          <option>Loan Department</option>
-        </select>
-      </div>
-      <div class="form-field">
-        <label>Username</label>
-        <input id="username" type="text" placeholder="Enter username" autocomplete="username">
-      </div>
-      <div class="form-field">
-        <label>Password</label>
-        <input id="password" type="password" placeholder="Enter password" autocomplete="current-password">
-      </div>
-      <button class="login-btn" id="loginBtn" onclick="login()">Sign In</button>
-      <div class="login-status" id="loginStatus"></div>
+  <div class="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-2 overflow-x-auto no-scrollbar">
+    <div class="flex items-center gap-1 w-max">
+      <button class="px-3 py-1.5 text-xs font-semibold rounded-md tracking-wide bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white" onclick="switchDashboard('visits')">Visits</button>
+      <button class="px-3 py-1.5 text-xs font-semibold rounded-md tracking-wide text-slate-500 dark:text-slate-400" onclick="switchDashboard('visitdone')">Visit Done</button>
+      <button class="px-3 py-1.5 text-xs font-semibold rounded-md tracking-wide text-slate-500 dark:text-slate-400" onclick="switchDashboard('fnclients')">FN Clients</button>
+      <button class="px-3 py-1.5 text-xs font-semibold rounded-md tracking-wide text-slate-500 dark:text-slate-400" onclick="switchDashboard('revenue')">Revenue</button>
     </div>
   </div>
 
-  <!-- Dashboard Panel -->
-  <div id="dashPanel">
+  <main class="flex-1 w-full max-w-[1600px] mx-auto px-4 py-6 md:px-6 md:py-8 flex flex-col">
 
-    <!-- Visits Dashboard -->
-    <div id="visitsDash">
-      <div class="filters-bar">
-        <div class="filters-grid">
-          <div class="filter-item">
-            <select id="v-pnlFilter" onchange="applyVisitFilters()"><option value="">All PNL Heads</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="v-tlFilter" onchange="applyVisitFilters()"><option value="">All Team Leads</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="v-empFilter" onchange="applyVisitFilters()"><option value="">All Employees</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="v-projFilter" onchange="applyVisitFilters()"><option value="">All Projects</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="v-devFilter" onchange="applyVisitFilters()"><option value="">All Developers</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="v-closureFilter" onchange="applyVisitFilters()">
-              <option value="">Closure Chances</option>
-              <option>Excellent</option>
-              <option>Very good</option>
-              <option>Good</option>
-              <option>Fair</option>
-              <option>Poor</option>
+    <section id="loginPanel" class="flex-1 flex items-center justify-center py-12">
+      <div class="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl rounded-2xl p-8 border-t-4 border-t-brand-gold">
+        <h2 class="font-serif text-2xl font-bold text-center text-slate-900 dark:text-slate-100 mb-1">Welcome Back</h2>
+        <p class="text-xs text-center text-slate-400 dark:text-slate-500 tracking-normal mb-8">Authenticate to securely access your data pipeline workspace</p>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">User Workspace Role</label>
+            <select id="role" class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm px-3 py-2.5 rounded-xl focus:outline-none focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/10 transition-all">
+              <option>Admin</option>
+              <option>MD/CEO</option>
+              <option>Management</option>
+              <option>Pre Sales Head</option>
+              <option>PNL Head</option>
+              <option>Cluster Head</option>
+              <option>Team Lead</option>
+              <option>Sales Executive</option>
+              <option>Loan Department</option>
             </select>
           </div>
-          <div class="filter-item">
-            <input type="text" id="v-custFilter" placeholder="Customer Name Search…" oninput="applyVisitFilters()">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">Account Username</label>
+            <input id="username" type="text" placeholder="Enter username profile" autocomplete="username" class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm px-3 py-2.5 rounded-xl focus:outline-none focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/10 transition-all">
           </div>
-          <div class="filter-item">
-            <input type="text" id="v-phoneFilter" placeholder="Phone Number Search…" oninput="applyVisitFilters()">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">Security Password</label>
+            <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-sm px-3 py-2.5 rounded-xl focus:outline-none focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/10 transition-all">
           </div>
-          <div class="filter-item">
-            <label>From Date</label>
-            <input type="date" id="v-fromDate" onchange="applyVisitFilters()">
-          </div>
-          <div class="filter-item">
-            <label>To Date</label>
-            <input type="date" id="v-toDate" onchange="applyVisitFilters()">
-          </div>
-          <div class="filter-item">
-            <div style="margin-bottom:5px;height:14px;"></div>
-            <div style="display:flex;gap:8px;">
-              <button class="clear-btn" onclick="clearVisitFilters()">Clear</button>
-              <div class="view-tabs">
-                <button class="view-tab active" id="v-detailTab" onclick="switchVisitView('detail')">Detail</button>
-                <button class="view-tab" id="v-pivotTab" onclick="switchVisitView('pivot')">Pivot</button>
+          <button class="w-full py-3 mt-2 bg-gradient-to-r from-brand-gold to-brand-gold-light hover:brightness-110 text-slate-950 text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md active:translate-y-px disabled:opacity-50 disabled:cursor-not-allowed" id="loginBtn" onclick="login()">Verify Credentials</button>
+          <div class="text-center text-xs font-medium min-h-[20px] transition-colors duration-150" id="loginStatus"></div>
+        </div>
+      </div>
+    </section>
+
+    <div id="dashPanel" class="hidden flex-col flex-1 space-y-6 animate-in fade-in duration-300">
+      
+      <section id="visitsDash" class="space-y-4">
+        
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="flex flex-col lg:flex-row gap-5 items-stretch lg:items-end">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 flex-1">
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">PNL Representative</label>
+                <select id="v-pnlFilter" onchange="applyVisitFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold"><option value="">All PNL Heads</option></select>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Team Director</label>
+                <select id="v-tlFilter" onchange="applyVisitFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold"><option value="">All Team Leads</option></select>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Field Employee</label>
+                <select id="v-empFilter" onchange="applyVisitFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold"><option value="">All Employees</option></select>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Active Enterprise Project</label>
+                <select id="v-projFilter" onchange="applyVisitFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold"><option value="">All Projects</option></select>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Assigned System Developer</label>
+                <select id="v-devFilter" onchange="applyVisitFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold"><option value="">All Developers</option></select>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Closure Assessment</label>
+                <select id="v-closureFilter" onchange="applyVisitFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold">
+                  <option value="">Closure Chances</option>
+                  <option>Excellent</option>
+                  <option>Very good</option>
+                  <option>Good</option>
+                  <option>Fair</option>
+                  <option>Poor</option>
+                </select>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Search Customer</label>
+                <input type="text" id="v-custFilter" placeholder="Customer Name Search…" oninput="applyVisitFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-3 rounded-lg focus:outline-none focus:border-brand-gold">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Search Phone Contact</label>
+                <input type="text" id="v-phoneFilter" placeholder="Phone Number Search…" oninput="applyVisitFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-3 rounded-lg focus:outline-none focus:border-brand-gold">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Timeline From</label>
+                <input type="date" id="v-fromDate" onchange="applyVisitFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Timeline To</label>
+                <input type="date" id="v-toDate" onchange="applyVisitFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold">
+              </div>
+            </div>
+
+            <div class="flex sm:flex-row items-center gap-2 lg:self-end min-w-max">
+              <button class="px-4 h-9 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-lg transition-colors duration-150" onclick="clearVisitFilters()">Clear</button>
+              <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700" id="v-viewTabs">
+                <button id="v-detailTab" class="px-3 h-7 text-[11px] font-bold tracking-wide rounded-md transition-all duration-150 active bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs" onclick="switchVisitView('detail')">Detail</button>
+                <button id="v-pivotTab" class="px-3 h-7 text-[11px] font-bold tracking-wide rounded-md transition-all duration-150 text-slate-500 dark:text-slate-400" onclick="switchVisitView('pivot')">Pivot</button>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="table-meta">
-        <div class="row-count" id="v-rowCount">Loading…</div>
-        <div class="last-updated" id="v-lastUpdated"></div>
-      </div>
-      <div id="v-detailView" class="table-wrap">
-        <table id="v-table">
-          <thead>
-            <tr>
-              <th class="sortable" onclick="sortVisits(0)">Cluster</th>
-              <th class="sortable" onclick="sortVisits(1)">Team Lead</th>
-              <th class="sortable" onclick="sortVisits(2)">SE</th>
-              <th class="sortable" onclick="sortVisits(3)">Customer</th>
-              <th>Phone</th>
-              <th class="sortable" onclick="sortVisits(5)">Project</th>
-              <th class="sortable" onclick="sortVisits(6)">Developer</th>
-              <th class="sortable" onclick="sortVisits(7)">Visit Date</th>
-              <th>Visit Time</th>
-              <th>Requirements</th>
-              <th>Closure</th>
-              <th>Backup</th>
-              <th>Convert</th>
-            </tr>
-          </thead>
-          <tbody id="v-tbody"></tbody>
-        </table>
-      </div>
-      <div id="v-pivotView" class="table-wrap" style="display:none;">
-        <table id="v-pivot"><thead></thead><tbody></tbody></table>
-      </div>
-    </div><!-- #visitsDash -->
 
-    <!-- Visit Done Dashboard -->
-    <div id="visitdoneDash" style="display:none;">
-      <div class="filters-bar">
-        <div class="filters-grid">
-          <div class="filter-item">
-            <select id="vd-pnlFilter" onchange="applyVDFilters()"><option value="">All PNL Heads</option></select>
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden flex flex-col">
+          <div class="px-5 py-3 bg-slate-50/70 dark:bg-slate-800/40 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <span id="v-rowCount">0 entries logged</span>
+            <span id="v-lastUpdated" class="text-[11px] opacity-75">Not synced</span>
           </div>
-          <div class="filter-item">
-            <select id="vd-tlFilter" onchange="applyVDFilters()"><option value="">All Team Leads</option></select>
+
+          <div id="v-detailView" class="overflow-x-auto w-full max-h-[58vh]">
+            <table class="w-full text-left text-xs whitespace-nowrap" id="v-table">
+              <thead class="bg-slate-100/70 dark:bg-slate-800/60 text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider sticky top-0 backdrop-blur-xs">
+                <tr>
+                  <th class="px-4 py-3.5 cursor-pointer hover:text-brand-gold select-none transition-colors" onclick="sortVisits(0)">Visit Date &nbsp;↕</th>
+                  <th class="px-4 py-3.5 cursor-pointer hover:text-brand-gold select-none transition-colors" onclick="sortVisits(1)">Cluster Group &nbsp;↕</th>
+                  <th class="px-4 py-3.5 cursor-pointer hover:text-brand-gold select-none transition-colors" onclick="sortVisits(2)">Director &nbsp;↕</th>
+                  <th class="px-4 py-3.5 cursor-pointer hover:text-brand-gold select-none transition-colors" onclick="sortVisits(3)">Representative &nbsp;↕</th>
+                  <th class="px-4 py-3.5 cursor-pointer hover:text-brand-gold select-none transition-colors" onclick="sortVisits(4)">Client Identity &nbsp;↕</th>
+                  <th class="px-4 py-3.5">Phone Call Contact</th>
+                  <th class="px-4 py-3.5 cursor-pointer hover:text-brand-gold select-none transition-colors" onclick="sortVisits(6)">Project Target &nbsp;↕</th>
+                  <th class="px-4 py-3.5">Developer Entity</th>
+                  <th class="px-4 py-3.5">Budget Class</th>
+                  <th class="px-4 py-3.5">Pipeline Status</th>
+                </tr>
+              </thead>
+              <tbody id="v-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300"></tbody>
+            </table>
           </div>
-          <div class="filter-item">
-            <select id="vd-empFilter" onchange="applyVDFilters()"><option value="">All Employees</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="vd-projFilter" onchange="applyVDFilters()"><option value="">All Projects</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="vd-devFilter" onchange="applyVDFilters()"><option value="">All Developers</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="vd-typeFilter" onchange="applyVDFilters()">
-              <option value="">All Types</option>
-              <option>Visit</option>
-              <option>VC</option>
-            </select>
-          </div>
-          <div class="filter-item">
-            <input type="text" id="vd-custFilter" placeholder="Customer Name Search…" oninput="applyVDFilters()">
-          </div>
-          <div class="filter-item">
-            <input type="text" id="vd-phoneFilter" placeholder="Phone Number Search…" oninput="applyVDFilters()">
-          </div>
-          <div class="filter-item">
-            <label>From Date</label>
-            <input type="date" id="vd-fromDate" onchange="applyVDFilters()">
-          </div>
-          <div class="filter-item">
-            <label>To Date</label>
-            <input type="date" id="vd-toDate" onchange="applyVDFilters()">
-          </div>
-          <div class="filter-item">
-            <div style="height:18px;"></div>
-            <button class="clear-btn" onclick="clearVDFilters()">Clear</button>
+          
+          <div id="v-pivotView" class="overflow-x-auto w-full max-h-[58vh] hidden">
+            <table class="w-full text-left text-xs whitespace-nowrap" id="v-pivotTable">
+              <thead class="bg-slate-100/70 dark:bg-slate-800/60 text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider sticky top-0">
+                <tr>
+                  <th class="px-4 py-3.5">Team Lead</th>
+                  <th class="px-4 py-3.5">Sales Executive</th>
+                  <th class="px-4 py-3.5 text-center">Excellent</th>
+                  <th class="px-4 py-3.5 text-center">Very Good</th>
+                  <th class="px-4 py-3.5 text-center">Good</th>
+                  <th class="px-4 py-3.5 text-center">Fair</th>
+                  <th class="px-4 py-3.5 text-center">Poor</th>
+                  <th class="px-4 py-3.5 text-center">Total Visits</th>
+                </tr>
+              </thead>
+              <tbody id="v-pivotTbody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300"></tbody>
+            </table>
           </div>
         </div>
-      </div>
-      <div class="table-meta">
-        <div class="row-count" id="vd-rowCount">Loading…</div>
-        <div class="last-updated" id="vd-lastUpdated"></div>
-      </div>
-      <div class="table-wrap">
-        <table id="vd-table">
-          <thead>
-            <tr>
-              <th class="sortable" onclick="sortVD(0)">Visit Date</th>
-              <th class="sortable" onclick="sortVD(1)">Customer Name</th>
-              <th>Phone</th>
-              <th class="sortable" onclick="sortVD(3)">Team Lead</th>
-              <th class="sortable" onclick="sortVD(4)">Sales Executive</th>
-              <th class="sortable" onclick="sortVD(5)">Project</th>
-              <th>Developer</th>
-              <th>Notes</th>
-              <th>Type</th>
-              <th>Convert</th>
-            </tr>
-          </thead>
-          <tbody id="vd-tbody"></tbody>
-        </table>
-      </div>
-    </div><!-- #visitdoneDash -->
+      </section>
 
-    <!-- FN Clients Dashboard -->
-    <div id="fnDash" style="display:none;">
-
-      <!-- Loan Dept Banner -->
-      <div class="loan-dept-banner" id="loanDeptBanner">
-        💼 Loan Department View — showing only <strong style="margin:0 4px">Lost</strong> &amp; <strong style="margin:0 4px">Booked</strong> clients
-      </div>
-
-      <!-- Pre-filter note (shown when Lost/Booked are hidden) -->
-      <div class="prefilter-note" id="fnPrefilterNote" style="display:none;">
-        ℹ️ Showing active clients only (Hot, Warm, Cold). Lost &amp; Booked are hidden.
-        <button onclick="showAllFNStatuses()">Show All</button>
-      </div>
-
-      <!-- Filters -->
-      <div class="filters-bar">
-        <div class="filters-grid">
-          <div class="filter-item">
-            <select id="fn-pnlFilter" onchange="applyFNFilters()"><option value="">All PNL Heads</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="fn-tlFilter" onchange="applyFNFilters()"><option value="">All Team Leads</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="fn-empFilter" onchange="applyFNFilters()"><option value="">All Employees</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="fn-projFilter" onchange="applyFNFilters()"><option value="">All Projects</option></select>
-          </div>
-          <div class="filter-item">
-            <select id="fn-devFilter" onchange="applyFNFilters()"><option value="">All Developers</option></select>
-          </div>
-
-          <!-- Multi-select Status Filter -->
-          <div class="filter-item">
-            <div class="ms-wrap" id="fnStatusWrap">
-              <div class="ms-trigger" id="fnStatusTrigger" onclick="toggleMSDropdown()">
-                <span id="fnStatusLabel">Status: Active</span>
+      <section id="visitdoneDash" class="space-y-4" style="display:none;">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="flex flex-col lg:flex-row gap-5 items-stretch lg:items-end">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-3 flex-1">
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">PNL Representative</label>
+                <select id="vd-pnlFilter" onchange="applyVDFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold"><option value="">All PNL Heads</option></select>
               </div>
-              <div class="ms-dropdown" id="fnStatusDropdown">
-                <div class="ms-option" data-value="Hot"    onclick="toggleMSOption(this)">
-                  <div class="ms-checkbox"></div><span>🔴 Hot</span>
-                </div>
-                <div class="ms-option" data-value="Warm"   onclick="toggleMSOption(this)">
-                  <div class="ms-checkbox"></div><span>🟠 Warm</span>
-                </div>
-                <div class="ms-option" data-value="Cold"   onclick="toggleMSOption(this)">
-                  <div class="ms-checkbox"></div><span>🔵 Cold</span>
-                </div>
-                <div class="ms-option" data-value="Lost"   onclick="toggleMSOption(this)">
-                  <div class="ms-checkbox"></div><span>⚫ Lost</span>
-                </div>
-                <div class="ms-option" data-value="Booked" onclick="toggleMSOption(this)">
-                  <div class="ms-checkbox"></div><span>✅ Booked</span>
-                </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Team Director</label>
+                <select id="vd-tlFilter" onchange="applyVDFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold"><option value="">All Team Leads</option></select>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Field Employee</label>
+                <select id="vd-empFilter" onchange="applyVDFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold"><option value="">All Employees</option></select>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Active Enterprise Project</label>
+                <select id="vd-projFilter" onchange="applyVDFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold"><option value="">All Projects</option></select>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Assigned System Developer</label>
+                <select id="vd-devFilter" onchange="applyVDFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold"><option value="">All Developers</option></select>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Classification Type</label>
+                <select id="vd-typeFilter" onchange="applyVDFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold">
+                  <option value="">All Sourcing Types</option>
+                  <option>Self Sourcing</option>
+                  <option>Builder Sourcing</option>
+                </select>
+              </div>
+              <div class="flex flex-col gap-1 sm:col-span-2">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Search Customer Data</label>
+                <input type="text" id="vd-custFilter" placeholder="Name query text search…" oninput="applyVDFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-3 rounded-lg focus:outline-none focus:border-brand-gold">
               </div>
             </div>
-          </div>
-
-          <div class="filter-item">
-            <input type="text" id="fn-custFilter" placeholder="Customer Name Search…" oninput="applyFNFilters()">
-          </div>
-          <div class="filter-item">
-            <input type="text" id="fn-phoneFilter" placeholder="Phone Number Search…" oninput="applyFNFilters()">
-          </div>
-          <div class="filter-item">
-            <label>From Date</label>
-            <input type="date" id="fn-fromDate" onchange="applyFNFilters()">
-          </div>
-          <div class="filter-item">
-            <label>To Date</label>
-            <input type="date" id="fn-toDate" onchange="applyFNFilters()">
-          </div>
-          <div class="filter-item">
-            <div style="height:18px;"></div>
-            <div style="display:flex;gap:8px;align-items:center;">
-              <button class="clear-btn" onclick="clearFNFilters()">Clear</button>
-              <div class="view-tabs" id="fnViewTabs">
-                <button class="view-tab active" id="fn-detailTab" onclick="switchFNView('detail')">Detail</button>
-                <button class="view-tab" id="fn-pivotTab" onclick="switchFNView('pivot')">Pivot</button>
-              </div>
+            <div class="flex min-w-max self-end">
+              <button class="px-5 h-9 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-lg transition-colors" onclick="clearVDFilters()">Clear Operations Filters</button>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="table-meta">
-        <div class="row-count" id="fn-rowCount">Loading…</div>
-        <div class="last-updated" id="fn-lastUpdated"></div>
-      </div>
-
-      <!-- Detail Table -->
-      <div id="fn-detailView" class="table-wrap">
-        <table id="fn-table">
-          <thead>
-            <tr>
-              <th class="sortable" onclick="sortFN(0)">Cluster</th>
-              <th class="sortable" onclick="sortFN(1)">Team Lead</th>
-              <th class="sortable" onclick="sortFN(2)">SE</th>
-              <th class="sortable" onclick="sortFN(3)">Customer</th>
-              <th class="sortable" onclick="sortFN(4)">Created Date</th>
-              <th class="sortable" onclick="sortFN(5)">Project</th>
-              <th>Developer</th>
-              <th>Config</th>
-              <th>Budget</th>
-              <th>Status</th>
-              <th class="sortable" onclick="sortFN(10)">Visit Date</th>
-            </tr>
-          </thead>
-          <tbody id="fn-tbody"></tbody>
-        </table>
-      </div>
-
-      <!-- Pivot Table -->
-      <div id="fn-pivotView" class="table-wrap" style="display:none;">
-        <table id="fn-pivot"><thead></thead><tbody></tbody></table>
-      </div>
-    </div><!-- #fnDash -->
-
-    <!-- Revenue Dashboard -->
-    <div id="revDash" style="display:none; flex:1;">
-      <div class="revenue-placeholder">
-        <div class="rev-icon">💰</div>
-        <h2>Revenue Dashboard</h2>
-        <p>Revenue analytics and reporting features are coming soon. This section will display closed deal values, team revenue targets, and performance breakdowns.</p>
-      </div>
-    </div>
-
-  </div><!-- #dashPanel -->
-</div><!-- .content -->
-
-<!-- Detail View Modal -->
-<div class="modal-overlay" id="detailModal" onclick="closeDetailModal(event)">
-  <div class="modal-box">
-    <div class="modal-header">
-      <div class="modal-title" id="modalCustomerName">Client Details</div>
-      <div class="modal-close" onclick="closeDetailModal()">✕</div>
-    </div>
-    <div class="modal-body">
-      <div class="detail-grid" id="detailGrid"></div>
-      <div class="admin-edit-panel" id="adminEditPanel" style="display:none;">
-        <div class="admin-edit-title">✏️ Operations Update</div>
-        <div class="admin-edit-row">
-          <div>
-            <div class="admin-edit-label">Change Status</div>
-            <select class="admin-edit-select" id="adminStatusSelect">
-              <option value="">— Keep current —</option>
-              <option value="Hot">🔴 Hot</option>
-              <option value="Warm">🟠 Warm</option>
-              <option value="Cold">🔵 Cold</option>
-              <option value="Lost">⚫ Lost</option>
-              <option value="Booked">✅ Booked</option>
-            </select>
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden flex flex-col">
+          <div class="px-5 py-3 bg-slate-50/70 dark:bg-slate-800/40 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <span id="vd-rowCount">0 entries captured</span>
+            <span id="vd-lastUpdated" class="text-[11px] opacity-75">Not synced</span>
           </div>
-          <div>
-            <div class="admin-edit-label">Current Status</div>
-            <div id="adminCurrentStatus" style="padding:8px 0;font-weight:600;font-size:0.9rem;color:var(--text-dim)">—</div>
+          <div class="overflow-x-auto w-full max-h-[60vh]">
+            <table class="w-full text-left text-xs whitespace-nowrap" id="vd-table">
+              <thead class="bg-slate-100/70 dark:bg-slate-800/60 text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider sticky top-0 backdrop-blur-xs">
+                <tr>
+                  <th class="px-4 py-3.5 cursor-pointer hover:text-brand-gold select-none" onclick="sortVD(0)">Visit Date &nbsp;↕</th>
+                  <th class="px-4 py-3.5 cursor-pointer hover:text-brand-gold select-none" onclick="sortVD(1)">Customer Identity &nbsp;↕</th>
+                  <th class="px-4 py-3.5">Phone Target</th>
+                  <th class="px-4 py-3.5 cursor-pointer hover:text-brand-gold select-none" onclick="sortVD(3)">Team Lead &nbsp;↕</th>
+                  <th class="px-4 py-3.5 cursor-pointer hover:text-brand-gold select-none" onclick="sortVD(4)">Sales Executive &nbsp;↕</th>
+                  <th class="px-4 py-3.5 cursor-pointer hover:text-brand-gold select-none" onclick="sortVD(5)">Project Asset &nbsp;↕</th>
+                  <th class="px-4 py-3.5">Developer Sourcing</th>
+                  <th class="px-4 py-3.5">Log Remarks</th>
+                  <th class="px-4 py-3.5">Sourcing Class</th>
+                  <th class="px-4 py-3.5 text-center">System Integration</th>
+                </tr>
+              </thead>
+              <tbody id="vd-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300"></tbody>
+            </table>
           </div>
         </div>
-        <div class="admin-edit-row full">
-          <div>
-            <div class="admin-edit-label">Operations Remark</div>
-            <textarea class="admin-edit-textarea" id="adminRemarkInput" placeholder="Add a new operations remark…"></textarea>
+      </section>
+
+      <section id="fnDash" class="space-y-4" style="display:none;">
+        
+        <div class="hidden items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-400 border border-cyan-200/50 dark:border-cyan-800/30" id="loanDeptBanner">
+          💼 SYSTEM NOTICE: Loan Department Matrix View active — isolation protocol strictly maps to Lost & Booked entries.
+        </div>
+        <div class="hidden items-center justify-between gap-4 px-4 py-2 bg-amber-50 dark:bg-amber-950/30 border border-amber-200/50 dark:border-amber-800/40 text-amber-700 dark:text-amber-400 text-xs font-medium rounded-lg" id="fnPrefilterNote">
+          <span>⚠️ Focus Isolation: Displaying active metrics only (Hot, Warm, Cold). Terminated states are hidden.</span>
+          <button onclick="showAllFNStatuses()" class="px-3 py-1 bg-amber-200/50 hover:bg-amber-200 text-amber-900 rounded font-bold transition-all">Reveal All States</button>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm">
+          <div class="flex flex-col lg:flex-row gap-5 items-stretch lg:items-end">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 flex-1">
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">PNL Head</label>
+                <select id="fn-pnlFilter" onchange="applyFNFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold"><option value="">All PNL Heads</option></select>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Team Leader</label>
+                <select id="fn-tlFilter" onchange="applyFNFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold"><option value="">All Team Leads</option></select>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Sales Officer</label>
+                <select id="fn-empFilter" onchange="applyFNFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold"><option value="">All Employees</option></select>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Target Asset</label>
+                <select id="fn-projFilter" onchange="applyFNFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold"><option value="">All Projects</option></select>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">System Developer</label>
+                <select id="fn-devFilter" onchange="applyFNFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold"><option value="">All Developers</option></select>
+              </div>
+              
+              <div class="flex flex-col gap-1 relative">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Filter Metrics Pipeline</label>
+                <div class="w-full" id="fnStatusWrap">
+                  <div class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-3 rounded-lg flex items-center justify-between cursor-pointer select-none font-medium" id="fnStatusTrigger" onclick="toggleMSDropdown()">
+                    <span id="fnStatusLabel">Status: Active</span>
+                    <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                  </div>
+                  <div class="absolute left-0 top-14 mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl min-w-[200px] hidden overflow-hidden z-50 divide-y divide-slate-100 dark:divide-slate-800" id="fnStatusDropdown">
+                    <div class="flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-medium cursor-pointer text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" data-value="Hot" onclick="toggleMSOption(this)">
+                      <div class="w-4 h-4 rounded border border-slate-300 dark:border-slate-600 flex items-center justify-center transition-all bg-white dark:bg-slate-900 ms-checkbox"></div> Hot Lead
+                    </div>
+                    <div class="flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-medium cursor-pointer text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" data-value="Warm" onclick="toggleMSOption(this)">
+                      <div class="w-4 h-4 rounded border border-slate-300 dark:border-slate-600 flex items-center justify-center transition-all bg-white dark:bg-slate-900 ms-checkbox"></div> Warm Nurture
+                    </div>
+                    <div class="flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-medium cursor-pointer text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" data-value="Cold" onclick="toggleMSOption(this)">
+                      <div class="w-4 h-4 rounded border border-slate-300 dark:border-slate-600 flex items-center justify-center transition-all bg-white dark:bg-slate-900 ms-checkbox"></div> Cold Base
+                    </div>
+                    <div class="flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-medium cursor-pointer text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" data-value="Lost" onclick="toggleMSOption(this)">
+                      <div class="w-4 h-4 rounded border border-slate-300 dark:border-slate-600 flex items-center justify-center transition-all bg-white dark:bg-slate-900 ms-checkbox"></div> Lost Closed
+                    </div>
+                    <div class="flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-medium cursor-pointer text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" data-value="Booked" onclick="toggleMSOption(this)">
+                      <div class="w-4 h-4 rounded border border-slate-300 dark:border-slate-600 flex items-center justify-center transition-all bg-white dark:bg-slate-900 ms-checkbox"></div> Booked Closed
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Search Client</label>
+                <input type="text" id="fn-custFilter" placeholder="Search target profile…" oninput="applyFNFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-3 rounded-lg focus:outline-none focus:border-brand-gold">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Search Contact</label>
+                <input type="text" id="fn-phoneFilter" placeholder="Search dial sequence…" oninput="applyFNFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-3 rounded-lg focus:outline-none focus:border-brand-gold">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Pipeline History From</label>
+                <input type="date" id="fn-fromDate" onchange="applyFNFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-[10px] font-bold tracking-wider text-brand-gold dark:text-brand-gold-light uppercase">Pipeline History To</label>
+                <input type="date" id="fn-toDate" onchange="applyFNFilters()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-9 px-2 rounded-lg focus:outline-none focus:border-brand-gold">
+              </div>
+            </div>
+
+            <div class="flex sm:flex-row items-center gap-2 lg:self-end min-w-max">
+              <button class="px-4 h-9 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-lg transition-colors" onclick="clearFNFilters()">Reset</button>
+              <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700" id="fnViewTabs">
+                <button id="fn-detailTab" class="px-3 h-7 text-[11px] font-bold tracking-wide rounded-md transition-all duration-150 active bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs" onclick="switchFNView('detail')">Detail</button>
+                <button id="fn-pivotTab" class="px-3 h-7 text-[11px] font-bold tracking-wide rounded-md transition-all duration-150 text-slate-500 dark:text-slate-400" onclick="switchFNView('pivot')">Pivot</button>
+              </div>
+            </div>
           </div>
         </div>
-        <button class="admin-save-btn" id="adminSaveBtn" onclick="saveAdminUpdate()">Save Update</button>
-        <div class="admin-save-status" id="adminSaveStatus"></div>
+
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm overflow-hidden flex flex-col">
+          <div class="px-5 py-3 bg-slate-50/70 dark:bg-slate-800/40 border-b border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 font-medium" id="fn-rowCount">0 client profiles mapped</div>
+          
+          <div id="fn-detailView" class="overflow-x-auto w-full max-h-[58vh]">
+            <table class="w-full text-left text-xs whitespace-nowrap" id="fn-table">
+              <thead class="bg-slate-100/70 dark:bg-slate-800/60 text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider sticky top-0 backdrop-blur-xs">
+                <tr>
+                  <th class="px-4 py-3.5 cursor-pointer hover:text-brand-gold select-none" onclick="sortFN(0)">Logged Date &nbsp;↕</th>
+                  <th class="px-4 py-3.5 cursor-pointer hover:text-brand-gold select-none" onclick="sortFN(1)">Director &nbsp;↕</th>
+                  <th class="px-4 py-3.5 cursor-pointer hover:text-brand-gold select-none" onclick="sortFN(2)">Consultant &nbsp;↕</th>
+                  <th class="px-4 py-3.5 cursor-pointer hover:text-brand-gold select-none" onclick="sortFN(3)">Client Profile &nbsp;↕</th>
+                  <th class="px-4 py-3.5">Contact Link</th>
+                  <th class="px-4 py-3.5 cursor-pointer hover:text-brand-gold select-none" onclick="sortFN(5)">Project &nbsp;↕</th>
+                  <th class="px-4 py-3.5">Value Budget</th>
+                  <th class="px-4 py-3.5">Current Matrix Metric</th>
+                  <th class="px-4 py-3.5">Operations Remarques</th>
+                  <th class="px-4 py-3.5">Last Modification Time</th>
+                  <th class="px-4 py-3.5">Converted Flag</th>
+                </tr>
+              </thead>
+              <tbody id="fn-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300"></tbody>
+            </table>
+          </div>
+
+          <div id="fn-pivotView" class="overflow-x-auto w-full max-h-[58vh] hidden">
+            <table class="w-full text-left text-xs whitespace-nowrap" id="fn-pivotTable">
+              <thead class="bg-slate-100/70 dark:bg-slate-800/60 text-slate-400 dark:text-slate-400 font-bold uppercase tracking-wider sticky top-0">
+                <tr>
+                  <th class="px-4 py-3.5">Team Leader</th>
+                  <th class="px-4 py-3.5">Executive Rep</th>
+                  <th class="px-4 py-3.5 text-center">Hot</th>
+                  <th class="px-4 py-3.5 text-center">Warm</th>
+                  <th class="px-4 py-3.5 text-center">Cold</th>
+                  <th class="px-4 py-3.5 text-center">Lost</th>
+                  <th class="px-4 py-3.5 text-center">Booked</th>
+                  <th class="px-4 py-3.5 text-center">Aggregated Sum</th>
+                </tr>
+              </thead>
+              <tbody id="fn-pivotTbody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="revenueDash" class="flex-1 min-h-[400px] flex items-center justify-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-8 shadow-sm" style="display:none;">
+        <div class="text-center space-y-3 max-w-sm">
+          <div class="text-4xl text-brand-gold animate-bounce">📊</div>
+          <h3 class="font-serif text-lg font-bold text-slate-900 dark:text-slate-100">Revenue Stream Metrics Ledger</h3>
+          <p class="text-xs text-slate-400 dark:text-slate-500 leading-relaxed">Closed business target evaluations, rolling financial summaries, performance margin scales, and visual trend analytical tools are scheduled in the next module iteration update.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="refreshIndicator" class="fixed bottom-6 right-6 z-50 px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-500 dark:bg-emerald-600 text-slate-950 shadow-xl tracking-wider items-center gap-2 hidden animate-bounce">
+    ⚡ CORRELATING SYSTEM MASTER STREAM DATA OVERLAY...
+  </div>
+
+  <footer class="w-full border-t border-slate-200 dark:border-slate-800/60 bg-white dark:bg-slate-950 py-4 px-6 text-center text-[11px] text-slate-400 dark:text-slate-500 font-medium tracking-wide">
+    &copy; 2026 <span class="text-brand-gold">THORE OPERATIONAL NETWORKS</span>. Engine Dashboard Protocol Layer Interface. Crafted using unified token standards.
+  </footer>
+
+  <div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-[100] flex items-center justify-center p-4 transition-all opacity-0 pointer-events-none duration-200" id="detailModal" onclick="closeDetailModal(event)">
+    <div class="w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl rounded-2xl flex flex-col max-h-[85vh] transform scale-95 transition-transform duration-200" onclick="event.stopPropagation()">
+      <div class="px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <h4 class="font-serif text-sm font-bold text-brand-gold dark:text-brand-gold-light" id="modalCustomerName">Client Core Metadata Dossier</h4>
+        <button onclick="closeDetailModal()" class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-red-500 flex items-center justify-center transition-colors font-sans text-xs">✕</button>
+      </div>
+      <div class="p-5 overflow-y-auto space-y-5 no-scrollbar">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5" id="detailGrid"></div>
+        
+        <div class="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-4" id="adminEditPanel" style="display:none;">
+          <div class="text-[10px] font-bold tracking-wider text-brand-gold uppercase flex items-center gap-1.5">
+            <span>✏️</span> UPDATE LOGISTICS PROTOCOL ACTION
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="block text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase">Modify State Parameter</label>
+              <select id="adminStatusSelect" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs h-8 px-2 rounded-lg focus:outline-none">
+                <option value="">— Unaltered —</option>
+                <option value="Hot">🔴 Hot Lead</option>
+                <option value="Warm">🟠 Warm Nurture</option>
+                <option value="Cold">🔵 Cold Base</option>
+                <option value="Lost">⚫ Lost</option>
+                <option value="Booked">✅ Booked</option>
+              </select>
+            </div>
+            <div class="space-y-1">
+              <label class="block text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase">Isolated State State</label>
+              <div id="adminCurrentStatus" class="text-xs font-bold text-slate-700 dark:text-slate-300 pt-1.5">—</div>
+            </div>
+          </div>
+          <div class="space-y-1">
+            <label class="block text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase">Operational Activity Remark</label>
+            <textarea id="adminRemarkInput" placeholder="Append chronological activity description data insights..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-xs p-2 rounded-lg h-16 focus:outline-none focus:border-brand-gold resize-none"></textarea>
+          </div>
+          <div class="flex items-center justify-between gap-4 pt-1">
+            <button id="adminSaveBtn" onclick="saveAdminUpdate()" class="px-4 py-2 bg-slate-900 dark:bg-slate-100 hover:opacity-90 text-white dark:text-slate-950 text-[11px] font-bold uppercase tracking-wider rounded-lg transition-all shadow-xs">Commit Record Update</button>
+            <span id="adminSaveStatus" class="text-[11px] font-medium"></span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Drill-down Modal -->
-<div class="drill-overlay" id="drillModal" onclick="closeDrillModal(event)">
-  <div class="drill-box">
-    <div class="drill-header">
-      <div class="drill-title" id="drillTitle">Clients</div>
-      <div class="modal-close" onclick="closeDrillModal()">✕</div>
-    </div>
-    <div class="drill-table-wrap">
-      <table id="drill-table">
-        <thead>
-          <tr>
-            <th>Team Lead</th><th>SE</th><th>Customer</th><th>Phone</th>
-            <th>Project</th><th>Budget</th><th>Status</th><th>Visit Date</th>
-          </tr>
-        </thead>
-        <tbody id="drill-tbody"></tbody>
-      </table>
+  <div class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-[110] flex items-center justify-center p-4 transition-all opacity-0 pointer-events-none duration-200" id="drillModal" onclick="closeDrillModal(event)">
+    <div class="w-full max-w-5xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl rounded-2xl flex flex-col max-h-[80vh] transform scale-95 transition-transform duration-200" onclick="event.stopPropagation()">
+      <div class="px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+        <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300" id="drillTitle">Segregated Pipeline Audit Trail Partition Target</h4>
+        <button onclick="closeDrillModal()" class="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-red-500 flex items-center justify-center transition-colors text-xs">✕</button>
+      </div>
+      <div class="overflow-x-auto w-full flex-1" id="drillTableWrap">
+        </div>
     </div>
   </div>
-</div>
 
-<footer>
-  Engineered for excellence by <a href="https://narendraspatil.github.io/NarenP-website/" target="_blank">Operations Department, THORE</a> &nbsp;|&nbsp;
-  Copyright © <span id="yr"></span> All rights reserved.
-</footer>
 
-<script>
-// ── CONFIG ────────────────────────────────────────────────────
-const GAS_URL    = 'https://script.google.com/macros/s/AKfycbwL4V1nCL4M-BAMbHX0Wupfa_2mxaJXrb_p9japd1ZdAkesb4BUumSJBFGH54js7pe3/exec';
-const FN_FORM_URL = 'https://thore-india.github.io/FN_Clients_Form/index.html';
+  <script>
+    // ── NATIVE THEME CONTROLLER INTEGRATION SNIPPET ─────────────────
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const htmlEl = document.documentElement;
 
-// ── SESSION KEYS ──────────────────────────────────────────────
-const SK = { role:'d_role', user:'d_user', pass:'d_pass', time:'d_time' };
-
-// ── STATE ─────────────────────────────────────────────────────
-let auth             = null;
-let refreshTimer     = null;
-let isRefreshing     = false;
-let activeDash       = 'visits';
-let currentVisitView = 'detail';
-
-// Visits
-let visitsAll = [], visitsFiltered = [];
-let vSortCol = -1, vSortDir = 'asc';
-
-// Visit Done
-let vdAll = [], vdFiltered = [];
-let vdSortCol = -1, vdSortDir = 'asc';
-
-// FN Clients
-let fnAll = [], fnFiltered = [];
-let fnSortCol = -1, fnSortDir = 'asc';
-let fnView = 'detail';
-
-// FN Multi-select status filter state
-// Default: Hot, Warm, Cold selected (Lost and Booked hidden by default)
-let fnSelectedStatuses = new Set(['Hot', 'Warm', 'Cold']);
-
-// All possible FN statuses
-const FN_ACTIVE_STATUSES   = ['Hot', 'Warm', 'Cold'];
-const FN_INACTIVE_STATUSES = ['Lost', 'Booked'];
-const FN_ALL_STATUSES      = [...FN_ACTIVE_STATUSES, ...FN_INACTIVE_STATUSES];
-
-// ── BOOT ──────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('yr').textContent = new Date().getFullYear();
-  checkStoredSession();
-  // Init multi-select display
-  syncMSDisplay();
-});
-
-// ── ROLE HELPERS ──────────────────────────────────────────────
-function isLoanDept() {
-  return auth && auth.role.toLowerCase() === 'loan department';
-}
-function isAdmin() {
-  return auth && ['admin','md/ceo','md','ceo','management'].includes(auth.role.toLowerCase());
-}
-
-// ── AUTH ──────────────────────────────────────────────────────
-function login() {
-  const role = document.getElementById('role').value.trim();
-  const user = document.getElementById('username').value.trim();
-  const pass = document.getElementById('password').value;
-  if (!user || !pass) { setLoginStatus('Enter username and password', true); return; }
-  setLoginStatus('Checking credentials…');
-  document.getElementById('loginBtn').disabled = true;
-
-  // Loan Department logs in via getFNClientsData (they only access FN clients)
-  const loginAction = role.toLowerCase() === 'loan department'
-    ? 'getFNClientsData'
-    : 'getVisitData';
-
-  jsonpFetch(GAS_URL, { action: loginAction, role, username: user, password: pass }, data => {
-    document.getElementById('loginBtn').disabled = false;
-    if (!data.ok) { setLoginStatus(data.error || 'Invalid credentials', true); return; }
-    handleLoginSuccess(role, user, pass, data.data, loginAction);
-  }, () => {
-    document.getElementById('loginBtn').disabled = false;
-    setLoginStatus('Network error. Please try again.', true);
-  });
-}
-
-function handleLoginSuccess(role, user, pass, initialData, loginAction) {
-  auth = { role, user, pass };
-  sessionStorage.setItem(SK.role, role);
-  sessionStorage.setItem(SK.user, user);
-  sessionStorage.setItem(SK.pass, pass);
-  sessionStorage.setItem(SK.time, Date.now().toString());
-
-  // Show UI
-  document.getElementById('loginPanel').style.display = 'none';
-  document.getElementById('dashPanel').style.display  = 'flex';
-  document.getElementById('dashPanel').style.flexDirection = 'column';
-  document.getElementById('profileWrap').style.display = 'block';
-  document.getElementById('profileAvatar').textContent = getInitials(user);
-  document.getElementById('pdUsername').textContent    = user;
-  setLoginStatus('');
-
-  const isLoan = role.toLowerCase() === 'loan department';
-
-  if (isLoan) {
-    // Loan dept: only FN Clients tab, locked to Lost/Booked
-    setupLoanDeptView();
-    renderFNData(initialData);
-    document.getElementById('loanDeptBanner').style.display = 'flex';
-  } else {
-    // Normal roles: show all tabs
-    document.getElementById('dashTabs').style.display = 'flex';
-    document.getElementById('pdFormLink').style.display = 'block';
-    document.getElementById('pdFNLink').style.display   = 'block';
-    renderVisitData(initialData);
-    startAutoRefresh();
-  }
-  setStatus(true);
-}
-
-function setupLoanDeptView() {
-  // Show only the FN Clients tab and lock it
-  const tabsEl = document.getElementById('dashTabs');
-  tabsEl.style.display = 'flex';
-  // Hide all tabs except FN clients
-  tabsEl.querySelectorAll('.dash-tab').forEach((btn, i) => {
-    // 0=visits, 1=visitdone, 2=fnclients, 3=revenue
-    btn.style.display = i === 2 ? 'block' : 'none';
-  });
-  // Hide form links from profile menu
-  document.getElementById('pdFormLink').style.display = 'none';
-  document.getElementById('pdFNLink').style.display   = 'none';
-  // Set statuses to Lost+Booked only, locked
-  fnSelectedStatuses = new Set(['Lost', 'Booked']);
-  syncMSDisplay();
-  // Lock the status multi-select (disable interaction)
-  document.getElementById('fnStatusTrigger').style.pointerEvents = 'none';
-  document.getElementById('fnStatusTrigger').style.opacity = '0.6';
-  // Hide pivot tab for loan dept
-  document.getElementById('fnViewTabs').style.display = 'none';
-  // Switch to FN clients
-  switchDashboard('fnclients');
-}
-
-function checkStoredSession() {
-  const role = sessionStorage.getItem(SK.role);
-  const user = sessionStorage.getItem(SK.user);
-  const pass = sessionStorage.getItem(SK.pass);
-  const time = parseInt(sessionStorage.getItem(SK.time) || '0');
-  if (role && user && pass && Date.now() - time < 8 * 3600 * 1000) {
-    setLoginStatus('Auto-logging in…');
-    const isLoan = role.toLowerCase() === 'loan department';
-    const loginAction = isLoan ? 'getFNClientsData' : 'getVisitData';
-    jsonpFetch(GAS_URL, { action: loginAction, role, username: user, password: pass }, data => {
-      if (!data.ok) { clearSession(); setLoginStatus('Session expired, please log in.', true); return; }
-      document.getElementById('role').value     = role;
-      document.getElementById('username').value = user;
-      handleLoginSuccess(role, user, pass, data.data, loginAction);
-    }, () => setLoginStatus(''));
-  }
-}
-
-function logout() {
-  auth = null;
-  clearSession();
-  if (refreshTimer) clearInterval(refreshTimer);
-  document.getElementById('dashPanel').style.display   = 'none';
-  document.getElementById('dashTabs').style.display    = 'none';
-  document.getElementById('profileWrap').style.display = 'none';
-  document.getElementById('loginPanel').style.display  = 'flex';
-  document.getElementById('profileDropdown').classList.remove('show');
-  // Reset loan dept UI
-  document.getElementById('loanDeptBanner').style.display   = 'none';
-  document.getElementById('fnStatusTrigger').style.pointerEvents = '';
-  document.getElementById('fnStatusTrigger').style.opacity = '';
-  document.getElementById('fnViewTabs').style.display = '';
-  fnSelectedStatuses = new Set(['Hot', 'Warm', 'Cold']);
-  syncMSDisplay();
-  setStatus(true);
-}
-
-function clearSession() { Object.values(SK).forEach(k => sessionStorage.removeItem(k)); }
-
-function setLoginStatus(msg, isErr) {
-  const el = document.getElementById('loginStatus');
-  el.textContent = msg;
-  el.className   = 'login-status' + (isErr ? ' err' : '');
-}
-
-// ── DASHBOARD SWITCHING ───────────────────────────────────────
-function switchDashboard(which) {
-  // Loan dept can only access fnclients
-  if (isLoanDept() && which !== 'fnclients') return;
-
-  activeDash = which;
-  const order = ['visits','visitdone','fnclients','revenue'];
-  document.querySelectorAll('.dash-tab').forEach((t, i) => t.classList.toggle('active', order[i] === which));
-  document.getElementById('visitsDash').style.display    = which === 'visits'    ? 'block' : 'none';
-  document.getElementById('visitdoneDash').style.display = which === 'visitdone' ? 'block' : 'none';
-  document.getElementById('fnDash').style.display        = which === 'fnclients' ? 'block' : 'none';
-  document.getElementById('revDash').style.display       = which === 'revenue'   ? 'flex'  : 'none';
-  if (which === 'fnclients' && fnAll.length === 0 && auth) loadFNData();
-  if (which === 'visitdone' && vdAll.length === 0 && auth) loadVDData();
-}
-
-// ── AUTO REFRESH ──────────────────────────────────────────────
-function startAutoRefresh() {
-  if (refreshTimer) clearInterval(refreshTimer);
-  refreshTimer = setInterval(() => { if (!isRefreshing && auth) refreshAll(); }, 30000);
-}
-
-function refreshAll() {
-  if (!auth || isRefreshing) return;
-  isRefreshing = true;
-  document.getElementById('refreshInd').classList.add('show');
-  const done = () => { isRefreshing = false; document.getElementById('refreshInd').classList.remove('show'); };
-
-  jsonpFetch(GAS_URL, { action: 'getVisitData', role: auth.role, username: auth.user, password: auth.pass }, data => {
-    if (data.ok) renderVisitData(data.data);
-    let pending = 0;
-    const checkDone = () => { if (--pending <= 0) done(); };
-    if (fnAll.length > 0) { pending++; jsonpFetch(GAS_URL, { action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => { if (d.ok) renderFNData(d.data); checkDone(); }, checkDone); }
-    if (vdAll.length > 0) { pending++; jsonpFetch(GAS_URL, { action: 'getVisitDoneData', role: auth.role, username: auth.user, password: auth.pass }, d => { if (d.ok) renderVDData(d.data); checkDone(); }, checkDone); }
-    if (pending === 0) done();
-    setStatus(true);
-  }, () => { setStatus(false); done(); });
-}
-
-function loadFNData() {
-  document.getElementById('fn-rowCount').textContent = 'Loading…';
-  jsonpFetch(GAS_URL, { action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => {
-    if (d.ok) renderFNData(d.data);
-    else document.getElementById('fn-rowCount').textContent = 'Failed to load: ' + (d.error || 'unknown error');
-  }, () => { document.getElementById('fn-rowCount').textContent = 'Network error loading FN Clients data.'; });
-}
-
-// ── MULTI-SELECT STATUS FILTER ────────────────────────────────
-function toggleMSDropdown() {
-  const trigger  = document.getElementById('fnStatusTrigger');
-  const dropdown = document.getElementById('fnStatusDropdown');
-  const isOpen   = dropdown.classList.contains('open');
-  if (isOpen) {
-    dropdown.classList.remove('open');
-    trigger.classList.remove('open');
-  } else {
-    dropdown.classList.add('open');
-    trigger.classList.add('open');
-  }
-}
-
-function toggleMSOption(el) {
-  const val = el.dataset.value;
-  if (fnSelectedStatuses.has(val)) {
-    fnSelectedStatuses.delete(val);
-    el.classList.remove('selected');
-  } else {
-    fnSelectedStatuses.add(val);
-    el.classList.add('selected');
-  }
-  syncMSDisplay();
-  applyFNFilters();
-}
-
-function syncMSDisplay() {
-  // Update checkboxes in dropdown
-  document.querySelectorAll('#fnStatusDropdown .ms-option').forEach(opt => {
-    opt.classList.toggle('selected', fnSelectedStatuses.has(opt.dataset.value));
-  });
-  // Update trigger label
-  const label = document.getElementById('fnStatusLabel');
-  if (!label) return;
-  const selected = [...fnSelectedStatuses];
-  if (selected.length === 0) {
-    label.textContent = 'Status: None';
-  } else if (selected.length === FN_ALL_STATUSES.length) {
-    label.textContent = 'Status: All';
-  } else if (selected.length === FN_ACTIVE_STATUSES.length &&
-             FN_ACTIVE_STATUSES.every(s => fnSelectedStatuses.has(s))) {
-    label.textContent = 'Status: Active';
-  } else if (selected.length === FN_INACTIVE_STATUSES.length &&
-             FN_INACTIVE_STATUSES.every(s => fnSelectedStatuses.has(s))) {
-    label.textContent = 'Status: Closed';
-  } else {
-    label.textContent = 'Status: ' + selected.join(', ');
-  }
-  // Show/hide pre-filter note
-  const hasInactive = FN_INACTIVE_STATUSES.some(s => !fnSelectedStatuses.has(s));
-  const noteEl = document.getElementById('fnPrefilterNote');
-  if (noteEl && !isLoanDept()) {
-    noteEl.style.display = hasInactive ? 'flex' : 'none';
-  }
-}
-
-// Close MS dropdown when clicking outside
-document.addEventListener('click', e => {
-  const wrap = document.getElementById('fnStatusWrap');
-  if (wrap && !wrap.contains(e.target)) {
-    document.getElementById('fnStatusDropdown').classList.remove('open');
-    document.getElementById('fnStatusTrigger').classList.remove('open');
-  }
-  const profileWrap = document.getElementById('profileWrap');
-  if (profileWrap && !profileWrap.contains(e.target)) {
-    document.getElementById('profileDropdown').classList.remove('show');
-  }
-});
-
-function showAllFNStatuses() {
-  FN_ALL_STATUSES.forEach(s => fnSelectedStatuses.add(s));
-  syncMSDisplay();
-  applyFNFilters();
-}
-
-// ── VISITS RENDERING ──────────────────────────────────────────
-function renderVisitData(rows) {
-  visitsAll = rows.map(r => ({ ...r, visitDate: fmtDate(r.visitDate) }));
-  visitsFiltered = [...visitsAll];
-  populateVisitFilters(visitsAll);
-  applyVisitFilters();
-  document.getElementById('v-lastUpdated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
-}
-
-function applyVisitFilters() {
-  const pnl     = document.getElementById('v-pnlFilter').value;
-  const tl      = document.getElementById('v-tlFilter').value;
-  const emp     = document.getElementById('v-empFilter').value;
-  const proj    = document.getElementById('v-projFilter').value;
-  const dev     = document.getElementById('v-devFilter').value;
-  const closure = document.getElementById('v-closureFilter').value;
-  const cust    = (document.getElementById('v-custFilter').value  || '').trim().toLowerCase();
-  const phone   = (document.getElementById('v-phoneFilter').value || '').trim();
-  const from    = document.getElementById('v-fromDate').value;
-  const to      = document.getElementById('v-toDate').value;
-
-  visitsFiltered = visitsAll.filter(r => {
-    if (pnl     && r.pnlHead   !== pnl)     return false;
-    if (tl      && r.teamLead  !== tl)      return false;
-    if (emp     && r.employee  !== emp)     return false;
-    if (proj    && r.project   !== proj)    return false;
-    if (dev     && r.developer !== dev)     return false;
-    if (closure && r.closure   !== closure) return false;
-    if (cust    && !(r.customer||'').toLowerCase().includes(cust)) return false;
-    if (phone   && !(r.phone||'').includes(phone))                 return false;
-    if (from    && fmtDate(r.visitDate) < from) return false;
-    if (to      && fmtDate(r.visitDate) > to)   return false;
-    return true;
-  });
-
-  if (vSortCol >= 0) applySortVisits();
-  if (currentVisitView === 'detail') renderVisitTable(visitsFiltered);
-  else renderVisitPivot(visitsFiltered);
-}
-
-function clearVisitFilters() {
-  ['v-pnlFilter','v-tlFilter','v-empFilter','v-projFilter','v-devFilter',
-   'v-closureFilter','v-custFilter','v-phoneFilter','v-fromDate','v-toDate']
-    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  visitsFiltered = [...visitsAll];
-  if (currentVisitView === 'detail') renderVisitTable(visitsFiltered);
-  else renderVisitPivot(visitsFiltered);
-}
-
-function switchVisitView(v) {
-  currentVisitView = v;
-  document.getElementById('v-detailTab').classList.toggle('active', v === 'detail');
-  document.getElementById('v-pivotTab').classList.toggle('active', v === 'pivot');
-  document.getElementById('v-detailView').style.display = v === 'detail' ? 'block' : 'none';
-  document.getElementById('v-pivotView').style.display  = v === 'pivot'  ? 'block' : 'none';
-  if (v === 'detail') renderVisitTable(visitsFiltered);
-  else renderVisitPivot(visitsFiltered);
-}
-
-function renderVisitTable(rows) {
-  const tbody = document.getElementById('v-tbody');
-  document.getElementById('v-rowCount').textContent = `${rows.length} visit(s)`;
-  if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="13" class="no-data">No matching records found</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = rows.map(r => `
-    <tr>
-      <td>${esc(r.cluster)}</td>
-      <td>${esc(r.teamLead)}</td>
-      <td>${esc(r.employee)}</td>
-      <td>${esc(r.customer)}</td>
-      <td>${esc(r.phone)}</td>
-      <td>${esc(r.project)}</td>
-      <td>${esc(r.developer)}</td>
-      <td>${esc(r.visitDate)}</td>
-      <td>${esc(r.visitTime)}</td>
-      <td style="max-width:140px;white-space:normal;">${esc(r.requirement)}</td>
-      <td>${esc(r.closure)}</td>
-      <td>${r.backup === 'Yes' ? '<span class="badge badge-yes">Yes</span>' : r.backup ? '<span class="badge badge-no">No</span>' : ''}</td>
-      <td><button class="convert-btn" onclick="convertToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})">⚡ Convert</button></td>
-    </tr>`).join('');
-}
-
-function renderVisitPivot(rows) {
-  const dates  = [...new Set(rows.map(r => fmtDate(r.visitDate)).filter(Boolean))].sort();
-  const thead  = document.querySelector('#v-pivot thead');
-  const tbody  = document.querySelector('#v-pivot tbody');
-  thead.innerHTML = '';
-  tbody.innerHTML = '';
-  const hr = document.createElement('tr');
-  hr.innerHTML = '<th>Team Lead</th><th>Employee</th>' +
-    dates.map(d => `<th>${fmtDateDay(d)}</th>`).join('') + '<th>Total</th>';
-  thead.appendChild(hr);
-  const grouped = {};
-  rows.forEach(r => {
-    const d   = fmtDate(r.visitDate); if (!d) return;
-    const key = r.teamLead + '|' + r.employee;
-    if (!grouped[key]) grouped[key] = { teamLead: r.teamLead, employee: r.employee, counts: {} };
-    grouped[key].counts[d] = (grouped[key].counts[d] || 0) + 1;
-  });
-  Object.values(grouped).forEach(g => {
-    let total = 0;
-    const tr  = document.createElement('tr');
-    tr.innerHTML = `<td>${esc(g.teamLead)}</td><td>${esc(g.employee)}</td>` +
-      dates.map(d => {
-        const v = g.counts[d] || 0; total += v;
-        return `<td class="${v === 0 ? 'zero' : ''}">${v || '–'}</td>`;
-      }).join('') + `<td class="total">${total}</td>`;
-    tbody.appendChild(tr);
-  });
-  document.getElementById('v-rowCount').textContent = `${Object.keys(grouped).length} employee(s) — pivot`;
-}
-
-function populateVisitFilters(rows) {
-  fillSelect('v-pnlFilter',  [...new Set(rows.map(r => r.pnlHead).filter(Boolean))].sort(),   'All PNL Heads');
-  fillSelect('v-tlFilter',   [...new Set(rows.map(r => r.teamLead).filter(Boolean))].sort(),  'All Team Leads');
-  fillSelect('v-empFilter',  [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(),  'All Employees');
-  fillSelect('v-projFilter', [...new Set(rows.map(r => r.project).filter(Boolean))].sort(),   'All Projects');
-  fillSelect('v-devFilter',  [...new Set(rows.map(r => r.developer).filter(Boolean))].sort(), 'All Developers');
-}
-
-function sortVisits(col) {
-  if (vSortCol === col) vSortDir = vSortDir === 'asc' ? 'desc' : 'asc';
-  else { vSortCol = col; vSortDir = 'asc'; }
-  const ths = document.querySelectorAll('#v-table th');
-  ths.forEach((th, i) => { th.classList.remove('asc','desc'); if (i === col) th.classList.add(vSortDir); });
-  applySortVisits();
-  renderVisitTable(visitsFiltered);
-}
-
-function applySortVisits() {
-  const keys = ['cluster','teamLead','employee','customer','phone','project','developer','visitDate','visitTime'];
-  const key  = keys[vSortCol] || 'visitDate';
-  visitsFiltered.sort((a, b) => {
-    const v1 = a[key] || ''; const v2 = b[key] || '';
-    return vSortDir === 'asc' ? v1.localeCompare(v2) : v2.localeCompare(v1);
-  });
-}
-
-// ── FN CLIENTS RENDERING ─────────────────────────────────────
-function renderFNData(rows) {
-  fnAll      = rows.map(r => ({ ...r, visitDate: fmtDate(r.visitDate) }));
-  populateFNFilters(fnAll);
-  // For loan dept: force status filter to Lost/Booked
-  if (isLoanDept()) {
-    fnSelectedStatuses = new Set(['Lost', 'Booked']);
-    syncMSDisplay();
-  }
-  applyFNFilters();
-  document.getElementById('fn-lastUpdated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
-}
-
-function applyFNFilters() {
-  const pnl    = document.getElementById('fn-pnlFilter').value;
-  const tl     = document.getElementById('fn-tlFilter').value;
-  const emp    = document.getElementById('fn-empFilter').value;
-  const proj   = document.getElementById('fn-projFilter').value;
-  const dev    = document.getElementById('fn-devFilter').value;
-  const cust   = (document.getElementById('fn-custFilter').value  || '').trim().toLowerCase();
-  const phone  = (document.getElementById('fn-phoneFilter').value || '').trim();
-  const from   = document.getElementById('fn-fromDate').value;
-  const to     = document.getElementById('fn-toDate').value;
-
-  fnFiltered = fnAll.filter(r => {
-    if (pnl    && r.pnlHead   !== pnl)    return false;
-    if (tl     && r.teamLead  !== tl)     return false;
-    if (emp    && r.employee  !== emp)    return false;
-    if (proj   && r.project   !== proj)   return false;
-    if (dev    && r.developer !== dev)    return false;
-    // Multi-status filter: if nothing selected, show nothing; if "all 5" selected, skip
-    if (fnSelectedStatuses.size > 0 && fnSelectedStatuses.size < FN_ALL_STATUSES.length) {
-      if (!fnSelectedStatuses.has(r.status)) return false;
-    } else if (fnSelectedStatuses.size === 0) {
-      return false; // nothing selected = show nothing
-    }
-    if (cust   && !(r.customer||'').toLowerCase().includes(cust)) return false;
-    if (phone  && !(r.phone||'').includes(phone))                 return false;
-    if (from   && fmtDate(r.visitDate) < from) return false;
-    if (to     && fmtDate(r.visitDate) > to)   return false;
-    return true;
-  });
-
-  if (fnSortCol >= 0) applySortFN();
-  if (fnView === 'detail') renderFNTable(fnFiltered);
-  else renderFNPivot(fnFiltered);
-}
-
-function clearFNFilters() {
-  ['fn-pnlFilter','fn-tlFilter','fn-empFilter','fn-projFilter','fn-devFilter',
-   'fn-custFilter','fn-phoneFilter','fn-fromDate','fn-toDate']
-    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  // Reset status filter to default (active only), unless loan dept
-  if (!isLoanDept()) {
-    fnSelectedStatuses = new Set(['Hot', 'Warm', 'Cold']);
-    syncMSDisplay();
-  }
-  applyFNFilters();
-}
-
-function switchFNView(v) {
-  fnView = v;
-  document.getElementById('fn-detailTab').classList.toggle('active', v === 'detail');
-  document.getElementById('fn-pivotTab').classList.toggle('active', v === 'pivot');
-  document.getElementById('fn-detailView').style.display = v === 'detail' ? 'block' : 'none';
-  document.getElementById('fn-pivotView').style.display  = v === 'pivot'  ? 'block' : 'none';
-  if (v === 'detail') renderFNTable(fnFiltered);
-  else renderFNPivot(fnFiltered);
-}
-
-function renderFNTable(rows) {
-  const tbody = document.getElementById('fn-tbody');
-  const total = fnAll.filter(r => {
-    if (fnSelectedStatuses.size === 0) return false;
-    return fnSelectedStatuses.size === FN_ALL_STATUSES.length || fnSelectedStatuses.has(r.status);
-  }).length;
-  const hiddenCount = fnAll.length - total;
-  let countText = `${rows.length} FN client(s)`;
-  if (hiddenCount > 0) countText += ` · ${hiddenCount} hidden (change status filter to view)`;
-  document.getElementById('fn-rowCount').textContent = countText;
-
-  if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="11" class="no-data">No FN clients found</td></tr>`;
-    return;
-  }
-
-  tbody.innerHTML = rows.map((r, i) => {
-    let createdDateStr = '—';
-    if (r.timestamp) {
-      try {
-        const d = new Date(r.timestamp);
-        if (!isNaN(d)) createdDateStr = d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
-        else createdDateStr = r.timestamp;
-      } catch(_) { createdDateStr = r.timestamp; }
-    }
-    return `
-    <tr class="clickable-row" onclick="openDetailModal(fnFiltered[${i}])">
-      <td>${esc(r.cluster)}</td>
-      <td>${esc(r.teamLead)}</td>
-      <td>${esc(r.employee)}</td>
-      <td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td>
-      <td style="white-space:nowrap">${esc(createdDateStr)}</td>
-      <td>${esc(r.project)}</td>
-      <td>${esc(r.developer || r.builderSourcingName || '—')}</td>
-      <td>${esc(r.configuration)}</td>
-      <td>${esc(r.budget)}</td>
-      <td>${statusBadge(r.status)}</td>
-      <td>${esc(r.visitDate)}</td>
-    </tr>`;
-  }).join('');
-}
-
-function renderFNPivot(rows) {
-  const thead = document.querySelector('#fn-pivot thead');
-  const tbody = document.querySelector('#fn-pivot tbody');
-  thead.innerHTML = '';
-  tbody.innerHTML = '';
-
-  const hr = document.createElement('tr');
-  hr.innerHTML = `<th>Team Lead</th><th>Employee</th>
-    <th style="color:#e05c5c">🔴 Hot</th>
-    <th style="color:#e08c5c">🟠 Warm</th>
-    <th style="color:#5c9be0">🔵 Cold</th>
-    <th style="color:#9090b8">⚫ Lost</th>
-    <th style="color:#34c47a">✅ Booked</th>
-    <th>Total</th>`;
-  thead.appendChild(hr);
-
-  const grouped = {};
-  rows.forEach(r => {
-    const key = (r.teamLead || '—') + '||' + (r.employee || '—');
-    if (!grouped[key]) grouped[key] = { teamLead: r.teamLead || '—', employee: r.employee || '—', Hot: 0, Warm: 0, Cold: 0, Lost: 0, Booked: 0, rows: { Hot: [], Warm: [], Cold: [], Lost: [], Booked: [] } };
-    const s = r.status;
-    if (['Hot','Warm','Cold','Lost','Booked'].includes(s)) {
-      grouped[key][s]++;
-      grouped[key].rows[s].push(r);
-    }
-  });
-
-  const entries = Object.values(grouped).sort((a, b) =>
-    a.teamLead.localeCompare(b.teamLead) || a.employee.localeCompare(b.employee)
-  );
-
-  if (!entries.length) {
-    tbody.innerHTML = `<tr><td colspan="8" class="no-data">No data for pivot</td></tr>`;
-    document.getElementById('fn-rowCount').textContent = '0 FN client(s) — pivot';
-    return;
-  }
-
-  entries.forEach(g => {
-    const total = g.Hot + g.Warm + g.Cold + g.Lost + g.Booked;
-    const tr = document.createElement('tr');
-
-    const mkCell = (count, statusClass, statusLabel) => {
-      if (count === 0) return `<td class="zero">–</td>`;
-      return `<td class="pivot-${statusClass.toLowerCase()}" style="${statusClass==='Lost'?'color:#9090b8;cursor:pointer':statusClass==='Booked'?'color:#34c47a;cursor:pointer':''}" onclick="openDrillModal(event,'${esc(g.employee)}','${statusLabel}')">${count}</td>`;
-    };
-
-    tr.innerHTML =
-      `<td>${esc(g.teamLead)}</td>` +
-      `<td style="font-weight:600">${esc(g.employee)}</td>` +
-      mkCell(g.Hot,    'hot',    'Hot') +
-      mkCell(g.Warm,   'warm',   'Warm') +
-      mkCell(g.Cold,   'cold',   'Cold') +
-      mkCell(g.Lost,   'Lost',   'Lost') +
-      mkCell(g.Booked, 'Booked', 'Booked') +
-      `<td class="total ${total > 0 ? 'clickable' : ''}" ${total > 0 ? `onclick="openDrillModal(event,'${esc(g.employee)}','All')"` : ''}>${total || '–'}</td>`;
-    tbody.appendChild(tr);
-  });
-
-  document.getElementById('fn-rowCount').textContent = `${entries.length} employee(s) — pivot`;
-}
-
-function populateFNFilters(rows) {
-  fillSelect('fn-pnlFilter',  [...new Set(rows.map(r => r.pnlHead).filter(Boolean))].sort(),                         'All PNL Heads');
-  fillSelect('fn-tlFilter',   [...new Set(rows.map(r => r.teamLead).filter(Boolean))].sort(),                        'All Team Leads');
-  fillSelect('fn-empFilter',  [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(),                        'All Employees');
-  fillSelect('fn-projFilter', [...new Set(rows.map(r => r.project).filter(Boolean))].sort(),                         'All Projects');
-  fillSelect('fn-devFilter',  [...new Set(rows.map(r => r.developer || r.builderSourcingName).filter(Boolean))].sort(), 'All Developers');
-}
-
-function sortFN(col) {
-  if (fnSortCol === col) fnSortDir = fnSortDir === 'asc' ? 'desc' : 'asc';
-  else { fnSortCol = col; fnSortDir = 'asc'; }
-  const ths = document.querySelectorAll('#fn-table th');
-  ths.forEach((th, i) => { th.classList.remove('asc','desc'); if (i === col) th.classList.add(fnSortDir); });
-  applySortFN();
-  renderFNTable(fnFiltered);
-}
-
-function applySortFN() {
-  const keys = ['cluster','teamLead','employee','customer','timestamp','project','developer','configuration','budget','status','visitDate'];
-  const key  = keys[fnSortCol] || 'timestamp';
-  fnFiltered.sort((a, b) => {
-    if (key === 'timestamp') {
-      const d1 = a.timestamp ? new Date(a.timestamp).getTime() : 0;
-      const d2 = b.timestamp ? new Date(b.timestamp).getTime() : 0;
-      return fnSortDir === 'asc' ? d1 - d2 : d2 - d1;
-    }
-    const v1 = a[key] || ''; const v2 = b[key] || '';
-    return fnSortDir === 'asc' ? v1.localeCompare(v2) : v2.localeCompare(v1);
-  });
-}
-
-// ── DETAIL MODAL ──────────────────────────────────────────────
-function openDetailModal(r) {
-  document.getElementById('modalCustomerName').textContent = r.customer || 'Client Details';
-
-  let createdOn = '—';
-  if (r.timestamp) {
-    try {
-      const d = new Date(r.timestamp);
-      if (!isNaN(d)) {
-        createdOn = d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) +
-                    ' ' + d.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', hour12:true });
-      } else { createdOn = r.timestamp; }
-    } catch (_) { createdOn = r.timestamp; }
-  }
-
-  const fields = [
-    { label: 'Created On',              value: createdOn,                            full: false, gold: true },
-    { label: 'Status',                   value: r.status,                             full: false, badge: true },
-    { label: 'Cluster',                  value: r.cluster,                            full: false },
-    { label: 'PNL Head',                 value: r.pnlHead,                            full: false },
-    { label: 'Team Leader',              value: r.teamLead,                           full: false },
-    { label: 'Sales Executive',          value: r.employee,                           full: false },
-    { label: 'Customer Name',            value: r.customer,                           full: false },
-    { label: 'Contact Number',           value: r.phone,                              full: false },
-    { label: 'Property Type',            value: r.propertyType,                       full: false },
-    { label: 'Configuration',            value: r.configuration,                      full: false },
-    { label: 'Budget',                   value: r.budget ? '₹ ' + r.budget : '',    full: false },
-    { label: 'Visit Date',               value: r.visitDate,                          full: false },
-    { label: 'Project Name',             value: r.project,                            full: false },
-    { label: 'Developer / Builder',      value: r.developer || r.builderSourcingName, full: false },
-    { label: 'Builder Sourcing Manager', value: r.builderSourcingName,                full: false },
-    { label: 'Sourcing Manager Contact', value: r.builderSourcingContact,             full: false },
-    { label: 'Builder Closing Manager',  value: r.builderClosingName,                 full: false },
-    { label: 'Remarks',                  value: r.remark,                             full: true  },
-    { label: 'Operations Remark',        value: r.operationsRemark,                   full: true  },
-  ];
-
-  const grid = document.getElementById('detailGrid');
-  grid.innerHTML = fields.map(f => {
-    const val = f.value ? String(f.value).trim() : '';
-    const display = val
-      ? (f.badge ? statusBadge(val) : `<div class="detail-value ${f.gold ? 'gold' : ''}">${esc(val)}</div>`)
-      : `<div class="detail-value muted">—</div>`;
-    return `<div class="detail-item ${f.full ? 'full' : ''}">
-      <div class="detail-label">${f.label}</div>
-      ${display}
-    </div>`;
-  }).join('');
-
-  window._currentDetailRecord = r;
-
-  // Show admin edit panel for Admin/MD/CEO only (not loan dept)
-  const adminPanel = document.getElementById('adminEditPanel');
-  adminPanel.style.display = isAdmin() ? 'block' : 'none';
-  if (isAdmin()) {
-    document.getElementById('adminStatusSelect').value = '';
-    document.getElementById('adminRemarkInput').value  = '';
-    document.getElementById('adminCurrentStatus').textContent = r.status || '—';
-    document.getElementById('adminSaveStatus').textContent    = '';
-    document.getElementById('adminSaveBtn').disabled = false;
-  }
-
-  document.getElementById('detailModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeDetailModal(e) {
-  if (e && e.target !== document.getElementById('detailModal')) return;
-  document.getElementById('detailModal').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-// ── PIVOT DRILL-DOWN ─────────────────────────────────────────
-function openDrillModal(e, employeeName, statusLabel) {
-  e.stopPropagation();
-  const drillRows = fnFiltered.filter(r => {
-    if (r.employee !== employeeName) return false;
-    if (statusLabel === 'All') return ['Hot','Warm','Cold','Lost','Booked'].includes(r.status);
-    return r.status === statusLabel;
-  });
-
-  const statusColors = { Hot: '#e05c5c', Warm: '#e08c5c', Cold: '#5c9be0', Lost: '#9090b8', Booked: '#34c47a', All: 'var(--gold)' };
-  const statusColor  = statusColors[statusLabel] || 'var(--text)';
-  document.getElementById('drillTitle').innerHTML =
-    `<span style="color:${statusColor}">${esc(statusLabel)}</span> clients — ${esc(employeeName)} (${drillRows.length})`;
-
-  const tbody = document.getElementById('drill-tbody');
-  if (!drillRows.length) {
-    tbody.innerHTML = `<tr><td colspan="8" class="no-data">No records</td></tr>`;
-  } else {
-    tbody.innerHTML = drillRows.map(r => `
-      <tr class="clickable-row" onclick="openDetailModal(fnFiltered.find(x=>x.customer===\`${r.customer.replace(/`/g,"'")}\`&&x.phone===\`${r.phone}\`)||fnFiltered[0])">
-        <td>${esc(r.teamLead)}</td>
-        <td>${esc(r.employee)}</td>
-        <td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td>
-        <td>${esc(r.phone)}</td>
-        <td>${esc(r.project)}</td>
-        <td>${esc(r.budget)}</td>
-        <td>${statusBadge(r.status)}</td>
-        <td>${esc(r.visitDate)}</td>
-      </tr>`).join('');
-  }
-
-  document.getElementById('drillModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeDrillModal(e) {
-  if (e && e.target !== document.getElementById('drillModal')) return;
-  document.getElementById('drillModal').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-// ── CONVERT TO FN CLIENT ──────────────────────────────────────
-function convertToFN(row) {
-  const params = new URLSearchParams({
-    prefill: '1',
-    customerName:     row.customer    || '',
-    contactNumber:    row.phone       || '',
-    salesExec:        row.employee    || '',
-    teamLead:         row.teamLead    || '',
-    cluster:          row.cluster     || '',
-    projectName:      row.project     || '',
-    developerName:    row.developer   || '',
-    visitDate:        row.visitDate   || '',
-    requirement:      row.requirement || '',
-    convertedFromVisit: 'Yes'
-  });
-  window.open(FN_FORM_URL + '?' + params.toString(), '_blank');
-}
-
-// ── UI HELPERS ─────────────────────────────────────────────────
-function statusBadge(s) {
-  if (!s) return '—';
-  const clsMap = {
-    Hot:    'badge-hot',
-    Warm:   'badge-warm',
-    Cold:   'badge-cold',
-    Lost:   'badge-lost',
-    Booked: 'badge-booked'
-  };
-  const cls = clsMap[s] || '';
-  return `<span class="badge ${cls}">${esc(s)}</span>`;
-}
-
-function fillSelect(id, values, placeholder) {
-  const sel  = document.getElementById(id);
-  const curr = sel.value;
-  sel.innerHTML = `<option value="">${placeholder}</option>`;
-  values.forEach(v => sel.innerHTML += `<option value="${esc(v)}">${esc(v)}</option>`);
-  if (curr) sel.value = curr;
-}
-
-function esc(s) {
-  return String(s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-
-function fmtDate(s) {
-  if (!s) return '';
-  const d = new Date(s);
-  if (isNaN(d)) return s;
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-}
-
-function fmtDateDay(s) {
-  const d = new Date(s);
-  if (isNaN(d)) return s;
-  return s + ' (' + ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()] + ')';
-}
-
-function getInitials(u) {
-  const n = u.split('@')[0].split(/[.\-_]/);
-  return n.length >= 2 ? (n[0][0]+n[1][0]).toUpperCase() : u.slice(0,2).toUpperCase();
-}
-
-function setStatus(online) {
-  const el  = document.getElementById('connStatus');
-  el.className = 'status-pill ' + (online ? 'online' : 'offline');
-  el.innerHTML = `<span>●</span> ${online ? 'Online' : 'Connection issues'}`;
-}
-
-function toggleProfile() {
-  document.getElementById('profileDropdown').classList.toggle('show');
-}
-
-// ── ADMIN: UPDATE FN CLIENT STATUS + OPERATIONS REMARK ───────
-function saveAdminUpdate() {
-  const r = window._currentDetailRecord;
-  if (!r) return;
-
-  const newStatus  = document.getElementById('adminStatusSelect').value;
-  const newRemark  = document.getElementById('adminRemarkInput').value.trim();
-
-  if (!newStatus && !newRemark) {
-    setAdminSaveStatus('Please change the status or add a remark before saving.', true);
-    return;
-  }
-
-  const today  = new Date();
-  const dayStr = today.toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
-
-  const parts = [];
-  if ((r.operationsRemark || '').trim()) parts.push(r.operationsRemark.trim());
-  if (newStatus && newStatus !== r.status) {
-    parts.push(`${dayStr} - Status changed from "${r.status || 'None'}" to "${newStatus}"`);
-  }
-  if (newRemark) {
-    parts.push(`${dayStr} - ${newRemark}`);
-  }
-  const combinedRemark = parts.join(', ');
-
-  document.getElementById('adminSaveBtn').disabled = true;
-  setAdminSaveStatus('Saving…');
-
-  const payload = JSON.stringify({
-    action:            'updateFNClient',
-    rowIndex:          r.rowIndex,
-    newStatus:         newStatus || r.status,
-    operationsRemark:  combinedRemark,
-    customerName:      r.customer || '',
-    phone:             r.phone    || '',
-    username:          auth.user,
-    password:          auth.pass,
-    role:              auth.role
-  });
-
-  fetch(GAS_URL, {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body:    'data=' + encodeURIComponent(payload)
-  })
-  .then(res => res.json())
-  .then(data => {
-    if (data.ok) {
-      if (newStatus) r.status = newStatus;
-      r.operationsRemark = combinedRemark;
-      document.getElementById('adminCurrentStatus').textContent = r.status || '—';
-      document.getElementById('adminStatusSelect').value = '';
-      document.getElementById('adminRemarkInput').value  = '';
-
-      const updateInArray = arr => {
-        const found = arr.find(x => x.rowIndex === r.rowIndex);
-        if (found) { if (newStatus) found.status = r.status; found.operationsRemark = r.operationsRemark; }
-      };
-      updateInArray(fnAll);
-      updateInArray(fnFiltered);
-      if (fnView === 'detail') renderFNTable(fnFiltered);
-      else renderFNPivot(fnFiltered);
-
-      setAdminSaveStatus('✓ Saved successfully!', false);
-      document.getElementById('adminSaveBtn').disabled = false;
+    // Load initial stored user context configuration sequence
+    if (localStorage.getItem('thore-theme') === 'light') {
+      htmlEl.classList.remove('dark');
     } else {
-      setAdminSaveStatus('Error: ' + (data.error || 'Unknown error'), true);
-      document.getElementById('adminSaveBtn').disabled = false;
+      htmlEl.classList.add('dark');
     }
-  })
-  .catch(() => {
-    setAdminSaveStatus('Network error. Please retry.', true);
-    document.getElementById('adminSaveBtn').disabled = false;
-  });
-}
 
-function setAdminSaveStatus(msg, isErr) {
-  const el = document.getElementById('adminSaveStatus');
-  el.textContent = msg;
-  el.className   = 'admin-save-status' + (isErr === false ? ' ok' : isErr ? ' err' : '');
-}
+    themeToggleBtn.addEventListener('click', () => {
+      if (htmlEl.classList.contains('dark')) {
+        htmlEl.classList.remove('dark');
+        localStorage.setItem('thore-theme', 'light');
+      } else {
+        htmlEl.classList.add('dark');
+        localStorage.setItem('thore-theme', 'dark');
+      }
+    });
 
-// ── JSONP FETCH ───────────────────────────────────────────────
-function jsonpFetch(url, params, onSuccess, onError) {
-  const cbName = '__cb_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
-  const script = document.createElement('script');
-  const qs     = Object.entries({ ...params, callback: cbName })
-                       .map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
-  const timer = setTimeout(() => { cleanup(); if (onError) onError(new Error('Timeout')); }, 15000);
-  window[cbName] = data => { cleanup(); onSuccess(data); };
-  script.onerror = () => { cleanup(); if (onError) onError(new Error('Load failed')); };
-  function cleanup() {
-    clearTimeout(timer);
-    delete window[cbName];
-    if (script.parentNode) script.parentNode.removeChild(script);
-  }
-  script.src = url + '?' + qs;
-  document.head.appendChild(script);
-}
+    function toggleProfileDropdown() {
+      document.getElementById('profileDropdown').classList.toggle('hidden');
+    }
+    // Close context popups cleanly when intercepting random outside interface actions
+    document.addEventListener('click', (e) => {
+      if (!document.getElementById('profileWrap').contains(e.target)) {
+        document.getElementById('profileDropdown').classList.add('hidden');
+      }
+      if (document.getElementById('fnStatusWrap') && !document.getElementById('fnStatusWrap').contains(e.target)) {
+        const d = document.getElementById('fnStatusDropdown');
+        const t = document.getElementById('fnStatusTrigger');
+        if (d && t) { d.classList.add('hidden'); t.classList.remove('border-brand-gold'); }
+      }
+    });
 
-// ── THEME TOGGLE ──────────────────────────────────────────────
-function toggleTheme() {
-  const html = document.documentElement;
-  const isDark = html.getAttribute('data-theme') === 'dark';
-  const next = isDark ? 'light' : 'dark';
-  html.setAttribute('data-theme', next);
-  document.getElementById('themeBtn').textContent = next === 'dark' ? '☀️' : '🌙';
-  try { localStorage.setItem('dash_theme', next); } catch(_) {}
-}
-(function() {
-  try {
-    const saved = localStorage.getItem('dash_theme');
-    if (saved) {
-      document.documentElement.setAttribute('data-theme', saved);
-      document.addEventListener('DOMContentLoaded', () => {
-        const btn = document.getElementById('themeBtn');
-        if (btn) btn.textContent = saved === 'dark' ? '☀️' : '🌙';
+    // ── CORE DATA ARCHITECTURE AND SYSTEM CONFIG GLOBALS ────────────
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbz_y67bEwbNWh64VpW46r_vCHVn72y75Ww-6bK8_B0h-1k9_1k/exec"; // Internal WebApp Hook Proxy
+    const FN_FORM_URL = "https://thore-networks.github.io/form-fn/";
+
+    const SK = { role: 'thore_r', user: 'thore_u', pass: 'thore_p', time: 'thore_t' };
+    const SESSION_TIMEOUT = 12 * 60 * 60 * 1000; // 12-hour session barrier
+
+    let auth = null;
+    let activeDash = 'visits';
+
+    let visitsAll = [], visitsFiltered = [];
+    let currentVisitView = 'detail';
+    let vSortCol = -1, vSortDir = 'asc';
+
+    let vdAll = [], vdFiltered = [];
+    let vdSortCol = -1, vdSortDir = 'asc';
+
+    let fnAll = [], fnFiltered = [];
+    let fnView = 'detail';
+    const FN_ALL_STATUSES = ['Hot', 'Warm', 'Cold', 'Lost', 'Booked'];
+    const FN_ACTIVE_STATUSES = ['Hot', 'Warm', 'Cold'];
+    const FN_INACTIVE_STATUSES = ['Lost', 'Booked'];
+    let fnSelectedStatuses = new Set(FN_ACTIVE_STATUSES);
+
+    let refreshTimer = null;
+
+    // ── ROLE PERMISSION EVALUATION UTILITIES ───────────────────────
+    function isLoanDept() { return auth && auth.role.toLowerCase() === 'loan department'; }
+    function isAdmin() { return auth && ['admin','md/ceo','md','ceo','management'].includes(auth.role.toLowerCase()); }
+
+    // ── SYSTEM REGISTRATION AUTHENTICATION SEQUENCE ─────────────────
+    function login() {
+      const role = document.getElementById('role').value.trim();
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value;
+      
+      if (!user || !pass) {
+        setLoginStatus('Provide operational account profile metrics.', true);
+        return;
+      }
+      setLoginStatus('Connecting authentication clearance layers...');
+      document.getElementById('loginBtn').disabled = true;
+
+      const loginAction = role.toLowerCase() === 'loan department' ? 'getFNClientsData' : 'getVisitData';
+
+      jsonpFetch(GAS_URL, { action: loginAction, role, username: user, password: pass }, data => {
+        document.getElementById('loginBtn').disabled = false;
+        if (!data.ok) {
+          setLoginStatus(data.error || 'Identity verification mismatch error.', true);
+          return;
+        }
+        handleLoginSuccess(role, user, pass, data.data, loginAction);
+      }, () => {
+        document.getElementById('loginBtn').disabled = false;
+        setLoginStatus('Security gateway network routing timeout. Retry link.', true);
       });
     }
-  } catch(_) {}
-})();
 
-// ── VISIT DONE ────────────────────────────────────────────────
-function loadVDData() {
-  document.getElementById('vd-rowCount').textContent = 'Loading…';
-  jsonpFetch(GAS_URL, { action: 'getVisitDoneData', role: auth.role, username: auth.user, password: auth.pass }, d => {
-    if (d.ok) renderVDData(d.data);
-    else document.getElementById('vd-rowCount').textContent = 'Failed to load Visit Done data.';
-  }, () => { document.getElementById('vd-rowCount').textContent = 'Network error loading Visit Done data.'; });
-}
+    function handleLoginSuccess(role, user, pass, initialData, loginAction) {
+      auth = { role, user, pass };
+      sessionStorage.setItem(SK.role, role);
+      sessionStorage.setItem(SK.user, user);
+      sessionStorage.setItem(SK.pass, pass);
+      sessionStorage.setItem(SK.time, Date.now().toString());
 
-function renderVDData(rows) {
-  vdAll      = rows.map(r => ({ ...r, visitDate: fmtDate(r.visitDate) }));
-  vdFiltered = [...vdAll];
-  populateVDFilters(vdAll);
-  applyVDFilters();
-  document.getElementById('vd-lastUpdated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
-}
+      document.getElementById('loginPanel').style.display = 'none';
+      document.getElementById('dashPanel').style.display = 'flex';
+      document.getElementById('profileWrap').style.display = 'block';
+      document.getElementById('profileAvatar').textContent = String(user).substring(0,2).toUpperCase();
+      document.getElementById('pdUsername').textContent = user;
+      setLoginStatus('');
 
-function applyVDFilters() {
-  const pnl   = document.getElementById('vd-pnlFilter').value;
-  const tl    = document.getElementById('vd-tlFilter').value;
-  const emp   = document.getElementById('vd-empFilter').value;
-  const proj  = document.getElementById('vd-projFilter').value;
-  const dev   = document.getElementById('vd-devFilter').value;
-  const type  = document.getElementById('vd-typeFilter').value;
-  const cust  = (document.getElementById('vd-custFilter').value  || '').trim().toLowerCase();
-  const phone = (document.getElementById('vd-phoneFilter').value || '').trim();
-  const from  = document.getElementById('vd-fromDate').value;
-  const to    = document.getElementById('vd-toDate').value;
+      const isLoan = role.toLowerCase() === 'loan department';
+      if (isLoan) {
+        document.getElementById('loanDeptBanner').style.display = 'flex';
+        document.getElementById('fnStatusTrigger').style.pointerEvents = 'none';
+        document.getElementById('fnStatusTrigger').style.opacity = '0.6';
+        document.getElementById('fnViewTabs').style.display = 'none';
+        fnSelectedStatuses = new Set(FN_INACTIVE_STATUSES);
+        syncMSDisplay();
+        switchDashboard('fnclients');
+        renderFNData(initialData);
+      } else {
+        document.getElementById('loanDeptBanner').style.display = 'none';
+        document.getElementById('fnStatusTrigger').style.pointerEvents = '';
+        document.getElementById('fnStatusTrigger').style.opacity = '';
+        document.getElementById('fnViewTabs').style.display = '';
+        switchDashboard('visits');
+        visitsAll = initialData.map(r => ({ ...r, visitDate: fmtDate(r.visitDate) }));
+        visitsFiltered = [...visitsAll];
+        populateVisitFilters(visitsAll);
+        applyVisitFilters();
+        document.getElementById('v-lastUpdated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+        
+        setTimeout(refreshAll, 1500);
+        startAutoRefresh();
+      }
+    }
 
-  vdFiltered = vdAll.filter(r => {
-    if (pnl   && r.pnlHead   !== pnl)   return false;
-    if (tl    && r.teamLead  !== tl)    return false;
-    if (emp   && r.employee  !== emp)   return false;
-    if (proj  && r.project   !== proj)  return false;
-    if (dev   && r.developer !== dev)   return false;
-    if (type  && r.type      !== type)  return false;
-    if (cust  && !(r.customer||'').toLowerCase().includes(cust)) return false;
-    if (phone && !(r.phone||'').includes(phone))                 return false;
-    if (from  && fmtDate(r.visitDate) < from) return false;
-    if (to    && fmtDate(r.visitDate) > to)   return false;
-    return true;
-  });
+    function checkSession() {
+      const r = sessionStorage.getItem(SK.role);
+      const u = sessionStorage.getItem(SK.user);
+      const p = sessionStorage.getItem(SK.pass);
+      const t = sessionStorage.getItem(SK.time);
 
-  if (vdSortCol >= 0) applySortVD();
-  renderVDTable(vdFiltered);
-}
+      if (r && u && p && t) {
+        if (Date.now() - parseInt(t) > SESSION_TIMEOUT) {
+          clearSession();
+          return;
+        }
+        auth = { role: r, user: u, pass: p };
+        document.getElementById('loginPanel').style.display = 'none';
+        document.getElementById('dashPanel').style.display = 'flex';
+        document.getElementById('profileWrap').style.display = 'block';
+        document.getElementById('profileAvatar').textContent = String(u).substring(0,2).toUpperCase();
+        document.getElementById('pdUsername').textContent = u;
 
-function clearVDFilters() {
-  ['vd-pnlFilter','vd-tlFilter','vd-empFilter','vd-projFilter','vd-devFilter',
-   'vd-typeFilter','vd-custFilter','vd-phoneFilter','vd-fromDate','vd-toDate']
-    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  vdFiltered = [...vdAll];
-  renderVDTable(vdFiltered);
-}
+        const isLoan = r.toLowerCase() === 'loan department';
+        const loginAction = isLoan ? 'getFNClientsData' : 'getVisitData';
 
-function renderVDTable(rows) {
-  const tbody = document.getElementById('vd-tbody');
-  document.getElementById('vd-rowCount').textContent = `${rows.length} visit(s) done`;
-  if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="10" class="no-data">No records found</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = rows.map(r => `
-    <tr>
-      <td>${esc(r.visitDate)}</td>
-      <td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td>
-      <td>${esc(r.phone)}</td>
-      <td>${esc(r.teamLead)}</td>
-      <td>${esc(r.employee)}</td>
-      <td>${esc(r.project)}</td>
-      <td>${esc(r.developer)}</td>
-      <td style="max-width:160px;white-space:normal;font-size:0.78rem;color:var(--text-dim)">${esc(r.notes)}</td>
-      <td>${r.type ? `<span class="badge ${r.type === 'Visit' ? 'badge-yes' : 'badge-cold'}">${esc(r.type)}</span>` : '—'}</td>
-      <td><button class="convert-btn" onclick="convertVDToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})">⚡ Convert</button></td>
-    </tr>`).join('');
-}
+        jsonpFetch(GAS_URL, { action: loginAction, role: r, username: u, password: p }, data => {
+          if (!data.ok) {
+            clearSession();
+            setLoginStatus('Clearance session handshake terminated. Re-verify.', true);
+            return;
+          }
+          document.getElementById('role').value = r;
+          document.getElementById('username').value = u;
+          handleLoginSuccess(r, u, p, data.data, loginAction);
+        }, () => setLoginStatus(''));
+      }
+    }
 
-function populateVDFilters(rows) {
-  fillSelect('vd-pnlFilter',  [...new Set(rows.map(r => r.pnlHead).filter(Boolean))].sort(),   'All PNL Heads');
-  fillSelect('vd-tlFilter',   [...new Set(rows.map(r => r.teamLead).filter(Boolean))].sort(),  'All Team Leads');
-  fillSelect('vd-empFilter',  [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(),  'All Employees');
-  fillSelect('vd-projFilter', [...new Set(rows.map(r => r.project).filter(Boolean))].sort(),   'All Projects');
-  fillSelect('vd-devFilter',  [...new Set(rows.map(r => r.developer).filter(Boolean))].sort(), 'All Developers');
-}
+    function logout() {
+      auth = null;
+      clearSession();
+      if (refreshTimer) clearInterval(refreshTimer);
+      document.getElementById('dashPanel').style.display = 'none';
+      document.getElementById('profileWrap').style.display = 'none';
+      document.getElementById('loginPanel').style.display = 'flex';
+      document.getElementById('loanDeptBanner').style.display = 'none';
+      document.getElementById('fnStatusTrigger').style.pointerEvents = '';
+      document.getElementById('fnStatusTrigger').style.opacity = '';
+      document.getElementById('fnViewTabs').style.display = '';
+      fnSelectedStatuses = new Set(['Hot', 'Warm', 'Cold']);
+      syncMSDisplay();
+    }
 
-function sortVD(col) {
-  if (vdSortCol === col) vdSortDir = vdSortDir === 'asc' ? 'desc' : 'asc';
-  else { vdSortCol = col; vdSortDir = 'asc'; }
-  document.querySelectorAll('#vd-table th').forEach((th, i) => {
-    th.classList.remove('asc','desc');
-    if (i === col) th.classList.add(vdSortDir);
-  });
-  applySortVD();
-  renderVDTable(vdFiltered);
-}
+    function clearSession() {
+      Object.values(SK).forEach(k => sessionStorage.removeItem(k));
+    }
 
-function applySortVD() {
-  const keys = ['visitDate','customer','phone','teamLead','employee','project','developer','notes','type'];
-  const key  = keys[vdSortCol] || 'visitDate';
-  vdFiltered.sort((a, b) => {
-    const v1 = a[key] || ''; const v2 = b[key] || '';
-    return vdSortDir === 'asc' ? v1.localeCompare(v2) : v2.localeCompare(v1);
-  });
-}
+    function setLoginStatus(msg, isErr) {
+      const el = document.getElementById('loginStatus');
+      el.textContent = msg;
+      el.className = `text-center text-xs font-medium min-h-[20px] transition-colors mt-3 ${isErr ? 'text-red-500' : 'text-slate-400 dark:text-slate-500'}`;
+    }
 
-function convertVDToFN(row) {
-  const params = new URLSearchParams({
-    prefill:            '1',
-    customerName:       row.customer  || '',
-    contactNumber:      row.phone     || '',
-    salesExec:          row.employee  || '',
-    teamLead:           row.teamLead  || '',
-    cluster:            row.cluster   || '',
-    projectName:        row.project   || '',
-    developerName:      row.developer || '',
-    visitDate:          row.visitDate || '',
-    convertedFromVisit: 'Yes'
-  });
-  window.open(FN_FORM_URL + '?' + params.toString(), '_blank');
-}
+    // ── DASHBOARD NAVIGATION SYSTEM SWITCHING ROUTINES ─────────────
+    function switchDashboard(which) {
+      if (isLoanDept() && which !== 'fnclients') return;
+      activeDash = which;
+      
+      const order = ['visits', 'visitdone', 'fnclients', 'revenue'];
+      document.querySelectorAll('.dash-tab').forEach((t, i) => {
+        if (order[i] === which) {
+          t.className = "dash-tab px-4 py-1.5 text-xs font-semibold rounded-md tracking-wide transition-all duration-200 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm";
+        } else {
+          t.className = "dash-tab px-4 py-1.5 text-xs font-semibold rounded-md tracking-wide transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+        }
+      });
 
-// ── PAGE VISIBILITY ───────────────────────────────────────────
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { if (refreshTimer) clearInterval(refreshTimer); }
-  else if (auth && !isLoanDept()) { startAutoRefresh(); setTimeout(refreshAll, 1000); }
-});
-window.addEventListener('online',  () => { setStatus(true);  if (auth && !refreshTimer && !isLoanDept()) startAutoRefresh(); });
-window.addEventListener('offline', () => setStatus(false));
+      document.getElementById('visitsDash').style.display = which === 'visits' ? 'block' : 'none';
+      document.getElementById('visitdoneDash').style.display = which === 'visitdone' ? 'block' : 'none';
+      document.getElementById('fnDash').style.display = which === 'fnclients' ? 'block' : 'none';
+      document.getElementById('revenueDash').style.display = which === 'revenue' ? 'flex' : 'none';
+    }
 
-// ── ESC closes modals ─────────────────────────────────────────
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    document.getElementById('drillModal').classList.remove('open');
-    document.getElementById('detailModal').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-});
-</script>
+    // ── BACKGROUND ENGINE SYNC SERVICES ────────────────────────────
+    function startAutoRefresh() {
+      if (refreshTimer) clearInterval(refreshTimer);
+      refreshTimer = setInterval(refreshAll, 60000); // 60s processing cycle loop
+    }
+
+    function refreshAll() {
+      if (!auth || isLoanDept()) return;
+      const indicator = document.getElementById('refreshIndicator');
+      indicator.classList.remove('hidden');
+      indicator.classList.add('flex');
+
+      let pending = 2;
+      const done = () => {
+        pending--;
+        if (pending === 0) {
+          indicator.classList.add('hidden');
+          indicator.classList.remove('flex');
+        }
+      };
+
+      jsonpFetch(GAS_URL, { action: 'getVisitData', role: auth.role, username: auth.user, password: auth.pass }, d => {
+        if (d.ok) {
+          visitsAll = d.data.map(r => ({ ...r, visitDate: fmtDate(r.visitDate) }));
+          populateVisitFilters(visitsAll);
+          applyVisitFilters();
+          document.getElementById('v-lastUpdated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+        }
+        done();
+      }, done);
+
+      jsonpFetch(GAS_URL, { action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => {
+        if (d.ok) renderFNData(d.data);
+        done();
+      }, done);
+
+      if (document.getElementById('visitdoneDash').style.display === 'block' || vdAll.length === 0) {
+        jsonpFetch(GAS_URL, { action: 'getVisitDoneData', role: auth.role, username: auth.user, password: auth.pass }, d => {
+          if (d.ok) renderVDData(d.data);
+        }, () => {});
+      }
+    }
+
+    function loadFNData() {
+      document.getElementById('fn-rowCount').textContent = 'Analyzing master registry matrix overlay...';
+      jsonpFetch(GAS_URL, { action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => {
+        if (d.ok) renderFNData(d.data);
+        else document.getElementById('fn-rowCount').textContent = 'Error mapping database partition link: ' + (d.error || 'Unknown standard.');
+      }, () => {
+        document.getElementById('fn-rowCount').textContent = 'Network transit socket collision dropping packet line links.';
+      });
+    }
+
+    // ── MULTI-SELECT BADGE FILTER HANDLING COMPONENT ────────────────
+    function toggleMSDropdown() {
+      const dropdown = document.getElementById('fnStatusDropdown');
+      dropdown.classList.toggle('hidden');
+      document.getElementById('fnStatusTrigger').classList.toggle('border-brand-gold');
+    }
+
+    function toggleMSOption(el) {
+      const val = el.dataset.value;
+      if (fnSelectedStatuses.has(val)) {
+        fnSelectedStatuses.delete(val);
+      } else {
+        fnSelectedStatuses.add(val);
+      }
+      syncMSDisplay();
+      applyFNFilters();
+    }
+
+    function syncMSDisplay() {
+      document.querySelectorAll('#fnStatusDropdown [data-value]').forEach(opt => {
+        const val = opt.dataset.value;
+        const box = opt.querySelector('.ms-checkbox');
+        if (fnSelectedStatuses.has(val)) {
+          box.className = "w-4 h-4 rounded border border-brand-gold flex items-center justify-center transition-all bg-brand-gold text-slate-950 ms-checkbox";
+          box.innerHTML = `<svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>`;
+        } else {
+          box.className = "w-4 h-4 rounded border border-slate-300 dark:border-slate-600 flex items-center justify-center transition-all bg-white dark:bg-slate-900 ms-checkbox";
+          box.innerHTML = "";
+        }
+      });
+
+      const label = document.getElementById('fnStatusLabel');
+      if (!label) return;
+      const selected = [...fnSelectedStatuses];
+      if (selected.length === 0) label.textContent = 'Status: Isolated';
+      else if (selected.length === FN_ALL_STATUSES.length) label.textContent = 'Status: Global Matrix';
+      else if (selected.length === FN_ACTIVE_STATUSES.length && FN_ACTIVE_STATUSES.every(s => fnSelectedStatuses.has(s))) label.textContent = 'Status: Pipeline Active';
+      else label.textContent = 'Selected: (' + selected.length + ') Channels';
+    }
+
+    function showAllFNStatuses() {
+      fnSelectedStatuses = new Set(FN_ALL_STATUSES);
+      syncMSDisplay();
+      applyFNFilters();
+    }
+
+    // ── VISITS GRID CALCULATION FILTERS ENGINE ─────────────────────
+    function applyVisitFilters() {
+      const pnl = document.getElementById('v-pnlFilter').value;
+      const tl = document.getElementById('v-tlFilter').value;
+      const emp = document.getElementById('v-empFilter').value;
+      const proj = document.getElementById('v-projFilter').value;
+      const dev = document.getElementById('v-devFilter').value;
+      const closure = document.getElementById('v-closureFilter').value;
+      const cust = (document.getElementById('v-custFilter').value || '').trim().toLowerCase();
+      const phone = (document.getElementById('v-phoneFilter').value || '').trim();
+      const from = document.getElementById('v-fromDate').value;
+      const to = document.getElementById('v-toDate').value;
+
+      visitsFiltered = visitsAll.filter(r => {
+        if (pnl && r.pnlHead !== pnl) return false;
+        if (tl && r.teamLead !== tl) return false;
+        if (emp && r.employee !== emp) return false;
+        if (proj && r.project !== proj) return false;
+        if (dev && r.developer !== dev) return false;
+        if (closure && r.closure !== closure) return false;
+        if (cust && !(r.customer||'').toLowerCase().includes(cust)) return false;
+        if (phone && !(r.phone||'').includes(phone)) return false;
+        if (from && fmtDate(r.visitDate) < from) return false;
+        if (to && fmtDate(r.visitDate) > to) return false;
+        return true;
+      });
+
+      if (vSortCol >= 0) applySortVisits();
+      if (currentVisitView === 'detail') renderVisitTable(visitsFiltered);
+      else renderVisitPivot(visitsFiltered);
+    }
+
+    function clearVisitFilters() {
+      ['v-pnlFilter','v-tlFilter','v-empFilter','v-projFilter','v-devFilter', 'v-closureFilter','v-custFilter','v-phoneFilter','v-fromDate','v-toDate']
+        .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      visitsFiltered = [...visitsAll];
+      if (currentVisitView === 'detail') renderVisitTable(visitsFiltered);
+      else renderVisitPivot(visitsFiltered);
+    }
+
+    function switchVisitView(v) {
+      currentVisitView = v;
+      document.getElementById('v-detailTab').className = v === 'detail' ? "px-3 h-7 text-[11px] font-bold tracking-wide rounded-md transition-all duration-150 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs" : "px-3 h-7 text-[11px] font-bold tracking-wide rounded-md transition-all duration-150 text-slate-500 dark:text-slate-400";
+      document.getElementById('v-pivotTab').className = v === 'pivot' ? "px-3 h-7 text-[11px] font-bold tracking-wide rounded-md transition-all duration-150 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs" : "px-3 h-7 text-[11px] font-bold tracking-wide rounded-md transition-all duration-150 text-slate-500 dark:text-slate-400";
+      
+      document.getElementById('v-detailView').style.display = v === 'detail' ? 'block' : 'none';
+      document.getElementById('v-pivotView').style.display = v === 'pivot' ? 'block' : 'none';
+      if (v === 'detail') renderVisitTable(visitsFiltered);
+      else renderVisitPivot(visitsFiltered);
+    }
+
+    function renderVisitTable(rows) {
+      const tbody = document.getElementById('v-tbody');
+      document.getElementById('v-rowCount').textContent = `${rows.length} real-time active field visits logged`;
+      if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="10" class="px-4 py-8 text-center text-xs text-slate-400 dark:text-slate-500 italic">No operational pipeline records map to current filters.</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = rows.map(r => `
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors cursor-pointer group" onclick="openDetailModalWithRecord(${escJSON(r)})">
+          <td class="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">${esc(r.visitDate)} <span class="text-[10px] opacity-50 block">${esc(r.visitTime || '')}</span></td>
+          <td class="px-4 py-3">${esc(r.cluster)}</td>
+          <td class="px-4 py-3 font-medium">${esc(r.teamLead)}</td>
+          <td class="px-4 py-3">${esc(r.employee)}</td>
+          <td class="px-4 py-3 text-slate-900 dark:text-slate-200 font-semibold group-hover:text-brand-gold transition-colors">${esc(r.customer)}</td>
+          <td class="px-4 py-3 font-mono text-xs">${esc(r.phone)}</td>
+          <td class="px-4 py-3 font-medium text-slate-800 dark:text-slate-200">${esc(r.project)}</td>
+          <td class="px-4 py-3">${esc(r.developer)}</td>
+          <td class="px-4 py-3 font-medium text-emerald-600 dark:text-emerald-400">${r.budget ? '₹ ' + esc(r.budget) : '—'}</td>
+          <td class="px-4 py-3">${transformStatusToBadge(r.closure)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderVisitPivot(rows) {
+      const tbody = document.getElementById('v-pivotTbody');
+      const matrix = {};
+      rows.forEach(r => {
+        const emp = r.employee || 'Unmapped Rep';
+        const tl = r.teamLead || 'Management';
+        if (!matrix[emp]) matrix[emp] = { employee: emp, teamLead: tl, Excellent: 0, VeryGood: 0, Good: 0, Fair: 0, Poor: 0, Total: 0 };
+        
+        let cls = String(r.closure).replace(/\s+/g, '');
+        if (cls.toLowerCase() === 'verygood') cls = 'VeryGood';
+        else if (cls.toLowerCase() === 'excellent') cls = 'Excellent';
+        else if (cls.toLowerCase() === 'good') cls = 'Good';
+        else if (cls.toLowerCase() === 'fair') cls = 'Fair';
+        else if (cls.toLowerCase() === 'poor') cls = 'Poor';
+        else return;
+
+        matrix[emp][cls]++;
+        matrix[emp].Total++;
+      });
+
+      const items = Object.values(matrix).sort((a,b) => b.Total - a.Total);
+      if (!items.length) {
+        tbody.innerHTML = `<tr><td colspan="8" class="px-4 py-8 text-center text-xs text-slate-400 dark:text-slate-500 italic">No segment pivot aggregations calculated.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = items.map(g => `
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 divide-x divide-slate-100 dark:divide-slate-800">
+          <td class="px-4 py-2.5 font-medium text-slate-400">${esc(g.teamLead)}</td>
+          <td class="px-4 py-2.5 font-bold text-slate-800 dark:text-slate-200">${esc(g.employee)}</td>
+          <td class="px-4 py-2.5 text-center font-semibold text-emerald-500">${g.Excellent || '–'}</td>
+          <td class="px-4 py-2.5 text-center font-semibold text-teal-500">${g.VeryGood || '–'}</td>
+          <td class="px-4 py-2.5 text-center font-semibold text-sky-500">${g.Good || '–'}</td>
+          <td class="px-4 py-2.5 text-center font-semibold text-amber-500">${g.Fair || '–'}</td>
+          <td class="px-4 py-2.5 text-center font-semibold text-rose-500">${g.Poor || '–'}</td>
+          <td class="px-4 py-2.5 text-center font-bold text-brand-gold dark:text-brand-gold-light bg-slate-50/50 dark:bg-slate-800/30">${g.Total}</td>
+        </tr>
+      `).join('');
+    }
+
+    function populateVisitFilters(rows) {
+      fillSelect('v-pnlFilter', [...new Set(rows.map(r => r.pnlHead).filter(Boolean))].sort(), 'All PNL Heads');
+      fillSelect('v-tlFilter', [...new Set(rows.map(r => r.teamLead).filter(Boolean))].sort(), 'All Team Leads');
+      fillSelect('v-empFilter', [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(), 'All Employees');
+      fillSelect('v-projFilter', [...new Set(rows.map(r => r.project).filter(Boolean))].sort(), 'All Projects');
+      fillSelect('v-devFilter', [...new Set(rows.map(r => r.developer).filter(Boolean))].sort(), 'All Developers');
+    }
+
+    function sortVisits(col) {
+      if (vSortCol === col) vSortDir = vSortDir === 'asc' ? 'desc' : 'asc';
+      else { vSortCol = col; vSortDir = 'asc'; }
+      applySortVisits();
+      renderVisitTable(visitsFiltered);
+    }
+
+    function applySortVisits() {
+      const keys = ['visitDate','cluster','teamLead','employee','customer','phone','project','developer','budget','closure'];
+      const key = keys[vSortCol] || 'visitDate';
+      visitsFiltered.sort((a, b) => {
+        const v1 = String(a[key] || '');
+        const v2 = String(b[key] || '');
+        return vSortDir === 'asc' ? v1.localeCompare(v2) : v2.localeCompare(v1);
+      });
+    }
+
+    // ── VISIT DONE DATA ROUTINES SYSTEM HUB ──────────────────────────
+    function renderVDData(rows) {
+      vdAll = rows.map(r => ({ ...r, visitDate: fmtDate(r.visitDate) }));
+      vdFiltered = [...vdAll];
+      populateVDFilters(vdAll);
+      applyVDFilters();
+      document.getElementById('vd-lastUpdated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+    }
+
+    function applyVDFilters() {
+      const pnl = document.getElementById('vd-pnlFilter').value;
+      const tl = document.getElementById('vd-tlFilter').value;
+      const emp = document.getElementById('vd-empFilter').value;
+      const proj = document.getElementById('vd-projFilter').value;
+      const dev = document.getElementById('vd-devFilter').value;
+      const type = document.getElementById('vd-typeFilter').value;
+      const cust = (document.getElementById('vd-custFilter').value || '').trim().toLowerCase();
+
+      vdFiltered = vdAll.filter(r => {
+        if (pnl && r.pnlHead !== pnl) return false;
+        if (tl && r.teamLead !== tl) return false;
+        if (emp && r.employee !== emp) return false;
+        if (proj && r.project !== proj) return false;
+        if (dev && r.developer !== dev) return false;
+        if (type && r.sourcingType !== type) return false;
+        if (cust && !(r.customer||'').toLowerCase().includes(cust)) return false;
+        return true;
+      });
+
+      if (vdSortCol >= 0) applySortVD();
+      renderVDTable(vdFiltered);
+    }
+
+    function clearVDFilters() {
+      ['vd-pnlFilter','vd-tlFilter','vd-empFilter','vd-projFilter','vd-devFilter','vd-typeFilter','vd-custFilter']
+        .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      vdFiltered = [...vdAll];
+      renderVDTable(vdFiltered);
+    }
+
+    function renderVDTable(rows) {
+      const tbody = document.getElementById('vd-tbody');
+      document.getElementById('vd-rowCount').textContent = `${rows.length} validated finalized historical records loaded`;
+      if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="10" class="px-4 py-8 text-center text-xs text-slate-400 dark:text-slate-500 italic">No cleared visit done entities captured.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = rows.map(r => `
+        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
+          <td class="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">${esc(r.visitDate)}</td>
+          <td class="px-4 py-3 font-semibold text-slate-800 dark:text-slate-200">${esc(r.customer)}</td>
+          <td class="px-4 py-3 font-mono">${esc(r.phone)}</td>
+          <td class="px-4 py-3">${esc(r.teamLead)}</td>
+          <td class="px-4 py-3 font-medium">${esc(r.employee)}</td>
+          <td class="px-4 py-3 text-slate-800 dark:text-slate-200 font-semibold">${esc(r.project)}</td>
+          <td class="px-4 py-3">${esc(r.developer || '—')}</td>
+          <td class="px-4 py-3 max-w-xs truncate" title="${esc(r.remark || '')}">${esc(r.remark || '—')}</td>
+          <td class="px-4 py-3"><span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">${esc(r.sourcingType || 'Self')}</span></td>
+          <td class="px-4 py-3 text-center">
+            <button onclick='convertVDToFN(${escJSON(r)})' class="px-3 py-1 text-[11px] font-bold border border-brand-gold/40 hover:border-brand-gold text-brand-gold dark:text-brand-gold-light hover:bg-brand-gold/10 rounded-full transition-all">Pipeline Integration Form</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function populateVDFilters(rows) {
+      fillSelect('vd-pnlFilter', [...new Set(rows.map(r => r.pnlHead).filter(Boolean))].sort(), 'All PNL Heads');
+      fillSelect('vd-tlFilter', [...new Set(rows.map(r => r.teamLead).filter(Boolean))].sort(), 'All Team Leads');
+      fillSelect('vd-empFilter', [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(), 'All Employees');
+      fillSelect('vd-projFilter', [...new Set(rows.map(r => r.project).filter(Boolean))].sort(), 'All Projects');
+      fillSelect('vd-devFilter', [...new Set(rows.map(r => r.developer).filter(Boolean))].sort(), 'All Developers');
+    }
+
+    function sortVD(col) {
+      if (vdSortCol === col) vdSortDir = vdSortDir === 'asc' ? 'desc' : 'asc';
+      else { vdSortCol = col; vdSortDir = 'asc'; }
+      applySortVD();
+      renderVDTable(vdFiltered);
+    }
+
+    function applySortVD() {
+      const keys = ['visitDate','customer','phone','teamLead','employee','project'];
+      const key = keys[vdSortCol] || 'visitDate';
+      vdFiltered.sort((a,b) => {
+        const v1 = String(a[key] || '');
+        const v2 = String(b[key] || '');
+        return vdSortDir === 'asc' ? v1.localeCompare(v2) : v2.localeCompare(v1);
+      });
+    }
+
+    function convertVDToFN(row) {
+      const params = new URLSearchParams({
+        prefill: '1',
+        customerName: row.customer || '',
+        contactNumber: row.phone || '',
+        salesExec: row.employee || '',
+        teamLead: row.teamLead || '',
+        cluster: row.cluster || '',
+        projectName: row.project || '',
+        developerName: row.developer || '',
+        visitDate: row.visitDate || '',
+        convertedFromVisit: 'Yes'
+      });
+      window.open(FN_FORM_URL + '?' + params.toString(), '_blank');
+    }
+
+    // ── FN CLIENTS SYSTEM REGISTRY HUB LAYOUT DATAGRID ─────────────
+    function renderFNData(rows) {
+      fnAll = rows.map(r => ({ ...r, visitDate: fmtDate(r.visitDate) }));
+      populateFNFilters(fnAll);
+      
+      if (!isLoanDept()) {
+        const activeCount = fnAll.filter(r => FN_ACTIVE_STATUSES.includes(r.status)).length;
+        const note = document.getElementById('fnPrefilterNote');
+        if (activeCount < fnAll.length && activeCount > 0) {
+          note.style.display = 'flex';
+          fnSelectedStatuses = new Set(FN_ACTIVE_STATUSES);
+        } else {
+          note.style.display = 'none';
+          fnSelectedStatuses = new Set(FN_ALL_STATUSES);
+        }
+      }
+      syncMSDisplay();
+      applyFNFilters();
+    }
+
+    function applyFNFilters() {
+      const pnl = document.getElementById('fn-pnlFilter').value;
+      const tl = document.getElementById('fn-tlFilter').value;
+      const emp = document.getElementById('fn-empFilter').value;
+      const proj = document.getElementById('fn-projFilter').value;
+      const dev = document.getElementById('fn-devFilter').value;
+      const cust = (document.getElementById('fn-custFilter').value || '').trim().toLowerCase();
+      const phone = (document.getElementById('fn-phoneFilter').value || '').trim();
+      const from = document.getElementById('fn-fromDate').value;
+      const to = document.getElementById('fn-toDate').value;
+
+      fnFiltered = fnAll.filter(r => {
+        if (pnl && r.pnlHead !== pnl) return false;
+        if (tl && r.teamLead !== tl) return false;
+        if (emp && r.employee !== emp) return false;
+        if (proj && r.project !== proj) return false;
+        if (dev && r.developer !== dev) return false;
+        if (fnSelectedStatuses.size > 0 && !fnSelectedStatuses.has(r.status)) return false;
+        if (cust && !(r.customer||'').toLowerCase().includes(cust)) return false;
+        if (phone && !(r.phone||'').includes(phone)) return false;
+        if (from && fmtDate(r.timestamp) < from) return false;
+        if (to && fmtDate(r.timestamp) > to) return false;
+        return true;
+      });
+
+      if (fnView === 'detail') renderFNTable(fnFiltered);
+      else renderFNPivot(fnFiltered);
+    }
+
+    function clearFNFilters() {
+      ['fn-pnlFilter','fn-tlFilter','fn-empFilter','fn-projFilter','fn-devFilter','fn-custFilter','fn-phoneFilter','fn-fromDate','fn-toDate']
+        .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      if (!isLoanDept()) {
+        fnSelectedStatuses = new Set(FN_ACTIVE_STATUSES);
+        syncMSDisplay();
+      }
+      applyFNFilters();
+    }
+
+    function switchFNView(v) {
+      fnView = v;
+      document.getElementById('fn-detailTab').className = v === 'detail' ? "px-3 h-7 text-[11px] font-bold tracking-wide rounded-md transition-all duration-150 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs" : "px-3 h-7 text-[11px] font-bold tracking-wide rounded-md transition-all duration-150 text-slate-500 dark:text-slate-400";
+      document.getElementById('fn-pivotTab').className = v === 'pivot' ? "px-3 h-7 text-[11px] font-bold tracking-wide rounded-md transition-all duration-150 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs" : "px-3 h-7 text-[11px] font-bold tracking-wide rounded-md transition-all duration-150 text-slate-500 dark:text-slate-400";
+      
+      document.getElementById('fn-detailView').style.display = v === 'detail' ? 'block' : 'none';
+      document.getElementById('fn-pivotView').style.display = v === 'pivot' ? 'block' : 'none';
+      if (v === 'detail') renderFNTable(fnFiltered);
+      else renderFNPivot(fnFiltered);
+    }
+
+    function renderFNTable(rows) {
+      const tbody = document.getElementById('fn-tbody');
+      const totalCount = fnAll.filter(r => fnSelectedStatuses.has(r.status)).length;
+      const hiddenCount = fnAll.length - totalCount;
+      
+      let msg = `${rows.length} structured client logs mapped to query filters`;
+      if (hiddenCount > 0) msg += ` · (${hiddenCount} entries excluded outside current status sets)`;
+      document.getElementById('fn-rowCount').textContent = msg;
+
+      if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="11" class="px-4 py-8 text-center text-xs text-slate-400 dark:text-slate-500 italic">No target pipeline entities resolved in this query snapshot.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = rows.map(r => {
+        let createdDateStr = '—';
+        if (r.timestamp) {
+          try {
+            const d = new Date(r.timestamp);
+            if (!isNaN(d)) createdDateStr = d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+          } catch(e) {}
+        }
+        return `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors cursor-pointer group" onclick="openDetailModalWithRecord(${escJSON(r)})">
+            <td class="px-4 py-3 font-mono text-[11px] text-slate-400">${createdDateStr}</td>
+            <td class="px-4 py-3 font-medium">${esc(r.pnlHead)}</td>
+            <td class="px-4 py-3">${esc(r.employee)}</td>
+            <td class="px-4 py-3 text-slate-900 dark:text-slate-200 font-bold group-hover:text-brand-gold transition-all">${esc(r.customer)}</td>
+            <td class="px-4 py-3 font-mono">${esc(r.phone)}</td>
+            <td class="px-4 py-3 text-slate-800 dark:text-slate-200 font-semibold">${esc(r.project)}</td>
+            <td class="px-4 py-3 font-medium text-emerald-600 dark:text-emerald-400">${r.budget ? '₹ ' + esc(r.budget) : '—'}</td>
+            <td class="px-4 py-3">${transformStatusToBadge(r.status)}</td>
+            <td class="px-4 py-3 max-w-xs truncate text-slate-400" title="${esc(r.operationsRemark || '')}">${esc(r.operationsRemark || '—')}</td>
+            <td class="px-4 py-3 text-[11px] text-slate-400">${r.lastModifiedTime ? String(r.lastModifiedTime).substring(11,19) : '—'}</td>
+            <td class="px-4 py-3 text-center">${r.convertedFromVisit === 'Yes' ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border border-amber-200/40">VISIT_CONV</span>' : '—'}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderFNPivot(rows) {
+      const tbody = document.getElementById('fn-pivotTbody');
+      const matrix = {};
+      
+      rows.forEach(r => {
+        const emp = r.employee || 'Unmapped Officer';
+        const tl = r.teamLead || 'Management Context';
+        if (!matrix[emp]) matrix[emp] = { employee: emp, teamLead: tl, Hot:0, Warm:0, Cold:0, Lost:0, Booked:0, Total:0 };
+        
+        const s = r.status;
+        if (['Hot','Warm','Cold','Lost','Booked'].includes(s)) {
+          matrix[emp][s]++;
+          matrix[emp].Total++;
+        }
+      });
+
+      const entries = Object.values(matrix).sort((a,b) => b.Total - a.Total);
+      if (!entries.length) {
+        tbody.innerHTML = `<tr><td colspan="8" class="px-4 py-8 text-center text-xs text-slate-400 dark:text-slate-500 italic">No aggregated pivot vectors mapped.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = entries.map(g => {
+        const makeCell = (count, statusClass, labelStr) => {
+          if (count === 0) return `<td class="px-4 py-2.5 text-center text-slate-300 dark:text-slate-700 font-mono">–</td>`;
+          let colorCls = "text-slate-900 dark:text-slate-100";
+          if (labelStr === 'Hot') colorCls = "text-red-500 font-bold hover:underline cursor-pointer";
+          if (labelStr === 'Warm') colorCls = "text-amber-500 font-bold hover:underline cursor-pointer";
+          if (labelStr === 'Cold') colorCls = "text-sky-500 font-bold hover:underline cursor-pointer";
+          if (labelStr === 'Lost') colorCls = "text-slate-400 hover:underline cursor-pointer";
+          if (labelStr === 'Booked') colorCls = "text-emerald-500 font-extrabold hover:underline cursor-pointer";
+          
+          return `<td class="px-4 py-2.5 text-center ${colorCls}" onclick="openDrillModal(event,'${esc(g.employee)}','${labelStr}')">${count}</td>`;
+        };
+
+        return `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 divide-x divide-slate-100 dark:divide-slate-800">
+            <td class="px-4 py-2.5 text-slate-400 font-medium">${esc(g.teamLead)}</td>
+            <td class="px-4 py-2.5 font-bold text-slate-800 dark:text-slate-200">${esc(g.employee)}</td>
+            ${makeCell(g.Hot, 'hot', 'Hot')}
+            ${makeCell(g.Warm, 'warm', 'Warm')}
+            ${makeCell(g.Cold, 'cold', 'Cold')}
+            ${makeCell(g.Lost, 'lost', 'Lost')}
+            ${makeCell(g.Booked, 'booked', 'Booked')}
+            <td class="px-4 py-2.5 text-center font-bold text-brand-gold dark:text-brand-gold-light hover:underline cursor-pointer bg-slate-50 dark:bg-slate-800/30" onclick="openDrillModal(event,'${esc(g.employee)}','All')">${g.Total}</td>
+          </tr>
+        `;
+      }).join('');
+      document.getElementById('fn-rowCount').textContent = `${entries.length} corporate employees structured inside matrix data layout.`;
+    }
+
+    function populateFNFilters(rows) {
+      fillSelect('fn-pnlFilter', [...new Set(rows.map(r => r.pnlHead).filter(Boolean))].sort(), 'All PNL Heads');
+      fillSelect('fn-tlFilter', [...new Set(rows.map(r => r.teamLead).filter(Boolean))].sort(), 'All Team Leads');
+      fillSelect('fn-empFilter', [...new Set(rows.map(r => r.employee).filter(Boolean))].sort(), 'All Employees');
+      fillSelect('fn-projFilter', [...new Set(rows.map(r => r.project).filter(Boolean))].sort(), 'All Projects');
+      fillSelect('fn-devFilter', [...new Set(rows.map(r => r.developer).filter(Boolean))].sort(), 'All Developers');
+    }
+
+    // ── INTERACTIVE VIEW DIALOG 1 DETAILED MODAL WORKFLOW ──────────
+    function openDetailModalWithRecord(r) {
+      const modal = document.getElementById('detailModal');
+      document.getElementById('modalCustomerName').textContent = r.customer || 'Target Dossier Record';
+      
+      const fields = [
+        { label: 'Cluster Unit Pool', value: r.cluster },
+        { label: 'PNL Head Lead', value: r.pnlHead },
+        { label: 'Team Director', value: r.teamLead },
+        { label: 'Assigned Executive', value: r.employee },
+        { label: 'Customer Full Identity', value: r.customer },
+        { label: 'Contact Phone String', value: r.phone },
+        { label: 'Asset Structural Config', value: r.configuration || r.requirement },
+        { label: 'Budget Class Scope', value: r.budget ? '₹ ' + r.budget : '' },
+        { label: 'Chronological Logging Step', value: r.visitDate || r.timestamp },
+        { label: 'Target Project Node', value: r.project },
+        { label: 'Developer Entity Sourcing', value: r.developer || r.builderSourcingName },
+        { label: 'Builder Liaison Head', value: r.builderSourcingName },
+        { label: 'Liaison Dial Sequence', value: r.builderSourcingContact },
+        { label: 'Primary Field Narrative Remark', value: r.remark, full: true },
+        { label: 'Master Operations Remark Trail', value: r.operationsRemark || r.closingRemark, full: true }
+      ];
+
+      const grid = document.getElementById('detailGrid');
+      grid.innerHTML = fields.map(f => {
+        const val = f.value ? String(f.value).trim() : '';
+        return `
+          <div class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/80 ${f.full ? 'sm:col-span-2' : ''}">
+            <span class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-0.5">${f.label}</span>
+            <div class="text-xs font-semibold text-slate-800 dark:text-slate-200 break-words">${val || '<span class="text-slate-300 dark:text-slate-700 italic font-normal">Empty line trace</span>'}</div>
+          </div>
+        `;
+      }).join('');
+
+      window._currentDetailRecord = r;
+      
+      const panel = document.getElementById('adminEditPanel');
+      panel.style.display = isAdmin() ? 'block' : 'none';
+      if (isAdmin()) {
+        document.getElementById('adminCurrentStatus').textContent = r.status || r.closure || 'Unaligned';
+        document.getElementById('adminStatusSelect').value = '';
+        document.getElementById('adminRemarkInput').value = '';
+        document.getElementById('adminSaveStatus').textContent = '';
+      }
+
+      modal.classList.remove('pointer-events-none', 'opacity-0');
+      modal.querySelector('div').classList.remove('scale-95');
+    }
+
+    function closeDetailModal() {
+      const modal = document.getElementById('detailModal');
+      modal.classList.add('pointer-events-none', 'opacity-0');
+      modal.querySelector('div').classList.add('scale-95');
+    }
+
+    // ── CORE DATA POST BACK INTERACTION CONTROLLER ──────────────────
+    function saveAdminUpdate() {
+      const r = window._currentDetailRecord;
+      if (!r || !isAdmin()) return;
+
+      const newStatus = document.getElementById('adminStatusSelect').value;
+      const remarkInput = document.getElementById('adminRemarkInput').value.trim();
+
+      if (!newStatus && !remarkInput) {
+        setAdminSaveStatus('Provide status modification tokens or log updates.', true);
+        return;
+      }
+
+      document.getElementById('adminSaveBtn').disabled = true;
+      setAdminSaveStatus('Committing pipeline updates to remote ledger...');
+
+      const stamp = `[${new Date().toLocaleDateString('en-IN')} ${auth.user}]: `;
+      let combinedRemark = r.operationsRemark || '';
+      if (remarkInput) {
+        combinedRemark = combinedRemark ? combinedRemark + '\n' + stamp + remarkInput : stamp + remarkInput;
+      }
+
+      const payload = JSON.stringify({
+        action: 'updateFNClient',
+        rowIndex: r.rowIndex,
+        newStatus: newStatus || r.status,
+        operationsRemark: combinedRemark,
+        customerName: r.customer || '',
+        phone: r.phone || '',
+        username: auth.user,
+        password: auth.pass,
+        role: auth.role
+      });
+
+      fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'data=' + encodeURIComponent(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('adminSaveBtn').disabled = false;
+        if (data.ok) {
+          if (newStatus) r.status = newStatus;
+          r.operationsRemark = combinedRemark;
+          document.getElementById('adminCurrentStatus').textContent = r.status;
+          document.getElementById('adminStatusSelect').value = '';
+          document.getElementById('adminRemarkInput').value = '';
+          
+          const updateInArr = arr => {
+            const f = arr.find(x => x.rowIndex === r.rowIndex);
+            if (f) { if (newStatus) f.status = r.status; f.operationsRemark = r.operationsRemark; }
+          };
+          updateInArr(fnAll);
+          updateInArr(fnFiltered);
+
+          if (fnView === 'detail') renderFNTable(fnFiltered);
+          else renderFNPivot(fnFiltered);
+
+          setAdminSaveStatus('✓ Synchronization confirmed.', false);
+        } else {
+          setAdminSaveStatus('Error matching sequence: ' + (data.error || 'Server rejected token.'), true);
+        }
+      })
+      .catch(() => {
+        document.getElementById('adminSaveBtn').disabled = false;
+        setAdminSaveStatus('Network transit breakdown connection fault. Retry.', true);
+      });
+    }
+
+    function setAdminSaveStatus(msg, isErr) {
+      const el = document.getElementById('adminSaveStatus');
+      el.textContent = msg;
+      el.className = `text-[11px] font-medium ${isErr === false ? 'text-emerald-500' : isErr ? 'text-rose-500' : 'text-slate-400'}`;
+    }
+
+    // ── AUDIT SUBGRID DATAGRID DRILLDOWN MODAL WORKFLOW ────────────
+    function openDrillModal(e, employeeName, statusLabel) {
+      if (e) e.stopPropagation();
+      const modal = document.getElementById('drillModal');
+      document.getElementById('drillTitle').innerHTML = `Audit Trail Scope Partition: <span class="text-brand-gold font-bold">${esc(employeeName)}</span> &mdash; <span class="text-slate-400">${statusLabel} Segment Set</span>`;
+
+      let targets = fnFiltered.filter(r => (r.employee || 'Unmapped Officer') === employeeName);
+      if (statusLabel !== 'All') {
+        targets = targets.filter(r => r.status === statusLabel);
+      }
+
+      const wrap = document.getElementById('drillTableWrap');
+      if (!targets.length) {
+        wrap.innerHTML = `<div class="p-8 text-xs text-slate-400 italic text-center">No structural vectors mapped to isolated segment trail definitions.</div>`;
+      } else {
+        wrap.innerHTML = `
+          <table class="w-full text-left text-xs whitespace-nowrap">
+            <thead class="bg-slate-50 dark:bg-slate-800 text-slate-400 font-bold uppercase tracking-wider sticky top-0 border-b border-slate-200 dark:border-slate-800">
+              <tr>
+                <th class="px-4 py-3">Logged Date</th>
+                <th class="px-4 py-3">Customer Profile</th>
+                <th class="px-4 py-3">Contact Dial</th>
+                <th class="px-4 py-3">Project</th>
+                <th class="px-4 py-3">Value Class</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3">Logs Commentary</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300">
+              ${targets.map(t => `
+                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer" onclick="openDetailModalWithRecord(${escJSON(t)})">
+                  <td class="px-4 py-2.5 text-[11px] font-mono">${t.timestamp ? String(t.timestamp).substring(0,10) : '—'}</td>
+                  <td class="px-4 py-2.5 font-bold text-slate-900 dark:text-slate-100">${esc(t.customer)}</td>
+                  <td class="px-4 py-2.5 font-mono">${esc(t.phone)}</td>
+                  <td class="px-4 py-2.5 font-medium">${esc(t.project)}</td>
+                  <td class="px-4 py-2.5 text-emerald-600 dark:text-emerald-400 font-semibold">${t.budget ? '₹ ' + t.budget : '—'}</td>
+                  <td class="px-4 py-2.5">${transformStatusToBadge(t.status)}</td>
+                  <td class="px-4 py-2.5 max-w-xs truncate text-[11px] text-slate-400" title="${esc(t.operationsRemark)}">${esc(t.operationsRemark || '—')}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+
+      modal.classList.remove('pointer-events-none', 'opacity-0');
+      modal.querySelector('div').classList.remove('scale-95');
+    }
+
+    function closeDrillModal() {
+      const modal = document.getElementById('drillModal');
+      modal.classList.add('pointer-events-none', 'opacity-0');
+      modal.querySelector('div').classList.add('scale-95');
+    }
+
+    // ESC Key closure listeners binding onto all dynamic layer overlay frames
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closeDetailModal(); closeDrillModal(); }
+    });
+
+    // ── HIGH DESIGN DATA RENDERING TOKENS TRANSFORMATION HELPERS ──
+    function transformStatusToBadge(s) {
+      if (!s) return '<span class="text-slate-300 dark:text-slate-700">—</span>';
+      let bg = "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300";
+      const clean = String(s).trim().toLowerCase().replace(/\s+/g, '');
+      
+      if (clean === 'hot' || clean === 'excellent') bg = "bg-rose-50 text-rose-600 dark:bg-rose-950/30 dark:text-rose-400 border border-rose-200/40 dark:border-rose-900/30";
+      else if (clean === 'warm' || clean === 'verygood') bg = "bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400 border border-amber-200/40 dark:border-amber-900/30";
+      else if (clean === 'cold' || clean === 'good') bg = "bg-sky-50 text-sky-600 dark:bg-sky-950/30 dark:text-sky-400 border border-sky-200/40 dark:border-sky-900/30";
+      else if (clean === 'fair') bg = "bg-purple-50 text-purple-600 dark:bg-purple-950/30 dark:text-purple-400 border border-purple-200/40 dark:border-purple-900/30";
+      else if (clean === 'poor' || clean === 'lost') bg = "bg-slate-100 text-slate-500 dark:bg-slate-800/60 dark:text-slate-400 border border-slate-200/40 dark:border-slate-700/30";
+      else if (clean === 'booked' || clean === 'yes') bg = "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400 border border-emerald-200/40 dark:border-emerald-900/30";
+
+      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide uppercase ${bg}">${s}</span>`;
+    }
+
+    function fillSelect(id, values, placeholder) {
+      const sel = document.getElementById(id);
+      if (!sel) return;
+      const curr = sel.value;
+      sel.innerHTML = `<option value="">${placeholder}</option>`;
+      values.forEach(v => sel.innerHTML += `<option value="${esc(v)}">${esc(v)}</option>`);
+      if (curr) sel.value = curr;
+    }
+
+    function esc(s) {
+      return String(s || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+    function escJSON(obj) {
+      return esc(JSON.stringify(obj || {}));
+    }
+    function fmtDate(s) {
+      if (!s) return '';
+      const d = new Date(s);
+      if (isNaN(d)) return s;
+      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    }
+
+    // ── DATA INTERCEPT MATRIX LOADER JSONP TRANSLATION SCRIPTS ──────
+    function jsonpFetch(url, params, onSuccess, onError) {
+      const cbName = '__cb_' + Date.now() + '_' + Math.random().toString(36).substring(2,10);
+      window[cbName] = function(data) {
+        onSuccess(data);
+        cleanup();
+      };
+
+      let timeoutId = setTimeout(() => {
+        onError();
+        cleanup();
+      }, 25000); // 25s timeout drop standard
+
+      function cleanup() {
+        clearTimeout(timeoutId);
+        if (script && script.parentNode) script.parentNode.removeChild(script);
+        delete window[cbName];
+      }
+
+      const q = new URLSearchParams();
+      Object.keys(params).forEach(k => q.append(k, params[k]));
+      q.append('callback', cbName);
+
+      const script = document.createElement('script');
+      script.src = url + '?' + q.toString();
+      document.body.appendChild(script);
+    }
+
+    // Global document visibility state handlers to manage refresh polling overheads
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { if (refreshTimer) clearInterval(refreshTimer); }
+      else if (auth && !isLoanDept()) { startAutoRefresh(); setTimeout(refreshAll, 500); }
+    });
+
+    // ── PLATFORM INITIATION ENTRY TRIGGER POINT ────────────────────
+    window.addEventListener('DOMContentLoaded', checkSession);
+  </script>
 </body>
 </html>
