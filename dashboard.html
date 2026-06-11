@@ -24,6 +24,7 @@
       --green:      #1e7c47;
       --blue:       #1a4fa0;
       --orange:     #b85c00;
+      --teal:       #0e7c6a;
       --text:       #1a1a2e;
       --text-muted: #6b6b80;
       --text-dim:   #4a4a60;
@@ -47,6 +48,7 @@
       --green:      #52c47e;
       --blue:       #5c9be0;
       --orange:     #e08c5c;
+      --teal:       #34c4a8;
       --text:       #f0ede6;
       --text-muted: #7a7a8e;
       --text-dim:   #a0a0b4;
@@ -97,7 +99,6 @@
     }
     .logo span { color: var(--text-muted); font-size: 0.7rem; font-weight: 400; font-family: 'Outfit', sans-serif; letter-spacing: 0.04em; display: block; margin-top: -2px; }
 
-    /* Dashboard tabs in header */
     .dash-tabs {
       display: flex;
       gap: 4px;
@@ -257,8 +258,6 @@
     #dashPanel { display: none; flex-direction: column; flex: 1; }
 
     /* ── Filters Bar ──────────────────────────────────────────── */
-    /* PREMIUM FILTER BAR */
-
     .filters-bar {
       margin: 12px 14px;
       padding: 18px;
@@ -323,6 +322,141 @@
     .filter-item select option { background: var(--surface2); }
     .filter-item select:focus, .filter-item input:focus { border-color: var(--gold); }
 
+    /* ── Multi-Select Status Filter ─────────────────────────── */
+    .ms-wrap {
+      position: relative;
+    }
+    .ms-trigger {
+      height: 38px;
+      padding: 0 28px 0 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.76rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.25s ease;
+      user-select: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      position: relative;
+    }
+    .ms-trigger::after {
+      content: '';
+      position: absolute;
+      right: 10px; top: 50%;
+      transform: translateY(-50%);
+      width: 12px; height: 12px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7a8e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    .ms-trigger:hover { border-color: rgba(201,168,76,0.35); }
+    .ms-trigger.open  { border-color: var(--gold); background: rgba(201,168,76,0.06); }
+
+    .ms-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      min-width: 180px;
+      background: var(--surface2);
+      border: 1.5px solid var(--border-mid);
+      border-radius: 12px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.45);
+      z-index: 300;
+      overflow: hidden;
+      display: none;
+    }
+    .ms-dropdown.open { display: block; }
+
+    .ms-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 500;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+      color: var(--text-dim);
+    }
+    .ms-option:last-child { border-bottom: none; }
+    .ms-option:hover { background: var(--surface3); color: var(--text); }
+    .ms-option.selected { background: var(--gold-dim); color: var(--text); }
+
+    .ms-checkbox {
+      width: 16px; height: 16px;
+      border: 2px solid var(--border-mid);
+      border-radius: 4px;
+      background: transparent;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .ms-option.selected .ms-checkbox {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+    .ms-option.selected .ms-checkbox::after {
+      content: '✓';
+      font-size: 10px;
+      font-weight: 700;
+      color: #0e0f14;
+      line-height: 1;
+    }
+
+    /* Pre-filter banner */
+    .prefilter-note {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      margin: 0 14px 0;
+      background: rgba(201,168,76,0.08);
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 10px;
+      font-size: 0.76rem;
+      color: var(--gold);
+      font-weight: 500;
+    }
+    .prefilter-note button {
+      margin-left: auto;
+      padding: 3px 10px;
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 6px;
+      color: var(--gold);
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Outfit', sans-serif;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .prefilter-note button:hover { background: rgba(201,168,76,0.25); }
+
+    /* Loan dept banner */
+    .loan-dept-banner {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      margin: 0 14px 0;
+      background: rgba(52,196,168,0.08);
+      border: 1px solid rgba(52,196,168,0.25);
+      border-radius: 10px;
+      font-size: 0.76rem;
+      color: var(--teal);
+      font-weight: 600;
+    }
+
     .clear-btn {
       padding: 7px 16px;
       background: transparent;
@@ -339,11 +473,7 @@
     .clear-btn:hover { border-color: var(--text-muted); color: var(--text); }
 
     @media(max-width:768px){
-        .filter-control,
-        .filter-control select,
-        .filter-control input{
-            font-size:12px;
-        }
+      .filter-item select, .filter-item input { font-size: 12px; }
     }
 
     /* ── Table Header ─────────────────────────────────────────── */
@@ -417,6 +547,8 @@
     .badge-hot    { background: rgba(224,92,92,0.15);  color: #e05c5c; }
     .badge-warm   { background: rgba(224,140,92,0.15); color: #e08c5c; }
     .badge-cold   { background: rgba(92,155,224,0.15); color: #5c9be0; }
+    .badge-lost   { background: rgba(120,120,150,0.15); color: #9090b8; }
+    .badge-booked { background: rgba(52,196,126,0.15); color: #34c47a; }
     .badge-yes    { background: rgba(82,196,126,0.15); color: #52c47e; }
     .badge-no     { background: rgba(224,92,92,0.12);  color: #e05c5c; }
     .badge-conv   { background: rgba(201,168,76,0.15); color: var(--gold); }
@@ -453,7 +585,6 @@
     }
     td.total.clickable { cursor: pointer; }
 
-    /* ── Clickable table rows ─────────────────────────────────── */
     tr.clickable-row { cursor: pointer; }
     tr.clickable-row:hover td { background: var(--surface3); color: var(--text); }
 
@@ -536,7 +667,7 @@
     .detail-value.gold { color: var(--gold); font-weight: 700; }
     .detail-value.muted { color: var(--text-muted); font-style: italic; }
 
-    /* ── Drill-down popup (pivot click) ──────────────────────── */
+    /* ── Drill-down popup ──────────────────────────────────────── */
     .drill-overlay {
       position: fixed; inset: 0; z-index: 600;
       background: rgba(0,0,0,0.75);
@@ -571,7 +702,7 @@
     .drill-title span { color: var(--gold); }
     .drill-table-wrap { overflow: auto; flex: 1; scrollbar-width: thin; scrollbar-color: var(--border-mid) transparent; }
 
-    /* ── Revenue placeholder tab ──────────────────────────────── */
+    /* ── Revenue placeholder ──────────────────────────────────── */
     .revenue-placeholder {
       flex: 1;
       display: flex; flex-direction: column;
@@ -604,7 +735,7 @@
     .refresh-indicator.show { display: block; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-    /* ── View Tabs (Detail / Pivot) ──────────────────────────── */
+    /* ── View Tabs ───────────────────────────────────────────── */
     .view-tabs {
       display: flex; gap: 4px;
       background: var(--surface2);
@@ -684,13 +815,8 @@
       transition: border-color var(--transition);
       outline: none;
     }
-    .admin-edit-select:focus, .admin-edit-textarea:focus {
-      border-color: var(--gold);
-    }
-    .admin-edit-textarea {
-      min-height: 72px;
-      resize: vertical;
-    }
+    .admin-edit-select:focus, .admin-edit-textarea:focus { border-color: var(--gold); }
+    .admin-edit-textarea { min-height: 72px; resize: vertical; }
     .admin-save-btn {
       width: 100%;
       padding: 10px;
@@ -716,7 +842,6 @@
     .admin-save-status.ok  { color: var(--green); }
     .admin-save-status.err { color: var(--red); }
 
-    /* ── Responsive ─────────────────────────────────────────────── */
     /* Theme toggle */
     .theme-toggle {
       width: 34px; height: 34px;
@@ -729,7 +854,6 @@
     }
     .theme-toggle:hover { border-color: var(--gold); color: var(--gold); }
 
-    /* Prevent iOS zoom on inputs */
     .form-field input, .form-field select,
     .filter-item select, .filter-item input { font-size: 16px !important; }
 
@@ -759,7 +883,6 @@
       .detail-item.full { grid-column: 1; }
       .drill-overlay { padding: 0; align-items: flex-end; }
       .drill-box { max-width: 100%; max-height: 88vh; border-radius: 18px 18px 0 0; }
-      .revenue-placeholder { padding: 2rem 1.2rem; }
     }
     @media (max-width: 480px) {
       .convert-btn { padding: 3px 8px; font-size: 0.65rem; }
@@ -789,8 +912,8 @@
       <div class="profile-avatar" onclick="toggleProfile()" id="profileAvatar">?</div>
       <div class="profile-dropdown" id="profileDropdown">
         <div class="pd-item username" id="pdUsername">—</div>
-        <div class="pd-item" onclick="window.open('index.html')">📋 Friday Lineup Form</div>
-        <div class="pd-item" onclick="window.open('https://thore-india.github.io/FN_Clients_Form/index.html')">🏆 FN Clients Form</div>
+        <div class="pd-item" id="pdFormLink" onclick="window.open('index.html')">📋 Friday Lineup Form</div>
+        <div class="pd-item" id="pdFNLink" onclick="window.open('https://thore-india.github.io/FN_Clients_Form/index.html')">🏆 FN Clients Form</div>
         <div class="pd-item logout" onclick="logout()">Sign Out</div>
       </div>
     </div>
@@ -814,6 +937,7 @@
           <option>PNL Head</option>
           <option>Admin</option>
           <option>MD/CEO</option>
+          <option>Loan Department</option>
         </select>
       </div>
       <div class="form-field">
@@ -834,7 +958,6 @@
 
     <!-- Visits Dashboard -->
     <div id="visitsDash">
-      <!-- Filters -->
       <div class="filters-bar">
         <div class="filters-grid">
           <div class="filter-item">
@@ -888,13 +1011,10 @@
           </div>
         </div>
       </div>
-
       <div class="table-meta">
         <div class="row-count" id="v-rowCount">Loading…</div>
         <div class="last-updated" id="v-lastUpdated"></div>
       </div>
-
-      <!-- Detail Table -->
       <div id="v-detailView" class="table-wrap">
         <table id="v-table">
           <thead>
@@ -917,13 +1037,8 @@
           <tbody id="v-tbody"></tbody>
         </table>
       </div>
-
-      <!-- Pivot Table -->
       <div id="v-pivotView" class="table-wrap" style="display:none;">
-        <table id="v-pivot">
-          <thead></thead>
-          <tbody></tbody>
-        </table>
+        <table id="v-pivot"><thead></thead><tbody></tbody></table>
       </div>
     </div><!-- #visitsDash -->
 
@@ -1000,6 +1115,18 @@
 
     <!-- FN Clients Dashboard -->
     <div id="fnDash" style="display:none;">
+
+      <!-- Loan Dept Banner -->
+      <div class="loan-dept-banner" id="loanDeptBanner">
+        💼 Loan Department View — showing only <strong style="margin:0 4px">Lost</strong> &amp; <strong style="margin:0 4px">Booked</strong> clients
+      </div>
+
+      <!-- Pre-filter note (shown when Lost/Booked are hidden) -->
+      <div class="prefilter-note" id="fnPrefilterNote" style="display:none;">
+        ℹ️ Showing active clients only (Hot, Warm, Cold). Lost &amp; Booked are hidden.
+        <button onclick="showAllFNStatuses()">Show All</button>
+      </div>
+
       <!-- Filters -->
       <div class="filters-bar">
         <div class="filters-grid">
@@ -1018,14 +1145,33 @@
           <div class="filter-item">
             <select id="fn-devFilter" onchange="applyFNFilters()"><option value="">All Developers</option></select>
           </div>
+
+          <!-- Multi-select Status Filter -->
           <div class="filter-item">
-            <select id="fn-statusFilter" onchange="applyFNFilters()">
-              <option value="">All Statuses</option>
-              <option>Hot</option>
-              <option>Warm</option>
-              <option>Cold</option>
-            </select>
+            <div class="ms-wrap" id="fnStatusWrap">
+              <div class="ms-trigger" id="fnStatusTrigger" onclick="toggleMSDropdown()">
+                <span id="fnStatusLabel">Status: Active</span>
+              </div>
+              <div class="ms-dropdown" id="fnStatusDropdown">
+                <div class="ms-option" data-value="Hot"    onclick="toggleMSOption(this)">
+                  <div class="ms-checkbox"></div><span>🔴 Hot</span>
+                </div>
+                <div class="ms-option" data-value="Warm"   onclick="toggleMSOption(this)">
+                  <div class="ms-checkbox"></div><span>🟠 Warm</span>
+                </div>
+                <div class="ms-option" data-value="Cold"   onclick="toggleMSOption(this)">
+                  <div class="ms-checkbox"></div><span>🔵 Cold</span>
+                </div>
+                <div class="ms-option" data-value="Lost"   onclick="toggleMSOption(this)">
+                  <div class="ms-checkbox"></div><span>⚫ Lost</span>
+                </div>
+                <div class="ms-option" data-value="Booked" onclick="toggleMSOption(this)">
+                  <div class="ms-checkbox"></div><span>✅ Booked</span>
+                </div>
+              </div>
+            </div>
           </div>
+
           <div class="filter-item">
             <input type="text" id="fn-custFilter" placeholder="Customer Name Search…" oninput="applyFNFilters()">
           </div>
@@ -1044,7 +1190,7 @@
             <div style="height:18px;"></div>
             <div style="display:flex;gap:8px;align-items:center;">
               <button class="clear-btn" onclick="clearFNFilters()">Clear</button>
-              <div class="view-tabs">
+              <div class="view-tabs" id="fnViewTabs">
                 <button class="view-tab active" id="fn-detailTab" onclick="switchFNView('detail')">Detail</button>
                 <button class="view-tab" id="fn-pivotTab" onclick="switchFNView('pivot')">Pivot</button>
               </div>
@@ -1082,14 +1228,11 @@
 
       <!-- Pivot Table -->
       <div id="fn-pivotView" class="table-wrap" style="display:none;">
-        <table id="fn-pivot">
-          <thead></thead>
-          <tbody></tbody>
-        </table>
+        <table id="fn-pivot"><thead></thead><tbody></tbody></table>
       </div>
     </div><!-- #fnDash -->
 
-    <!-- Revenue Dashboard (placeholder) -->
+    <!-- Revenue Dashboard -->
     <div id="revDash" style="display:none; flex:1;">
       <div class="revenue-placeholder">
         <div class="rev-icon">💰</div>
@@ -1110,8 +1253,6 @@
     </div>
     <div class="modal-body">
       <div class="detail-grid" id="detailGrid"></div>
-
-      <!-- Admin Edit Panel — shown only to Admin / MD/CEO -->
       <div class="admin-edit-panel" id="adminEditPanel" style="display:none;">
         <div class="admin-edit-title">✏️ Operations Update</div>
         <div class="admin-edit-row">
@@ -1122,6 +1263,8 @@
               <option value="Hot">🔴 Hot</option>
               <option value="Warm">🟠 Warm</option>
               <option value="Cold">🔵 Cold</option>
+              <option value="Lost">⚫ Lost</option>
+              <option value="Booked">✅ Booked</option>
             </select>
           </div>
           <div>
@@ -1142,7 +1285,7 @@
   </div>
 </div>
 
-<!-- Drill-down Modal (pivot click) -->
+<!-- Drill-down Modal -->
 <div class="drill-overlay" id="drillModal" onclick="closeDrillModal(event)">
   <div class="drill-box">
     <div class="drill-header">
@@ -1170,15 +1313,7 @@
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────
-// Friday Lineup GAS — reads/writes the Friday Lineup spreadsheet
 const GAS_URL    = 'https://script.google.com/macros/s/AKfycbwL4V1nCL4M-BAMbHX0Wupfa_2mxaJXrb_p9japd1ZdAkesb4BUumSJBFGH54js7pe3/exec';
-
-// FN Clients GAS — reads/writes the FN Clients spreadsheet (separate deployment)
-// FN Clients data now reads from Friday Lineup GAS (single source of truth).
-// GAS_URL_FN is no longer needed — both Visits and FN Clients data come from GAS_URL.
-// The old FN Clients GAS still receives forwarded copies server-side (handled by code.gs).
-
-// FN Clients form — hosted in the FN_Clients_Form GitHub repo
 const FN_FORM_URL = 'https://thore-india.github.io/FN_Clients_Form/index.html';
 
 // ── SESSION KEYS ──────────────────────────────────────────────
@@ -1188,7 +1323,7 @@ const SK = { role:'d_role', user:'d_user', pass:'d_pass', time:'d_time' };
 let auth             = null;
 let refreshTimer     = null;
 let isRefreshing     = false;
-let activeDash       = 'visits';   // 'visits' | 'fnclients'
+let activeDash       = 'visits';
 let currentVisitView = 'detail';
 
 // Visits
@@ -1202,12 +1337,32 @@ let vdSortCol = -1, vdSortDir = 'asc';
 // FN Clients
 let fnAll = [], fnFiltered = [];
 let fnSortCol = -1, fnSortDir = 'asc';
+let fnView = 'detail';
+
+// FN Multi-select status filter state
+// Default: Hot, Warm, Cold selected (Lost and Booked hidden by default)
+let fnSelectedStatuses = new Set(['Hot', 'Warm', 'Cold']);
+
+// All possible FN statuses
+const FN_ACTIVE_STATUSES   = ['Hot', 'Warm', 'Cold'];
+const FN_INACTIVE_STATUSES = ['Lost', 'Booked'];
+const FN_ALL_STATUSES      = [...FN_ACTIVE_STATUSES, ...FN_INACTIVE_STATUSES];
 
 // ── BOOT ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('yr').textContent = new Date().getFullYear();
   checkStoredSession();
+  // Init multi-select display
+  syncMSDisplay();
 });
+
+// ── ROLE HELPERS ──────────────────────────────────────────────
+function isLoanDept() {
+  return auth && auth.role.toLowerCase() === 'loan department';
+}
+function isAdmin() {
+  return auth && ['admin','md/ceo','md','ceo','management'].includes(auth.role.toLowerCase());
+}
 
 // ── AUTH ──────────────────────────────────────────────────────
 function login() {
@@ -1218,17 +1373,22 @@ function login() {
   setLoginStatus('Checking credentials…');
   document.getElementById('loginBtn').disabled = true;
 
-  jsonpFetch(GAS_URL, { action: 'getVisitData', role, username: user, password: pass }, data => {
+  // Loan Department logs in via getFNClientsData (they only access FN clients)
+  const loginAction = role.toLowerCase() === 'loan department'
+    ? 'getFNClientsData'
+    : 'getVisitData';
+
+  jsonpFetch(GAS_URL, { action: loginAction, role, username: user, password: pass }, data => {
     document.getElementById('loginBtn').disabled = false;
     if (!data.ok) { setLoginStatus(data.error || 'Invalid credentials', true); return; }
-    handleLoginSuccess(role, user, pass, data.data);
-  }, err => {
+    handleLoginSuccess(role, user, pass, data.data, loginAction);
+  }, () => {
     document.getElementById('loginBtn').disabled = false;
     setLoginStatus('Network error. Please try again.', true);
   });
 }
 
-function handleLoginSuccess(role, user, pass, visitRows) {
+function handleLoginSuccess(role, user, pass, initialData, loginAction) {
   auth = { role, user, pass };
   sessionStorage.setItem(SK.role, role);
   sessionStorage.setItem(SK.user, user);
@@ -1239,15 +1399,51 @@ function handleLoginSuccess(role, user, pass, visitRows) {
   document.getElementById('loginPanel').style.display = 'none';
   document.getElementById('dashPanel').style.display  = 'flex';
   document.getElementById('dashPanel').style.flexDirection = 'column';
-  document.getElementById('dashTabs').style.display   = 'flex';
   document.getElementById('profileWrap').style.display = 'block';
   document.getElementById('profileAvatar').textContent = getInitials(user);
   document.getElementById('pdUsername').textContent    = user;
   setLoginStatus('');
 
-  renderVisitData(visitRows);
-  startAutoRefresh();
+  const isLoan = role.toLowerCase() === 'loan department';
+
+  if (isLoan) {
+    // Loan dept: only FN Clients tab, locked to Lost/Booked
+    setupLoanDeptView();
+    renderFNData(initialData);
+    document.getElementById('loanDeptBanner').style.display = 'flex';
+  } else {
+    // Normal roles: show all tabs
+    document.getElementById('dashTabs').style.display = 'flex';
+    document.getElementById('pdFormLink').style.display = 'block';
+    document.getElementById('pdFNLink').style.display   = 'block';
+    renderVisitData(initialData);
+    startAutoRefresh();
+  }
   setStatus(true);
+}
+
+function setupLoanDeptView() {
+  // Show only the FN Clients tab and lock it
+  const tabsEl = document.getElementById('dashTabs');
+  tabsEl.style.display = 'flex';
+  // Hide all tabs except FN clients
+  tabsEl.querySelectorAll('.dash-tab').forEach((btn, i) => {
+    // 0=visits, 1=visitdone, 2=fnclients, 3=revenue
+    btn.style.display = i === 2 ? 'block' : 'none';
+  });
+  // Hide form links from profile menu
+  document.getElementById('pdFormLink').style.display = 'none';
+  document.getElementById('pdFNLink').style.display   = 'none';
+  // Set statuses to Lost+Booked only, locked
+  fnSelectedStatuses = new Set(['Lost', 'Booked']);
+  syncMSDisplay();
+  // Lock the status multi-select (disable interaction)
+  document.getElementById('fnStatusTrigger').style.pointerEvents = 'none';
+  document.getElementById('fnStatusTrigger').style.opacity = '0.6';
+  // Hide pivot tab for loan dept
+  document.getElementById('fnViewTabs').style.display = 'none';
+  // Switch to FN clients
+  switchDashboard('fnclients');
 }
 
 function checkStoredSession() {
@@ -1257,11 +1453,13 @@ function checkStoredSession() {
   const time = parseInt(sessionStorage.getItem(SK.time) || '0');
   if (role && user && pass && Date.now() - time < 8 * 3600 * 1000) {
     setLoginStatus('Auto-logging in…');
-    jsonpFetch(GAS_URL, { action: 'getVisitData', role, username: user, password: pass }, data => {
+    const isLoan = role.toLowerCase() === 'loan department';
+    const loginAction = isLoan ? 'getFNClientsData' : 'getVisitData';
+    jsonpFetch(GAS_URL, { action: loginAction, role, username: user, password: pass }, data => {
       if (!data.ok) { clearSession(); setLoginStatus('Session expired, please log in.', true); return; }
       document.getElementById('role').value     = role;
       document.getElementById('username').value = user;
-      handleLoginSuccess(role, user, pass, data.data);
+      handleLoginSuccess(role, user, pass, data.data, loginAction);
     }, () => setLoginStatus(''));
   }
 }
@@ -1275,6 +1473,13 @@ function logout() {
   document.getElementById('profileWrap').style.display = 'none';
   document.getElementById('loginPanel').style.display  = 'flex';
   document.getElementById('profileDropdown').classList.remove('show');
+  // Reset loan dept UI
+  document.getElementById('loanDeptBanner').style.display   = 'none';
+  document.getElementById('fnStatusTrigger').style.pointerEvents = '';
+  document.getElementById('fnStatusTrigger').style.opacity = '';
+  document.getElementById('fnViewTabs').style.display = '';
+  fnSelectedStatuses = new Set(['Hot', 'Warm', 'Cold']);
+  syncMSDisplay();
   setStatus(true);
 }
 
@@ -1288,6 +1493,9 @@ function setLoginStatus(msg, isErr) {
 
 // ── DASHBOARD SWITCHING ───────────────────────────────────────
 function switchDashboard(which) {
+  // Loan dept can only access fnclients
+  if (isLoanDept() && which !== 'fnclients') return;
+
   activeDash = which;
   const order = ['visits','visitdone','fnclients','revenue'];
   document.querySelectorAll('.dash-tab').forEach((t, i) => t.classList.toggle('active', order[i] === which));
@@ -1326,8 +1534,84 @@ function loadFNData() {
   document.getElementById('fn-rowCount').textContent = 'Loading…';
   jsonpFetch(GAS_URL, { action: 'getFNClientsData', role: auth.role, username: auth.user, password: auth.pass }, d => {
     if (d.ok) renderFNData(d.data);
-    else document.getElementById('fn-rowCount').textContent = 'Failed to load FN Clients data: ' + (d.error || 'unknown error');
+    else document.getElementById('fn-rowCount').textContent = 'Failed to load: ' + (d.error || 'unknown error');
   }, () => { document.getElementById('fn-rowCount').textContent = 'Network error loading FN Clients data.'; });
+}
+
+// ── MULTI-SELECT STATUS FILTER ────────────────────────────────
+function toggleMSDropdown() {
+  const trigger  = document.getElementById('fnStatusTrigger');
+  const dropdown = document.getElementById('fnStatusDropdown');
+  const isOpen   = dropdown.classList.contains('open');
+  if (isOpen) {
+    dropdown.classList.remove('open');
+    trigger.classList.remove('open');
+  } else {
+    dropdown.classList.add('open');
+    trigger.classList.add('open');
+  }
+}
+
+function toggleMSOption(el) {
+  const val = el.dataset.value;
+  if (fnSelectedStatuses.has(val)) {
+    fnSelectedStatuses.delete(val);
+    el.classList.remove('selected');
+  } else {
+    fnSelectedStatuses.add(val);
+    el.classList.add('selected');
+  }
+  syncMSDisplay();
+  applyFNFilters();
+}
+
+function syncMSDisplay() {
+  // Update checkboxes in dropdown
+  document.querySelectorAll('#fnStatusDropdown .ms-option').forEach(opt => {
+    opt.classList.toggle('selected', fnSelectedStatuses.has(opt.dataset.value));
+  });
+  // Update trigger label
+  const label = document.getElementById('fnStatusLabel');
+  if (!label) return;
+  const selected = [...fnSelectedStatuses];
+  if (selected.length === 0) {
+    label.textContent = 'Status: None';
+  } else if (selected.length === FN_ALL_STATUSES.length) {
+    label.textContent = 'Status: All';
+  } else if (selected.length === FN_ACTIVE_STATUSES.length &&
+             FN_ACTIVE_STATUSES.every(s => fnSelectedStatuses.has(s))) {
+    label.textContent = 'Status: Active';
+  } else if (selected.length === FN_INACTIVE_STATUSES.length &&
+             FN_INACTIVE_STATUSES.every(s => fnSelectedStatuses.has(s))) {
+    label.textContent = 'Status: Closed';
+  } else {
+    label.textContent = 'Status: ' + selected.join(', ');
+  }
+  // Show/hide pre-filter note
+  const hasInactive = FN_INACTIVE_STATUSES.some(s => !fnSelectedStatuses.has(s));
+  const noteEl = document.getElementById('fnPrefilterNote');
+  if (noteEl && !isLoanDept()) {
+    noteEl.style.display = hasInactive ? 'flex' : 'none';
+  }
+}
+
+// Close MS dropdown when clicking outside
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('fnStatusWrap');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('fnStatusDropdown').classList.remove('open');
+    document.getElementById('fnStatusTrigger').classList.remove('open');
+  }
+  const profileWrap = document.getElementById('profileWrap');
+  if (profileWrap && !profileWrap.contains(e.target)) {
+    document.getElementById('profileDropdown').classList.remove('show');
+  }
+});
+
+function showAllFNStatuses() {
+  FN_ALL_STATUSES.forEach(s => fnSelectedStatuses.add(s));
+  syncMSDisplay();
+  applyFNFilters();
 }
 
 // ── VISITS RENDERING ──────────────────────────────────────────
@@ -1392,12 +1676,10 @@ function switchVisitView(v) {
 function renderVisitTable(rows) {
   const tbody = document.getElementById('v-tbody');
   document.getElementById('v-rowCount').textContent = `${rows.length} visit(s)`;
-
   if (!rows.length) {
     tbody.innerHTML = `<tr><td colspan="13" class="no-data">No matching records found</td></tr>`;
     return;
   }
-
   tbody.innerHTML = rows.map(r => `
     <tr>
       <td>${esc(r.cluster)}</td>
@@ -1422,12 +1704,10 @@ function renderVisitPivot(rows) {
   const tbody  = document.querySelector('#v-pivot tbody');
   thead.innerHTML = '';
   tbody.innerHTML = '';
-
   const hr = document.createElement('tr');
   hr.innerHTML = '<th>Team Lead</th><th>Employee</th>' +
     dates.map(d => `<th>${fmtDateDay(d)}</th>`).join('') + '<th>Total</th>';
   thead.appendChild(hr);
-
   const grouped = {};
   rows.forEach(r => {
     const d   = fmtDate(r.visitDate); if (!d) return;
@@ -1435,7 +1715,6 @@ function renderVisitPivot(rows) {
     if (!grouped[key]) grouped[key] = { teamLead: r.teamLead, employee: r.employee, counts: {} };
     grouped[key].counts[d] = (grouped[key].counts[d] || 0) + 1;
   });
-
   Object.values(grouped).forEach(g => {
     let total = 0;
     const tr  = document.createElement('tr');
@@ -1446,7 +1725,6 @@ function renderVisitPivot(rows) {
       }).join('') + `<td class="total">${total}</td>`;
     tbody.appendChild(tr);
   });
-
   document.getElementById('v-rowCount').textContent = `${Object.keys(grouped).length} employee(s) — pivot`;
 }
 
@@ -1458,7 +1736,6 @@ function populateVisitFilters(rows) {
   fillSelect('v-devFilter',  [...new Set(rows.map(r => r.developer).filter(Boolean))].sort(), 'All Developers');
 }
 
-// ── VISITS SORT ───────────────────────────────────────────────
 function sortVisits(col) {
   if (vSortCol === col) vSortDir = vSortDir === 'asc' ? 'desc' : 'asc';
   else { vSortCol = col; vSortDir = 'asc'; }
@@ -1478,12 +1755,14 @@ function applySortVisits() {
 }
 
 // ── FN CLIENTS RENDERING ─────────────────────────────────────
-let fnView = 'detail'; // 'detail' | 'pivot'
-
 function renderFNData(rows) {
   fnAll      = rows.map(r => ({ ...r, visitDate: fmtDate(r.visitDate) }));
-  fnFiltered = [...fnAll];
   populateFNFilters(fnAll);
+  // For loan dept: force status filter to Lost/Booked
+  if (isLoanDept()) {
+    fnSelectedStatuses = new Set(['Lost', 'Booked']);
+    syncMSDisplay();
+  }
   applyFNFilters();
   document.getElementById('fn-lastUpdated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
 }
@@ -1494,7 +1773,6 @@ function applyFNFilters() {
   const emp    = document.getElementById('fn-empFilter').value;
   const proj   = document.getElementById('fn-projFilter').value;
   const dev    = document.getElementById('fn-devFilter').value;
-  const status = document.getElementById('fn-statusFilter').value;
   const cust   = (document.getElementById('fn-custFilter').value  || '').trim().toLowerCase();
   const phone  = (document.getElementById('fn-phoneFilter').value || '').trim();
   const from   = document.getElementById('fn-fromDate').value;
@@ -1506,7 +1784,12 @@ function applyFNFilters() {
     if (emp    && r.employee  !== emp)    return false;
     if (proj   && r.project   !== proj)   return false;
     if (dev    && r.developer !== dev)    return false;
-    if (status && r.status    !== status) return false;
+    // Multi-status filter: if nothing selected, show nothing; if "all 5" selected, skip
+    if (fnSelectedStatuses.size > 0 && fnSelectedStatuses.size < FN_ALL_STATUSES.length) {
+      if (!fnSelectedStatuses.has(r.status)) return false;
+    } else if (fnSelectedStatuses.size === 0) {
+      return false; // nothing selected = show nothing
+    }
     if (cust   && !(r.customer||'').toLowerCase().includes(cust)) return false;
     if (phone  && !(r.phone||'').includes(phone))                 return false;
     if (from   && fmtDate(r.visitDate) < from) return false;
@@ -1521,11 +1804,14 @@ function applyFNFilters() {
 
 function clearFNFilters() {
   ['fn-pnlFilter','fn-tlFilter','fn-empFilter','fn-projFilter','fn-devFilter',
-   'fn-statusFilter','fn-custFilter','fn-phoneFilter','fn-fromDate','fn-toDate']
+   'fn-custFilter','fn-phoneFilter','fn-fromDate','fn-toDate']
     .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-  fnFiltered = [...fnAll];
-  if (fnView === 'detail') renderFNTable(fnFiltered);
-  else renderFNPivot(fnFiltered);
+  // Reset status filter to default (active only), unless loan dept
+  if (!isLoanDept()) {
+    fnSelectedStatuses = new Set(['Hot', 'Warm', 'Cold']);
+    syncMSDisplay();
+  }
+  applyFNFilters();
 }
 
 function switchFNView(v) {
@@ -1540,7 +1826,14 @@ function switchFNView(v) {
 
 function renderFNTable(rows) {
   const tbody = document.getElementById('fn-tbody');
-  document.getElementById('fn-rowCount').textContent = `${rows.length} FN client(s)`;
+  const total = fnAll.filter(r => {
+    if (fnSelectedStatuses.size === 0) return false;
+    return fnSelectedStatuses.size === FN_ALL_STATUSES.length || fnSelectedStatuses.has(r.status);
+  }).length;
+  const hiddenCount = fnAll.length - total;
+  let countText = `${rows.length} FN client(s)`;
+  if (hiddenCount > 0) countText += ` · ${hiddenCount} hidden (change status filter to view)`;
+  document.getElementById('fn-rowCount').textContent = countText;
 
   if (!rows.length) {
     tbody.innerHTML = `<tr><td colspan="11" class="no-data">No FN clients found</td></tr>`;
@@ -1584,48 +1877,49 @@ function renderFNPivot(rows) {
     <th style="color:#e05c5c">🔴 Hot</th>
     <th style="color:#e08c5c">🟠 Warm</th>
     <th style="color:#5c9be0">🔵 Cold</th>
+    <th style="color:#9090b8">⚫ Lost</th>
+    <th style="color:#34c47a">✅ Booked</th>
     <th>Total</th>`;
   thead.appendChild(hr);
 
-  // Group by TL + Employee
   const grouped = {};
   rows.forEach(r => {
     const key = (r.teamLead || '—') + '||' + (r.employee || '—');
-    if (!grouped[key]) grouped[key] = { teamLead: r.teamLead || '—', employee: r.employee || '—', Hot: 0, Warm: 0, Cold: 0, rows: { Hot: [], Warm: [], Cold: [] } };
+    if (!grouped[key]) grouped[key] = { teamLead: r.teamLead || '—', employee: r.employee || '—', Hot: 0, Warm: 0, Cold: 0, Lost: 0, Booked: 0, rows: { Hot: [], Warm: [], Cold: [], Lost: [], Booked: [] } };
     const s = r.status;
-    if (s === 'Hot' || s === 'Warm' || s === 'Cold') {
+    if (['Hot','Warm','Cold','Lost','Booked'].includes(s)) {
       grouped[key][s]++;
       grouped[key].rows[s].push(r);
     }
   });
 
-  // Sort by TL then employee
   const entries = Object.values(grouped).sort((a, b) =>
     a.teamLead.localeCompare(b.teamLead) || a.employee.localeCompare(b.employee)
   );
 
   if (!entries.length) {
-    tbody.innerHTML = `<tr><td colspan="6" class="no-data">No data for pivot</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" class="no-data">No data for pivot</td></tr>`;
     document.getElementById('fn-rowCount').textContent = '0 FN client(s) — pivot';
     return;
   }
 
   entries.forEach(g => {
-    const total = g.Hot + g.Warm + g.Cold;
-    const allRows = [...g.rows.Hot, ...g.rows.Warm, ...g.rows.Cold];
+    const total = g.Hot + g.Warm + g.Cold + g.Lost + g.Booked;
     const tr = document.createElement('tr');
 
-    const mkCell = (count, statusClass, statusLabel, rowsArr) => {
+    const mkCell = (count, statusClass, statusLabel) => {
       if (count === 0) return `<td class="zero">–</td>`;
-      return `<td class="pivot-${statusClass.toLowerCase()}" onclick="openDrillModal(event,'${esc(g.employee)}','${statusLabel}')">${count}</td>`;
+      return `<td class="pivot-${statusClass.toLowerCase()}" style="${statusClass==='Lost'?'color:#9090b8;cursor:pointer':statusClass==='Booked'?'color:#34c47a;cursor:pointer':''}" onclick="openDrillModal(event,'${esc(g.employee)}','${statusLabel}')">${count}</td>`;
     };
 
     tr.innerHTML =
       `<td>${esc(g.teamLead)}</td>` +
       `<td style="font-weight:600">${esc(g.employee)}</td>` +
-      mkCell(g.Hot,  'hot',  'Hot',  g.rows.Hot) +
-      mkCell(g.Warm, 'warm', 'Warm', g.rows.Warm) +
-      mkCell(g.Cold, 'cold', 'Cold', g.rows.Cold) +
+      mkCell(g.Hot,    'hot',    'Hot') +
+      mkCell(g.Warm,   'warm',   'Warm') +
+      mkCell(g.Cold,   'cold',   'Cold') +
+      mkCell(g.Lost,   'Lost',   'Lost') +
+      mkCell(g.Booked, 'Booked', 'Booked') +
       `<td class="total ${total > 0 ? 'clickable' : ''}" ${total > 0 ? `onclick="openDrillModal(event,'${esc(g.employee)}','All')"` : ''}>${total || '–'}</td>`;
     tbody.appendChild(tr);
   });
@@ -1654,7 +1948,6 @@ function applySortFN() {
   const keys = ['cluster','teamLead','employee','customer','timestamp','project','developer','configuration','budget','status','visitDate'];
   const key  = keys[fnSortCol] || 'timestamp';
   fnFiltered.sort((a, b) => {
-    // For timestamp, sort as actual dates for correct chronological order
     if (key === 'timestamp') {
       const d1 = a.timestamp ? new Date(a.timestamp).getTime() : 0;
       const d2 = b.timestamp ? new Date(b.timestamp).getTime() : 0;
@@ -1669,7 +1962,6 @@ function applySortFN() {
 function openDetailModal(r) {
   document.getElementById('modalCustomerName').textContent = r.customer || 'Client Details';
 
-  // Format the timestamp into a readable "Created On" string
   let createdOn = '—';
   if (r.timestamp) {
     try {
@@ -1677,32 +1969,30 @@ function openDetailModal(r) {
       if (!isNaN(d)) {
         createdOn = d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) +
                     ' ' + d.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', hour12:true });
-      } else {
-        createdOn = r.timestamp;
-      }
+      } else { createdOn = r.timestamp; }
     } catch (_) { createdOn = r.timestamp; }
   }
 
   const fields = [
-    { label: 'Created On',                    value: createdOn,                              full: false, gold: true },
-    { label: 'Status',                         value: r.status,                               full: false, badge: true },
-    { label: 'Cluster',                        value: r.cluster,                              full: false },
-    { label: 'PNL Head',                       value: r.pnlHead,                              full: false },
-    { label: 'Team Leader',                    value: r.teamLead,                             full: false },
-    { label: 'Sales Executive',                value: r.employee,                             full: false },
-    { label: 'Customer Name',                  value: r.customer,                             full: false },
-    { label: 'Contact Number',                 value: r.phone,                                full: false },
-    { label: 'Property Type',                  value: r.propertyType,                         full: false },
-    { label: 'Configuration',                  value: r.configuration,                        full: false },
-    { label: 'Budget',                         value: r.budget ? '₹ ' + r.budget : '',       full: false },
-    { label: 'Visit Date',                     value: r.visitDate,                            full: false },
-    { label: 'Project Name',                   value: r.project,                              full: false },
-    { label: 'Developer / Builder',            value: r.developer || r.builderSourcingName,   full: false },
-    { label: 'Builder Sourcing Manager',       value: r.builderSourcingName,                  full: false },
-    { label: 'Sourcing Manager Contact',       value: r.builderSourcingContact,               full: false },
-    { label: 'Builder Closing Manager',        value: r.builderClosingName,                   full: false },
-    { label: 'Remarks',                        value: r.remark,                               full: true  },
-    { label: 'Operations Remark',              value: r.operationsRemark,                     full: true  },
+    { label: 'Created On',              value: createdOn,                            full: false, gold: true },
+    { label: 'Status',                   value: r.status,                             full: false, badge: true },
+    { label: 'Cluster',                  value: r.cluster,                            full: false },
+    { label: 'PNL Head',                 value: r.pnlHead,                            full: false },
+    { label: 'Team Leader',              value: r.teamLead,                           full: false },
+    { label: 'Sales Executive',          value: r.employee,                           full: false },
+    { label: 'Customer Name',            value: r.customer,                           full: false },
+    { label: 'Contact Number',           value: r.phone,                              full: false },
+    { label: 'Property Type',            value: r.propertyType,                       full: false },
+    { label: 'Configuration',            value: r.configuration,                      full: false },
+    { label: 'Budget',                   value: r.budget ? '₹ ' + r.budget : '',    full: false },
+    { label: 'Visit Date',               value: r.visitDate,                          full: false },
+    { label: 'Project Name',             value: r.project,                            full: false },
+    { label: 'Developer / Builder',      value: r.developer || r.builderSourcingName, full: false },
+    { label: 'Builder Sourcing Manager', value: r.builderSourcingName,                full: false },
+    { label: 'Sourcing Manager Contact', value: r.builderSourcingContact,             full: false },
+    { label: 'Builder Closing Manager',  value: r.builderClosingName,                 full: false },
+    { label: 'Remarks',                  value: r.remark,                             full: true  },
+    { label: 'Operations Remark',        value: r.operationsRemark,                   full: true  },
   ];
 
   const grid = document.getElementById('detailGrid');
@@ -1717,14 +2007,12 @@ function openDetailModal(r) {
     </div>`;
   }).join('');
 
-  // Store current record for admin edit
   window._currentDetailRecord = r;
 
-  // Show admin edit panel for Admin / MD/CEO roles
-  const isAdmin = auth && ['admin','md/ceo','md','ceo','management'].includes(auth.role.toLowerCase());
+  // Show admin edit panel for Admin/MD/CEO only (not loan dept)
   const adminPanel = document.getElementById('adminEditPanel');
-  adminPanel.style.display = isAdmin ? 'block' : 'none';
-  if (isAdmin) {
+  adminPanel.style.display = isAdmin() ? 'block' : 'none';
+  if (isAdmin()) {
     document.getElementById('adminStatusSelect').value = '';
     document.getElementById('adminRemarkInput').value  = '';
     document.getElementById('adminCurrentStatus').textContent = r.status || '—';
@@ -1742,18 +2030,17 @@ function closeDetailModal(e) {
   document.body.style.overflow = '';
 }
 
-// ── PIVOT DRILL-DOWN MODAL ────────────────────────────────────
+// ── PIVOT DRILL-DOWN ─────────────────────────────────────────
 function openDrillModal(e, employeeName, statusLabel) {
   e.stopPropagation();
-
-  // Find the matching rows from fnFiltered
   const drillRows = fnFiltered.filter(r => {
     if (r.employee !== employeeName) return false;
-    if (statusLabel === 'All') return r.status === 'Hot' || r.status === 'Warm' || r.status === 'Cold';
+    if (statusLabel === 'All') return ['Hot','Warm','Cold','Lost','Booked'].includes(r.status);
     return r.status === statusLabel;
   });
 
-  const statusColor = { Hot: '#e05c5c', Warm: '#e08c5c', Cold: '#5c9be0', All: 'var(--gold)' }[statusLabel] || 'var(--text)';
+  const statusColors = { Hot: '#e05c5c', Warm: '#e08c5c', Cold: '#5c9be0', Lost: '#9090b8', Booked: '#34c47a', All: 'var(--gold)' };
+  const statusColor  = statusColors[statusLabel] || 'var(--text)';
   document.getElementById('drillTitle').innerHTML =
     `<span style="color:${statusColor}">${esc(statusLabel)}</span> clients — ${esc(employeeName)} (${drillRows.length})`;
 
@@ -1761,7 +2048,7 @@ function openDrillModal(e, employeeName, statusLabel) {
   if (!drillRows.length) {
     tbody.innerHTML = `<tr><td colspan="8" class="no-data">No records</td></tr>`;
   } else {
-    tbody.innerHTML = drillRows.map((r, i) => `
+    tbody.innerHTML = drillRows.map(r => `
       <tr class="clickable-row" onclick="openDetailModal(fnFiltered.find(x=>x.customer===\`${r.customer.replace(/`/g,"'")}\`&&x.phone===\`${r.phone}\`)||fnFiltered[0])">
         <td>${esc(r.teamLead)}</td>
         <td>${esc(r.employee)}</td>
@@ -1786,7 +2073,6 @@ function closeDrillModal(e) {
 
 // ── CONVERT TO FN CLIENT ──────────────────────────────────────
 function convertToFN(row) {
-  // Encode row data as URL params and open fn-clients.html with prefill
   const params = new URLSearchParams({
     prefill: '1',
     customerName:     row.customer    || '',
@@ -1806,7 +2092,14 @@ function convertToFN(row) {
 // ── UI HELPERS ─────────────────────────────────────────────────
 function statusBadge(s) {
   if (!s) return '—';
-  const cls = { Hot: 'badge-hot', Warm: 'badge-warm', Cold: 'badge-cold' }[s] || '';
+  const clsMap = {
+    Hot:    'badge-hot',
+    Warm:   'badge-warm',
+    Cold:   'badge-cold',
+    Lost:   'badge-lost',
+    Booked: 'badge-booked'
+  };
+  const cls = clsMap[s] || '';
   return `<span class="badge ${cls}">${esc(s)}</span>`;
 }
 
@@ -1850,11 +2143,6 @@ function toggleProfile() {
   document.getElementById('profileDropdown').classList.toggle('show');
 }
 
-document.addEventListener('click', e => {
-  const wrap = document.getElementById('profileWrap');
-  if (wrap && !wrap.contains(e.target)) document.getElementById('profileDropdown').classList.remove('show');
-});
-
 // ── ADMIN: UPDATE FN CLIENT STATUS + OPERATIONS REMARK ───────
 function saveAdminUpdate() {
   const r = window._currentDetailRecord;
@@ -1868,11 +2156,9 @@ function saveAdminUpdate() {
     return;
   }
 
-  // Build the today date string  dd mmm yyyy
-  const today = new Date();
+  const today  = new Date();
   const dayStr = today.toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
 
-  // Compose appended operations remark
   const parts = [];
   if ((r.operationsRemark || '').trim()) parts.push(r.operationsRemark.trim());
   if (newStatus && newStatus !== r.status) {
@@ -1886,36 +2172,32 @@ function saveAdminUpdate() {
   document.getElementById('adminSaveBtn').disabled = true;
   setAdminSaveStatus('Saving…');
 
-  // POST to GAS
   const payload = JSON.stringify({
     action:            'updateFNClient',
     rowIndex:          r.rowIndex,
     newStatus:         newStatus || r.status,
     operationsRemark:  combinedRemark,
-    customerName:      r.customer || '',   // sent for GAS row-verification
-    phone:             r.phone    || '',   // sent for GAS row-verification
+    customerName:      r.customer || '',
+    phone:             r.phone    || '',
     username:          auth.user,
     password:          auth.pass,
     role:              auth.role
   });
 
-  const formData = 'data=' + encodeURIComponent(payload);
   fetch(GAS_URL, {
     method:  'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body:    formData
+    body:    'data=' + encodeURIComponent(payload)
   })
   .then(res => res.json())
   .then(data => {
     if (data.ok) {
-      // Update local record so modal reflects the change immediately
       if (newStatus) r.status = newStatus;
       r.operationsRemark = combinedRemark;
       document.getElementById('adminCurrentStatus').textContent = r.status || '—';
       document.getElementById('adminStatusSelect').value = '';
       document.getElementById('adminRemarkInput').value  = '';
 
-      // Also refresh the in-memory arrays so table & pivot reflect new status
       const updateInArray = arr => {
         const found = arr.find(x => x.rowIndex === r.rowIndex);
         if (found) { if (newStatus) found.status = r.status; found.operationsRemark = r.operationsRemark; }
@@ -1932,7 +2214,7 @@ function saveAdminUpdate() {
       document.getElementById('adminSaveBtn').disabled = false;
     }
   })
-  .catch(err => {
+  .catch(() => {
     setAdminSaveStatus('Network error. Please retry.', true);
     document.getElementById('adminSaveBtn').disabled = false;
   });
@@ -1944,26 +2226,20 @@ function setAdminSaveStatus(msg, isErr) {
   el.className   = 'admin-save-status' + (isErr === false ? ' ok' : isErr ? ' err' : '');
 }
 
-// ── JSONP FETCH HELPER ────────────────────────────────────────
-// url: GAS endpoint to call (all requests now go to GAS_URL)
-// params: query params object
+// ── JSONP FETCH ───────────────────────────────────────────────
 function jsonpFetch(url, params, onSuccess, onError) {
   const cbName = '__cb_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
   const script = document.createElement('script');
   const qs     = Object.entries({ ...params, callback: cbName })
                        .map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
-
   const timer = setTimeout(() => { cleanup(); if (onError) onError(new Error('Timeout')); }, 15000);
-
   window[cbName] = data => { cleanup(); onSuccess(data); };
   script.onerror = () => { cleanup(); if (onError) onError(new Error('Load failed')); };
-
   function cleanup() {
     clearTimeout(timer);
     delete window[cbName];
     if (script.parentNode) script.parentNode.removeChild(script);
   }
-
   script.src = url + '?' + qs;
   document.head.appendChild(script);
 }
@@ -1977,7 +2253,6 @@ function toggleTheme() {
   document.getElementById('themeBtn').textContent = next === 'dark' ? '☀️' : '🌙';
   try { localStorage.setItem('dash_theme', next); } catch(_) {}
 }
-// Restore saved theme immediately
 (function() {
   try {
     const saved = localStorage.getItem('dash_theme');
@@ -1992,16 +2267,11 @@ function toggleTheme() {
 })();
 
 // ── VISIT DONE ────────────────────────────────────────────────
-// Reads "Visit Done" sheet in Friday Lineup spreadsheet.
-// Columns: Visit Date | Customer Name | Customer Number |
-//          Sales Executive Name | Project Name | Notes | Type
-
 function loadVDData() {
   document.getElementById('vd-rowCount').textContent = 'Loading…';
   jsonpFetch(GAS_URL, { action: 'getVisitDoneData', role: auth.role, username: auth.user, password: auth.pass }, d => {
     if (d.ok) renderVDData(d.data);
-    else document.getElementById('vd-rowCount').textContent =
-      'Failed to load. Ensure "Visit Done" sheet exists and GAS is redeployed.';
+    else document.getElementById('vd-rowCount').textContent = 'Failed to load Visit Done data.';
   }, () => { document.getElementById('vd-rowCount').textContent = 'Network error loading Visit Done data.'; });
 }
 
@@ -2117,12 +2387,12 @@ function convertVDToFN(row) {
   window.open(FN_FORM_URL + '?' + params.toString(), '_blank');
 }
 
-// ── PAGE VISIBILITY HANDLING ──────────────────────────────────
+// ── PAGE VISIBILITY ───────────────────────────────────────────
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) { if (refreshTimer) clearInterval(refreshTimer); }
-  else if (auth) { startAutoRefresh(); setTimeout(refreshAll, 1000); }
+  else if (auth && !isLoanDept()) { startAutoRefresh(); setTimeout(refreshAll, 1000); }
 });
-window.addEventListener('online',  () => { setStatus(true);  if (auth && !refreshTimer) startAutoRefresh(); });
+window.addEventListener('online',  () => { setStatus(true);  if (auth && !refreshTimer && !isLoanDept()) startAutoRefresh(); });
 window.addEventListener('offline', () => setStatus(false));
 
 // ── ESC closes modals ─────────────────────────────────────────
