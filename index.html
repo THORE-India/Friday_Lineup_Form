@@ -942,7 +942,7 @@
     const payload = JSON.stringify({
       action: 'submitVisit',
       employee, customerName: cname, phone, project, developer,
-      visitDate, visitTime, requirement, closure, backup, remark
+      visitDate, visitTime, requirement, closure, visitType, remark
     });
 
     fetch(GAS_URL, {
@@ -966,7 +966,7 @@
       btn.disabled    = false;
     });
   }
-
+  
   function resetForm() {
     document.getElementById('form').reset();
     document.getElementById('teamLead').value = '';
