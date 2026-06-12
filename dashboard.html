@@ -334,7 +334,7 @@
           <th class="sortable" onclick="sortVisits(0)">Cluster</th><th class="sortable" onclick="sortVisits(1)">Team Lead</th>
           <th class="sortable" onclick="sortVisits(2)">SE</th><th class="sortable" onclick="sortVisits(3)">Customer</th>
           <th>Phone</th><th class="sortable" onclick="sortVisits(5)">Project</th><th class="sortable" onclick="sortVisits(6)">Developer</th>
-          <th class="sortable" onclick="sortVisits(7)">Visit Date</th><th>Visit Time</th><th>Requirements</th><th>Closure</th><th>Backup</th><th>Convert</th>
+          <th class="sortable" onclick="sortVisits(7)">Visit Date</th><th>Visit Time</th><th>Requirements</th><th>Closure</th><th>Visit Type</th><th>Convert</th>
         </tr></thead><tbody id="v-tbody"></tbody></table>
       </div>
       <div id="v-pivotView" class="table-wrap" style="display:none;"><table id="v-pivot"><thead></thead><tbody></tbody></table></div>
@@ -660,7 +660,7 @@ function switchVisitView(v){
 function renderVisitTable(rows){
   const tbody=document.getElementById('v-tbody');document.getElementById('v-rowCount').textContent=rows.length+' visit(s)';
   if(!rows.length){tbody.innerHTML='<tr><td colspan="13" class="no-data">No matching records found</td></tr>';return;}
-  tbody.innerHTML=rows.map(r=>`<tr><td>${esc(r.cluster)}</td><td>${esc(r.teamLead)}</td><td>${esc(r.employee)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td>${esc(r.phone)}</td><td>${esc(r.project)}</td><td>${esc(r.developer)}</td><td style="white-space:nowrap">${esc(r.visitDate)}</td><td style="white-space:nowrap">${esc(r.visitTime)}</td><td style="max-width:140px;white-space:normal;font-size:0.78rem">${esc(r.requirement)}</td><td>${esc(r.closure)}</td><td>${r.backup==='Yes'?'<span class="badge badge-yes">Yes</span>':r.backup?'<span class="badge badge-no">No</span>':''}</td><td><button class="convert-btn" onclick="convertToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})">⚡ Convert</button></td></tr>`).join('');
+  tbody.innerHTML=rows.map(r=>`<tr><td>${esc(r.cluster)}</td><td>${esc(r.teamLead)}</td><td>${esc(r.employee)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td>${esc(r.phone)}</td><td>${esc(r.project)}</td><td>${esc(r.developer)}</td><td style="white-space:nowrap">${esc(r.visitDate)}</td><td style="white-space:nowrap">${esc(r.visitTime)}</td><td style="max-width:140px;white-space:normal;font-size:0.78rem">${esc(r.requirement)}</td><td>${esc(r.closure)}</td><td>${r.visitType?`<span class="badge ${r.visitType==='Visit'?'badge-yes':'badge-cold'}">${esc(r.visitType)}</span>`:'—'}</td><td><button class="convert-btn" onclick="convertToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})">⚡ Convert</button></td></tr>`).join('');
 }
 function renderVisitPivot(rows){
   const dates=[...new Set(rows.map(r=>fmtDate(r.visitDate)).filter(Boolean))].sort();
