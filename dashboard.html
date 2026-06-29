@@ -168,6 +168,7 @@
     .badge-cold{background:var(--blue-bg);color:var(--blue);}
     .badge-lost{background:var(--slate-bg);color:var(--slate);}
     .badge-booked{background:var(--green-bg);color:var(--green);}
+    .badge-token{background:var(--gold-dim);color:var(--gold-bright);}
     .badge-yes{background:var(--green-bg);color:var(--green);}
     .badge-no{background:var(--red-bg);color:var(--red);}
     .convert-btn{padding:3px 10px;background:transparent;border:1px solid var(--border-gold);border-radius:20px;color:var(--gold);font-size:0.68rem;font-weight:700;cursor:pointer;transition:all var(--dur) var(--ease);font-family:'Inter',sans-serif;white-space:nowrap;letter-spacing:0.02em;}
@@ -177,7 +178,8 @@
     td.pivot-hot{font-weight:700;color:var(--red);cursor:pointer;}
     td.pivot-warm{font-weight:700;color:var(--orange);cursor:pointer;}
     td.pivot-cold{font-weight:700;color:var(--blue);cursor:pointer;}
-    td.pivot-hot:hover,td.pivot-warm:hover,td.pivot-cold:hover,td.total.clickable:hover{text-decoration:underline;filter:brightness(1.2);}
+    td.pivot-token{font-weight:700;color:var(--gold-bright);cursor:pointer;}
+    td.pivot-hot:hover,td.pivot-warm:hover,td.pivot-cold:hover,td.pivot-token:hover,td.total.clickable:hover{text-decoration:underline;filter:brightness(1.2);}
     td.total.clickable{cursor:pointer;}
     .modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;visibility:hidden;transition:opacity 0.25s,visibility 0.25s;}
     .modal-overlay.open{opacity:1;visibility:visible;}
@@ -379,7 +381,7 @@
         <div class="metric-card"><div class="metric-icon gold">🏆</div><div class="metric-body"><div class="metric-value" id="fnm-total">—</div><div class="metric-label">Total Clients</div></div></div>
         <div class="metric-card"><div class="metric-icon" style="background:var(--red-bg)">🔴</div><div class="metric-body"><div class="metric-value" id="fnm-hot" style="color:var(--red)">—</div><div class="metric-label">Hot Leads</div></div></div>
         <div class="metric-card"><div class="metric-icon green">✅</div><div class="metric-body"><div class="metric-value" id="fnm-booked" style="color:var(--green)">—</div><div class="metric-label">Booked</div></div></div>
-        <div class="metric-card"><div class="metric-icon blue">❄️</div><div class="metric-body"><div class="metric-value" id="fnm-active" style="color:var(--blue)">—</div><div class="metric-label">Active (H+W+C)</div></div></div>
+        <div class="metric-card"><div class="metric-icon blue">❄️</div><div class="metric-body"><div class="metric-value" id="fnm-active" style="color:var(--blue)">—</div><div class="metric-label">Active (H+W+C+T)</div></div></div>
       </div>
       <div class="loan-dept-banner" id="loanDeptBanner">💼 Loan Department View — showing only <strong style="margin:0 4px">Lost</strong> &amp; <strong style="margin:0 4px">Booked</strong> clients</div>
       <div class="prefilter-note" id="fnPrefilterNote" style="display:none;">ℹ️ Showing active clients only (Hot, Warm, Cold). Lost &amp; Booked are hidden.<button onclick="showAllFNStatuses()">Show All</button></div>
@@ -397,6 +399,7 @@
               <div class="ms-option" data-value="Hot" onclick="toggleMSOption(this)"><div class="ms-checkbox"></div><span>🔴 Hot</span></div>
               <div class="ms-option" data-value="Warm" onclick="toggleMSOption(this)"><div class="ms-checkbox"></div><span>🟠 Warm</span></div>
               <div class="ms-option" data-value="Cold" onclick="toggleMSOption(this)"><div class="ms-checkbox"></div><span>🔵 Cold</span></div>
+              <div class="ms-option" data-value="Token" onclick="toggleMSOption(this)"><div class="ms-checkbox"></div><span>🟡 Token</span></div>
               <div class="ms-option" data-value="Lost" onclick="toggleMSOption(this)"><div class="ms-checkbox"></div><span>⚫ Lost</span></div>
               <div class="ms-option" data-value="Booked" onclick="toggleMSOption(this)"><div class="ms-checkbox"></div><span>✅ Booked</span></div>
             </div>
@@ -442,7 +445,7 @@
         <div class="admin-edit-title">✏️ Operations Update</div>
         <div class="admin-edit-row">
           <div><div class="admin-edit-label">Change Status</div>
-            <select class="admin-edit-select" id="adminStatusSelect"><option value="">— Keep current —</option><option value="Hot">🔴 Hot</option><option value="Warm">🟠 Warm</option><option value="Cold">🔵 Cold</option><option value="Lost">⚫ Lost</option><option value="Booked">✅ Booked</option></select>
+            <select class="admin-edit-select" id="adminStatusSelect"><option value="">— Keep current —</option><option value="Hot">🔴 Hot</option><option value="Warm">🟠 Warm</option><option value="Cold">🔵 Cold</option><option value="Token">🟡 Token</option><option value="Lost">⚫ Lost</option><option value="Booked">✅ Booked</option></select>
           </div>
           <div><div class="admin-edit-label">Current Status</div><div id="adminCurrentStatus" style="padding:8px 0;font-weight:600;font-size:0.9rem;color:var(--text-sub)">—</div></div>
         </div>
@@ -474,8 +477,8 @@ let auth=null,refreshTimer=null,isRefreshing=false,activeDash='visits',currentVi
 let visitsAll=[],visitsFiltered=[],vSortCol=-1,vSortDir='asc';
 let vdAll=[],vdFiltered=[],vdSortCol=-1,vdSortDir='asc';
 let fnAll=[],fnFiltered=[],fnSortCol=-1,fnSortDir='asc',fnView='detail';
-let fnSelectedStatuses=new Set(['Hot','Warm','Cold']);
-const FN_ACTIVE_STATUSES=['Hot','Warm','Cold'],FN_INACTIVE_STATUSES=['Lost','Booked'],FN_ALL_STATUSES=['Hot','Warm','Cold','Lost','Booked'];
+let fnSelectedStatuses=new Set(['Hot','Warm','Cold','Token']);
+const FN_ACTIVE_STATUSES=['Hot','Warm','Cold','Token'],FN_INACTIVE_STATUSES=['Lost','Booked'],FN_ALL_STATUSES=['Hot','Warm','Cold','Token','Lost','Booked'];
 
 document.addEventListener('DOMContentLoaded',()=>{document.getElementById('yr').textContent=new Date().getFullYear();checkStoredSession();syncMSDisplay();});
 
@@ -560,7 +563,7 @@ function logout(){
   document.getElementById('profileWrap').style.display='none';document.getElementById('loginPanel').style.display='flex';
   document.getElementById('profileDropdown').classList.remove('show');document.getElementById('loanDeptBanner').style.display='none';
   document.getElementById('fnStatusTrigger').style.pointerEvents='';document.getElementById('fnStatusTrigger').style.opacity='';
-  document.getElementById('fnViewTabs').style.display='';fnSelectedStatuses=new Set(['Hot','Warm','Cold']);syncMSDisplay();setStatus(true);
+  document.getElementById('fnViewTabs').style.display='';fnSelectedStatuses=new Set(['Hot','Warm','Cold','Token']);syncMSDisplay();setStatus(true);
 }
 function clearSession(){Object.values(SK).forEach(k=>sessionStorage.removeItem(k));}
 function setLoginStatus(msg,isErr){const el=document.getElementById('loginStatus');el.textContent=msg;el.className='login-status'+(isErr?' err':'');}
@@ -692,7 +695,7 @@ function renderFNData(rows){
 }
 function updateFNMetrics(rows){
   document.getElementById('fnm-total').textContent=rows.length;document.getElementById('fnm-hot').textContent=rows.filter(r=>r.status==='Hot').length;
-  document.getElementById('fnm-booked').textContent=rows.filter(r=>r.status==='Booked').length;document.getElementById('fnm-active').textContent=rows.filter(r=>['Hot','Warm','Cold'].includes(r.status)).length;
+  document.getElementById('fnm-booked').textContent=rows.filter(r=>r.status==='Booked').length;document.getElementById('fnm-active').textContent=rows.filter(r=>['Hot','Warm','Cold','Token'].includes(r.status)).length;
 }
 function applyFNFilters(){
   const pnl=document.getElementById('fn-pnlFilter').value,mgr=document.getElementById('fn-managerFilter').value,tl=document.getElementById('fn-tlFilter').value,emp=document.getElementById('fn-empFilter').value,proj=document.getElementById('fn-projFilter').value,dev=document.getElementById('fn-devFilter').value;
@@ -708,7 +711,7 @@ function applyFNFilters(){
 }
 function clearFNFilters(){
   ['fn-pnlFilter','fn-managerFilter','fn-tlFilter','fn-empFilter','fn-projFilter','fn-devFilter','fn-custFilter','fn-phoneFilter','fn-fromDate','fn-toDate'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  if(!isLoanDept()){fnSelectedStatuses=new Set(['Hot','Warm','Cold']);syncMSDisplay();}applyFNFilters();
+  if(!isLoanDept()){fnSelectedStatuses=new Set(['Hot','Warm','Cold','Token']);syncMSDisplay();}applyFNFilters();
 }
 function switchFNView(v){
   fnView=v;document.getElementById('fn-detailTab').classList.toggle('active',v==='detail');document.getElementById('fn-pivotTab').classList.toggle('active',v==='pivot');
@@ -738,15 +741,15 @@ function renderFNTable(rows){
 }
 function renderFNPivot(rows){
   const thead=document.querySelector('#fn-pivot thead'),tbody=document.querySelector('#fn-pivot tbody');thead.innerHTML='';tbody.innerHTML='';
-  const hr=document.createElement('tr');hr.innerHTML=`<th>Team Lead</th><th>Employee</th><th style="color:var(--red)">🔴 Hot</th><th style="color:var(--orange)">🟠 Warm</th><th style="color:var(--blue)">🔵 Cold</th><th style="color:var(--slate)">⚫ Lost</th><th style="color:var(--green)">✅ Booked</th><th>Total</th>`;thead.appendChild(hr);
+  const hr=document.createElement('tr');hr.innerHTML=`<th>Team Lead</th><th>Employee</th><th style="color:var(--red)">🔴 Hot</th><th style="color:var(--orange)">🟠 Warm</th><th style="color:var(--blue)">🔵 Cold</th><th style="color:var(--gold-bright)">🟡 Token</th><th style="color:var(--slate)">⚫ Lost</th><th style="color:var(--green)">✅ Booked</th><th>Total</th>`;thead.appendChild(hr);
   const grouped={};
-  rows.forEach(r=>{const key=(r.teamLead||'—')+'||'+(r.employee||'—');if(!grouped[key])grouped[key]={teamLead:r.teamLead||'—',employee:r.employee||'—',Hot:0,Warm:0,Cold:0,Lost:0,Booked:0};const s=r.status;if(['Hot','Warm','Cold','Lost','Booked'].includes(s))grouped[key][s]++;});
+  rows.forEach(r=>{const key=(r.teamLead||'—')+'||'+(r.employee||'—');if(!grouped[key])grouped[key]={teamLead:r.teamLead||'—',employee:r.employee||'—',Hot:0,Warm:0,Cold:0,Token:0,Lost:0,Booked:0};const s=r.status;if(['Hot','Warm','Cold','Token','Lost','Booked'].includes(s))grouped[key][s]++;});
   const entries=Object.values(grouped).sort((a,b)=>a.teamLead.localeCompare(b.teamLead)||a.employee.localeCompare(b.employee));
   if(!entries.length){tbody.innerHTML='<tr><td colspan="8" class="no-data">No data for pivot</td></tr>';document.getElementById('fn-rowCount').textContent='0 FN client(s) — pivot';return;}
   entries.forEach(g=>{
-    const total=g.Hot+g.Warm+g.Cold+g.Lost+g.Booked;const tr=document.createElement('tr');
+    const total=g.Hot+g.Warm+g.Cold+g.Token+g.Lost+g.Booked;const tr=document.createElement('tr');
     const mkCell=(count,sc,sl)=>{if(count===0)return'<td class="zero">–</td>';const es=sc==='Lost'?'color:var(--slate);cursor:pointer':sc==='Booked'?'color:var(--green);cursor:pointer':'';return`<td class="pivot-${sc.toLowerCase()}" style="${es}" onclick="openDrillModal(event,'${esc(g.employee)}','${sl}')">${count}</td>`;};
-    tr.innerHTML=`<td>${esc(g.teamLead)}</td><td style="font-weight:600">${esc(g.employee)}</td>`+mkCell(g.Hot,'hot','Hot')+mkCell(g.Warm,'warm','Warm')+mkCell(g.Cold,'cold','Cold')+mkCell(g.Lost,'Lost','Lost')+mkCell(g.Booked,'Booked','Booked')+`<td class="total ${total>0?'clickable':''}" ${total>0?`onclick="openDrillModal(event,'${esc(g.employee)}','All')"`:''} >${total||'–'}</td>`;
+    tr.innerHTML=`<td>${esc(g.teamLead)}</td><td style="font-weight:600">${esc(g.employee)}</td>`+mkCell(g.Hot,'hot','Hot')+mkCell(g.Warm,'warm','Warm')+mkCell(g.Cold,'cold','Cold')+mkCell(g.Token,'token','Token')+mkCell(g.Lost,'Lost','Lost')+mkCell(g.Booked,'Booked','Booked')+`<td class="total ${total>0?'clickable':''}" ${total>0?`onclick="openDrillModal(event,'${esc(g.employee)}','All')"`:''} >${total||'–'}</td>`;
     tbody.appendChild(tr);
   });
   document.getElementById('fn-rowCount').textContent=entries.length+' employee(s) — pivot';
@@ -777,8 +780,8 @@ function closeDetailModal(e){if(e&&e.target!==document.getElementById('detailMod
 
 function openDrillModal(e,employeeName,statusLabel){
   e.stopPropagation();
-  const drillRows=fnFiltered.filter(r=>{if(r.employee!==employeeName)return false;if(statusLabel==='All')return['Hot','Warm','Cold','Lost','Booked'].includes(r.status);return r.status===statusLabel;});
-  const statusColors={Hot:'var(--red)',Warm:'var(--orange)',Cold:'var(--blue)',Lost:'var(--slate)',Booked:'var(--green)',All:'var(--gold)'};
+  const drillRows=fnFiltered.filter(r=>{if(r.employee!==employeeName)return false;if(statusLabel==='All')return['Hot','Warm','Cold','Token','Lost','Booked'].includes(r.status);return r.status===statusLabel;});
+  const statusColors={Hot:'var(--red)',Warm:'var(--orange)',Cold:'var(--blue)',Token:'var(--gold-bright)',Lost:'var(--slate)',Booked:'var(--green)',All:'var(--gold)'};
   document.getElementById('drillTitle').innerHTML=`<span style="color:${statusColors[statusLabel]||'var(--text)'}">${esc(statusLabel)}</span> clients — ${esc(employeeName)} (${drillRows.length})`;
   const tbody=document.getElementById('drill-tbody');
   if(!drillRows.length){tbody.innerHTML='<tr><td colspan="8" class="no-data">No records</td></tr>';}
@@ -789,7 +792,7 @@ function closeDrillModal(e){if(e&&e.target!==document.getElementById('drillModal
 
 function convertToFN(row){const params=new URLSearchParams({prefill:'1',customerName:row.customer||'',contactNumber:row.phone||'',salesExec:row.employee||'',teamLead:row.teamLead||'',cluster:row.cluster||'',projectName:row.project||'',developerName:row.developer||'',visitDate:row.visitDate||'',requirement:row.requirement||'',convertedFromVisit:'Yes'});window.open(FN_FORM_URL+'?'+params.toString(),'_blank');}
 
-function statusBadge(s){if(!s)return'—';const c={Hot:'badge-hot',Warm:'badge-warm',Cold:'badge-cold',Lost:'badge-lost',Booked:'badge-booked'};return`<span class="badge ${c[s]||''}">${esc(s)}</span>`;}
+function statusBadge(s){if(!s)return'—';const c={Hot:'badge-hot',Warm:'badge-warm',Cold:'badge-cold',Token:'badge-token',Lost:'badge-lost',Booked:'badge-booked'};return`<span class="badge ${c[s]||''}">${esc(s)}</span>`;}
 function fillSelect(id,values,placeholder){const sel=document.getElementById(id),curr=sel.value;sel.innerHTML=`<option value="">${placeholder}</option>`;values.forEach(v=>sel.innerHTML+=`<option value="${esc(v)}">${esc(v)}</option>`);if(curr)sel.value=curr;}
 function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
 function fmtDate(s){if(!s)return'';const d=new Date(s);if(isNaN(d))return s;return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
