@@ -381,7 +381,7 @@
         <div class="metric-card"><div class="metric-icon gold">🏆</div><div class="metric-body"><div class="metric-value" id="fnm-total">—</div><div class="metric-label">Total Clients</div></div></div>
         <div class="metric-card"><div class="metric-icon" style="background:var(--red-bg)">🔴</div><div class="metric-body"><div class="metric-value" id="fnm-hot" style="color:var(--red)">—</div><div class="metric-label">Hot Leads</div></div></div>
         <div class="metric-card"><div class="metric-icon green">✅</div><div class="metric-body"><div class="metric-value" id="fnm-booked" style="color:var(--green)">—</div><div class="metric-label">Booked</div></div></div>
-        <div class="metric-card"><div class="metric-icon blue">❄️</div><div class="metric-body"><div class="metric-value" id="fnm-active" style="color:var(--blue)">—</div><div class="metric-label">Active (H+W+C+T)</div></div></div>
+        <div class="metric-card"><div class="metric-icon blue">❄️</div><div class="metric-body"><div class="metric-value" id="fnm-active" style="color:var(--blue)">—</div><div class="metric-label">Active (H+W+C)</div></div></div>
       </div>
       <div class="loan-dept-banner" id="loanDeptBanner">💼 Loan Department View — showing only <strong style="margin:0 4px">Lost</strong> &amp; <strong style="margin:0 4px">Booked</strong> clients</div>
       <div class="prefilter-note" id="fnPrefilterNote" style="display:none;">ℹ️ Showing active clients only (Hot, Warm, Cold). Lost &amp; Booked are hidden.<button onclick="showAllFNStatuses()">Show All</button></div>
@@ -477,8 +477,8 @@ let auth=null,refreshTimer=null,isRefreshing=false,activeDash='visits',currentVi
 let visitsAll=[],visitsFiltered=[],vSortCol=-1,vSortDir='asc';
 let vdAll=[],vdFiltered=[],vdSortCol=-1,vdSortDir='asc';
 let fnAll=[],fnFiltered=[],fnSortCol=-1,fnSortDir='asc',fnView='detail';
-let fnSelectedStatuses=new Set(['Hot','Warm','Cold','Token']);
-const FN_ACTIVE_STATUSES=['Hot','Warm','Cold','Token'],FN_INACTIVE_STATUSES=['Lost','Booked'],FN_ALL_STATUSES=['Hot','Warm','Cold','Token','Lost','Booked'];
+let fnSelectedStatuses=new Set(['Hot','Warm','Cold']);
+const FN_ACTIVE_STATUSES=['Hot','Warm','Cold'],FN_INACTIVE_STATUSES=['Lost','Booked'],FN_ALL_STATUSES=['Hot','Warm','Cold','Token','Lost','Booked'];
 
 document.addEventListener('DOMContentLoaded',()=>{document.getElementById('yr').textContent=new Date().getFullYear();checkStoredSession();syncMSDisplay();});
 
@@ -563,7 +563,7 @@ function logout(){
   document.getElementById('profileWrap').style.display='none';document.getElementById('loginPanel').style.display='flex';
   document.getElementById('profileDropdown').classList.remove('show');document.getElementById('loanDeptBanner').style.display='none';
   document.getElementById('fnStatusTrigger').style.pointerEvents='';document.getElementById('fnStatusTrigger').style.opacity='';
-  document.getElementById('fnViewTabs').style.display='';fnSelectedStatuses=new Set(['Hot','Warm','Cold','Token']);syncMSDisplay();setStatus(true);
+  document.getElementById('fnViewTabs').style.display='';fnSelectedStatuses=new Set(['Hot','Warm','Cold']);syncMSDisplay();setStatus(true);
 }
 function clearSession(){Object.values(SK).forEach(k=>sessionStorage.removeItem(k));}
 function setLoginStatus(msg,isErr){const el=document.getElementById('loginStatus');el.textContent=msg;el.className='login-status'+(isErr?' err':'');}
@@ -695,7 +695,7 @@ function renderFNData(rows){
 }
 function updateFNMetrics(rows){
   document.getElementById('fnm-total').textContent=rows.length;document.getElementById('fnm-hot').textContent=rows.filter(r=>r.status==='Hot').length;
-  document.getElementById('fnm-booked').textContent=rows.filter(r=>r.status==='Booked').length;document.getElementById('fnm-active').textContent=rows.filter(r=>['Hot','Warm','Cold','Token'].includes(r.status)).length;
+  document.getElementById('fnm-booked').textContent=rows.filter(r=>r.status==='Booked').length;document.getElementById('fnm-active').textContent=rows.filter(r=>['Hot','Warm','Cold'].includes(r.status)).length;
 }
 function applyFNFilters(){
   const pnl=document.getElementById('fn-pnlFilter').value,mgr=document.getElementById('fn-managerFilter').value,tl=document.getElementById('fn-tlFilter').value,emp=document.getElementById('fn-empFilter').value,proj=document.getElementById('fn-projFilter').value,dev=document.getElementById('fn-devFilter').value;
@@ -711,7 +711,7 @@ function applyFNFilters(){
 }
 function clearFNFilters(){
   ['fn-pnlFilter','fn-managerFilter','fn-tlFilter','fn-empFilter','fn-projFilter','fn-devFilter','fn-custFilter','fn-phoneFilter','fn-fromDate','fn-toDate'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  if(!isLoanDept()){fnSelectedStatuses=new Set(['Hot','Warm','Cold','Token']);syncMSDisplay();}applyFNFilters();
+  if(!isLoanDept()){fnSelectedStatuses=new Set(['Hot','Warm','Cold']);syncMSDisplay();}applyFNFilters();
 }
 function switchFNView(v){
   fnView=v;document.getElementById('fn-detailTab').classList.toggle('active',v==='detail');document.getElementById('fn-pivotTab').classList.toggle('active',v==='pivot');
