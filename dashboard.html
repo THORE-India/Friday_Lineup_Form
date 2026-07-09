@@ -51,16 +51,20 @@
     body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;line-height:1.5;font-size:14px;}
     body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 55% 45% at 10% 6%,rgba(215,165,79,0.20) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 94% 10%,rgba(232,196,220,0.30) 0%,transparent 60%),radial-gradient(ellipse 55% 50% at 88% 94%,rgba(190,205,230,0.26) 0%,transparent 60%),radial-gradient(ellipse 45% 40% at 6% 92%,rgba(169,121,59,0.12) 0%,transparent 60%);}
     [data-theme="dark"] body::before{background:radial-gradient(ellipse 55% 45% at 10% 6%,rgba(212,168,83,0.12) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 94% 10%,rgba(92,160,240,0.10) 0%,transparent 60%),radial-gradient(ellipse 55% 50% at 88% 94%,rgba(64,212,184,0.08) 0%,transparent 60%),radial-gradient(ellipse 45% 40% at 6% 92%,rgba(212,168,83,0.08) 0%,transparent 60%);}
-    .header{position:sticky;top:0;z-index:200;height:var(--header-h);background:rgba(7,12,24,0.90);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid var(--border-mid);display:flex;align-items:center;padding:0 20px;gap:16px;}
-    [data-theme="light"] .header{background:rgba(255,255,255,0.90);}
+    .header{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.55);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid var(--border-mid);display:flex;flex-direction:column;}
+    [data-theme="dark"] .header{background:rgba(15,20,32,0.80);}
+    .header-top{display:flex;align-items:center;padding:9px 20px;gap:16px;min-height:44px;}
     .header-left{display:flex;align-items:center;gap:14px;flex-shrink:0;}
-    .logo-block{display:flex;flex-direction:column;gap:1px;}
+    .logo-block{display:flex;align-items:center;gap:10px;}
+    .logo-img{height:36px;width:auto;border-radius:8px;box-shadow:0 2px 10px rgba(169,121,59,0.25);}
+    .logo-text{display:flex;flex-direction:column;gap:1px;}
     .logo-word{font-family:'DM Serif Display',serif;font-size:1.35rem;color:var(--gold);letter-spacing:0.12em;line-height:1;}
     .logo-sub{font-size:0.60rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);}
     .h-divider{width:1px;height:28px;background:var(--border-mid);flex-shrink:0;}
-    .dash-tabs{display:flex;gap:3px;background:var(--surface2);border:1px solid var(--border-mid);border-radius:var(--radius-sm);padding:4px;overflow:hidden;}
-    .dash-tab{padding:6px 14px;border:none;background:transparent;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:0.76rem;font-weight:600;border-radius:7px;cursor:pointer;transition:all var(--dur) var(--ease);letter-spacing:0.02em;white-space:nowrap;}
-    .dash-tab.active{background:var(--gold);color:#070C18;box-shadow:0 2px 10px var(--gold-glow);}
+    .header-nav-row{display:flex;justify-content:center;padding:0 20px;}
+    .dash-tabs{display:flex;gap:3px;background:var(--surface2);border:1px solid var(--border-mid);border-radius:var(--radius-sm);padding:4px;overflow:hidden;margin-bottom:10px;box-shadow:0 4px 14px rgba(60,45,20,0.08);}
+    .dash-tab{padding:6px 16px;border:none;background:transparent;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:0.76rem;font-weight:600;border-radius:7px;cursor:pointer;transition:all var(--dur) var(--ease);letter-spacing:0.02em;white-space:nowrap;}
+    .dash-tab.active{background:var(--gold);color:#fffaf2;box-shadow:0 2px 10px var(--gold-glow);}
     .dash-tab:not(.active):hover{color:var(--text);background:var(--surface3);}
     .header-center{flex:1;}
     .header-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
@@ -116,16 +120,18 @@
     .metric-label{font-size:0.60rem;font-weight:600;color:var(--text-dim);letter-spacing:0.07em;text-transform:uppercase;margin-top:2px;}
 
     /* ── COMPACT FILTER BAR ── */
-    .filters-bar{margin:8px 16px 0;padding:10px 14px;background:var(--surface);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid var(--border-mid);border-radius:var(--radius-sm);box-shadow:0 2px 12px rgba(0,0,0,0.12);}
-    .filters-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:7px;align-items:end;}
-    .filter-item{display:flex;flex-direction:column;gap:3px;}
-    .filter-item label{font-size:0.56rem;font-weight:700;letter-spacing:0.11em;text-transform:uppercase;color:var(--gold);}
-    .filter-item select,.filter-item input{height:30px;padding:0 8px;background:var(--surface2);border:1px solid var(--border-mid);border-radius:var(--radius-xs);color:var(--text);font-family:'Inter',sans-serif;font-size:0.74rem;font-weight:500;outline:none;transition:all var(--dur) var(--ease);-webkit-appearance:none;appearance:none;}
+    .filters-bar{margin:8px 16px 0;padding:10px 14px;background:var(--surface);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid var(--border-mid);border-radius:var(--radius-sm);box-shadow:0 2px 12px rgba(60,45,20,0.10);}
+    .filters-grid{display:flex;flex-wrap:nowrap;gap:9px;align-items:end;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin;scrollbar-color:var(--border-mid) transparent;}
+    .filters-grid::-webkit-scrollbar{height:5px;}
+    .filters-grid::-webkit-scrollbar-thumb{background:var(--border-mid);border-radius:4px;}
+    .filter-item{display:flex;flex-direction:column;gap:3px;flex:1 1 128px;min-width:112px;}
+    .filter-item label{font-size:0.56rem;font-weight:700;letter-spacing:0.11em;text-transform:uppercase;color:var(--gold);white-space:nowrap;}
+    .filter-item select,.filter-item input{height:30px;padding:0 8px;background:var(--surface2);border:1px solid var(--border-mid);border-radius:var(--radius-xs);color:var(--text);font-family:'Inter',sans-serif;font-size:0.74rem;font-weight:500;outline:none;transition:all var(--dur) var(--ease);-webkit-appearance:none;appearance:none;width:100%;}
     .filter-item select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%236B7D92' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;padding-right:22px;}
     .filter-item select option{background:var(--surface2);}
     .filter-item select:focus,.filter-item input:focus{border-color:var(--gold);background:var(--surface3);box-shadow:0 0 0 2px var(--gold-dim);}
     .filter-item select:hover,.filter-item input:hover{border-color:var(--border-gold);}
-    .filter-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;align-self:end;}
+    .filter-actions{display:flex;gap:6px;align-items:center;flex-wrap:nowrap;align-self:end;flex-shrink:0;margin-left:auto;padding-left:4px;}
     .clear-btn{height:30px;padding:0 11px;background:transparent;border:1px solid var(--border-mid);border-radius:var(--radius-xs);color:var(--text-dim);font-size:0.72rem;font-weight:600;cursor:pointer;transition:all var(--dur) var(--ease);font-family:'Inter',sans-serif;}
     .clear-btn:hover{border-color:var(--text-dim);color:var(--text);}
     .view-tabs{display:flex;gap:2px;background:var(--surface2);border:1px solid var(--border-mid);border-radius:var(--radius-xs);padding:2px;}
@@ -164,6 +170,8 @@
     th.asc::after{content:' ▲';opacity:1;color:var(--gold);}
     th.desc::after{content:' ▼';opacity:1;color:var(--gold);}
     td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text-sub);vertical-align:middle;}
+    tbody tr:nth-child(even) td{background:rgba(169,121,59,0.035);}
+    [data-theme="dark"] tbody tr:nth-child(even) td{background:rgba(255,255,255,0.025);}
     tbody tr{transition:background var(--dur) var(--ease);}
     tbody tr:hover td{background:var(--surface2);color:var(--text);}
     tbody tr:last-child td{border-bottom:none;}
@@ -243,11 +251,13 @@
     footer a{color:var(--gold);text-decoration:none;}
     footer a:hover{text-decoration:underline;}
     @media(max-width:768px){
-      .header{padding:8px 12px;height:auto;flex-wrap:wrap;gap:8px;}
+      .header-top{padding:8px 12px;gap:8px;}
       .header-left{gap:10px;flex:1;min-width:0;}
+      .logo-img{height:28px;}
       .logo-word{font-size:1.1rem;}
       .h-divider{display:none;}
-      .dash-tabs{order:3;width:100%;overflow-x:auto;scrollbar-width:none;}
+      .header-nav-row{padding:0 12px;}
+      .dash-tabs{width:100%;overflow-x:auto;scrollbar-width:none;}
       .dash-tabs::-webkit-scrollbar{display:none;}
       .dash-tab{flex-shrink:0;padding:5px 10px;font-size:0.68rem;}
       .header-right{gap:7px;}
@@ -275,29 +285,36 @@
 <body>
 
 <div class="header">
-  <div class="header-left">
-    <div class="logo-block"><div class="logo-word">THORE</div><div class="logo-sub">Dashboard</div></div>
-    <div class="h-divider"></div>
+  <div class="header-top">
+    <div class="header-left">
+      <div class="logo-block">
+        <img class="logo-img" src="https://i.postimg.cc/g25bQs8t/image.png" alt="THORE">
+        <div class="logo-text"><div class="logo-word">THORE</div><div class="logo-sub">Dashboard</div></div>
+      </div>
+    </div>
+    <div class="header-center"></div>
+    <div class="header-right">
+      <div id="connStatus" class="status-pill online"><div class="status-dot"></div> Online</div>
+      <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+      <a href="index.html" class="icon-btn" title="Go to Form" style="font-size:0.76rem;font-weight:700;">←</a>
+      <div class="profile-wrap" id="profileWrap" style="display:none;">
+        <div class="profile-avatar" onclick="toggleProfile()" id="profileAvatar">?</div>
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="pd-item username" id="pdUsername">—</div>
+          <div class="pd-item" id="pdFormLink" onclick="window.open('index.html')">📋 Friday Lineup Form</div>
+          <div class="pd-item" id="pdFNLink" onclick="window.open('https://thore-india.github.io/FN_Clients_Form/index.html')">🏆 FN Clients Form</div>
+
+        <div class="pd-item logout" onclick="logout()">Sign Out</div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <div class="header-nav-row">
     <div id="dashTabs" class="dash-tabs" style="display:none;">
       <button class="dash-tab active" onclick="switchDashboard('visits')">📋 Friday Lineup</button>
       <button class="dash-tab" onclick="switchDashboard('visitdone')">✅ Visit Done</button>
       <button class="dash-tab" onclick="switchDashboard('fnclients')">🏆 FN Clients</button>
       <button class="dash-tab" onclick="switchDashboard('revenue')">💰 Revenue</button>
-    </div>
-  </div>
-  <div class="header-center"></div>
-  <div class="header-right">
-    <div id="connStatus" class="status-pill online"><div class="status-dot"></div> Online</div>
-    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
-    <a href="index.html" class="icon-btn" title="Go to Form" style="font-size:0.76rem;font-weight:700;">←</a>
-    <div class="profile-wrap" id="profileWrap" style="display:none;">
-      <div class="profile-avatar" onclick="toggleProfile()" id="profileAvatar">?</div>
-      <div class="profile-dropdown" id="profileDropdown">
-        <div class="pd-item username" id="pdUsername">—</div>
-        <div class="pd-item" id="pdFormLink" onclick="window.open('index.html')">📋 Friday Lineup Form</div>
-        <div class="pd-item" id="pdFNLink" onclick="window.open('https://thore-india.github.io/FN_Clients_Form/index.html')">🏆 FN Clients Form</div>
-        <div class="pd-item logout" onclick="logout()">Sign Out</div>
-      </div>
     </div>
   </div>
 </div>
@@ -455,8 +472,8 @@
     <div class="modal-body">
       <div class="detail-grid" id="detailGrid"></div>
       <div class="admin-edit-panel" id="adminEditPanel" style="display:none;">
-        <div class="admin-edit-title">✏️ Operations Update</div>
-        <div class="admin-edit-row">
+        <div class="admin-edit-title" id="adminEditTitle">✏️ Operations Update</div>
+        <div class="admin-edit-row" id="adminStatusRow">
           <div><div class="admin-edit-label">Change Status</div>
             <select class="admin-edit-select" id="adminStatusSelect"><option value="">— Keep current —</option><option value="Hot">🔴 Hot</option><option value="Warm">🟠 Warm</option><option value="Cold">🔵 Cold</option><option value="Token">🟡 Token</option><option value="Lost">⚫ Lost</option><option value="Booked">✅ Booked</option></select>
           </div>
@@ -785,8 +802,9 @@ function openDetailModal(r){
   const grid=document.getElementById('detailGrid');
   grid.innerHTML=fields.map(f=>{const val=f.value?String(f.value).trim():'';const display=val?(f.badge?statusBadge(val):`<div class="detail-value ${f.gold?'gold':''}">${esc(val)}</div>`):`<div class="detail-value muted">—</div>`;return`<div class="detail-item ${f.full?'full':''}"><div class="detail-label">${f.label}</div>${display}</div>`;}).join('');
   window._currentDetailRecord=r;
-  const adminPanel=document.getElementById('adminEditPanel');adminPanel.style.display=isAdmin()?'block':'none';
-  if(isAdmin()){document.getElementById('adminStatusSelect').value='';document.getElementById('adminRemarkInput').value='';document.getElementById('adminCurrentStatus').textContent=r.status||'—';document.getElementById('adminSaveStatus').textContent='';document.getElementById('adminSaveBtn').disabled=false;}
+  const adminPanel=document.getElementById('adminEditPanel');const canEdit=isAdmin()||isLoanDept();adminPanel.style.display=canEdit?'block':'none';
+  if(canEdit){document.getElementById('adminStatusSelect').value='';document.getElementById('adminRemarkInput').value='';document.getElementById('adminCurrentStatus').textContent=r.status||'—';document.getElementById('adminSaveStatus').textContent='';document.getElementById('adminSaveBtn').disabled=false;
+    const loan=isLoanDept();document.getElementById('adminStatusRow').style.display=loan?'none':'grid';document.getElementById('adminEditTitle').textContent=loan?'✏️ Add Remark':'✏️ Operations Update';document.getElementById('adminRemarkInput').placeholder=loan?'Add a remark after reachout…':'Add a new operations remark…';}
   document.getElementById('detailModal').classList.add('open');document.body.style.overflow='hidden';
 }
 function closeDetailModal(e){if(e&&e.target!==document.getElementById('detailModal'))return;document.getElementById('detailModal').classList.remove('open');document.body.style.overflow='';}
@@ -816,7 +834,7 @@ function toggleProfile(){document.getElementById('profileDropdown').classList.to
 
 function saveAdminUpdate(){
   const r=window._currentDetailRecord;if(!r)return;
-  const newStatus=document.getElementById('adminStatusSelect').value,newRemark=document.getElementById('adminRemarkInput').value.trim();
+  const newStatus=isLoanDept()?'':document.getElementById('adminStatusSelect').value,newRemark=document.getElementById('adminRemarkInput').value.trim();
   if(!newStatus&&!newRemark){setAdminSaveStatus('Please change the status or add a remark before saving.',true);return;}
   const today=new Date(),dayStr=today.toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
   const parts=[];if((r.operationsRemark||'').trim())parts.push(r.operationsRemark.trim());
