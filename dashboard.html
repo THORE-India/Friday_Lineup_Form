@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THORE - Dashboard</title>
+  <title>THORE — Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
@@ -53,7 +53,7 @@
     [data-theme="dark"] body::before{background:radial-gradient(ellipse 55% 45% at 10% 6%,rgba(212,168,83,0.12) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 94% 10%,rgba(92,160,240,0.10) 0%,transparent 60%),radial-gradient(ellipse 55% 50% at 88% 94%,rgba(64,212,184,0.08) 0%,transparent 60%),radial-gradient(ellipse 45% 40% at 6% 92%,rgba(212,168,83,0.08) 0%,transparent 60%);}
     .header{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.55);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid var(--border-mid);display:flex;flex-direction:column;}
     [data-theme="dark"] .header{background:rgba(15,20,32,0.80);}
-    .header-top{display:flex;align-items:center;padding:8px 18px;gap:16px;min-height:44px;}
+    .header-top{display:flex;align-items:center;padding:9px 20px;gap:16px;min-height:44px;}
     .header-left{display:flex;align-items:center;gap:14px;flex-shrink:0;}
     .logo-block{display:flex;align-items:center;gap:10px;}
     .logo-img{height:36px;width:auto;border-radius:8px;box-shadow:0 2px 10px rgba(169,121,59,0.25);}
@@ -62,12 +62,11 @@
     .logo-sub{font-size:0.60rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);}
     .h-divider{width:1px;height:28px;background:var(--border-mid);flex-shrink:0;}
     .header-nav-row{display:flex;justify-content:center;padding:0 20px;}
-    .dash-tabs{display:flex;gap:3px;background:var(--surface2);border:1px solid var(--border-mid);border-radius:var(--radius-sm);padding:4px;overflow:hidden;box-shadow:0 4px 14px rgba(60,45,20,0.08);}
-    .dash-tab{padding:5px 14px;border:none;background:transparent;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:0.74rem;font-weight:600;border-radius:7px;cursor:pointer;transition:all var(--dur) var(--ease);letter-spacing:0.02em;white-space:nowrap;}
+    .dash-tabs{display:flex;gap:3px;background:var(--surface2);border:1px solid var(--border-mid);border-radius:var(--radius-sm);padding:4px;overflow:hidden;margin-bottom:10px;box-shadow:0 4px 14px rgba(60,45,20,0.08);}
+    .dash-tab{padding:6px 16px;border:none;background:transparent;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:0.76rem;font-weight:600;border-radius:7px;cursor:pointer;transition:all var(--dur) var(--ease);letter-spacing:0.02em;white-space:nowrap;}
     .dash-tab.active{background:var(--gold);color:#fffaf2;box-shadow:0 2px 10px var(--gold-glow);}
     .dash-tab:not(.active):hover{color:var(--text);background:var(--surface3);}
     .header-center{flex:1;}
-    .header-center{ flex:1; display:flex; justify-content:center; align-items:center;}
     .header-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
     .status-pill{display:flex;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;font-size:0.69rem;font-weight:700;letter-spacing:0.04em;border:1px solid transparent;}
     .status-pill.online{background:var(--green-bg);color:var(--green);border-color:rgba(80,208,144,0.2);}
@@ -127,7 +126,7 @@
     .filters-grid::-webkit-scrollbar-thumb{background:var(--border-mid);border-radius:4px;}
     .filter-item{display:flex;flex-direction:column;gap:3px;flex:1 1 128px;min-width:112px;}
     .filter-item label{font-size:0.56rem;font-weight:700;letter-spacing:0.11em;text-transform:uppercase;color:var(--gold);white-space:nowrap;}
-    .filter-item select,.filter-item input{height:30px; padding:0 8px; background:var(--surface2); border:1px solid var(--border-mid); border-radius:var(--radius-xs); color:var(--text-sub); font-family:'Inter',sans-serif; font-size:0.70rem; font-weight:400; outline:none; transition:all var(--dur) var(--ease);-webkit-appearance:none;appearance:none;width:100%;}
+    .filter-item select,.filter-item input{height:30px;padding:0 8px;background:var(--surface2);border:1px solid var(--border-mid);border-radius:var(--radius-xs);color:var(--text);font-family:'Inter',sans-serif;font-size:0.74rem;font-weight:500;outline:none;transition:all var(--dur) var(--ease);-webkit-appearance:none;appearance:none;width:100%;}
     .filter-item select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%236B7D92' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 7px center;padding-right:22px;}
     .filter-item select option{background:var(--surface2);}
     .filter-item select:focus,.filter-item input:focus{border-color:var(--gold);background:var(--surface3);box-shadow:0 0 0 2px var(--gold-dim);}
@@ -163,8 +162,8 @@
     .last-updated{font-size:0.67rem;color:var(--text-dim);}
     .table-wrap{margin:0 16px 12px;overflow:auto;max-height:calc(100vh - 255px);background:var(--surface);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid var(--border-mid);border-radius:0 0 var(--radius-sm) var(--radius-sm);scrollbar-width:thin;scrollbar-color:var(--surface4) transparent;}
     table{width:100%;border-collapse:collapse;font-size:0.82rem;}
-    thead{position:sticky;top:0;z-index:50;}
-    th{background:var(--surface4); backdrop-filter:none; -webkit-backdrop-filter:none;;padding:9px 12px;text-align:left;font-weight:700;font-size:0.63rem;letter-spacing:0.09em;text-transform:uppercase;color:var(--text-dim);border-bottom:2px solid var(--border-mid);white-space:nowrap;user-select:none;}
+    thead{position:sticky;top:0;z-index:10;}
+    th{background:var(--surface2);padding:9px 12px;text-align:left;font-weight:700;font-size:0.63rem;letter-spacing:0.09em;text-transform:uppercase;color:var(--text-dim);border-bottom:2px solid var(--border-mid);white-space:nowrap;user-select:none;}
     th.sortable{cursor:pointer;transition:color 0.15s;}
     th.sortable:hover{color:var(--gold);}
     th.sortable::after{content:' ↕';opacity:0.3;font-size:0.58rem;}
@@ -289,17 +288,11 @@
   <div class="header-top">
     <div class="header-left">
       <div class="logo-block">
+        <img class="logo-img" src="https://i.postimg.cc/g25bQs8t/image.png" alt="THORE">
         <div class="logo-text"><div class="logo-word">THORE</div><div class="logo-sub">Dashboard</div></div>
       </div>
     </div>
-    <div class="header-center">
-      <div id="dashTabs" class="dash-tabs" style="display:none;">
-      <button class="dash-tab active" onclick="switchDashboard('visits')">📋 Friday Lineup</button>
-      <button class="dash-tab" onclick="switchDashboard('visitdone')">✅ Visit Done</button>
-      <button class="dash-tab" onclick="switchDashboard('fnclients')">🏆 FN Clients</button>
-      <button class="dash-tab" onclick="switchDashboard('revenue')">💰 Revenue</button>
-    </div>
-    </div>
+    <div class="header-center"></div>
     <div class="header-right">
       <div id="connStatus" class="status-pill online"><div class="status-dot"></div> Online</div>
       <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
@@ -315,6 +308,14 @@
       </div>
     </div>
   </div>
+  </div>
+  <div class="header-nav-row">
+    <div id="dashTabs" class="dash-tabs" style="display:none;">
+      <button class="dash-tab active" onclick="switchDashboard('visits')">📋 Friday Lineup</button>
+      <button class="dash-tab" onclick="switchDashboard('visitdone')">✅ Visit Done</button>
+      <button class="dash-tab" onclick="switchDashboard('fnclients')">🏆 FN Clients</button>
+      <button class="dash-tab" onclick="switchDashboard('revenue')">💰 Revenue</button>
+    </div>
   </div>
 </div>
 
@@ -347,12 +348,12 @@
         <div class="metric-card"><div class="metric-icon orange">🏗️</div><div class="metric-body"><div class="metric-value" id="vm-projects">—</div><div class="metric-label">Projects</div></div></div>
       </div>
       <div class="filters-bar"><div class="filters-grid">
-        <div class="filter-item"><label>PNL Head</label><select id="v-pnlFilter" onchange="applyVisitFilters()"><option value="" selected disabled hidden>Select PNL Head</option></select></div>
-        <div class="filter-item"><label>Manager</label><select id="v-managerFilter" onchange="applyVisitFilters()"><option value="" selected disabled hidden>Select Manager</option></select></div>
-        <div class="filter-item"><label>Team Lead</label><select id="v-tlFilter" onchange="applyVisitFilters()"><option value="" selected disabled hidden>Select Team Lead</option></select></div>
-        <div class="filter-item"><label>Employee</label><select id="v-empFilter" onchange="applyVisitFilters()"><option value="" selected disabled hidden>Select Employee</option></select></div>
-        <div class="filter-item"><label>Project</label><select id="v-projFilter" onchange="applyVisitFilters()"><option value="" selected disabled hidden>Select Project</option></select></div>
-        <div class="filter-item"><label>Developer</label><select id="v-devFilter" onchange="applyVisitFilters()"><option value="" selected disabled hidden>Select Developer</option></select></div>
+        <div class="filter-item"><label>PNL Head</label><select id="v-pnlFilter" onchange="applyVisitFilters()"><option value="">All PNL Heads</option></select></div>
+        <div class="filter-item"><label>Manager</label><select id="v-managerFilter" onchange="applyVisitFilters()"><option value="">All Managers</option></select></div>
+        <div class="filter-item"><label>Team Lead</label><select id="v-tlFilter" onchange="applyVisitFilters()"><option value="">All Team Leads</option></select></div>
+        <div class="filter-item"><label>Employee</label><select id="v-empFilter" onchange="applyVisitFilters()"><option value="">All Employees</option></select></div>
+        <div class="filter-item"><label>Project</label><select id="v-projFilter" onchange="applyVisitFilters()"><option value="">All Projects</option></select></div>
+        <div class="filter-item"><label>Developer</label><select id="v-devFilter" onchange="applyVisitFilters()"><option value="">All Developers</option></select></div>
         <div class="filter-item"><label>Closure</label><select id="v-closureFilter" onchange="applyVisitFilters()"><option value="">All Closure Chances</option><option>Excellent</option><option>Very good</option><option>Good</option><option>Fair</option><option>Poor</option></select></div>
         <div class="filter-item"><label>Customer</label><input type="text" id="v-custFilter" placeholder="Search customer…" oninput="applyVisitFilters()"></div>
         <div class="filter-item"><label>Phone</label><input type="text" id="v-phoneFilter" placeholder="Search phone…" oninput="applyVisitFilters()"></div>
