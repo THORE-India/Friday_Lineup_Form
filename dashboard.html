@@ -131,6 +131,10 @@
     .filter-item select:focus,.filter-item input:focus{border-color:var(--gold);background:var(--surface3);box-shadow:0 0 0 2px var(--gold-dim);}
     .filter-item select:hover,.filter-item input:hover{border-color:var(--border-gold);}
     .filter-actions{display:flex;gap:6px;align-items:center;flex-wrap:nowrap;align-self:end;flex-shrink:0;margin-left:auto;padding-left:4px;}
+    .date-range-item{flex:1 1 190px;min-width:170px;}
+    .date-range-pair{display:flex;align-items:center;gap:4px;}
+    .date-range-pair input{min-width:0;}
+    .date-range-sep{color:var(--text-dim);font-size:0.68rem;flex-shrink:0;}
     .clear-btn{height:30px;padding:0 11px;background:transparent;border:1px solid var(--border-mid);border-radius:var(--radius-xs);color:var(--text-dim);font-size:0.72rem;font-weight:600;cursor:pointer;transition:all var(--dur) var(--ease);font-family:'Inter',sans-serif;}
     .clear-btn:hover{border-color:var(--text-dim);color:var(--text);}
     .view-tabs{display:flex;gap:2px;background:var(--surface2);border:1px solid var(--border-mid);border-radius:var(--radius-xs);padding:2px;}
@@ -141,7 +145,7 @@
     .ms-trigger::after{content:'';position:absolute;right:7px;top:50%;transform:translateY(-50%);width:11px;height:11px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%236B7D92' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center;}
     .ms-trigger:hover{border-color:var(--border-gold);}
     .ms-trigger.open{border-color:var(--gold);background:var(--surface3);box-shadow:0 0 0 2px var(--gold-dim);}
-    .ms-dropdown{position:absolute;top:calc(100% + 5px);left:0;min-width:165px;background:var(--surface2);border:1px solid var(--border-mid);border-radius:var(--radius-sm);box-shadow:0 14px 40px rgba(0,0,0,0.5);z-index:300;overflow:hidden;display:none;}
+    .ms-dropdown{position:fixed;min-width:165px;background:var(--surface2);border:1px solid var(--border-mid);border-radius:var(--radius-sm);box-shadow:0 14px 40px rgba(0,0,0,0.5);z-index:300;overflow:hidden;display:none;}
     .ms-dropdown.open{display:block;}
     .ms-option{display:flex;align-items:center;gap:9px;padding:8px 12px;cursor:pointer;font-size:0.76rem;font-weight:500;border-bottom:1px solid var(--border);transition:background 0.15s;color:var(--text-sub);}
     .ms-option:last-child{border-bottom:none;}
@@ -434,8 +438,7 @@
         </div>
         <div class="filter-item"><label>Customer</label><input type="text" id="fn-custFilter" placeholder="Search customer…" oninput="applyFNFilters()"></div>
         <div class="filter-item"><label>Phone</label><input type="text" id="fn-phoneFilter" placeholder="Search phone…" oninput="applyFNFilters()"></div>
-        <div class="filter-item"><label>From Date</label><input type="date" id="fn-fromDate" onchange="applyFNFilters()"></div>
-        <div class="filter-item"><label>To Date</label><input type="date" id="fn-toDate" onchange="applyFNFilters()"></div>
+        <div class="filter-item date-range-item"><label>Date Range</label><div class="date-range-pair"><input type="date" id="fn-fromDate" onchange="applyFNFilters()" title="From date"><span class="date-range-sep">–</span><input type="date" id="fn-toDate" onchange="applyFNFilters()" title="To date"></div></div>
         <div class="filter-item"><label>&nbsp;</label><div class="filter-actions"><button class="clear-btn" onclick="clearFNFilters()">Clear</button><div class="view-tabs" id="fnViewTabs"><button class="view-tab active" id="fn-detailTab" onclick="switchFNView('detail')">Detail</button><button class="view-tab" id="fn-pivotTab" onclick="switchFNView('pivot')">Pivot</button></div></div></div>
       </div></div>
       <div class="table-meta"><div class="row-count" id="fn-rowCount">Loading…</div><div class="last-updated" id="fn-lastUpdated"></div></div>
@@ -631,7 +634,12 @@ function loadFNData(){
 
 function toggleMSDropdown(){
   const t=document.getElementById('fnStatusTrigger'),d=document.getElementById('fnStatusDropdown'),o=d.classList.contains('open');
-  if(o){d.classList.remove('open');t.classList.remove('open');}else{d.classList.add('open');t.classList.add('open');}
+  if(o){d.classList.remove('open');t.classList.remove('open');}else{
+    const r=t.getBoundingClientRect();
+    d.style.top=(r.bottom+5)+'px';
+    d.style.left=Math.max(8,Math.min(r.left,window.innerWidth-175))+'px';
+    d.classList.add('open');t.classList.add('open');
+  }
 }
 function toggleMSOption(el){
   const val=el.dataset.value;
@@ -655,6 +663,7 @@ document.addEventListener('click',e=>{
   if(w&&!w.contains(e.target)){document.getElementById('fnStatusDropdown').classList.remove('open');document.getElementById('fnStatusTrigger').classList.remove('open');}
   const pw=document.getElementById('profileWrap');if(pw&&!pw.contains(e.target))document.getElementById('profileDropdown').classList.remove('show');
 });
+window.addEventListener('scroll',()=>{const d=document.getElementById('fnStatusDropdown');if(d&&d.classList.contains('open')){d.classList.remove('open');document.getElementById('fnStatusTrigger').classList.remove('open');}},true);
 function showAllFNStatuses(){FN_ALL_STATUSES.forEach(s=>fnSelectedStatuses.add(s));syncMSDisplay();applyFNFilters();}
 
 function renderVisitData(rows){
