@@ -106,7 +106,7 @@
     #dashPanel{display:none;flex-direction:column;flex:1;}
 
     /* ── SMALLER METRIC CARDS ── */
-    .metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;padding:8px 20px;background:rgba(255,255,255,0.45);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border-bottom:1px solid var(--border);position:sticky;top:58px;z-index:90;}
+    .metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;padding:8px 20px;background:rgba(255,255,255,0.45);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border-bottom:1px solid var(--border);position:sticky;top:var(--header-h);z-index:90;}
     [data-theme="dark"] .metrics-row{background:rgba(15,20,32,0.65);}
     .metric-card{background:var(--surface3);border:1px solid var(--border);border-radius:var(--radius-xs);padding:7px 10px;display:flex;align-items:center;gap:8px;position:relative;overflow:hidden;transition:border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease);}
     .metric-card:hover{border-color:var(--border-gold);box-shadow:0 0 18px var(--gold-dim);}
@@ -249,7 +249,7 @@
     .revenue-placeholder .rev-icon{font-size:3.5rem;}
     .revenue-placeholder h2{font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--gold);}
     .revenue-placeholder p{font-size:0.86rem;max-width:360px;line-height:1.75;}
-    .refresh-indicator{position:fixed;top:68px;right:18px;background:var(--green-bg);color:var(--green);border:1px solid rgba(80,208,144,0.3);padding:5px 12px;border-radius:20px;font-size:0.68rem;font-weight:700;display:none;z-index:999;animation:pulse 1.5s infinite;}
+    .refresh-indicator{position:fixed;top:calc(var(--header-h) + 8px);right:18px;background:var(--green-bg);color:var(--green);border:1px solid rgba(80,208,144,0.3);padding:5px 12px;border-radius:20px;font-size:0.68rem;font-weight:700;display:none;z-index:999;animation:pulse 1.5s infinite;}
     .refresh-indicator.show{display:block;}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
     footer{background:var(--surface);border-top:1px solid var(--border);padding:12px 20px;text-align:center;font-size:0.70rem;color:var(--text-dim);position:relative;z-index:1;}
@@ -266,7 +266,7 @@
       .dash-tab{flex-shrink:0;padding:5px 10px;font-size:0.68rem;}
       .header-right{gap:7px;}
       .status-pill{display:none;}
-      .metrics-row{grid-template-columns:repeat(2,1fr);padding:8px 12px;gap:8px;top:88px;}
+      .metrics-row{grid-template-columns:repeat(2,1fr);padding:8px 12px;gap:8px;}
       .filters-bar{margin:8px 12px 0;padding:9px 11px;}
       .filters-grid{gap:6px;}
       .table-wrap{margin:0 12px 10px;max-height:calc(100vh - 225px);}
@@ -512,6 +512,30 @@ let fnAll=[],fnFiltered=[],fnSortCol=-1,fnSortDir='asc',fnView='detail';
 let fnSelectedStatuses=new Set(['Hot','Warm','Cold']);
 const FN_ACTIVE_STATUSES=['Hot','Warm','Cold'],FN_INACTIVE_STATUSES=['Lost','Booked'],FN_ALL_STATUSES=['Hot','Warm','Cold','Token','Lost','Booked'];
 
+// ── Dynamic header-height sync (fixes sticky metrics row / refresh pill overlap on mobile) ──
+function syncHeaderHeight(){
+  const header=document.querySelector('.header');
+  if(!header)return;
+  const h=Math.ceil(header.getBoundingClientRect().height);
+  document.documentElement.style.setProperty('--header-h',h+'px');
+}
+(function initHeaderHeightSync(){
+  // Run once ASAP, then again after layout settles (fonts, wrapping, etc.)
+  document.addEventListener('DOMContentLoaded',()=>{
+    syncHeaderHeight();
+    // Keep header height in sync whenever its own size changes —
+    // e.g. dash tabs appearing after login, tabs wrapping to a 2nd row on narrow screens, font load, etc.
+    const header=document.querySelector('.header');
+    if(header&&window.ResizeObserver){
+      new ResizeObserver(syncHeaderHeight).observe(header);
+    }
+  });
+  window.addEventListener('resize',syncHeaderHeight);
+  window.addEventListener('orientationchange',()=>setTimeout(syncHeaderHeight,150));
+  // Fonts loading late can change header height slightly; re-sync once they're ready.
+  if(document.fonts&&document.fonts.ready){document.fonts.ready.then(syncHeaderHeight);}
+})();
+
 document.addEventListener('DOMContentLoaded',()=>{document.getElementById('yr').textContent=new Date().getFullYear();checkStoredSession();syncMSDisplay();});
 
 function isLoanDept(){return auth&&auth.role.toLowerCase()==='loan department';}
@@ -565,6 +589,9 @@ function handleLoginSuccess(role,user,pass,initialData){
   if(role.toLowerCase()==='loan department'){setupLoanDeptView();renderFNData(initialData);document.getElementById('loanDeptBanner').style.display='flex';}
   else{document.getElementById('dashTabs').style.display='flex';document.getElementById('pdFormLink').style.display='block';document.getElementById('pdFNLink').style.display='block';renderVisitData(initialData);startAutoRefresh();}
   setStatus(true);
+  // Header just changed shape (tabs/profile appeared) — resync sticky offset, next frame + short delay for safety.
+  requestAnimationFrame(syncHeaderHeight);
+  setTimeout(syncHeaderHeight,50);
 }
 
 function setupLoanDeptView(){
@@ -596,7 +623,9 @@ function logout(){
   document.getElementById('profileDropdown').classList.remove('show');document.getElementById('loanDeptBanner').style.display='none';
   document.getElementById('fnStatusTrigger').style.pointerEvents='';document.getElementById('fnStatusTrigger').style.opacity='';
   document.getElementById('fnViewTabs').style.display='';fnSelectedStatuses=new Set(['Hot','Warm','Cold']);syncMSDisplay();setStatus(true);
+  requestAnimationFrame(syncHeaderHeight);
 }
+
 function clearSession(){Object.values(SK).forEach(k=>sessionStorage.removeItem(k));}
 function setLoginStatus(msg,isErr){const el=document.getElementById('loginStatus');el.textContent=msg;el.className='login-status'+(isErr?' err':'');}
 
