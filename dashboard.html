@@ -45,7 +45,7 @@
       --green:#50D090;--green-bg:rgba(80,208,144,0.12);
       --slate:#8898B0;--slate-bg:rgba(136,152,176,0.12);
       --teal:#40D4B8;--teal-bg:rgba(64,212,184,0.12);
-      --text:#E8EDF5;--text-sub:#9AAABB;--text-dim:#6B7D92;
+      --text:#F2F5FA;--text-sub:#C2CCDC;--text-dim:#93A2B8;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scroll-behavior:smooth;}
@@ -210,7 +210,7 @@
     .ratio-na{background:var(--slate-bg);color:var(--text-dim);}
     .sp-view-toggle{display:flex;gap:2px;background:var(--surface2);border:1px solid var(--border-mid);border-radius:var(--radius-xs);padding:2px;}
     /* Dashboard (charts) view */
-    .chart-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:8px 16px 16px;}
+    .chart-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:8px 16px 28px;}
     .chart-card{background:var(--surface);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid var(--border-mid);border-radius:var(--radius-sm);padding:14px 16px 10px;box-shadow:0 2px 12px rgba(60,45,20,0.08);}
     .chart-card.full{grid-column:1 / -1;}
     .chart-card-title{font-size:0.76rem;font-weight:700;color:var(--text);margin-bottom:10px;letter-spacing:0.01em;}
@@ -528,18 +528,18 @@
       <div id="sp-tableView" class="table-wrap">
         <table id="sp-table"><thead><tr>
           <th>Manager</th><th>Employee</th><th>Leads</th><th>SV</th><th>Meeting</th><th>Bookings</th><th>Revenue</th>
-          <th>Leads:SV</th><th>Leads:Meeting</th><th>SV:Booking</th><th>Meeting:Booking</th>
+          <th>Leads:SV</th><th>Leads:Meeting</th><th>SV+Meeting:Booking</th>
         </tr></thead><tbody id="sp-tbody"></tbody></table>
       </div>
 
-      <div id="sp-dashboardView" class="table-wrap" style="display:none;overflow:visible;background:transparent;border:none;">
+      <div id="sp-dashboardView" style="display:none;">
         <div class="chart-grid">
           <div class="chart-card"><div class="chart-card-title">Cluster-wise <span>Leads / SV / Meetings / Bookings</span></div><div class="chart-card-body"><canvas id="sp-chart-cluster"></canvas></div></div>
-          <div class="chart-card"><div class="chart-card-title">Team-wise <span>Leads / SV / Meetings / Bookings</span></div><div class="chart-card-body"><canvas id="sp-chart-team"></canvas></div></div>
+          <div class="chart-card"><div class="chart-card-title">PNL Head-wise <span>Leads / SV / Meetings / Bookings</span></div><div class="chart-card-body"><canvas id="sp-chart-team"></canvas></div></div>
           <div class="chart-card"><div class="chart-card-title">Cluster-wise <span>Conversion Ratios (%)</span></div><div class="chart-card-body"><canvas id="sp-chart-cluster-ratio"></canvas></div></div>
-          <div class="chart-card"><div class="chart-card-title">Team-wise <span>Conversion Ratios (%)</span></div><div class="chart-card-body"><canvas id="sp-chart-team-ratio"></canvas></div></div>
-          <div class="chart-card full"><div class="chart-card-title">Project-wise <span>SV → Booking &amp; Meeting → Booking Ratio</span></div><div class="chart-card-body tall"><canvas id="sp-chart-project-ratio"></canvas></div></div>
-          <div class="chart-card full"><div class="chart-card-title">Developer-wise <span>SV → Booking &amp; Meeting → Booking Ratio</span></div><div class="chart-card-body tall"><canvas id="sp-chart-developer-ratio"></canvas></div></div>
+          <div class="chart-card"><div class="chart-card-title">PNL Head-wise <span>Conversion Ratios (%)</span></div><div class="chart-card-body"><canvas id="sp-chart-team-ratio"></canvas></div></div>
+          <div class="chart-card full"><div class="chart-card-title">Project-wise <span>SV + Meeting → Booking Ratio</span></div><div class="chart-card-body tall"><canvas id="sp-chart-project-ratio"></canvas></div></div>
+          <div class="chart-card full"><div class="chart-card-title">Developer-wise <span>SV + Meeting → Booking Ratio</span></div><div class="chart-card-body tall"><canvas id="sp-chart-developer-ratio"></canvas></div></div>
         </div>
       </div>
     </div>
@@ -586,7 +586,7 @@
     <div class="modal-body" style="overflow-y:auto;flex:1;">
       <div class="sp-detail-summary" id="spDetailSummary"></div>
       <div class="drill-table-wrap" style="overflow:visible;flex:none;">
-        <table class="sp-proj-table"><thead><tr><th>Project</th><th>Developer</th><th>SV</th><th>Meeting</th><th>Bookings</th><th>Revenue</th><th>SV:Booking</th><th>Meeting:Booking</th></tr></thead><tbody id="spDetailProjTbody"></tbody></table>
+        <table class="sp-proj-table"><thead><tr><th>Project</th><th>Developer</th><th>SV</th><th>Meeting</th><th>Bookings</th><th>Revenue</th><th>SV+Meeting:Booking</th></tr></thead><tbody id="spDetailProjTbody"></tbody></table>
       </div>
     </div>
   </div>
@@ -1146,8 +1146,8 @@ function buildSPAggregation(){
   employees.forEach(e=>{
     if(!clusterMap[e.cluster])clusterMap[e.cluster]={cluster:e.cluster,teams:{},leads:0,sv:0,meetings:0,bookings:0,revenue:0};
     const c=clusterMap[e.cluster];
-    if(!c.teams[e.team])c.teams[e.team]={team:e.team,employees:[],leads:0,sv:0,meetings:0,bookings:0,revenue:0};
-    const t=c.teams[e.team];
+    if(!c.teams[e.pnlHead])c.teams[e.pnlHead]={team:e.pnlHead,employees:[],leads:0,sv:0,meetings:0,bookings:0,revenue:0};
+    const t=c.teams[e.pnlHead];
     t.employees.push(e);t.leads+=e.leads;t.sv+=e.sv;t.meetings+=e.meetings;t.bookings+=e.bookings;t.revenue+=e.revenue;
     c.leads+=e.leads;c.sv+=e.sv;c.meetings+=e.meetings;c.bookings+=e.bookings;c.revenue+=e.revenue;
   });
@@ -1183,12 +1183,12 @@ function updateSPMetrics(agg){
 function renderSPTable(agg){
   if(!agg)return;
   const tbody=document.getElementById('sp-tbody');
-  if(!agg.employees.length){tbody.innerHTML='<tr><td colspan="11" class="no-data">No sales performance data found for the current filters</td></tr>';document.getElementById('sp-rowCount').textContent='0 employees';return;}
+  if(!agg.employees.length){tbody.innerHTML='<tr><td colspan="10" class="no-data">No sales performance data found for the current filters</td></tr>';document.getElementById('sp-rowCount').textContent='0 employees';return;}
   let html='';
   agg.clusters.forEach(c=>{
-    html+=`<tr class="sp-cluster-row"><td colspan="11">📍 ${esc(c.cluster)}</td></tr>`;
+    html+=`<tr class="sp-cluster-row"><td colspan="10">📍 ${esc(c.cluster)}</td></tr>`;
     c.teamList.forEach(t=>{
-      html+=`<tr class="sp-team-row"><td colspan="11">👥 Team: ${esc(t.team)}</td></tr>`;
+      html+=`<tr class="sp-team-row"><td colspan="10">👥 PNL Head: ${esc(t.team)}</td></tr>`;
       t.employees.forEach(e=>{
         html+=`<tr class="sp-emp-row">
           <td>${esc(e.manager)}</td>
@@ -1200,21 +1200,20 @@ function renderSPTable(agg){
           <td>${e.revenue?formatBudgetTotal(e.revenue):'—'}</td>
           <td>${ratioPill(e.sv,e.leads)}</td>
           <td>${ratioPill(e.meetings,e.leads)}</td>
-          <td>${ratioPill(e.bookings,e.sv)}</td>
-          <td>${ratioPill(e.bookings,e.meetings)}</td>
+          <td>${ratioPill(e.bookings,e.sv+e.meetings)}</td>
         </tr>`;
       });
-      html+=`<tr class="sp-team-subtotal"><td colspan="2">Subtotal — ${esc(t.team)}</td><td>${t.leads.toLocaleString('en-IN')}</td><td>${t.sv.toLocaleString('en-IN')}</td><td>${t.meetings.toLocaleString('en-IN')}</td><td>${t.bookings.toLocaleString('en-IN')}</td><td>${t.revenue?formatBudgetTotal(t.revenue):'—'}</td><td>${ratioPill(t.sv,t.leads)}</td><td>${ratioPill(t.meetings,t.leads)}</td><td>${ratioPill(t.bookings,t.sv)}</td><td>${ratioPill(t.bookings,t.meetings)}</td></tr>`;
+      html+=`<tr class="sp-team-subtotal"><td colspan="2">Subtotal — ${esc(t.team)}</td><td>${t.leads.toLocaleString('en-IN')}</td><td>${t.sv.toLocaleString('en-IN')}</td><td>${t.meetings.toLocaleString('en-IN')}</td><td>${t.bookings.toLocaleString('en-IN')}</td><td>${t.revenue?formatBudgetTotal(t.revenue):'—'}</td><td>${ratioPill(t.sv,t.leads)}</td><td>${ratioPill(t.meetings,t.leads)}</td><td>${ratioPill(t.bookings,t.sv+t.meetings)}</td></tr>`;
     });
-    html+=`<tr class="sp-cluster-subtotal"><td colspan="2">Cluster Total — ${esc(c.cluster)}</td><td>${c.leads.toLocaleString('en-IN')}</td><td>${c.sv.toLocaleString('en-IN')}</td><td>${c.meetings.toLocaleString('en-IN')}</td><td>${c.bookings.toLocaleString('en-IN')}</td><td>${c.revenue?formatBudgetTotal(c.revenue):'—'}</td><td>${ratioPill(c.sv,c.leads)}</td><td>${ratioPill(c.meetings,c.leads)}</td><td>${ratioPill(c.bookings,c.sv)}</td><td>${ratioPill(c.bookings,c.meetings)}</td></tr>`;
+    html+=`<tr class="sp-cluster-subtotal"><td colspan="2">Cluster Total — ${esc(c.cluster)}</td><td>${c.leads.toLocaleString('en-IN')}</td><td>${c.sv.toLocaleString('en-IN')}</td><td>${c.meetings.toLocaleString('en-IN')}</td><td>${c.bookings.toLocaleString('en-IN')}</td><td>${c.revenue?formatBudgetTotal(c.revenue):'—'}</td><td>${ratioPill(c.sv,c.leads)}</td><td>${ratioPill(c.meetings,c.leads)}</td><td>${ratioPill(c.bookings,c.sv+c.meetings)}</td></tr>`;
   });
-  html+=`<tr class="sp-grand-total"><td colspan="2">GRAND TOTAL</td><td>${agg.grand.leads.toLocaleString('en-IN')}</td><td>${agg.grand.sv.toLocaleString('en-IN')}</td><td>${agg.grand.meetings.toLocaleString('en-IN')}</td><td>${agg.grand.bookings.toLocaleString('en-IN')}</td><td>${agg.grand.revenue?formatBudgetTotal(agg.grand.revenue):'—'}</td><td>${ratioPill(agg.grand.sv,agg.grand.leads)}</td><td>${ratioPill(agg.grand.meetings,agg.grand.leads)}</td><td>${ratioPill(agg.grand.bookings,agg.grand.sv)}</td><td>${ratioPill(agg.grand.bookings,agg.grand.meetings)}</td></tr>`;
+  html+=`<tr class="sp-grand-total"><td colspan="2">GRAND TOTAL</td><td>${agg.grand.leads.toLocaleString('en-IN')}</td><td>${agg.grand.sv.toLocaleString('en-IN')}</td><td>${agg.grand.meetings.toLocaleString('en-IN')}</td><td>${agg.grand.bookings.toLocaleString('en-IN')}</td><td>${agg.grand.revenue?formatBudgetTotal(agg.grand.revenue):'—'}</td><td>${ratioPill(agg.grand.sv,agg.grand.leads)}</td><td>${ratioPill(agg.grand.meetings,agg.grand.leads)}</td><td>${ratioPill(agg.grand.bookings,agg.grand.sv+agg.grand.meetings)}</td></tr>`;
   tbody.innerHTML=html;
   document.getElementById('sp-rowCount').textContent=agg.employees.length+' employee(s) across '+agg.clusters.length+' cluster(s)';
 }
 
 function openSPEmployeeDetail(e){
-  document.getElementById('spDetailTitle').innerHTML=`${esc(e.employee)} <span>— ${esc(e.team)}</span>`;
+  document.getElementById('spDetailTitle').innerHTML=`${esc(e.employee)} <span>— ${esc(e.pnlHead)}</span>`;
   const summary=[
     {label:'Cluster',value:e.cluster},{label:'Manager',value:e.manager},{label:'PNL Head',value:e.pnlHead},
     {label:'Leads',value:e.leads.toLocaleString('en-IN'),gold:true},{label:'SV',value:e.sv.toLocaleString('en-IN')},{label:'Meetings',value:e.meetings.toLocaleString('en-IN')},
@@ -1222,8 +1221,8 @@ function openSPEmployeeDetail(e){
   ];
   document.getElementById('spDetailSummary').innerHTML=summary.map(s=>`<div class="detail-item"><div class="detail-label">${s.label}</div><div class="detail-value ${s.gold?'gold':''}">${esc(String(s.value))}</div></div>`).join('');
   const tbody=document.getElementById('spDetailProjTbody');
-  if(!e.projects.length){tbody.innerHTML='<tr><td colspan="8" class="no-data">No project-wise activity found</td></tr>';}
-  else{tbody.innerHTML=e.projects.map(p=>`<tr><td style="font-weight:600;color:var(--text)">${esc(p.project)}</td><td>${esc(p.developer)}</td><td>${p.sv}</td><td>${p.meetings}</td><td>${p.bookings}</td><td>${p.revenue?formatBudgetTotal(p.revenue):'—'}</td><td>${ratioPill(p.bookings,p.sv)}</td><td>${ratioPill(p.bookings,p.meetings)}</td></tr>`).join('');}
+  if(!e.projects.length){tbody.innerHTML='<tr><td colspan="7" class="no-data">No project-wise activity found</td></tr>';}
+  else{tbody.innerHTML=e.projects.map(p=>`<tr><td style="font-weight:600;color:var(--text)">${esc(p.project)}</td><td>${esc(p.developer)}</td><td>${p.sv}</td><td>${p.meetings}</td><td>${p.bookings}</td><td>${p.revenue?formatBudgetTotal(p.revenue):'—'}</td><td>${ratioPill(p.bookings,p.sv+p.meetings)}</td></tr>`).join('');}
   document.getElementById('spDetailModal').classList.add('open');document.body.style.overflow='hidden';
 }
 function closeSPDetailModal(e){if(e&&e.target!==document.getElementById('spDetailModal'))return;document.getElementById('spDetailModal').classList.remove('open');document.body.style.overflow='';}
@@ -1268,30 +1267,26 @@ function renderSPCharts(agg){
   spCharts.clusterRatio=new Chart(document.getElementById('sp-chart-cluster-ratio'),{type:'bar',data:{labels:clLabels,datasets:[
     {label:'Leads:SV %',data:agg.clusters.map(c=>ratioPct(c.sv,c.leads)||0),backgroundColor:blue},
     {label:'Leads:Meeting %',data:agg.clusters.map(c=>ratioPct(c.meetings,c.leads)||0),backgroundColor:orange},
-    {label:'SV:Booking %',data:agg.clusters.map(c=>ratioPct(c.bookings,c.sv)||0),backgroundColor:green},
-    {label:'Meeting:Booking %',data:agg.clusters.map(c=>ratioPct(c.bookings,c.meetings)||0),backgroundColor:red}
+    {label:'SV+Meeting:Booking %',data:agg.clusters.map(c=>ratioPct(c.bookings,c.sv+c.meetings)||0),backgroundColor:green}
   ]},options:spChartOpts(true)});
 
   destroySPChart('teamRatio');
   spCharts.teamRatio=new Chart(document.getElementById('sp-chart-team-ratio'),{type:'bar',data:{labels:allTeams.map(t=>t.label),datasets:[
     {label:'Leads:SV %',data:allTeams.map(t=>ratioPct(t.sv,t.leads)||0),backgroundColor:blue},
     {label:'Leads:Meeting %',data:allTeams.map(t=>ratioPct(t.meetings,t.leads)||0),backgroundColor:orange},
-    {label:'SV:Booking %',data:allTeams.map(t=>ratioPct(t.bookings,t.sv)||0),backgroundColor:green},
-    {label:'Meeting:Booking %',data:allTeams.map(t=>ratioPct(t.bookings,t.meetings)||0),backgroundColor:red}
+    {label:'SV+Meeting:Booking %',data:allTeams.map(t=>ratioPct(t.bookings,t.sv+t.meetings)||0),backgroundColor:green}
   ]},options:spChartOpts(true)});
 
   destroySPChart('projRatio');
   const projSorted=[...agg.projAgg].filter(p=>p.sv>0||p.meetings>0||p.bookings>0).sort((a,b)=>b.bookings-a.bookings).slice(0,20);
   spCharts.projRatio=new Chart(document.getElementById('sp-chart-project-ratio'),{type:'bar',data:{labels:projSorted.map(p=>p.key),datasets:[
-    {label:'SV:Booking %',data:projSorted.map(p=>ratioPct(p.bookings,p.sv)||0),backgroundColor:green},
-    {label:'Meeting:Booking %',data:projSorted.map(p=>ratioPct(p.bookings,p.meetings)||0),backgroundColor:red}
+    {label:'SV+Meeting:Booking %',data:projSorted.map(p=>ratioPct(p.bookings,p.sv+p.meetings)||0),backgroundColor:green}
   ]},options:spChartOpts(true)});
 
   destroySPChart('devRatio');
   const devSorted=[...agg.devAgg].filter(d=>d.sv>0||d.meetings>0||d.bookings>0).sort((a,b)=>b.bookings-a.bookings).slice(0,20);
   spCharts.devRatio=new Chart(document.getElementById('sp-chart-developer-ratio'),{type:'bar',data:{labels:devSorted.map(d=>d.key),datasets:[
-    {label:'SV:Booking %',data:devSorted.map(d=>ratioPct(d.bookings,d.sv)||0),backgroundColor:green},
-    {label:'Meeting:Booking %',data:devSorted.map(d=>ratioPct(d.bookings,d.meetings)||0),backgroundColor:red}
+    {label:'SV+Meeting:Booking %',data:devSorted.map(d=>ratioPct(d.bookings,d.sv+d.meetings)||0),backgroundColor:green}
   ]},options:spChartOpts(true)});
 }
 
