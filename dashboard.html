@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THORE — Dashboard</title>
+  <title>THORE Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
@@ -516,7 +516,7 @@
         <div class="metric-card"><div class="metric-icon gold">🧲</div><div class="metric-body"><div class="metric-value" id="mpm-leads">—</div><div class="metric-label">Total Leads</div></div></div>
         <div class="metric-card"><div class="metric-icon blue">💸</div><div class="metric-body"><div class="metric-value" id="mpm-spent">—</div><div class="metric-label">Total Spent</div></div></div>
         <div class="metric-card"><div class="metric-icon green">💰</div><div class="metric-body"><div class="metric-value" id="mpm-revenue">—</div><div class="metric-label">Total Revenue</div></div></div>
-        <div class="metric-card"><div class="metric-icon orange">📐</div><div class="metric-body"><div class="metric-value" id="mpm-roi">—</div><div class="metric-label">Overall ROI (Spent/Revenue)</div></div></div>
+        <div class="metric-card"><div class="metric-icon orange">📐</div><div class="metric-body"><div class="metric-value" id="mpm-roi">—</div><div class="metric-label">Overall Spent/Revenue %</div></div></div>
       </div>
       <div class="filters-bar"><div class="filters-grid">
         <div class="filter-item"><label>Agency</label><select id="mp-agencyFilter" onchange="applyMPFilters()"><option value="">All Agencies</option></select></div>
@@ -538,10 +538,10 @@
 
       <div id="mp-dashboardView" style="display:none;">
         <div class="chart-grid">
-          <div class="chart-card"><div class="chart-card-title">Zone-wise <span>ROI &amp; Conversion Ratios (%)</span></div><div class="chart-card-body"><canvas id="mp-chart-zone"></canvas></div></div>
-          <div class="chart-card"><div class="chart-card-title">Cluster-wise <span>ROI &amp; Conversion Ratios (%)</span></div><div class="chart-card-body"><canvas id="mp-chart-cluster"></canvas></div></div>
-          <div class="chart-card"><div class="chart-card-title">Agency-wise <span>ROI &amp; Conversion Ratios (%)</span></div><div class="chart-card-body"><canvas id="mp-chart-agency"></canvas></div></div>
-          <div class="chart-card"><div class="chart-card-title">Project-wise <span>ROI &amp; Conversion Ratios (%)</span></div><div class="chart-card-body"><canvas id="mp-chart-project"></canvas></div></div>
+          <div class="chart-card"><div class="chart-card-title">Zone-wise <span>Spent/Revenue % &amp; Conversion Ratios</span></div><div class="chart-card-body"><canvas id="mp-chart-zone"></canvas></div></div>
+          <div class="chart-card"><div class="chart-card-title">Cluster-wise <span>Spent/Revenue % &amp; Conversion Ratios</span></div><div class="chart-card-body"><canvas id="mp-chart-cluster"></canvas></div></div>
+          <div class="chart-card"><div class="chart-card-title">Agency-wise <span>Spent/Revenue % &amp; Conversion Ratios</span></div><div class="chart-card-body"><canvas id="mp-chart-agency"></canvas></div></div>
+          <div class="chart-card"><div class="chart-card-title">Project-wise <span>Spent/Revenue % &amp; Conversion Ratios</span></div><div class="chart-card-body"><canvas id="mp-chart-project"></canvas></div></div>
         </div>
       </div>
     </div>
@@ -803,8 +803,8 @@ function refreshAll(){
     let pending=0;const checkDone=()=>{if(--pending<=0)done();};
     if(fnAll.length>0){pending++;jsonpFetch(GAS_URL,{action:'getFNClientsData',role:auth.role,username:auth.user,password:auth.pass},d=>{if(d.ok)renderFNData(d.data);checkDone();},checkDone);}
     if(vdAll.length>0){pending++;jsonpFetch(GAS_URL,{action:'getVisitDoneData',role:auth.role,username:auth.user,password:auth.pass},d=>{if(d.ok)renderVDData(d.data);checkDone();},checkDone);}
-    if(spPerfAll.length>0||spLeadAll.length>0){pending++;jsonpFetch(GAS_URL,{action:'getSalesPerformanceData',role:auth.role,username:auth.user,password:auth.pass},d=>{if(d.ok)renderSalesPerformanceData(d.data);checkDone();},checkDone);}
-    if(mpAll.length>0){pending++;jsonpFetch(GAS_URL,{action:'getMarketingPerformanceData',role:auth.role,username:auth.user,password:auth.pass},d=>{if(d.ok)renderMarketingPerformanceData(d.data);checkDone();},checkDone);}
+    // Sales Dashboard & Marketing Dashboard intentionally excluded from auto-refresh —
+    // this data changes infrequently, so it's only (re)loaded on login or tab switch.
     if(pending===0)done();setStatus(true);
   },()=>{setStatus(false);done();});
 }
@@ -1217,10 +1217,13 @@ function updateMPMetrics(agg){
   document.getElementById('mpm-roi').textContent=roi===null?'—':roi.toFixed(1)+'%';
 }
 
+let mpProjectIndex={};
 function renderMPTable(agg){
   if(!agg)return;
   const tbody=document.getElementById('mp-tbody');
   if(!agg.campaigns.length){tbody.innerHTML='<tr><td colspan="10" class="no-data">No marketing performance data found for the current filters</td></tr>';document.getElementById('mp-rowCount').textContent='0 campaigns';return;}
+  mpProjectIndex={};
+  let pSeq=0;
   let html='';
   agg.agencies.forEach(a=>{
     html+=`<tr class="mp-agency-row"><td colspan="10">🏢 Agency: ${esc(a.agency)}</td></tr>`;
@@ -1229,22 +1232,20 @@ function renderMPTable(agg){
       z.clusterList.forEach(cl=>{
         html+=`<tr class="mp-cluster-row"><td colspan="10">📍 Cluster: ${esc(cl.cluster)}</td></tr>`;
         cl.projectList.forEach(p=>{
-          html+=`<tr class="mp-project-row"><td colspan="10">🏗️ Project: ${esc(p.project)}</td></tr>`;
-          p.campaigns.forEach(c=>{
-            html+=`<tr class="mp-campaign-row">
-              <td>${esc(c.campaign)}</td>
-              <td>${c.leads.toLocaleString('en-IN')}</td>
-              <td>${c.sv.toLocaleString('en-IN')}</td>
-              <td>${c.meetings.toLocaleString('en-IN')}</td>
-              <td>${c.bookings.toLocaleString('en-IN')}</td>
-              <td>${c.spent?formatBudgetTotal(c.spent):'—'}</td>
-              <td>${c.revenue?formatBudgetTotal(c.revenue):'—'}</td>
-              <td>${roiPill(c.spent,c.revenue)}</td>
-              <td>${ratioPill(c.sv,c.leads)}</td>
-              <td>${ratioPill(c.bookings,c.sv+c.meetings)}</td>
-            </tr>`;
-          });
-          html+=`<tr class="mp-project-subtotal"><td>Subtotal — ${esc(p.project)}</td><td>${p.leads.toLocaleString('en-IN')}</td><td>${p.sv.toLocaleString('en-IN')}</td><td>${p.meetings.toLocaleString('en-IN')}</td><td>${p.bookings.toLocaleString('en-IN')}</td><td>${p.spent?formatBudgetTotal(p.spent):'—'}</td><td>${p.revenue?formatBudgetTotal(p.revenue):'—'}</td><td>${roiPill(p.spent,p.revenue)}</td><td>${ratioPill(p.sv,p.leads)}</td><td>${ratioPill(p.bookings,p.sv+p.meetings)}</td></tr>`;
+          const pid='mpproj'+(pSeq++);
+          mpProjectIndex[pid]=p;
+          html+=`<tr class="mp-project-row" data-pid="${pid}">
+            <td><button class="sp-expand-btn" onclick="toggleMPCampaigns('${pid}',this)" title="View campaign-wise breakdown">▸</button>${esc(p.project)}${p.campaigns.length>1?` <span class="mp-camp-count">(${p.campaigns.length} campaigns)</span>`:''}</td>
+            <td>${p.leads.toLocaleString('en-IN')}</td>
+            <td>${p.sv.toLocaleString('en-IN')}</td>
+            <td>${p.meetings.toLocaleString('en-IN')}</td>
+            <td>${p.bookings.toLocaleString('en-IN')}</td>
+            <td>${p.spent?formatBudgetTotal(p.spent):'—'}</td>
+            <td>${p.revenue?formatBudgetTotal(p.revenue):'—'}</td>
+            <td>${roiPill(p.spent,p.revenue)}</td>
+            <td>${ratioPill(p.sv,p.leads)}</td>
+            <td>${ratioPill(p.bookings,p.sv+p.meetings)}</td>
+          </tr>`;
         });
         html+=`<tr class="mp-cluster-subtotal"><td>Cluster Total — ${esc(cl.cluster)}</td><td>${cl.leads.toLocaleString('en-IN')}</td><td>${cl.sv.toLocaleString('en-IN')}</td><td>${cl.meetings.toLocaleString('en-IN')}</td><td>${cl.bookings.toLocaleString('en-IN')}</td><td>${cl.spent?formatBudgetTotal(cl.spent):'—'}</td><td>${cl.revenue?formatBudgetTotal(cl.revenue):'—'}</td><td>${roiPill(cl.spent,cl.revenue)}</td><td>${ratioPill(cl.sv,cl.leads)}</td><td>${ratioPill(cl.bookings,cl.sv+cl.meetings)}</td></tr>`;
       });
