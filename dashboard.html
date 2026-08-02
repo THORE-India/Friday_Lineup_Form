@@ -532,7 +532,7 @@
       <div id="mp-tableView" class="table-wrap">
         <table id="mp-table"><thead><tr>
           <th>Campaign</th><th>Leads</th><th>SV</th><th>Meetings</th><th>Bookings</th><th>Spent</th><th>Revenue</th>
-          <th>ROI</th><th>Leads:SV</th><th>SV+Meeting:Booking</th>
+          <th>Spent/Revenue %</th><th>Leads:SV</th><th>SV+Meeting:Booking</th>
         </tr></thead><tbody id="mp-tbody"></tbody></table>
       </div>
 
@@ -1268,7 +1268,7 @@ function renderMPCharts(agg){
     destroyMPChart(chartKey);
     const sorted=[...rows].filter(r=>r.leads>0||r.sv>0||r.meetings>0||r.bookings>0||r.spent>0||r.revenue>0).sort((a,b)=>b.revenue-a.revenue).slice(0,20);
     mpCharts[chartKey]=new Chart(document.getElementById(canvasId),{type:'bar',data:{labels:sorted.map(r=>r.key),datasets:[
-      {label:'ROI % (Spent/Revenue)',data:sorted.map(r=>roiPct(r.spent,r.revenue)||0),backgroundColor:red},
+      {label:'Spent/Revenue %',data:sorted.map(r=>roiPct(r.spent,r.revenue)||0),backgroundColor:red},
       {label:'Leads:SV %',data:sorted.map(r=>ratioPct(r.sv,r.leads)||0),backgroundColor:blue},
       {label:'SV+Meeting:Booking %',data:sorted.map(r=>ratioPct(r.bookings,r.sv+r.meetings)||0),backgroundColor:green}
     ]},options:spChartOpts(true)});
