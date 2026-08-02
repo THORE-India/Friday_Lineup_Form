@@ -226,6 +226,26 @@
     .sp-proj-table td{padding:7px 9px;border-bottom:1px solid var(--border);color:var(--text-sub);}
     .sp-proj-table tr:last-child td{border-bottom:none;}
 
+    /* ── MARKETING DASHBOARD: 4-level grouped table (Agency → Zone → Cluster → Project → Campaign) ── */
+    tr.mp-agency-row td{background:var(--gold-dim);color:var(--gold);font-weight:800;font-size:0.74rem;letter-spacing:0.06em;text-transform:uppercase;padding:9px 12px;border-top:2px solid var(--border-gold);border-bottom:1px solid var(--border-gold);}
+    tr.mp-agency-row:hover td{background:var(--gold-dim);}
+    tr.mp-zone-row td{background:var(--surface4);color:var(--text);font-weight:700;font-size:0.70rem;letter-spacing:0.02em;padding:7px 12px 7px 24px;border-bottom:1px solid var(--border-mid);}
+    tr.mp-zone-row:hover td{background:var(--surface4);}
+    tr.mp-cluster-row td{background:var(--surface3);color:var(--text-sub);font-weight:700;font-size:0.68rem;padding:6px 12px 6px 36px;border-bottom:1px solid var(--border);}
+    tr.mp-cluster-row:hover td{background:var(--surface3);}
+    tr.mp-project-row td{background:var(--surface2);color:var(--text-dim);font-weight:600;font-size:0.66rem;padding:5px 12px 5px 48px;border-bottom:1px solid var(--border);}
+    tr.mp-project-row:hover td{background:var(--surface2);}
+    tr.mp-campaign-row td:first-child{padding-left:60px;}
+    tr.mp-project-subtotal td{background:var(--surface2);color:var(--text);font-weight:700;font-size:0.72rem;border-top:1px solid var(--border-mid);}
+    tr.mp-project-subtotal:hover td{background:var(--surface2);}
+    tr.mp-cluster-subtotal td{background:var(--surface3);color:var(--text);font-weight:700;font-size:0.73rem;border-top:1px solid var(--border-mid);}
+    tr.mp-cluster-subtotal:hover td{background:var(--surface3);}
+    tr.mp-zone-subtotal td{background:var(--surface4);color:var(--text);font-weight:700;font-size:0.74rem;border-top:1px solid var(--border-mid);}
+    tr.mp-zone-subtotal:hover td{background:var(--surface4);}
+    tr.mp-agency-subtotal td{background:rgba(169,121,59,0.09);color:var(--gold);font-weight:800;font-size:0.76rem;border-bottom:2px solid var(--border-gold);}
+    tr.mp-agency-subtotal:hover td{background:rgba(169,121,59,0.09);}
+    tr.mp-grand-total td{position:sticky;bottom:0;background:var(--th-bg);border-top:2px solid var(--gold);color:var(--gold);font-weight:800;font-size:0.80rem;z-index:5;}
+
     .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:0.66rem;font-weight:700;letter-spacing:0.03em;}
     .badge-hot{background:var(--red-bg);color:var(--red);}
     .badge-warm{background:var(--orange-bg);color:var(--orange);}
@@ -283,10 +303,6 @@
     .admin-save-status{font-size:0.74rem;margin-top:6px;min-height:18px;text-align:center;}
     .admin-save-status.ok{color:var(--green);}
     .admin-save-status.err{color:var(--red);}
-    .revenue-placeholder{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;color:var(--text-dim);padding:3rem;text-align:center;}
-    .revenue-placeholder .rev-icon{font-size:3.5rem;}
-    .revenue-placeholder h2{font-family:'DM Serif Display',serif;font-size:1.5rem;color:var(--gold);}
-    .revenue-placeholder p{font-size:0.86rem;max-width:360px;line-height:1.75;}
     .refresh-indicator{position:fixed;top:calc(var(--header-h) + 8px);right:18px;background:var(--green-bg);color:var(--green);border:1px solid rgba(80,208,144,0.3);padding:5px 12px;border-radius:20px;font-size:0.68rem;font-weight:700;display:none;z-index:999;animation:pulse 1.5s infinite;}
     .refresh-indicator.show{display:block;}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
@@ -338,7 +354,7 @@
         <button class="dash-tab active" onclick="switchDashboard('visits')">📋 Friday Lineup</button>
         <button class="dash-tab" onclick="switchDashboard('visitdone')">✅ Visit Done</button>
         <button class="dash-tab" onclick="switchDashboard('fnclients')">🏆 FN Clients</button>
-        <button class="dash-tab" onclick="switchDashboard('revenue')">💰 Revenue</button>
+        <button class="dash-tab" id="marketingTabBtn" onclick="switchDashboard('marketing')">📈 Marketing Dashboard</button>
         <button class="dash-tab" onclick="switchDashboard('salesdash')">📊 Sales Dashboard</button>
       </div>
     </div>
@@ -494,12 +510,39 @@
       <div id="fn-pivotView" class="table-wrap" style="display:none;"><table id="fn-pivot"><thead></thead><tbody></tbody></table></div>
     </div>
 
-    <!-- REVENUE -->
-    <div id="revDash" style="display:none;flex:1;">
-      <div class="revenue-placeholder">
-        <div class="rev-icon">💰</div>
-        <h2>Revenue Dashboard</h2>
-        <p>Revenue analytics and reporting features are coming soon. This section will display closed deal values, team revenue targets, and performance breakdowns.</p>
+    <!-- MARKETING DASHBOARD -->
+    <div id="marketingDash" style="display:none;">
+      <div class="metrics-row">
+        <div class="metric-card"><div class="metric-icon gold">🧲</div><div class="metric-body"><div class="metric-value" id="mpm-leads">—</div><div class="metric-label">Total Leads</div></div></div>
+        <div class="metric-card"><div class="metric-icon blue">💸</div><div class="metric-body"><div class="metric-value" id="mpm-spent">—</div><div class="metric-label">Total Spent</div></div></div>
+        <div class="metric-card"><div class="metric-icon green">💰</div><div class="metric-body"><div class="metric-value" id="mpm-revenue">—</div><div class="metric-label">Total Revenue</div></div></div>
+        <div class="metric-card"><div class="metric-icon orange">📐</div><div class="metric-body"><div class="metric-value" id="mpm-roi">—</div><div class="metric-label">Overall ROI (Spent/Revenue)</div></div></div>
+      </div>
+      <div class="filters-bar"><div class="filters-grid">
+        <div class="filter-item"><label>Agency</label><select id="mp-agencyFilter" onchange="applyMPFilters()"><option value="">All Agencies</option></select></div>
+        <div class="filter-item"><label>Zone</label><select id="mp-zoneFilter" onchange="applyMPFilters()"><option value="">All Zones</option></select></div>
+        <div class="filter-item"><label>Cluster</label><select id="mp-clusterFilter" onchange="applyMPFilters()"><option value="">All Clusters</option></select></div>
+        <div class="filter-item"><label>Project</label><select id="mp-projFilter" onchange="applyMPFilters()"><option value="">All Projects</option></select></div>
+        <div class="filter-item"><label>Campaign</label><select id="mp-campaignFilter" onchange="applyMPFilters()"><option value="">All Campaigns</option></select></div>
+        <div class="filter-item date-range-item"><label>Updated Date</label><div class="date-range-pair"><input type="date" id="mp-fromDate" onchange="applyMPFilters()" title="From date"><span class="date-range-sep">–</span><input type="date" id="mp-toDate" onchange="applyMPFilters()" title="To date"></div></div>
+        <div class="filter-item"><label>&nbsp;</label><div class="filter-actions"><button class="clear-btn" onclick="clearMPFilters()">Clear</button><div class="sp-view-toggle"><button class="view-tab active" id="mp-tableTab" onclick="switchMPView('table')">📋 Table</button><button class="view-tab" id="mp-dashTab" onclick="switchMPView('graphical')">📊 Graphical</button></div></div></div>
+      </div></div>
+      <div class="table-meta"><div class="row-count" id="mp-rowCount">Loading…</div><div class="last-updated" id="mp-lastUpdated"></div></div>
+
+      <div id="mp-tableView" class="table-wrap">
+        <table id="mp-table"><thead><tr>
+          <th>Campaign</th><th>Leads</th><th>SV</th><th>Meetings</th><th>Bookings</th><th>Spent</th><th>Revenue</th>
+          <th>ROI</th><th>Leads:SV</th><th>SV+Meeting:Booking</th>
+        </tr></thead><tbody id="mp-tbody"></tbody></table>
+      </div>
+
+      <div id="mp-dashboardView" style="display:none;">
+        <div class="chart-grid">
+          <div class="chart-card"><div class="chart-card-title">Zone-wise <span>ROI &amp; Conversion Ratios (%)</span></div><div class="chart-card-body"><canvas id="mp-chart-zone"></canvas></div></div>
+          <div class="chart-card"><div class="chart-card-title">Cluster-wise <span>ROI &amp; Conversion Ratios (%)</span></div><div class="chart-card-body"><canvas id="mp-chart-cluster"></canvas></div></div>
+          <div class="chart-card"><div class="chart-card-title">Agency-wise <span>ROI &amp; Conversion Ratios (%)</span></div><div class="chart-card-body"><canvas id="mp-chart-agency"></canvas></div></div>
+          <div class="chart-card"><div class="chart-card-title">Project-wise <span>ROI &amp; Conversion Ratios (%)</span></div><div class="chart-card-body"><canvas id="mp-chart-project"></canvas></div></div>
+        </div>
       </div>
     </div>
 
@@ -609,6 +652,10 @@ const FN_ACTIVE_STATUSES=['Hot','Warm','Cold'],FN_INACTIVE_STATUSES=['Lost','Boo
 let spPerfAll=[],spLeadAll=[],spPerfFiltered=[],spLeadFiltered=[];
 let spView='table',spExpanded=new Set(),spCharts={};
 
+// ── Marketing Dashboard state ──
+let mpAll=[],mpFiltered=[];
+let mpView='table',mpCharts={},mpAgg=null;
+
 // ── Dynamic header-height sync (fixes sticky metrics row / refresh pill overlap on mobile) ──
 function syncHeaderHeight(){
   const header=document.querySelector('.header');
@@ -637,6 +684,9 @@ document.addEventListener('DOMContentLoaded',()=>{document.getElementById('yr').
 
 function isLoanDept(){return auth&&auth.role.toLowerCase()==='loan department';}
 function isAdmin(){return auth&&['admin','md/ceo','md','ceo','management'].includes(auth.role.toLowerCase());}
+// Marketing Dashboard is restricted to Admin & CEO only — adjust the list below if your
+// access.json stores the CEO role under a different exact string (e.g. "MD/CEO").
+function isMarketingDashAdmin(){return auth&&['admin','ceo','md/ceo'].includes(auth.role.toLowerCase());}
 
 // ── Budget parsing & formatting ──
 // Parses a budget string like "1 Cr", "1.5 Cr", "50 Lakh", "75L", "2.5cr" etc. → rupees (number)
@@ -684,7 +734,7 @@ function handleLoginSuccess(role,user,pass,initialData){
   document.getElementById('profileAvatar').textContent=getInitials(user);document.getElementById('pdUsername').textContent=user;
   setLoginStatus('');
   if(role.toLowerCase()==='loan department'){setupLoanDeptView();renderFNData(initialData);document.getElementById('loanDeptBanner').style.display='flex';}
-  else{document.getElementById('dashTabs').style.display='flex';document.getElementById('pdFormLink').style.display='block';document.getElementById('pdFNLink').style.display='block';renderVisitData(initialData);startAutoRefresh();}
+  else{document.getElementById('dashTabs').style.display='flex';document.getElementById('pdFormLink').style.display='block';document.getElementById('pdFNLink').style.display='block';document.getElementById('marketingTabBtn').style.display=isMarketingDashAdmin()?'block':'none';renderVisitData(initialData);startAutoRefresh();}
   setStatus(true);
   // Header just changed shape (tabs/profile appeared) — resync sticky offset, next frame + short delay for safety.
   requestAnimationFrame(syncHeaderHeight);
@@ -728,17 +778,19 @@ function setLoginStatus(msg,isErr){const el=document.getElementById('loginStatus
 
 function switchDashboard(which){
   if(isLoanDept()&&which!=='fnclients')return;
+  if(which==='marketing'&&!isMarketingDashAdmin())return;
   activeDash=which;
-  const order=['visits','visitdone','fnclients','revenue','salesdash'];
+  const order=['visits','visitdone','fnclients','marketing','salesdash'];
   document.querySelectorAll('.dash-tab').forEach((t,i)=>t.classList.toggle('active',order[i]===which));
   document.getElementById('visitsDash').style.display=which==='visits'?'block':'none';
   document.getElementById('visitdoneDash').style.display=which==='visitdone'?'block':'none';
   document.getElementById('fnDash').style.display=which==='fnclients'?'block':'none';
-  document.getElementById('revDash').style.display=which==='revenue'?'flex':'none';
+  document.getElementById('marketingDash').style.display=which==='marketing'?'block':'none';
   document.getElementById('salesDash').style.display=which==='salesdash'?'block':'none';
   if(which==='fnclients'&&fnAll.length===0&&auth)loadFNData();
   if(which==='visitdone'&&vdAll.length===0&&auth)loadVDData();
   if(which==='salesdash'&&spPerfAll.length===0&&spLeadAll.length===0&&auth)loadSalesPerformanceData();
+  if(which==='marketing'&&mpAll.length===0&&auth)loadMarketingPerformanceData();
 }
 
 function startAutoRefresh(){if(refreshTimer)clearInterval(refreshTimer);refreshTimer=setInterval(()=>{if(!isRefreshing&&auth)refreshAll();},30000);}
@@ -752,6 +804,7 @@ function refreshAll(){
     if(fnAll.length>0){pending++;jsonpFetch(GAS_URL,{action:'getFNClientsData',role:auth.role,username:auth.user,password:auth.pass},d=>{if(d.ok)renderFNData(d.data);checkDone();},checkDone);}
     if(vdAll.length>0){pending++;jsonpFetch(GAS_URL,{action:'getVisitDoneData',role:auth.role,username:auth.user,password:auth.pass},d=>{if(d.ok)renderVDData(d.data);checkDone();},checkDone);}
     if(spPerfAll.length>0||spLeadAll.length>0){pending++;jsonpFetch(GAS_URL,{action:'getSalesPerformanceData',role:auth.role,username:auth.user,password:auth.pass},d=>{if(d.ok)renderSalesPerformanceData(d.data);checkDone();},checkDone);}
+    if(mpAll.length>0){pending++;jsonpFetch(GAS_URL,{action:'getMarketingPerformanceData',role:auth.role,username:auth.user,password:auth.pass},d=>{if(d.ok)renderMarketingPerformanceData(d.data);checkDone();},checkDone);}
     if(pending===0)done();setStatus(true);
   },()=>{setStatus(false);done();});
 }
@@ -1043,6 +1096,188 @@ function populateVDFilters(rows){
 function sortVD(col){if(vdSortCol===col)vdSortDir=vdSortDir==='asc'?'desc':'asc';else{vdSortCol=col;vdSortDir='asc';}document.querySelectorAll('#vd-table th').forEach((th,i)=>{th.classList.remove('asc','desc');if(i===col)th.classList.add(vdSortDir);});applySortVD();renderVDTable(vdFiltered);}
 function applySortVD(){const keys=['visitDate','customer','phone','teamLead','employee','project','developer','notes','type'];const key=keys[vdSortCol]||'visitDate';vdFiltered.sort((a,b)=>{const v1=a[key]||'',v2=b[key]||'';return vdSortDir==='asc'?v1.localeCompare(v2):v2.localeCompare(v1);});}
 function convertVDToFN(row){const params=new URLSearchParams({prefill:'1',customerName:row.customer||'',contactNumber:row.phone||'',salesExec:row.employee||'',teamLead:row.teamLead||'',cluster:row.cluster||'',projectName:row.project||'',developerName:row.developer||'',visitDate:row.visitDate||'',convertedFromVisit:'Yes'});window.open(FN_FORM_URL+'?'+params.toString(),'_blank');}
+
+// ══════════════════════════════════════════════════════════
+//  MARKETING DASHBOARD
+// ══════════════════════════════════════════════════════════
+function loadMarketingPerformanceData(){
+  document.getElementById('mp-rowCount').textContent='Loading…';
+  jsonpFetch(GAS_URL,{action:'getMarketingPerformanceData',role:auth.role,username:auth.user,password:auth.pass},d=>{
+    if(d.ok)renderMarketingPerformanceData(d.data);else document.getElementById('mp-rowCount').textContent='Failed to load: '+(d.error||'unknown');
+  },()=>{document.getElementById('mp-rowCount').textContent='Network error loading Marketing Dashboard data.';});
+}
+function renderMarketingPerformanceData(data){
+  mpAll=(data||[]).map(r=>({...r,updatedDate:fmtDate(r.updatedDate)}));
+  populateMPFilters();applyMPFilters();
+  document.getElementById('mp-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
+}
+function populateMPFilters(){
+  const agencyVals=new Set(),zoneVals=new Set(),clusterVals=new Set(),projVals=new Set(),campaignVals=new Set();
+  mpAll.forEach(r=>{r.agency&&agencyVals.add(r.agency);r.zone&&zoneVals.add(r.zone);r.cluster&&clusterVals.add(r.cluster);r.project&&projVals.add(r.project);r.campaign&&campaignVals.add(r.campaign);});
+  fillSelect('mp-agencyFilter',[...agencyVals].sort(),'All Agencies');
+  fillSelect('mp-zoneFilter',[...zoneVals].sort(),'All Zones');
+  fillSelect('mp-clusterFilter',[...clusterVals].sort(),'All Clusters');
+  fillSelect('mp-projFilter',[...projVals].sort(),'All Projects');
+  fillSelect('mp-campaignFilter',[...campaignVals].sort(),'All Campaigns');
+}
+function applyMPFilters(){
+  const agency=document.getElementById('mp-agencyFilter').value,zone=document.getElementById('mp-zoneFilter').value,cluster=document.getElementById('mp-clusterFilter').value,proj=document.getElementById('mp-projFilter').value,campaign=document.getElementById('mp-campaignFilter').value;
+  const from=document.getElementById('mp-fromDate').value,to=document.getElementById('mp-toDate').value;
+  mpFiltered=mpAll.filter(r=>{
+    if(agency&&r.agency!==agency)return false;if(zone&&r.zone!==zone)return false;if(cluster&&r.cluster!==cluster)return false;if(proj&&r.project!==proj)return false;if(campaign&&r.campaign!==campaign)return false;
+    if(from&&r.updatedDate<from)return false;if(to&&r.updatedDate>to)return false;
+    return true;
+  });
+  renderMPAll();
+}
+function clearMPFilters(){
+  ['mp-agencyFilter','mp-zoneFilter','mp-clusterFilter','mp-projFilter','mp-campaignFilter','mp-fromDate','mp-toDate'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  mpFiltered=[...mpAll];renderMPAll();
+}
+function switchMPView(v){
+  mpView=v;
+  document.getElementById('mp-tableTab').classList.toggle('active',v==='table');
+  document.getElementById('mp-dashTab').classList.toggle('active',v==='graphical');
+  document.getElementById('mp-tableView').style.display=v==='table'?'block':'none';
+  document.getElementById('mp-dashboardView').style.display=v==='graphical'?'block':'none';
+  if(v==='table')renderMPTable(mpAgg);else renderMPCharts(mpAgg);
+}
+function renderMPAll(){
+  mpAgg=buildMPAggregation();
+  updateMPMetrics(mpAgg);
+  if(mpView==='table')renderMPTable(mpAgg);else renderMPCharts(mpAgg);
+}
+
+function mpZero(){return{leads:0,sv:0,meetings:0,bookings:0,spent:0,revenue:0};}
+function mpAdd(target,src){target.leads+=src.leads;target.sv+=src.sv;target.meetings+=src.meetings;target.bookings+=src.bookings;target.spent+=src.spent;target.revenue+=src.revenue;}
+
+// ── Aggregation: dedupes raw filtered rows into unique campaigns
+//    (summed across dates), then nests Agency → Zone → Cluster →
+//    Project → Campaign for the table, plus flat single-dimension
+//    rollups (zone/cluster/agency/project) for the chart view.
+function buildMPAggregation(){
+  const campMap={};
+  mpFiltered.forEach(r=>{
+    const key=[r.agency||'—',r.zone||'—',r.cluster||'—',r.project||'—',r.campaign||'—'].join('||');
+    if(!campMap[key])campMap[key]={agency:r.agency||'—',zone:r.zone||'—',cluster:r.cluster||'—',project:r.project||'—',campaign:r.campaign||'—',...mpZero()};
+    mpAdd(campMap[key],r);
+  });
+  const campaigns=Object.values(campMap);
+
+  const agencyMap={};
+  campaigns.forEach(c=>{
+    if(!agencyMap[c.agency])agencyMap[c.agency]={agency:c.agency,zones:{},...mpZero()};
+    const a=agencyMap[c.agency];
+    if(!a.zones[c.zone])a.zones[c.zone]={zone:c.zone,clusters:{},...mpZero()};
+    const z=a.zones[c.zone];
+    if(!z.clusters[c.cluster])z.clusters[c.cluster]={cluster:c.cluster,projects:{},...mpZero()};
+    const cl=z.clusters[c.cluster];
+    if(!cl.projects[c.project])cl.projects[c.project]={project:c.project,campaigns:[],...mpZero()};
+    const p=cl.projects[c.project];
+    p.campaigns.push(c);
+    mpAdd(p,c);mpAdd(cl,c);mpAdd(z,c);mpAdd(a,c);
+  });
+
+  const agencies=Object.values(agencyMap).sort((a,b)=>a.agency.localeCompare(b.agency));
+  agencies.forEach(a=>{
+    a.zoneList=Object.values(a.zones).sort((x,y)=>x.zone.localeCompare(y.zone));
+    a.zoneList.forEach(z=>{
+      z.clusterList=Object.values(z.clusters).sort((x,y)=>x.cluster.localeCompare(y.cluster));
+      z.clusterList.forEach(cl=>{
+        cl.projectList=Object.values(cl.projects).sort((x,y)=>x.project.localeCompare(y.project));
+        cl.projectList.forEach(p=>p.campaigns.sort((x,y)=>x.campaign.localeCompare(y.campaign)));
+      });
+    });
+  });
+
+  const grand=mpZero();
+  campaigns.forEach(c=>mpAdd(grand,c));
+
+  function rollup(field){
+    const m={};
+    campaigns.forEach(c=>{
+      const k=c[field]||'—';
+      if(!m[k])m[k]={key:k,...mpZero()};
+      mpAdd(m[k],c);
+    });
+    return Object.values(m);
+  }
+  return{agencies,campaigns,grand,zoneAgg:rollup('zone'),clusterAgg:rollup('cluster'),agencyAgg:rollup('agency'),projectAgg:rollup('project')};
+}
+
+function roiPct(spent,revenue){return revenue>0?(spent/revenue*100):null;}
+function roiClass(p){if(p===null)return'ratio-na';if(p<=20)return'ratio-good';if(p<=50)return'ratio-mid';return'ratio-low';}
+function roiPill(spent,revenue){const p=roiPct(spent,revenue);return`<span class="ratio-pill ${roiClass(p)}">${p===null?'—':p.toFixed(1)+'%'}</span>`;}
+
+function updateMPMetrics(agg){
+  document.getElementById('mpm-leads').textContent=agg.grand.leads.toLocaleString('en-IN');
+  document.getElementById('mpm-spent').textContent=agg.grand.spent?formatBudgetTotal(agg.grand.spent):'—';
+  document.getElementById('mpm-revenue').textContent=agg.grand.revenue?formatBudgetTotal(agg.grand.revenue):'—';
+  const roi=roiPct(agg.grand.spent,agg.grand.revenue);
+  document.getElementById('mpm-roi').textContent=roi===null?'—':roi.toFixed(1)+'%';
+}
+
+function renderMPTable(agg){
+  if(!agg)return;
+  const tbody=document.getElementById('mp-tbody');
+  if(!agg.campaigns.length){tbody.innerHTML='<tr><td colspan="10" class="no-data">No marketing performance data found for the current filters</td></tr>';document.getElementById('mp-rowCount').textContent='0 campaigns';return;}
+  let html='';
+  agg.agencies.forEach(a=>{
+    html+=`<tr class="mp-agency-row"><td colspan="10">🏢 Agency: ${esc(a.agency)}</td></tr>`;
+    a.zoneList.forEach(z=>{
+      html+=`<tr class="mp-zone-row"><td colspan="10">🗺️ Zone: ${esc(z.zone)}</td></tr>`;
+      z.clusterList.forEach(cl=>{
+        html+=`<tr class="mp-cluster-row"><td colspan="10">📍 Cluster: ${esc(cl.cluster)}</td></tr>`;
+        cl.projectList.forEach(p=>{
+          html+=`<tr class="mp-project-row"><td colspan="10">🏗️ Project: ${esc(p.project)}</td></tr>`;
+          p.campaigns.forEach(c=>{
+            html+=`<tr class="mp-campaign-row">
+              <td>${esc(c.campaign)}</td>
+              <td>${c.leads.toLocaleString('en-IN')}</td>
+              <td>${c.sv.toLocaleString('en-IN')}</td>
+              <td>${c.meetings.toLocaleString('en-IN')}</td>
+              <td>${c.bookings.toLocaleString('en-IN')}</td>
+              <td>${c.spent?formatBudgetTotal(c.spent):'—'}</td>
+              <td>${c.revenue?formatBudgetTotal(c.revenue):'—'}</td>
+              <td>${roiPill(c.spent,c.revenue)}</td>
+              <td>${ratioPill(c.sv,c.leads)}</td>
+              <td>${ratioPill(c.bookings,c.sv+c.meetings)}</td>
+            </tr>`;
+          });
+          html+=`<tr class="mp-project-subtotal"><td>Subtotal — ${esc(p.project)}</td><td>${p.leads.toLocaleString('en-IN')}</td><td>${p.sv.toLocaleString('en-IN')}</td><td>${p.meetings.toLocaleString('en-IN')}</td><td>${p.bookings.toLocaleString('en-IN')}</td><td>${p.spent?formatBudgetTotal(p.spent):'—'}</td><td>${p.revenue?formatBudgetTotal(p.revenue):'—'}</td><td>${roiPill(p.spent,p.revenue)}</td><td>${ratioPill(p.sv,p.leads)}</td><td>${ratioPill(p.bookings,p.sv+p.meetings)}</td></tr>`;
+        });
+        html+=`<tr class="mp-cluster-subtotal"><td>Cluster Total — ${esc(cl.cluster)}</td><td>${cl.leads.toLocaleString('en-IN')}</td><td>${cl.sv.toLocaleString('en-IN')}</td><td>${cl.meetings.toLocaleString('en-IN')}</td><td>${cl.bookings.toLocaleString('en-IN')}</td><td>${cl.spent?formatBudgetTotal(cl.spent):'—'}</td><td>${cl.revenue?formatBudgetTotal(cl.revenue):'—'}</td><td>${roiPill(cl.spent,cl.revenue)}</td><td>${ratioPill(cl.sv,cl.leads)}</td><td>${ratioPill(cl.bookings,cl.sv+cl.meetings)}</td></tr>`;
+      });
+      html+=`<tr class="mp-zone-subtotal"><td>Zone Total — ${esc(z.zone)}</td><td>${z.leads.toLocaleString('en-IN')}</td><td>${z.sv.toLocaleString('en-IN')}</td><td>${z.meetings.toLocaleString('en-IN')}</td><td>${z.bookings.toLocaleString('en-IN')}</td><td>${z.spent?formatBudgetTotal(z.spent):'—'}</td><td>${z.revenue?formatBudgetTotal(z.revenue):'—'}</td><td>${roiPill(z.spent,z.revenue)}</td><td>${ratioPill(z.sv,z.leads)}</td><td>${ratioPill(z.bookings,z.sv+z.meetings)}</td></tr>`;
+    });
+    html+=`<tr class="mp-agency-subtotal"><td>Agency Total — ${esc(a.agency)}</td><td>${a.leads.toLocaleString('en-IN')}</td><td>${a.sv.toLocaleString('en-IN')}</td><td>${a.meetings.toLocaleString('en-IN')}</td><td>${a.bookings.toLocaleString('en-IN')}</td><td>${a.spent?formatBudgetTotal(a.spent):'—'}</td><td>${a.revenue?formatBudgetTotal(a.revenue):'—'}</td><td>${roiPill(a.spent,a.revenue)}</td><td>${ratioPill(a.sv,a.leads)}</td><td>${ratioPill(a.bookings,a.sv+a.meetings)}</td></tr>`;
+  });
+  html+=`<tr class="mp-grand-total"><td>GRAND TOTAL</td><td>${agg.grand.leads.toLocaleString('en-IN')}</td><td>${agg.grand.sv.toLocaleString('en-IN')}</td><td>${agg.grand.meetings.toLocaleString('en-IN')}</td><td>${agg.grand.bookings.toLocaleString('en-IN')}</td><td>${agg.grand.spent?formatBudgetTotal(agg.grand.spent):'—'}</td><td>${agg.grand.revenue?formatBudgetTotal(agg.grand.revenue):'—'}</td><td>${roiPill(agg.grand.spent,agg.grand.revenue)}</td><td>${ratioPill(agg.grand.sv,agg.grand.leads)}</td><td>${ratioPill(agg.grand.bookings,agg.grand.sv+agg.grand.meetings)}</td></tr>`;
+  tbody.innerHTML=html;
+  document.getElementById('mp-rowCount').textContent=agg.campaigns.length+' campaign(s) across '+agg.agencies.length+' agenc'+(agg.agencies.length===1?'y':'ies');
+}
+
+function destroyMPChart(id){if(mpCharts[id]){mpCharts[id].destroy();delete mpCharts[id];}}
+function renderMPCharts(agg){
+  agg=agg||mpAgg;
+  if(!agg||typeof Chart==='undefined')return;
+  const blue=spCssVar('--blue'),green=spCssVar('--green'),red=spCssVar('--red'),textDim=spCssVar('--text-dim');
+  Chart.defaults.color=textDim;Chart.defaults.font.family="'Inter',sans-serif";Chart.defaults.font.size=10.5;
+
+  function buildChart(canvasId,rows,chartKey){
+    destroyMPChart(chartKey);
+    const sorted=[...rows].filter(r=>r.leads>0||r.sv>0||r.meetings>0||r.bookings>0||r.spent>0||r.revenue>0).sort((a,b)=>b.revenue-a.revenue).slice(0,20);
+    mpCharts[chartKey]=new Chart(document.getElementById(canvasId),{type:'bar',data:{labels:sorted.map(r=>r.key),datasets:[
+      {label:'ROI % (Spent/Revenue)',data:sorted.map(r=>roiPct(r.spent,r.revenue)||0),backgroundColor:red},
+      {label:'Leads:SV %',data:sorted.map(r=>ratioPct(r.sv,r.leads)||0),backgroundColor:blue},
+      {label:'SV+Meeting:Booking %',data:sorted.map(r=>ratioPct(r.bookings,r.sv+r.meetings)||0),backgroundColor:green}
+    ]},options:spChartOpts(true)});
+  }
+  buildChart('mp-chart-zone',agg.zoneAgg,'zone');
+  buildChart('mp-chart-cluster',agg.clusterAgg,'cluster');
+  buildChart('mp-chart-agency',agg.agencyAgg,'agency');
+  buildChart('mp-chart-project',agg.projectAgg,'project');
+}
 
 // ══════════════════════════════════════════════════════════
 //  SALES DASHBOARD
