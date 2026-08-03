@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THORE Dashboard</title>
+  <title>THORE — Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
@@ -233,11 +233,11 @@
     tr.mp-zone-row:hover td{background:var(--surface4);}
     tr.mp-cluster-row td{background:var(--surface3);color:var(--text-sub);font-weight:700;font-size:0.68rem;padding:6px 12px 6px 36px;border-bottom:1px solid var(--border);}
     tr.mp-cluster-row:hover td{background:var(--surface3);}
-    tr.mp-project-row td{background:var(--surface2);color:var(--text-dim);font-weight:600;font-size:0.66rem;padding:5px 12px 5px 48px;border-bottom:1px solid var(--border);}
-    tr.mp-project-row:hover td{background:var(--surface2);}
-    tr.mp-campaign-row td:first-child{padding-left:60px;}
-    tr.mp-project-subtotal td{background:var(--surface2);color:var(--text);font-weight:700;font-size:0.72rem;border-top:1px solid var(--border-mid);}
-    tr.mp-project-subtotal:hover td{background:var(--surface2);}
+    tr.mp-project-row td{color:var(--text-sub);font-weight:600;font-size:0.76rem;border-bottom:1px solid var(--border);}
+    tr.mp-project-row td:first-child{padding-left:48px;}
+    tr.mp-campaign-row td{color:var(--text-dim);font-size:0.74rem;background:rgba(120,120,120,0.03);}
+    tr.mp-campaign-row td:first-child{padding-left:72px;}
+    .mp-camp-count{color:var(--text-dim);font-size:0.66rem;font-weight:500;}
     tr.mp-cluster-subtotal td{background:var(--surface3);color:var(--text);font-weight:700;font-size:0.73rem;border-top:1px solid var(--border-mid);}
     tr.mp-cluster-subtotal:hover td{background:var(--surface3);}
     tr.mp-zone-subtotal td{background:var(--surface4);color:var(--text);font-weight:700;font-size:0.74rem;border-top:1px solid var(--border-mid);}
@@ -527,11 +527,12 @@
         <div class="filter-item date-range-item"><label>Updated Date</label><div class="date-range-pair"><input type="date" id="mp-fromDate" onchange="applyMPFilters()" title="From date"><span class="date-range-sep">–</span><input type="date" id="mp-toDate" onchange="applyMPFilters()" title="To date"></div></div>
         <div class="filter-item"><label>&nbsp;</label><div class="filter-actions"><button class="clear-btn" onclick="clearMPFilters()">Clear</button><div class="sp-view-toggle"><button class="view-tab active" id="mp-tableTab" onclick="switchMPView('table')">📋 Table</button><button class="view-tab" id="mp-dashTab" onclick="switchMPView('graphical')">📊 Graphical</button></div></div></div>
       </div></div>
+      <div class="prefilter-note">ℹ️ <span>Table shows project-wise totals for faster loading. Click the ▸ next to a project to expand its campaign-wise breakdown.</span></div>
       <div class="table-meta"><div class="row-count" id="mp-rowCount">Loading…</div><div class="last-updated" id="mp-lastUpdated"></div></div>
 
       <div id="mp-tableView" class="table-wrap">
         <table id="mp-table"><thead><tr>
-          <th>Campaign</th><th>Leads</th><th>SV</th><th>Meetings</th><th>Bookings</th><th>Spent</th><th>Revenue</th>
+          <th>Project / Campaign</th><th>Leads</th><th>SV</th><th>Meetings</th><th>Bookings</th><th>Spent</th><th>Revenue</th>
           <th>Spent/Revenue %</th><th>Leads:SV</th><th>SV+Meeting:Booking</th>
         </tr></thead><tbody id="mp-tbody"></tbody></table>
       </div>
@@ -1256,6 +1257,42 @@ function renderMPTable(agg){
   html+=`<tr class="mp-grand-total"><td>GRAND TOTAL</td><td>${agg.grand.leads.toLocaleString('en-IN')}</td><td>${agg.grand.sv.toLocaleString('en-IN')}</td><td>${agg.grand.meetings.toLocaleString('en-IN')}</td><td>${agg.grand.bookings.toLocaleString('en-IN')}</td><td>${agg.grand.spent?formatBudgetTotal(agg.grand.spent):'—'}</td><td>${agg.grand.revenue?formatBudgetTotal(agg.grand.revenue):'—'}</td><td>${roiPill(agg.grand.spent,agg.grand.revenue)}</td><td>${ratioPill(agg.grand.sv,agg.grand.leads)}</td><td>${ratioPill(agg.grand.bookings,agg.grand.sv+agg.grand.meetings)}</td></tr>`;
   tbody.innerHTML=html;
   document.getElementById('mp-rowCount').textContent=agg.campaigns.length+' campaign(s) across '+agg.agencies.length+' agenc'+(agg.agencies.length===1?'y':'ies');
+}
+
+// Lazily builds & inserts the campaign-wise breakdown rows for a project only
+// when its dropdown is opened — keeps the initial table render fast since we
+// never build DOM for campaign-level rows unless the user asks to see them.
+function toggleMPCampaigns(pid,btn){
+  const projectRow=btn.closest('tr');
+  const nextRow=projectRow.nextElementSibling;
+  const isOpen=nextRow&&nextRow.classList.contains('mp-campaign-row')&&nextRow.dataset.pid===pid;
+  if(isOpen){
+    let next=projectRow.nextElementSibling;
+    while(next&&next.classList.contains('mp-campaign-row')&&next.dataset.pid===pid){
+      const toRemove=next;next=next.nextElementSibling;toRemove.remove();
+    }
+    btn.textContent='▸';btn.classList.remove('open');
+    return;
+  }
+  const p=mpProjectIndex[pid];
+  if(!p)return;
+  let html='';
+  p.campaigns.forEach(c=>{
+    html+=`<tr class="mp-campaign-row" data-pid="${pid}">
+      <td>${esc(c.campaign)}</td>
+      <td>${c.leads.toLocaleString('en-IN')}</td>
+      <td>${c.sv.toLocaleString('en-IN')}</td>
+      <td>${c.meetings.toLocaleString('en-IN')}</td>
+      <td>${c.bookings.toLocaleString('en-IN')}</td>
+      <td>${c.spent?formatBudgetTotal(c.spent):'—'}</td>
+      <td>${c.revenue?formatBudgetTotal(c.revenue):'—'}</td>
+      <td>${roiPill(c.spent,c.revenue)}</td>
+      <td>${ratioPill(c.sv,c.leads)}</td>
+      <td>${ratioPill(c.bookings,c.sv+c.meetings)}</td>
+    </tr>`;
+  });
+  projectRow.insertAdjacentHTML('afterend',html);
+  btn.textContent='▾';btn.classList.add('open');
 }
 
 function destroyMPChart(id){if(mpCharts[id]){mpCharts[id].destroy();delete mpCharts[id];}}
