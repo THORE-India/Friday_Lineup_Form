@@ -856,7 +856,9 @@ function showAllFNStatuses(){FN_ALL_STATUSES.forEach(s=>fnSelectedStatuses.add(s
 
 function renderVisitData(rows){
   visitsAll=rows.map(r=>({...r,visitDate:fmtDate(r.visitDate)}));visitsFiltered=[...visitsAll];
-  populateVisitFilters(visitsAll);updateVisitMetrics(visitsAll);applyVisitFilters();
+  populateVisitFilters(visitsAll);
+  // updateVisitMetrics(visitsAll);
+  applyVisitFilters();
   document.getElementById('v-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
 }
 function updateVisitMetrics(rows){
@@ -913,7 +915,8 @@ function sortVisits(col){if(vSortCol===col)vSortDir=vSortDir==='asc'?'desc':'asc
 function applySortVisits(){const keys=['cluster','teamLead','employee','customer','phone','project','developer','visitDate','visitTime'];const key=keys[vSortCol]||'visitDate';visitsFiltered.sort((a,b)=>{const v1=a[key]||'',v2=b[key]||'';return vSortDir==='asc'?v1.localeCompare(v2):v2.localeCompare(v1);});}
 
 function renderFNData(rows){
-  fnAll=rows.map(r=>({...r,visitDate:fmtDate(r.visitDate)}));populateFNFilters(fnAll);updateFNMetrics(fnAll);
+  fnAll=rows.map(r=>({...r,visitDate:fmtDate(r.visitDate)}));populateFNFilters(fnAll);
+  // updateFNMetrics(fnAll);
   if(isLoanDept()){fnSelectedStatuses=new Set(['Lost','Booked']);syncMSDisplay();}
   applyFNFilters();document.getElementById('fn-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
 }
@@ -1064,7 +1067,9 @@ function loadVDData(){
   jsonpFetch(GAS_URL,{action:'getVisitDoneData',role:auth.role,username:auth.user,password:auth.pass},d=>{if(d.ok)renderVDData(d.data);else document.getElementById('vd-rowCount').textContent='Failed to load Visit Done data.';},()=>{document.getElementById('vd-rowCount').textContent='Network error loading Visit Done data.';});
 }
 function renderVDData(rows){
-  vdAll=rows.map(r=>({...r,visitDate:fmtDate(r.visitDate)}));vdFiltered=[...vdAll];populateVDFilters(vdAll);updateVDMetrics(vdAll);applyVDFilters();
+  vdAll=rows.map(r=>({...r,visitDate:fmtDate(r.visitDate)}));vdFiltered=[...vdAll];populateVDFilters(vdAll);
+  // updateVDMetrics(vdAll);
+  applyVDFilters();
   document.getElementById('vd-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
 }
 function updateVDMetrics(rows){
@@ -1147,7 +1152,7 @@ function switchMPView(v){
 }
 function renderMPAll(){
   mpAgg=buildMPAggregation();
-  updateMPMetrics(mpAgg);
+  // updateMPMetrics(mpAgg);
   if(mpView==='table')renderMPTable(mpAgg);else renderMPCharts(mpAgg);
 }
 
@@ -1384,7 +1389,7 @@ function switchSPView(v){
 }
 function renderSPAll(){
   spAgg=buildSPAggregation();
-  updateSPMetrics(spAgg);
+  // updateSPMetrics(spAgg);
   if(spView==='table')renderSPTable(spAgg);else renderSPCharts(spAgg);
 }
 
