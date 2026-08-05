@@ -516,6 +516,7 @@
         <div class="metric-card"><div class="metric-icon gold">🧲</div><div class="metric-body"><div class="metric-value" id="mpm-leads">—</div><div class="metric-label">Total Leads</div></div></div>
         <div class="metric-card"><div class="metric-icon blue">💸</div><div class="metric-body"><div class="metric-value" id="mpm-spent">—</div><div class="metric-label">Total Spent</div></div></div>
         <div class="metric-card"><div class="metric-icon green">💰</div><div class="metric-body"><div class="metric-value" id="mpm-revenue">—</div><div class="metric-label">Total Revenue</div></div></div>
+        <div class="metric-card"><div class="metric-icon gold">🎫</div><div class="metric-body"><div class="metric-value" id="mpm-tokens">—</div><div class="metric-label">Tokens</div></div></div>
         <div class="metric-card"><div class="metric-icon orange">📐</div><div class="metric-body"><div class="metric-value" id="mpm-roi">—</div><div class="metric-label">Overall Spent/Revenue %</div></div></div>
       </div>
       <div class="filters-bar"><div class="filters-grid">
@@ -532,8 +533,8 @@
 
       <div id="mp-tableView" class="table-wrap">
         <table id="mp-table"><thead><tr>
-          <th>Project / Campaign</th><th>Leads</th><th>SV</th><th>Meetings</th><th>Bookings</th><th>Spent</th><th>Revenue</th>
-          <th>Spent/Revenue %</th><th>Leads:SV</th><th>SV+Meeting:Booking</th>
+          <th>Project / Campaign</th><th>Leads</th><th>SV</th><th>Meetings</th><th>Tokens</th><th>Bookings</th><th>Spent</th><th>Revenue</th>
+          <th>Spent/Revenue %</th><th>Leads:SV</th><th>SV:Booking</th><th>Meeting:Booking</th>
         </tr></thead><tbody id="mp-tbody"></tbody></table>
       </div>
 
@@ -553,6 +554,7 @@
         <div class="metric-card"><div class="metric-icon gold">🧲</div><div class="metric-body"><div class="metric-value" id="spm-leads">—</div><div class="metric-label">Total Leads</div></div></div>
         <div class="metric-card"><div class="metric-icon blue">🏠</div><div class="metric-body"><div class="metric-value" id="spm-sv">—</div><div class="metric-label">Site Visits</div></div></div>
         <div class="metric-card"><div class="metric-icon orange">🤝</div><div class="metric-body"><div class="metric-value" id="spm-meetings">—</div><div class="metric-label">Meetings</div></div></div>
+        <div class="metric-card"><div class="metric-icon gold">🎫</div><div class="metric-body"><div class="metric-value" id="spm-tokens">—</div><div class="metric-label">Tokens</div></div></div>
         <div class="metric-card"><div class="metric-icon green">✅</div><div class="metric-body"><div class="metric-value" id="spm-bookings">—</div><div class="metric-label">Bookings</div></div></div>
       </div>
       <div class="filters-bar"><div class="filters-grid">
@@ -571,8 +573,8 @@
 
       <div id="sp-tableView" class="table-wrap">
         <table id="sp-table"><thead><tr>
-          <th>Manager</th><th>Employee</th><th>Leads</th><th>SV</th><th>Meeting</th><th>Bookings</th><th>Revenue</th>
-          <th>Leads:SV</th><th>Leads:Meeting</th><th>SV+Meeting:Booking</th>
+          <th>Manager</th><th>Employee</th><th>Leads</th><th>SV</th><th>Meeting</th><th>Tokens</th><th>Bookings</th><th>Revenue</th>
+          <th>Leads:SV</th><th>Leads:Meeting</th><th>SV:Booking</th><th>Meeting:Booking</th>
         </tr></thead><tbody id="sp-tbody"></tbody></table>
       </div>
 
@@ -630,7 +632,7 @@
     <div class="modal-body" style="overflow-y:auto;flex:1;">
       <div class="sp-detail-summary" id="spDetailSummary"></div>
       <div class="drill-table-wrap" style="overflow:visible;flex:none;">
-        <table class="sp-proj-table"><thead><tr><th>Project</th><th>Developer</th><th>SV</th><th>Meeting</th><th>Bookings</th><th>Revenue</th><th>SV+Meeting:Booking</th></tr></thead><tbody id="spDetailProjTbody"></tbody></table>
+        <table class="sp-proj-table"><thead><tr><th>Project</th><th>Developer</th><th>SV</th><th>Meeting</th><th>Tokens</th><th>Bookings</th><th>Revenue</th><th>SV:Booking</th><th>Meeting:Booking</th></tr></thead><tbody id="spDetailProjTbody"></tbody></table>
       </div>
     </div>
   </div>
@@ -1149,8 +1151,8 @@ function renderMPAll(){
   if(mpView==='table')renderMPTable(mpAgg);else renderMPCharts(mpAgg);
 }
 
-function mpZero(){return{leads:0,sv:0,meetings:0,bookings:0,spent:0,revenue:0};}
-function mpAdd(target,src){target.leads+=src.leads;target.sv+=src.sv;target.meetings+=src.meetings;target.bookings+=src.bookings;target.spent+=src.spent;target.revenue+=src.revenue;}
+function mpZero(){return{leads:0,sv:0,meetings:0,tokens:0,bookings:0,bookingAfterSV:0,bookingAfterVC:0,spent:0,revenue:0};}
+function mpAdd(target,src){target.leads+=src.leads;target.sv+=src.sv;target.meetings+=src.meetings;target.tokens+=src.tokens||0;target.bookings+=src.bookings;target.bookingAfterSV+=src.bookingAfterSV||0;target.bookingAfterVC+=src.bookingAfterVC||0;target.spent+=src.spent;target.revenue+=src.revenue;}
 
 // ── Aggregation: dedupes raw filtered rows into unique campaigns
 //    (summed across dates), then nests Agency → Zone → Cluster →
@@ -1214,6 +1216,7 @@ function updateMPMetrics(agg){
   document.getElementById('mpm-leads').textContent=agg.grand.leads.toLocaleString('en-IN');
   document.getElementById('mpm-spent').textContent=agg.grand.spent?formatBudgetTotal(agg.grand.spent):'—';
   document.getElementById('mpm-revenue').textContent=agg.grand.revenue?formatBudgetTotal(agg.grand.revenue):'—';
+  document.getElementById('mpm-tokens').textContent=agg.grand.tokens.toLocaleString('en-IN');
   const roi=roiPct(agg.grand.spent,agg.grand.revenue);
   document.getElementById('mpm-roi').textContent=roi===null?'—':roi.toFixed(1)+'%';
 }
@@ -1222,16 +1225,16 @@ let mpProjectIndex={};
 function renderMPTable(agg){
   if(!agg)return;
   const tbody=document.getElementById('mp-tbody');
-  if(!agg.campaigns.length){tbody.innerHTML='<tr><td colspan="10" class="no-data">No marketing performance data found for the current filters</td></tr>';document.getElementById('mp-rowCount').textContent='0 campaigns';return;}
+  if(!agg.campaigns.length){tbody.innerHTML='<tr><td colspan="12" class="no-data">No marketing performance data found for the current filters</td></tr>';document.getElementById('mp-rowCount').textContent='0 campaigns';return;}
   mpProjectIndex={};
   let pSeq=0;
   let html='';
   agg.agencies.forEach(a=>{
-    html+=`<tr class="mp-agency-row"><td colspan="10">🏢 Agency: ${esc(a.agency)}</td></tr>`;
+    html+=`<tr class="mp-agency-row"><td colspan="12">🏢 Agency: ${esc(a.agency)}</td></tr>`;
     a.zoneList.forEach(z=>{
-      html+=`<tr class="mp-zone-row"><td colspan="10">🗺️ Zone: ${esc(z.zone)}</td></tr>`;
+      html+=`<tr class="mp-zone-row"><td colspan="12">🗺️ Zone: ${esc(z.zone)}</td></tr>`;
       z.clusterList.forEach(cl=>{
-        html+=`<tr class="mp-cluster-row"><td colspan="10">📍 Cluster: ${esc(cl.cluster)}</td></tr>`;
+        html+=`<tr class="mp-cluster-row"><td colspan="12">📍 Cluster: ${esc(cl.cluster)}</td></tr>`;
         cl.projectList.forEach(p=>{
           const pid='mpproj'+(pSeq++);
           mpProjectIndex[pid]=p;
@@ -1240,21 +1243,23 @@ function renderMPTable(agg){
             <td>${p.leads.toLocaleString('en-IN')}</td>
             <td>${p.sv.toLocaleString('en-IN')}</td>
             <td>${p.meetings.toLocaleString('en-IN')}</td>
+            <td>${p.tokens.toLocaleString('en-IN')}</td>
             <td>${p.bookings.toLocaleString('en-IN')}</td>
             <td>${p.spent?formatBudgetTotal(p.spent):'—'}</td>
             <td>${p.revenue?formatBudgetTotal(p.revenue):'—'}</td>
             <td>${roiPill(p.spent,p.revenue)}</td>
             <td>${ratioPill(p.sv,p.leads)}</td>
-            <td>${ratioPill(p.bookings,p.sv+p.meetings)}</td>
+            <td>${ratioPill(p.bookingAfterSV,p.sv)}</td>
+            <td>${ratioPill(p.bookingAfterVC,p.meetings)}</td>
           </tr>`;
         });
-        html+=`<tr class="mp-cluster-subtotal"><td>Cluster Total — ${esc(cl.cluster)}</td><td>${cl.leads.toLocaleString('en-IN')}</td><td>${cl.sv.toLocaleString('en-IN')}</td><td>${cl.meetings.toLocaleString('en-IN')}</td><td>${cl.bookings.toLocaleString('en-IN')}</td><td>${cl.spent?formatBudgetTotal(cl.spent):'—'}</td><td>${cl.revenue?formatBudgetTotal(cl.revenue):'—'}</td><td>${roiPill(cl.spent,cl.revenue)}</td><td>${ratioPill(cl.sv,cl.leads)}</td><td>${ratioPill(cl.bookings,cl.sv+cl.meetings)}</td></tr>`;
+        html+=`<tr class="mp-cluster-subtotal"><td>Cluster Total — ${esc(cl.cluster)}</td><td>${cl.leads.toLocaleString('en-IN')}</td><td>${cl.sv.toLocaleString('en-IN')}</td><td>${cl.meetings.toLocaleString('en-IN')}</td><td>${cl.tokens.toLocaleString('en-IN')}</td><td>${cl.bookings.toLocaleString('en-IN')}</td><td>${cl.spent?formatBudgetTotal(cl.spent):'—'}</td><td>${cl.revenue?formatBudgetTotal(cl.revenue):'—'}</td><td>${roiPill(cl.spent,cl.revenue)}</td><td>${ratioPill(cl.sv,cl.leads)}</td><td>${ratioPill(cl.bookingAfterSV,cl.sv)}</td><td>${ratioPill(cl.bookingAfterVC,cl.meetings)}</td></tr>`;
       });
-      html+=`<tr class="mp-zone-subtotal"><td>Zone Total — ${esc(z.zone)}</td><td>${z.leads.toLocaleString('en-IN')}</td><td>${z.sv.toLocaleString('en-IN')}</td><td>${z.meetings.toLocaleString('en-IN')}</td><td>${z.bookings.toLocaleString('en-IN')}</td><td>${z.spent?formatBudgetTotal(z.spent):'—'}</td><td>${z.revenue?formatBudgetTotal(z.revenue):'—'}</td><td>${roiPill(z.spent,z.revenue)}</td><td>${ratioPill(z.sv,z.leads)}</td><td>${ratioPill(z.bookings,z.sv+z.meetings)}</td></tr>`;
+      html+=`<tr class="mp-zone-subtotal"><td>Zone Total — ${esc(z.zone)}</td><td>${z.leads.toLocaleString('en-IN')}</td><td>${z.sv.toLocaleString('en-IN')}</td><td>${z.meetings.toLocaleString('en-IN')}</td><td>${z.tokens.toLocaleString('en-IN')}</td><td>${z.bookings.toLocaleString('en-IN')}</td><td>${z.spent?formatBudgetTotal(z.spent):'—'}</td><td>${z.revenue?formatBudgetTotal(z.revenue):'—'}</td><td>${roiPill(z.spent,z.revenue)}</td><td>${ratioPill(z.sv,z.leads)}</td><td>${ratioPill(z.bookingAfterSV,z.sv)}</td><td>${ratioPill(z.bookingAfterVC,z.meetings)}</td></tr>`;
     });
-    html+=`<tr class="mp-agency-subtotal"><td>Agency Total — ${esc(a.agency)}</td><td>${a.leads.toLocaleString('en-IN')}</td><td>${a.sv.toLocaleString('en-IN')}</td><td>${a.meetings.toLocaleString('en-IN')}</td><td>${a.bookings.toLocaleString('en-IN')}</td><td>${a.spent?formatBudgetTotal(a.spent):'—'}</td><td>${a.revenue?formatBudgetTotal(a.revenue):'—'}</td><td>${roiPill(a.spent,a.revenue)}</td><td>${ratioPill(a.sv,a.leads)}</td><td>${ratioPill(a.bookings,a.sv+a.meetings)}</td></tr>`;
+    html+=`<tr class="mp-agency-subtotal"><td>Agency Total — ${esc(a.agency)}</td><td>${a.leads.toLocaleString('en-IN')}</td><td>${a.sv.toLocaleString('en-IN')}</td><td>${a.meetings.toLocaleString('en-IN')}</td><td>${a.tokens.toLocaleString('en-IN')}</td><td>${a.bookings.toLocaleString('en-IN')}</td><td>${a.spent?formatBudgetTotal(a.spent):'—'}</td><td>${a.revenue?formatBudgetTotal(a.revenue):'—'}</td><td>${roiPill(a.spent,a.revenue)}</td><td>${ratioPill(a.sv,a.leads)}</td><td>${ratioPill(a.bookingAfterSV,a.sv)}</td><td>${ratioPill(a.bookingAfterVC,a.meetings)}</td></tr>`;
   });
-  html+=`<tr class="mp-grand-total"><td>GRAND TOTAL</td><td>${agg.grand.leads.toLocaleString('en-IN')}</td><td>${agg.grand.sv.toLocaleString('en-IN')}</td><td>${agg.grand.meetings.toLocaleString('en-IN')}</td><td>${agg.grand.bookings.toLocaleString('en-IN')}</td><td>${agg.grand.spent?formatBudgetTotal(agg.grand.spent):'—'}</td><td>${agg.grand.revenue?formatBudgetTotal(agg.grand.revenue):'—'}</td><td>${roiPill(agg.grand.spent,agg.grand.revenue)}</td><td>${ratioPill(agg.grand.sv,agg.grand.leads)}</td><td>${ratioPill(agg.grand.bookings,agg.grand.sv+agg.grand.meetings)}</td></tr>`;
+  html+=`<tr class="mp-grand-total"><td>GRAND TOTAL</td><td>${agg.grand.leads.toLocaleString('en-IN')}</td><td>${agg.grand.sv.toLocaleString('en-IN')}</td><td>${agg.grand.meetings.toLocaleString('en-IN')}</td><td>${agg.grand.tokens.toLocaleString('en-IN')}</td><td>${agg.grand.bookings.toLocaleString('en-IN')}</td><td>${agg.grand.spent?formatBudgetTotal(agg.grand.spent):'—'}</td><td>${agg.grand.revenue?formatBudgetTotal(agg.grand.revenue):'—'}</td><td>${roiPill(agg.grand.spent,agg.grand.revenue)}</td><td>${ratioPill(agg.grand.sv,agg.grand.leads)}</td><td>${ratioPill(agg.grand.bookingAfterSV,agg.grand.sv)}</td><td>${ratioPill(agg.grand.bookingAfterVC,agg.grand.meetings)}</td></tr>`;
   tbody.innerHTML=html;
   document.getElementById('mp-rowCount').textContent=agg.campaigns.length+' campaign(s) across '+agg.agencies.length+' agenc'+(agg.agencies.length===1?'y':'ies');
 }
@@ -1283,12 +1288,14 @@ function toggleMPCampaigns(pid,btn){
       <td>${c.leads.toLocaleString('en-IN')}</td>
       <td>${c.sv.toLocaleString('en-IN')}</td>
       <td>${c.meetings.toLocaleString('en-IN')}</td>
+      <td>${c.tokens.toLocaleString('en-IN')}</td>
       <td>${c.bookings.toLocaleString('en-IN')}</td>
       <td>${c.spent?formatBudgetTotal(c.spent):'—'}</td>
       <td>${c.revenue?formatBudgetTotal(c.revenue):'—'}</td>
       <td>${roiPill(c.spent,c.revenue)}</td>
       <td>${ratioPill(c.sv,c.leads)}</td>
-      <td>${ratioPill(c.bookings,c.sv+c.meetings)}</td>
+      <td>${ratioPill(c.bookingAfterSV,c.sv)}</td>
+      <td>${ratioPill(c.bookingAfterVC,c.meetings)}</td>
     </tr>`;
   });
   projectRow.insertAdjacentHTML('afterend',html);
@@ -1299,7 +1306,7 @@ function destroyMPChart(id){if(mpCharts[id]){mpCharts[id].destroy();delete mpCha
 function renderMPCharts(agg){
   agg=agg||mpAgg;
   if(!agg||typeof Chart==='undefined')return;
-  const blue=spCssVar('--blue'),green=spCssVar('--green'),red=spCssVar('--red'),textDim=spCssVar('--text-dim');
+  const blue=spCssVar('--blue'),green=spCssVar('--green'),red=spCssVar('--red'),orange=spCssVar('--orange'),textDim=spCssVar('--text-dim');
   Chart.defaults.color=textDim;Chart.defaults.font.family="'Inter',sans-serif";Chart.defaults.font.size=10.5;
 
   function buildChart(canvasId,rows,chartKey){
@@ -1308,7 +1315,8 @@ function renderMPCharts(agg){
     mpCharts[chartKey]=new Chart(document.getElementById(canvasId),{type:'bar',data:{labels:sorted.map(r=>r.key),datasets:[
       {label:'Spent/Revenue %',data:sorted.map(r=>roiPct(r.spent,r.revenue)||0),backgroundColor:red},
       {label:'Leads:SV %',data:sorted.map(r=>ratioPct(r.sv,r.leads)||0),backgroundColor:blue},
-      {label:'SV+Meeting:Booking %',data:sorted.map(r=>ratioPct(r.bookings,r.sv+r.meetings)||0),backgroundColor:green}
+      {label:'SV:Booking %',data:sorted.map(r=>ratioPct(r.bookingAfterSV,r.sv)||0),backgroundColor:green},
+      {label:'Meeting:Booking %',data:sorted.map(r=>ratioPct(r.bookingAfterVC,r.meetings)||0),backgroundColor:orange}
     ]},options:spChartOpts(true)});
   }
   buildChart('mp-chart-zone',agg.zoneAgg,'zone');
@@ -1383,6 +1391,19 @@ function renderSPAll(){
 // ── Aggregation: joins Sales Lead Count (leads) with Sales Performance
 //    (SV/Meeting/Booking/Revenue) per employee, grouped Cluster → Team,
 //    plus separate Project-wise / Developer-wise rollups for charts.
+function spZeroActivity(){return{sv:0,meetings:0,tokens:0,bookings:0,svBookings:0,vcBookings:0,revenue:0};}
+function spAddActivity(target,r){
+  if(r.type==='SV')target.sv++;
+  else if(r.type==='Meeting')target.meetings++;
+  else if(r.type==='Token')target.tokens++;
+  else if(r.type==='Booking'){
+    target.bookings++;
+    target.revenue+=parseBudget(r.revenue);
+    if(r.bookingSource==='SV')target.svBookings++;
+    else if(r.bookingSource==='VC')target.vcBookings++;
+  }
+}
+
 function buildSPAggregation(){
   const leadByEmp={};
   spLeadFiltered.forEach(r=>{
@@ -1393,13 +1414,12 @@ function buildSPAggregation(){
   const perfByEmp={};
   spPerfFiltered.forEach(r=>{
     const key=r.employee||'—';
-    if(!perfByEmp[key])perfByEmp[key]={cluster:r.cluster||'—',team:r.teamLead||'—',manager:r.manager||'—',pnlHead:r.pnlHead||'—',sv:0,meetings:0,bookings:0,revenue:0,projects:{}};
+    if(!perfByEmp[key])perfByEmp[key]={cluster:r.cluster||'—',team:r.teamLead||'—',manager:r.manager||'—',pnlHead:r.pnlHead||'—',...spZeroActivity(),projects:{}};
     const e=perfByEmp[key];
-    if(r.type==='SV')e.sv++;else if(r.type==='Meeting')e.meetings++;else if(r.type==='Booking'){e.bookings++;e.revenue+=parseBudget(r.revenue);}
+    spAddActivity(e,r);
     const pk=(r.project||'—')+'||'+(r.developer||'—');
-    if(!e.projects[pk])e.projects[pk]={project:r.project||'—',developer:r.developer||'—',sv:0,meetings:0,bookings:0,revenue:0};
-    const pe=e.projects[pk];
-    if(r.type==='SV')pe.sv++;else if(r.type==='Meeting')pe.meetings++;else if(r.type==='Booking'){pe.bookings++;pe.revenue+=parseBudget(r.revenue);}
+    if(!e.projects[pk])e.projects[pk]={project:r.project||'—',developer:r.developer||'—',...spZeroActivity()};
+    spAddActivity(e.projects[pk],r);
   });
   const empNames=new Set([...Object.keys(leadByEmp),...Object.keys(perfByEmp)]);
   const employees=[...empNames].map(name=>{
@@ -1411,33 +1431,33 @@ function buildSPAggregation(){
       team:pick(p&&p.team,l&&l.team),
       manager:pick(p&&p.manager,l&&l.manager),
       pnlHead:pick(p&&p.pnlHead,l&&l.pnlHead),
-      leads:l?l.leads:0,sv:p?p.sv:0,meetings:p?p.meetings:0,bookings:p?p.bookings:0,revenue:p?p.revenue:0,
+      leads:l?l.leads:0,
+      sv:p?p.sv:0,meetings:p?p.meetings:0,tokens:p?p.tokens:0,bookings:p?p.bookings:0,
+      svBookings:p?p.svBookings:0,vcBookings:p?p.vcBookings:0,revenue:p?p.revenue:0,
       projects:p?Object.values(p.projects).sort((a,b)=>a.project.localeCompare(b.project)):[]
     };
   });
   const clusterMap={};
   employees.forEach(e=>{
-    if(!clusterMap[e.cluster])clusterMap[e.cluster]={cluster:e.cluster,teams:{},leads:0,sv:0,meetings:0,bookings:0,revenue:0};
+    if(!clusterMap[e.cluster])clusterMap[e.cluster]={cluster:e.cluster,teams:{},leads:0,...spZeroActivity()};
     const c=clusterMap[e.cluster];
-    if(!c.teams[e.pnlHead])c.teams[e.pnlHead]={team:e.pnlHead,employees:[],leads:0,sv:0,meetings:0,bookings:0,revenue:0};
+    if(!c.teams[e.pnlHead])c.teams[e.pnlHead]={team:e.pnlHead,employees:[],leads:0,...spZeroActivity()};
     const t=c.teams[e.pnlHead];
-    t.employees.push(e);t.leads+=e.leads;t.sv+=e.sv;t.meetings+=e.meetings;t.bookings+=e.bookings;t.revenue+=e.revenue;
-    c.leads+=e.leads;c.sv+=e.sv;c.meetings+=e.meetings;c.bookings+=e.bookings;c.revenue+=e.revenue;
+    t.employees.push(e);
+    ['leads','sv','meetings','tokens','bookings','svBookings','vcBookings','revenue'].forEach(k=>{t[k]+=e[k];c[k]+=e[k];});
   });
   const clusters=Object.values(clusterMap).sort((a,b)=>a.cluster.localeCompare(b.cluster));
   clusters.forEach(c=>{c.teamList=Object.values(c.teams).sort((a,b)=>a.team.localeCompare(b.team));c.teamList.forEach(t=>t.employees.sort((a,b)=>a.employee.localeCompare(b.employee)));});
-  const grand={leads:0,sv:0,meetings:0,bookings:0,revenue:0};
-  employees.forEach(e=>{grand.leads+=e.leads;grand.sv+=e.sv;grand.meetings+=e.meetings;grand.bookings+=e.bookings;grand.revenue+=e.revenue;});
+  const grand={leads:0,...spZeroActivity()};
+  employees.forEach(e=>{['leads','sv','meetings','tokens','bookings','svBookings','vcBookings','revenue'].forEach(k=>{grand[k]+=e[k];});});
   const projAgg={},devAgg={};
   spPerfFiltered.forEach(r=>{
     const pk=r.project||'—';
-    if(!projAgg[pk])projAgg[pk]={key:pk,sv:0,meetings:0,bookings:0,revenue:0};
-    const pa=projAgg[pk];
-    if(r.type==='SV')pa.sv++;else if(r.type==='Meeting')pa.meetings++;else if(r.type==='Booking'){pa.bookings++;pa.revenue+=parseBudget(r.revenue);}
+    if(!projAgg[pk])projAgg[pk]={key:pk,...spZeroActivity()};
+    spAddActivity(projAgg[pk],r);
     const dk=r.developer||'—';
-    if(!devAgg[dk])devAgg[dk]={key:dk,sv:0,meetings:0,bookings:0,revenue:0};
-    const da=devAgg[dk];
-    if(r.type==='SV')da.sv++;else if(r.type==='Meeting')da.meetings++;else if(r.type==='Booking'){da.bookings++;da.revenue+=parseBudget(r.revenue);}
+    if(!devAgg[dk])devAgg[dk]={key:dk,...spZeroActivity()};
+    spAddActivity(devAgg[dk],r);
   });
   return{clusters,employees,grand,projAgg:Object.values(projAgg),devAgg:Object.values(devAgg)};
 }
@@ -1450,18 +1470,19 @@ function updateSPMetrics(agg){
   document.getElementById('spm-leads').textContent=agg.grand.leads.toLocaleString('en-IN');
   document.getElementById('spm-sv').textContent=agg.grand.sv.toLocaleString('en-IN');
   document.getElementById('spm-meetings').textContent=agg.grand.meetings.toLocaleString('en-IN');
+  document.getElementById('spm-tokens').textContent=agg.grand.tokens.toLocaleString('en-IN');
   document.getElementById('spm-bookings').textContent=agg.grand.bookings.toLocaleString('en-IN');
 }
 
 function renderSPTable(agg){
   if(!agg)return;
   const tbody=document.getElementById('sp-tbody');
-  if(!agg.employees.length){tbody.innerHTML='<tr><td colspan="10" class="no-data">No sales performance data found for the current filters</td></tr>';document.getElementById('sp-rowCount').textContent='0 employees';return;}
+  if(!agg.employees.length){tbody.innerHTML='<tr><td colspan="12" class="no-data">No sales performance data found for the current filters</td></tr>';document.getElementById('sp-rowCount').textContent='0 employees';return;}
   let html='';
   agg.clusters.forEach(c=>{
-    html+=`<tr class="sp-cluster-row"><td colspan="10">📍 ${esc(c.cluster)}</td></tr>`;
+    html+=`<tr class="sp-cluster-row"><td colspan="12">📍 ${esc(c.cluster)}</td></tr>`;
     c.teamList.forEach(t=>{
-      html+=`<tr class="sp-team-row"><td colspan="10">👥 PNL Head: ${esc(t.team)}</td></tr>`;
+      html+=`<tr class="sp-team-row"><td colspan="12">👥 PNL Head: ${esc(t.team)}</td></tr>`;
       t.employees.forEach(e=>{
         html+=`<tr class="sp-emp-row">
           <td>${esc(e.manager)}</td>
@@ -1469,18 +1490,20 @@ function renderSPTable(agg){
           <td>${e.leads.toLocaleString('en-IN')}</td>
           <td>${e.sv.toLocaleString('en-IN')}</td>
           <td>${e.meetings.toLocaleString('en-IN')}</td>
+          <td>${e.tokens.toLocaleString('en-IN')}</td>
           <td>${e.bookings.toLocaleString('en-IN')}</td>
           <td>${e.revenue?formatBudgetTotal(e.revenue):'—'}</td>
           <td>${ratioPill(e.sv,e.leads)}</td>
           <td>${ratioPill(e.meetings,e.leads)}</td>
-          <td>${ratioPill(e.bookings,e.sv+e.meetings)}</td>
+          <td>${ratioPill(e.svBookings,e.sv)}</td>
+          <td>${ratioPill(e.vcBookings,e.meetings)}</td>
         </tr>`;
       });
-      html+=`<tr class="sp-team-subtotal"><td colspan="2">Subtotal — ${esc(t.team)}</td><td>${t.leads.toLocaleString('en-IN')}</td><td>${t.sv.toLocaleString('en-IN')}</td><td>${t.meetings.toLocaleString('en-IN')}</td><td>${t.bookings.toLocaleString('en-IN')}</td><td>${t.revenue?formatBudgetTotal(t.revenue):'—'}</td><td>${ratioPill(t.sv,t.leads)}</td><td>${ratioPill(t.meetings,t.leads)}</td><td>${ratioPill(t.bookings,t.sv+t.meetings)}</td></tr>`;
+      html+=`<tr class="sp-team-subtotal"><td colspan="2">Subtotal — ${esc(t.team)}</td><td>${t.leads.toLocaleString('en-IN')}</td><td>${t.sv.toLocaleString('en-IN')}</td><td>${t.meetings.toLocaleString('en-IN')}</td><td>${t.tokens.toLocaleString('en-IN')}</td><td>${t.bookings.toLocaleString('en-IN')}</td><td>${t.revenue?formatBudgetTotal(t.revenue):'—'}</td><td>${ratioPill(t.sv,t.leads)}</td><td>${ratioPill(t.meetings,t.leads)}</td><td>${ratioPill(t.svBookings,t.sv)}</td><td>${ratioPill(t.vcBookings,t.meetings)}</td></tr>`;
     });
-    html+=`<tr class="sp-cluster-subtotal"><td colspan="2">Cluster Total — ${esc(c.cluster)}</td><td>${c.leads.toLocaleString('en-IN')}</td><td>${c.sv.toLocaleString('en-IN')}</td><td>${c.meetings.toLocaleString('en-IN')}</td><td>${c.bookings.toLocaleString('en-IN')}</td><td>${c.revenue?formatBudgetTotal(c.revenue):'—'}</td><td>${ratioPill(c.sv,c.leads)}</td><td>${ratioPill(c.meetings,c.leads)}</td><td>${ratioPill(c.bookings,c.sv+c.meetings)}</td></tr>`;
+    html+=`<tr class="sp-cluster-subtotal"><td colspan="2">Cluster Total — ${esc(c.cluster)}</td><td>${c.leads.toLocaleString('en-IN')}</td><td>${c.sv.toLocaleString('en-IN')}</td><td>${c.meetings.toLocaleString('en-IN')}</td><td>${c.tokens.toLocaleString('en-IN')}</td><td>${c.bookings.toLocaleString('en-IN')}</td><td>${c.revenue?formatBudgetTotal(c.revenue):'—'}</td><td>${ratioPill(c.sv,c.leads)}</td><td>${ratioPill(c.meetings,c.leads)}</td><td>${ratioPill(c.svBookings,c.sv)}</td><td>${ratioPill(c.vcBookings,c.meetings)}</td></tr>`;
   });
-  html+=`<tr class="sp-grand-total"><td colspan="2">GRAND TOTAL</td><td>${agg.grand.leads.toLocaleString('en-IN')}</td><td>${agg.grand.sv.toLocaleString('en-IN')}</td><td>${agg.grand.meetings.toLocaleString('en-IN')}</td><td>${agg.grand.bookings.toLocaleString('en-IN')}</td><td>${agg.grand.revenue?formatBudgetTotal(agg.grand.revenue):'—'}</td><td>${ratioPill(agg.grand.sv,agg.grand.leads)}</td><td>${ratioPill(agg.grand.meetings,agg.grand.leads)}</td><td>${ratioPill(agg.grand.bookings,agg.grand.sv+agg.grand.meetings)}</td></tr>`;
+  html+=`<tr class="sp-grand-total"><td colspan="2">GRAND TOTAL</td><td>${agg.grand.leads.toLocaleString('en-IN')}</td><td>${agg.grand.sv.toLocaleString('en-IN')}</td><td>${agg.grand.meetings.toLocaleString('en-IN')}</td><td>${agg.grand.tokens.toLocaleString('en-IN')}</td><td>${agg.grand.bookings.toLocaleString('en-IN')}</td><td>${agg.grand.revenue?formatBudgetTotal(agg.grand.revenue):'—'}</td><td>${ratioPill(agg.grand.sv,agg.grand.leads)}</td><td>${ratioPill(agg.grand.meetings,agg.grand.leads)}</td><td>${ratioPill(agg.grand.svBookings,agg.grand.sv)}</td><td>${ratioPill(agg.grand.vcBookings,agg.grand.meetings)}</td></tr>`;
   tbody.innerHTML=html;
   document.getElementById('sp-rowCount').textContent=agg.employees.length+' employee(s) across '+agg.clusters.length+' cluster(s)';
 }
@@ -1490,12 +1513,12 @@ function openSPEmployeeDetail(e){
   const summary=[
     {label:'Cluster',value:e.cluster},{label:'Manager',value:e.manager},{label:'PNL Head',value:e.pnlHead},
     {label:'Leads',value:e.leads.toLocaleString('en-IN'),gold:true},{label:'SV',value:e.sv.toLocaleString('en-IN')},{label:'Meetings',value:e.meetings.toLocaleString('en-IN')},
-    {label:'Bookings',value:e.bookings.toLocaleString('en-IN'),gold:true},{label:'Revenue',value:e.revenue?formatBudgetTotal(e.revenue):'—',gold:true},{label:'Projects Worked',value:e.projects.length}
+    {label:'Tokens',value:e.tokens.toLocaleString('en-IN')},{label:'Bookings',value:e.bookings.toLocaleString('en-IN'),gold:true},{label:'Revenue',value:e.revenue?formatBudgetTotal(e.revenue):'—',gold:true},{label:'Projects Worked',value:e.projects.length}
   ];
   document.getElementById('spDetailSummary').innerHTML=summary.map(s=>`<div class="detail-item"><div class="detail-label">${s.label}</div><div class="detail-value ${s.gold?'gold':''}">${esc(String(s.value))}</div></div>`).join('');
   const tbody=document.getElementById('spDetailProjTbody');
-  if(!e.projects.length){tbody.innerHTML='<tr><td colspan="7" class="no-data">No project-wise activity found</td></tr>';}
-  else{tbody.innerHTML=e.projects.map(p=>`<tr><td style="font-weight:600;color:var(--text)">${esc(p.project)}</td><td>${esc(p.developer)}</td><td>${p.sv}</td><td>${p.meetings}</td><td>${p.bookings}</td><td>${p.revenue?formatBudgetTotal(p.revenue):'—'}</td><td>${ratioPill(p.bookings,p.sv+p.meetings)}</td></tr>`).join('');}
+  if(!e.projects.length){tbody.innerHTML='<tr><td colspan="9" class="no-data">No project-wise activity found</td></tr>';}
+  else{tbody.innerHTML=e.projects.map(p=>`<tr><td style="font-weight:600;color:var(--text)">${esc(p.project)}</td><td>${esc(p.developer)}</td><td>${p.sv}</td><td>${p.meetings}</td><td>${p.tokens}</td><td>${p.bookings}</td><td>${p.revenue?formatBudgetTotal(p.revenue):'—'}</td><td>${ratioPill(p.svBookings,p.sv)}</td><td>${ratioPill(p.vcBookings,p.meetings)}</td></tr>`).join('');}
   document.getElementById('spDetailModal').classList.add('open');document.body.style.overflow='hidden';
 }
 function closeSPDetailModal(e){if(e&&e.target!==document.getElementById('spDetailModal'))return;document.getElementById('spDetailModal').classList.remove('open');document.body.style.overflow='';}
@@ -1524,6 +1547,7 @@ function renderSPCharts(agg){
     {label:'Leads',data:agg.clusters.map(c=>c.leads),backgroundColor:gold},
     {label:'SV',data:agg.clusters.map(c=>c.sv),backgroundColor:blue},
     {label:'Meetings',data:agg.clusters.map(c=>c.meetings),backgroundColor:orange},
+    {label:'Tokens',data:agg.clusters.map(c=>c.tokens),backgroundColor:red},
     {label:'Bookings',data:agg.clusters.map(c=>c.bookings),backgroundColor:green}
   ]},options:spChartOpts(false)});
 
@@ -1533,6 +1557,7 @@ function renderSPCharts(agg){
     {label:'Leads',data:allTeams.map(t=>t.leads),backgroundColor:gold},
     {label:'SV',data:allTeams.map(t=>t.sv),backgroundColor:blue},
     {label:'Meetings',data:allTeams.map(t=>t.meetings),backgroundColor:orange},
+    {label:'Tokens',data:allTeams.map(t=>t.tokens),backgroundColor:red},
     {label:'Bookings',data:allTeams.map(t=>t.bookings),backgroundColor:green}
   ]},options:spChartOpts(false)});
 
@@ -1540,26 +1565,30 @@ function renderSPCharts(agg){
   spCharts.clusterRatio=new Chart(document.getElementById('sp-chart-cluster-ratio'),{type:'bar',data:{labels:clLabels,datasets:[
     {label:'Leads:SV %',data:agg.clusters.map(c=>ratioPct(c.sv,c.leads)||0),backgroundColor:blue},
     {label:'Leads:Meeting %',data:agg.clusters.map(c=>ratioPct(c.meetings,c.leads)||0),backgroundColor:orange},
-    {label:'SV+Meeting:Booking %',data:agg.clusters.map(c=>ratioPct(c.bookings,c.sv+c.meetings)||0),backgroundColor:green}
+    {label:'SV:Booking %',data:agg.clusters.map(c=>ratioPct(c.svBookings,c.sv)||0),backgroundColor:green},
+    {label:'Meeting:Booking %',data:agg.clusters.map(c=>ratioPct(c.vcBookings,c.meetings)||0),backgroundColor:red}
   ]},options:spChartOpts(true)});
 
   destroySPChart('teamRatio');
   spCharts.teamRatio=new Chart(document.getElementById('sp-chart-team-ratio'),{type:'bar',data:{labels:allTeams.map(t=>t.label),datasets:[
     {label:'Leads:SV %',data:allTeams.map(t=>ratioPct(t.sv,t.leads)||0),backgroundColor:blue},
     {label:'Leads:Meeting %',data:allTeams.map(t=>ratioPct(t.meetings,t.leads)||0),backgroundColor:orange},
-    {label:'SV+Meeting:Booking %',data:allTeams.map(t=>ratioPct(t.bookings,t.sv+t.meetings)||0),backgroundColor:green}
+    {label:'SV:Booking %',data:allTeams.map(t=>ratioPct(t.svBookings,t.sv)||0),backgroundColor:green},
+    {label:'Meeting:Booking %',data:allTeams.map(t=>ratioPct(t.vcBookings,t.meetings)||0),backgroundColor:red}
   ]},options:spChartOpts(true)});
 
   destroySPChart('projRatio');
   const projSorted=[...agg.projAgg].filter(p=>p.sv>0||p.meetings>0||p.bookings>0).sort((a,b)=>b.bookings-a.bookings).slice(0,20);
   spCharts.projRatio=new Chart(document.getElementById('sp-chart-project-ratio'),{type:'bar',data:{labels:projSorted.map(p=>p.key),datasets:[
-    {label:'SV+Meeting:Booking %',data:projSorted.map(p=>ratioPct(p.bookings,p.sv+p.meetings)||0),backgroundColor:green}
+    {label:'SV:Booking %',data:projSorted.map(p=>ratioPct(p.svBookings,p.sv)||0),backgroundColor:green},
+    {label:'Meeting:Booking %',data:projSorted.map(p=>ratioPct(p.vcBookings,p.meetings)||0),backgroundColor:red}
   ]},options:spChartOpts(true)});
 
   destroySPChart('devRatio');
   const devSorted=[...agg.devAgg].filter(d=>d.sv>0||d.meetings>0||d.bookings>0).sort((a,b)=>b.bookings-a.bookings).slice(0,20);
   spCharts.devRatio=new Chart(document.getElementById('sp-chart-developer-ratio'),{type:'bar',data:{labels:devSorted.map(d=>d.key),datasets:[
-    {label:'SV+Meeting:Booking %',data:devSorted.map(d=>ratioPct(d.bookings,d.sv+d.meetings)||0),backgroundColor:green}
+    {label:'SV:Booking %',data:devSorted.map(d=>ratioPct(d.svBookings,d.sv)||0),backgroundColor:green},
+    {label:'Meeting:Booking %',data:devSorted.map(d=>ratioPct(d.vcBookings,d.meetings)||0),backgroundColor:red}
   ]},options:spChartOpts(true)});
 }
 
