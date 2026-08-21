@@ -566,7 +566,7 @@
         <div class="filter-item"><label>Project</label><select id="sp-projFilter" onchange="applySPFilters()"><option value="">All Projects</option></select></div>
         <div class="filter-item"><label>Developer</label><select id="sp-devFilter" onchange="applySPFilters()"><option value="">All Developers</option></select></div>
         <div class="filter-item date-range-item"><label>Updated Date</label><div class="date-range-pair"><input type="date" id="sp-fromDate" onchange="applySPFilters()" title="From date"><span class="date-range-sep">–</span><input type="date" id="sp-toDate" onchange="applySPFilters()" title="To date"></div></div>
-        <div class="filter-item"><label>&nbsp;</label><div class="filter-actions"><button class="clear-btn" onclick="clearSPFilters()">Clear</button><div class="sp-view-toggle"><button class="view-tab active" id="sp-tableTab" onclick="switchSPView('table')">📋 Table</button><button class="view-tab" id="sp-dashTab" onclick="switchSPView('dashboard')">📊 Dashboard</button></div></div></div>
+        <div class="filter-item"><label>&nbsp;</label><div class="filter-actions"><button class="clear-btn" onclick="clearSPFilters()">Clear</button><div class="sp-view-toggle"><button class="view-tab active" id="sp-tableTab" onclick="switchSPView('table')">📋 Table</button><button class="view-tab" id="sp-dashTab" onclick="switchSPView('dashboard')">📊 Dashboard</button><button class="view-tab" id="sp-targetsTab" onclick="switchSPView('targets')">🎯 Targets</button></div></div></div>
       </div></div>
       <div class="prefilter-note" style="display:flex;">ℹ️ <span>Project / Developer filters narrow SV, Meeting, Booking &amp; Revenue counts only — Leads (from Sales Lead Count) are tracked per-employee, not per-project.</span></div>
       <div class="table-meta"><div class="row-count" id="sp-rowCount">Loading…</div><div class="last-updated" id="sp-lastUpdated"></div></div>
@@ -586,6 +586,62 @@
           <div class="chart-card"><div class="chart-card-title">PNL Head-wise <span>Conversion Ratios (%)</span></div><div class="chart-card-body"><canvas id="sp-chart-team-ratio"></canvas></div></div>
           <div class="chart-card full"><div class="chart-card-title">Project-wise <span>SV + Meeting → Booking Ratio</span></div><div class="chart-card-body tall"><canvas id="sp-chart-project-ratio"></canvas></div></div>
           <div class="chart-card full"><div class="chart-card-title">Developer-wise <span>SV + Meeting → Booking Ratio</span></div><div class="chart-card-body tall"><canvas id="sp-chart-developer-ratio"></canvas></div></div>
+        </div>
+      </div>
+
+      <div id="sp-targetsView" style="display:none;">
+        <div class="filters-bar"><div class="filters-grid">
+          <div class="filter-item"><label>Leader Level</label>
+            <select id="tgt-levelFilter" onchange="applyTargetFilters()">
+              <option value="PNL Head">PNL Head</option>
+              <option value="Manager">Manager</option>
+            </select>
+          </div>
+          <div class="filter-item"><label>Leader Name</label><select id="tgt-leaderFilter" onchange="applyTargetFilters()"><option value="">All (Combined)</option></select></div>
+          <div class="filter-item"><label>&nbsp;</label><button class="clear-btn" onclick="clearTargetFilters()">Clear</button></div>
+        </div></div>
+
+        <div class="table-meta"><div class="row-count" id="tgt-rowCount">Loading…</div><div class="last-updated" id="tgt-lastUpdated"></div></div>
+
+        <div class="chart-grid">
+          <div class="chart-card full"><div class="chart-card-title">Site Visits (SV) <span>Target vs Achieved — weekly</span></div><div class="chart-card-body tall"><canvas id="tgt-chart-sv"></canvas></div></div>
+          <div class="chart-card full"><div class="chart-card-title">VC / Meetings <span>Target vs Achieved — weekly</span></div><div class="chart-card-body tall"><canvas id="tgt-chart-vc"></canvas></div></div>
+          <div class="chart-card full"><div class="chart-card-title">Bookings (Incremental) <span>Target vs Achieved — weekly</span></div><div class="chart-card-body tall"><canvas id="tgt-chart-booking"></canvas></div></div>
+        </div>
+
+        <div class="table-meta"><div class="row-count">Weekly completion — %</div></div>
+        <div class="table-wrap">
+          <table id="tgt-table"><thead><tr>
+            <th>Week</th><th>Leader</th><th>SV Target</th><th>SV Achieved</th><th>SV %</th>
+            <th>VC Target</th><th>VC Achieved</th><th>VC %</th>
+            <th>Booking Target</th><th>Booking Achieved</th><th>Booking %</th>
+          </tr></thead><tbody id="tgt-tbody"></tbody></table>
+        </div>
+
+        <div class="admin-edit-panel" id="tgtAdminPanel" style="display:none;margin:8px 16px 20px;">
+          <div class="admin-edit-title">🎯 Set / Update Weekly Target</div>
+          <div class="admin-edit-row">
+            <div><div class="admin-edit-label">Week Start</div><input type="date" class="admin-edit-select" id="tgtNewWeekStart"></div>
+            <div><div class="admin-edit-label">Week End</div><input type="date" class="admin-edit-select" id="tgtNewWeekEnd"></div>
+          </div>
+          <div class="admin-edit-row">
+            <div><div class="admin-edit-label">Leader Level</div>
+              <select class="admin-edit-select" id="tgtNewLevel" onchange="populateTargetLeaderOptions()">
+                <option value="PNL Head">PNL Head</option>
+                <option value="Manager">Manager</option>
+              </select>
+            </div>
+            <div><div class="admin-edit-label">Leader Name</div><select class="admin-edit-select" id="tgtNewLeaderName"></select></div>
+          </div>
+          <div class="admin-edit-row">
+            <div><div class="admin-edit-label">SV Target</div><input type="number" min="0" class="admin-edit-select" id="tgtNewSV" value="0"></div>
+            <div><div class="admin-edit-label">VC Target</div><input type="number" min="0" class="admin-edit-select" id="tgtNewVC" value="0"></div>
+          </div>
+          <div class="admin-edit-row full">
+            <div><div class="admin-edit-label">Booking Target (Incremental)</div><input type="number" min="0" class="admin-edit-select" id="tgtNewBooking" value="0"></div>
+          </div>
+          <button class="admin-save-btn" onclick="saveWeeklyTargetEntry()">Save Target</button>
+          <div class="admin-save-status" id="tgtSaveStatus"></div>
         </div>
       </div>
     </div>
@@ -658,6 +714,9 @@ let spView='table',spExpanded=new Set(),spCharts={};
 // ── Marketing Dashboard state ──
 let mpAll=[],mpFiltered=[];
 let mpView='table',mpCharts={},mpAgg=null;
+
+// ── Weekly Targets (Sales Dashboard sub-view) state ──
+let tgtAll=[],tgtCharts={};
 
 // ── Dynamic header-height sync (fixes sticky metrics row / refresh pill overlap on mobile) ──
 function syncHeaderHeight(){
@@ -1346,6 +1405,9 @@ function renderSalesPerformanceData(data){
   spLeadAll=(data&&data.leadCount)?data.leadCount.map(r=>({...r,updatedDate:fmtDate(r.updatedDate)})):[];
   populateSPFilters();applySPFilters();
   document.getElementById('sp-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
+  // Weekly Targets sub-view depends on spPerfAll for achievement — refresh it
+  // if it's already loaded and currently visible so achievements aren't stale.
+  if(spView==='targets'&&tgtAll.length>0)renderTargetsSection();
 }
 function populateSPFilters(){
   const clusterVals=new Set(),pnlVals=new Set(),mgrVals=new Set(),tlVals=new Set(),empVals=new Set(),projVals=new Set(),devVals=new Set();
@@ -1383,14 +1445,21 @@ function switchSPView(v){
   spView=v;
   document.getElementById('sp-tableTab').classList.toggle('active',v==='table');
   document.getElementById('sp-dashTab').classList.toggle('active',v==='dashboard');
+  document.getElementById('sp-targetsTab').classList.toggle('active',v==='targets');
   document.getElementById('sp-tableView').style.display=v==='table'?'block':'none';
   document.getElementById('sp-dashboardView').style.display=v==='dashboard'?'block':'none';
-  if(v==='table')renderSPTable(spAgg);else renderSPCharts(spAgg);
+  document.getElementById('sp-targetsView').style.display=v==='targets'?'block':'none';
+  if(v==='table')renderSPTable(spAgg);
+  else if(v==='dashboard')renderSPCharts(spAgg);
+  else if(v==='targets'){
+    if(tgtAll.length===0&&auth)loadWeeklyTargetsData();
+    else renderTargetsSection();
+  }
 }
 function renderSPAll(){
   spAgg=buildSPAggregation();
   // updateSPMetrics(spAgg);
-  if(spView==='table')renderSPTable(spAgg);else renderSPCharts(spAgg);
+  if(spView==='table')renderSPTable(spAgg);else if(spView==='dashboard')renderSPCharts(spAgg);
 }
 
 // ── Aggregation: joins Sales Lead Count (leads) with Sales Performance
@@ -1596,6 +1665,180 @@ function renderSPCharts(agg){
     {label:'Meeting:Booking %',data:devSorted.map(d=>ratioPct(d.vcBookings,d.meetings)||0),backgroundColor:red}
   ]},options:spChartOpts(true)});
 }
+
+// ══════════════════════════════════════════════════════════
+//  WEEKLY TARGETS  (Sales Dashboard → 🎯 Targets sub-view)
+//  ─────────────────────────────────────────────────────────
+//  Targets are taken from PNL Heads & Managers every Tuesday
+//  for the coming week and saved by Admin/Management via the
+//  form below (writes to the "Weekly Targets" GAS sheet).
+//  Achievement is computed client-side by re-using the already
+//  loaded spPerfAll (Sales Performance) rows: every row with a
+//  date inside [weekStart, weekEnd] and a matching pnlHead /
+//  manager counts toward that leader's SV / VC / Booking total
+//  for that week — no extra backend aggregation needed.
+// ══════════════════════════════════════════════════════════
+function tnorm_(s){return String(s||'').trim().toLowerCase();}
+
+function loadWeeklyTargetsData(){
+  document.getElementById('tgt-rowCount').textContent='Loading…';
+  jsonpFetch(GAS_URL,{action:'getWeeklyTargetsData',role:auth.role,username:auth.user,password:auth.pass},d=>{
+    if(d.ok){
+      tgtAll=d.data||[];
+      populateTargetFilters();
+      document.getElementById('tgtAdminPanel').style.display=isAdmin()?'block':'none';
+      if(isAdmin())populateTargetLeaderOptions();
+      renderTargetsSection();
+      document.getElementById('tgt-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
+    }else{
+      document.getElementById('tgt-rowCount').textContent='Failed to load: '+(d.error||'unknown');
+    }
+  },()=>{document.getElementById('tgt-rowCount').textContent='Network error loading Targets data.';});
+}
+
+function populateTargetFilters(){
+  const level=document.getElementById('tgt-levelFilter').value;
+  const names=[...new Set(tgtAll.filter(r=>r.leaderLevel===level).map(r=>r.leaderName))].sort();
+  fillSelect('tgt-leaderFilter',names,'All (Combined)');
+}
+// Admin form's leader dropdown is sourced from the org's actual PNL Heads /
+// Managers (via already-loaded Sales Dashboard data), not just leaders who
+// already have a target row — so a leader can be given their first-ever target.
+function populateTargetLeaderOptions(){
+  const level=document.getElementById('tgtNewLevel').value;
+  const set=new Set();
+  spPerfAll.forEach(r=>{if(level==='PNL Head'&&r.pnlHead&&r.pnlHead!=='—')set.add(r.pnlHead);if(level==='Manager'&&r.manager&&r.manager!=='—')set.add(r.manager);});
+  spLeadAll.forEach(r=>{if(level==='PNL Head'&&r.pnlHead&&r.pnlHead!=='—')set.add(r.pnlHead);if(level==='Manager'&&r.manager&&r.manager!=='—')set.add(r.manager);});
+  fillSelect('tgtNewLeaderName',[...set].sort(),'Select leader…');
+}
+
+function applyTargetFilters(){populateTargetFilters();renderTargetsSection();}
+function clearTargetFilters(){
+  document.getElementById('tgt-levelFilter').value='PNL Head';
+  populateTargetFilters();
+  document.getElementById('tgt-leaderFilter').value='';
+  renderTargetsSection();
+}
+
+function computeAchievementForTarget_(t){
+  const field=t.leaderLevel==='PNL Head'?'pnlHead':'manager';
+  let sv=0,vc=0,booking=0;
+  spPerfAll.forEach(r=>{
+    if(!r.updatedDate)return;
+    if(r.updatedDate<t.weekStart||r.updatedDate>t.weekEnd)return;
+    if(tnorm_(r[field])!==tnorm_(t.leaderName))return;
+    if(r.type==='SV')sv++;
+    else if(r.type==='Meeting')vc++;
+    else if(r.type==='Booking')booking++;
+  });
+  return{sv,vc,booking};
+}
+function buildTargetRows_(){
+  const level=document.getElementById('tgt-levelFilter').value;
+  const leaderSel=document.getElementById('tgt-leaderFilter').value;
+  let rows=tgtAll.filter(r=>r.leaderLevel===level);
+  if(leaderSel)rows=rows.filter(r=>r.leaderName===leaderSel);
+  rows=rows.map(r=>{
+    const ach=computeAchievementForTarget_(r);
+    return{...r,svAchieved:ach.sv,vcAchieved:ach.vc,bookingAchieved:ach.booking};
+  });
+  rows.sort((a,b)=>a.weekStart.localeCompare(b.weekStart)||a.leaderName.localeCompare(b.leaderName));
+  return rows;
+}
+function aggregateTargetRowsByWeek_(rows){
+  const map={};
+  rows.forEach(r=>{
+    if(!map[r.weekStart])map[r.weekStart]={weekStart:r.weekStart,weekEnd:r.weekEnd,leaderName:'Combined',svTarget:0,vcTarget:0,bookingTarget:0,svAchieved:0,vcAchieved:0,bookingAchieved:0};
+    const m=map[r.weekStart];
+    m.svTarget+=r.svTarget;m.vcTarget+=r.vcTarget;m.bookingTarget+=r.bookingTarget;
+    m.svAchieved+=r.svAchieved;m.vcAchieved+=r.vcAchieved;m.bookingAchieved+=r.bookingAchieved;
+    if(r.weekEnd>m.weekEnd)m.weekEnd=r.weekEnd;
+  });
+  return Object.values(map).sort((a,b)=>a.weekStart.localeCompare(b.weekStart));
+}
+
+function pctPill(achieved,target){
+  if(!target)return'<span class="ratio-pill ratio-na">—</span>';
+  const p=achieved/target*100;
+  const cls=p>=100?'ratio-good':p>=70?'ratio-mid':'ratio-low';
+  return`<span class="ratio-pill ${cls}">${p.toFixed(0)}%</span>`;
+}
+function tgtWeekLabel(w){
+  const d=new Date(w);
+  if(isNaN(d))return w;
+  return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
+}
+
+function renderTargetsSection(){
+  if(!auth)return;
+  const level=document.getElementById('tgt-levelFilter').value;
+  const leaderSel=document.getElementById('tgt-leaderFilter').value;
+  const rawRows=buildTargetRows_();
+  const chartRows=leaderSel?rawRows:aggregateTargetRowsByWeek_(rawRows);
+  const leaderCount=new Set(rawRows.map(r=>r.leaderName)).size;
+  document.getElementById('tgt-rowCount').textContent=rawRows.length+' target record(s)'+(leaderSel?'':' · combined across '+leaderCount+' '+level+'(s)');
+  renderTargetsTable(rawRows);
+  renderTargetsCharts(chartRows,leaderSel?leaderSel:('All '+level+'s'));
+}
+
+function renderTargetsTable(rows){
+  const tbody=document.getElementById('tgt-tbody');
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="11" class="no-data">No targets recorded yet for this selection. Use the form below to add one.</td></tr>';return;}
+  tbody.innerHTML=rows.map(r=>`<tr>
+    <td style="white-space:nowrap">${esc(r.weekStart)} – ${esc(r.weekEnd)}</td>
+    <td style="font-weight:600;color:var(--text)">${esc(r.leaderName)}</td>
+    <td>${r.svTarget}</td><td>${r.svAchieved}</td><td>${pctPill(r.svAchieved,r.svTarget)}</td>
+    <td>${r.vcTarget}</td><td>${r.vcAchieved}</td><td>${pctPill(r.vcAchieved,r.vcTarget)}</td>
+    <td>${r.bookingTarget}</td><td>${r.bookingAchieved}</td><td>${pctPill(r.bookingAchieved,r.bookingTarget)}</td>
+  </tr>`).join('');
+}
+
+function destroyTgtChart(id){if(tgtCharts[id]){tgtCharts[id].destroy();delete tgtCharts[id];}}
+function renderTargetsCharts(rows,seriesLabel){
+  if(typeof Chart==='undefined')return;
+  const blue=spCssVar('--blue'),green=spCssVar('--green'),orange=spCssVar('--orange'),gold=spCssVar('--gold'),red=spCssVar('--red'),textDim=spCssVar('--text-dim');
+  Chart.defaults.color=textDim;Chart.defaults.font.family="'Inter',sans-serif";Chart.defaults.font.size=10.5;
+  const labels=rows.map(r=>tgtWeekLabel(r.weekStart));
+  const opts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:9,font:{size:10}}}},scales:{x:{ticks:{font:{size:9}},grid:{display:false}},y:{beginAtZero:true,grid:{color:'rgba(120,120,120,0.12)'}}}};
+
+  destroyTgtChart('sv');
+  tgtCharts.sv=new Chart(document.getElementById('tgt-chart-sv'),{type:'line',data:{labels,datasets:[
+    {label:'SV Target — '+seriesLabel,data:rows.map(r=>r.svTarget),borderColor:blue,borderDash:[6,4],backgroundColor:'transparent',tension:0.25,pointRadius:3},
+    {label:'SV Achieved — '+seriesLabel,data:rows.map(r=>r.svAchieved),borderColor:green,backgroundColor:'transparent',tension:0.25,pointRadius:3,fill:false}
+  ]},options:opts});
+
+  destroyTgtChart('vc');
+  tgtCharts.vc=new Chart(document.getElementById('tgt-chart-vc'),{type:'line',data:{labels,datasets:[
+    {label:'VC Target — '+seriesLabel,data:rows.map(r=>r.vcTarget),borderColor:orange,borderDash:[6,4],backgroundColor:'transparent',tension:0.25,pointRadius:3},
+    {label:'VC Achieved — '+seriesLabel,data:rows.map(r=>r.vcAchieved),borderColor:green,backgroundColor:'transparent',tension:0.25,pointRadius:3,fill:false}
+  ]},options:opts});
+
+  destroyTgtChart('booking');
+  tgtCharts.booking=new Chart(document.getElementById('tgt-chart-booking'),{type:'line',data:{labels,datasets:[
+    {label:'Booking Target — '+seriesLabel,data:rows.map(r=>r.bookingTarget),borderColor:gold,borderDash:[6,4],backgroundColor:'transparent',tension:0.25,pointRadius:3},
+    {label:'Booking Achieved — '+seriesLabel,data:rows.map(r=>r.bookingAchieved),borderColor:red,backgroundColor:'transparent',tension:0.25,pointRadius:3,fill:false}
+  ]},options:opts});
+}
+
+function saveWeeklyTargetEntry(){
+  const weekStart=document.getElementById('tgtNewWeekStart').value;
+  const weekEnd=document.getElementById('tgtNewWeekEnd').value;
+  const leaderLevel=document.getElementById('tgtNewLevel').value;
+  const leaderName=document.getElementById('tgtNewLeaderName').value;
+  const svTarget=Number(document.getElementById('tgtNewSV').value)||0;
+  const vcTarget=Number(document.getElementById('tgtNewVC').value)||0;
+  const bookingTarget=Number(document.getElementById('tgtNewBooking').value)||0;
+  if(!weekStart||!weekEnd||!leaderName){setTgtSaveStatus('Week Start, Week End and Leader Name are required.',true);return;}
+  if(weekEnd<weekStart){setTgtSaveStatus('Week End must be on or after Week Start.',true);return;}
+  setTgtSaveStatus('Saving…');
+  const payload=JSON.stringify({action:'saveWeeklyTarget',weekStart,weekEnd,leaderLevel,leaderName,svTarget,vcTarget,bookingTarget,username:auth.user,password:auth.pass,role:auth.role});
+  fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'data='+encodeURIComponent(payload)})
+  .then(res=>res.json()).then(data=>{
+    if(data.ok){setTgtSaveStatus('✓ Saved successfully!',false);loadWeeklyTargetsData();}
+    else setTgtSaveStatus('Error: '+(data.error||'Unknown error'),true);
+  }).catch(()=>setTgtSaveStatus('Network error. Please retry.',true));
+}
+function setTgtSaveStatus(msg,isErr){const el=document.getElementById('tgtSaveStatus');el.textContent=msg;el.className='admin-save-status'+(isErr===false?' ok':isErr?' err':'');}
 
 function toggleTheme(){const html=document.documentElement,isDark=html.getAttribute('data-theme')==='dark',next=isDark?'light':'dark';html.setAttribute('data-theme',next);document.getElementById('themeBtn').textContent=next==='dark'?'☀️':'🌙';try{localStorage.setItem('dash_theme',next);}catch(_){}}
 (function(){try{const saved=localStorage.getItem('dash_theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.addEventListener('DOMContentLoaded',()=>{const btn=document.getElementById('themeBtn');if(btn)btn.textContent=saved==='dark'?'☀️':'🌙';});}}catch(_){}})();
