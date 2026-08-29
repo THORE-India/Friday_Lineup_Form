@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>THORE — Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Serif+Display&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5EFE3;--card:#FBF7ED;--card-line:rgba(60,45,20,0.10);
+    --border:rgba(60,45,20,0.10);--border-mid:rgba(60,45,20,0.16);--border-gold:rgba(169,121,59,0.35);
+    --gold:#A9793B;--gold-bright:#D7A54F;--gold-dim:rgba(169,121,59,0.12);--gold-glow:rgba(169,121,59,0.24);
+    --ink:#2A2420;--ink-sub:#5C554A;--ink-dim:#948C7C;
+    --stamp-red:#B5473C;--stamp-teal:#0E8272;
+    --radius:14px;--radius-lg:22px;--ease:cubic-bezier(0.4,0,0.2,1);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;
+    line-height:1.5;font-size:15px;position:relative;overflow-x:hidden;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  /* faint ledger-paper texture */
+  body::before{
+    content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      repeating-linear-gradient(180deg,transparent,transparent 27px,rgba(60,45,20,0.035) 28px),
+      radial-gradient(ellipse 55% 40% at 8% 4%,rgba(215,165,79,0.20) 0%,transparent 60%),
+      radial-gradient(ellipse 50% 40% at 96% 100%,rgba(169,121,59,0.14) 0%,transparent 60%);
+  }
+  .wrap{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:18px 16px 48px;}
+
+  /* ── header ── */
+  header{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+  .crest{
+    width:42px;height:42px;border-radius:10px;flex-shrink:0;
+    background:linear-gradient(135deg,var(--gold),var(--gold-bright));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'DM Serif Display',serif;color:#2A1E0E;font-size:1.15rem;
+    box-shadow:0 4px 14px var(--gold-glow);
+  }
+  .h-text{display:flex;flex-direction:column;gap:1px;}
+  .h-title{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--ink);letter-spacing:0.01em;line-height:1.1;}
+  .h-sub{font-size:0.68rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);}
+
+  /* ── folder tab switcher (signature element) ── */
+  .tabs{display:flex;gap:0;margin-bottom:0;position:relative;z-index:2;}
+  .tab{
+    flex:1;position:relative;padding:13px 10px 15px;background:rgba(255,255,255,0.35);
+    border:1.5px solid var(--border-mid);border-bottom:none;
+    border-radius:12px 12px 0 0;cursor:pointer;font-family:'Inter',sans-serif;
+    font-weight:700;font-size:0.86rem;color:var(--ink-dim);text-align:center;
+    transition:all 0.25s var(--ease);display:flex;align-items:center;justify-content:center;gap:7px;
+  }
+  .tab:first-child{margin-right:-1px;}
+  .tab .tab-ic{font-size:1.05rem;}
+  .tab.active{
+    background:var(--card);color:var(--gold);border-color:var(--border-gold);
+    box-shadow:0 -4px 14px rgba(169,121,59,0.10);
+    transform:translateY(1px);
+  }
+  .tab.active::after{
+    content:'';position:absolute;left:14px;right:14px;bottom:-1.5px;height:3px;
+    background:linear-gradient(90deg,var(--gold),var(--gold-bright));border-radius:3px;
+  }
+  .tab:not(.active):hover{color:var(--ink);background:rgba(255,255,255,0.55);}
+
+  /* ── the card (manila index-card motif) ── */
+  .card{
+    background:var(--card);border:1.5px solid var(--border-gold);border-radius:0 0 var(--radius-lg) var(--radius-lg);
+    box-shadow:0 18px 44px rgba(60,45,20,0.14),0 0 0 1px var(--border);
+    padding:22px 18px 20px;position:relative;overflow:hidden;
+  }
+  .card::before{
+    /* two punch-holes, like a filed card */
+    content:'';position:absolute;top:14px;left:50%;transform:translateX(-58px);
+    width:9px;height:9px;border-radius:50%;background:var(--bg);box-shadow:116px 0 0 var(--bg);
+    border:1px solid var(--border-mid);
+  }
+  .card-inner{margin-top:14px;}
+  .panel{display:none;}
+  .panel.show{display:block;animation:fileIn 0.32s var(--ease);}
+  @keyframes fileIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .panel-title{font-family:'DM Serif Display',serif;font-size:1.18rem;color:var(--ink);margin-bottom:3px;}
+  .panel-desc{font-size:0.78rem;color:var(--ink-dim);margin-bottom:14px;}
+
+  /* ── flash caution note ── */
+  .flash-note{
+    display:flex;gap:9px;align-items:flex-start;padding:11px 13px;margin-bottom:18px;
+    background:var(--gold-dim);border:1px solid var(--border-gold);border-radius:10px;
+  }
+  .flash-note .ic{font-size:1.0rem;line-height:1.3;flex-shrink:0;}
+  .flash-note p{font-size:0.76rem;font-weight:600;color:#7A5A28;line-height:1.45;}
+
+  /* ── fields ── */
+  .field{margin-bottom:15px;position:relative;}
+  .field label{
+    display:flex;align-items:center;gap:6px;font-size:0.66rem;font-weight:700;color:var(--ink-sub);
+    letter-spacing:0.09em;text-transform:uppercase;margin-bottom:6px;
+  }
+  .field label .req{color:var(--stamp-red);}
+  .field input[type=text],.field select{
+    width:100%;padding:12px 13px;background:#fff;border:1.5px solid var(--border-mid);
+    border-radius:10px;color:var(--ink);font-family:'Inter',sans-serif;font-size:16px;
+    outline:none;transition:all 0.15s var(--ease);-webkit-appearance:none;appearance:none;
+  }
+  .field select{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23A9793B' stroke-width='2.4'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;
+  }
+  .field input:focus,.field select:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim);}
+  .hint{font-size:0.68rem;color:var(--ink-dim);margin-top:5px;}
+
+  /* ── searchable combobox ── */
+  .combo{position:relative;}
+  .combo-input-wrap{position:relative;}
+  .combo-input-wrap input{padding-right:34px;}
+  .combo-toggle{
+    position:absolute;right:10px;top:50%;transform:translateY(-50%);width:20px;height:20px;
+    display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:0.7rem;
+    pointer-events:none;transition:transform 0.15s var(--ease);
+  }
+  .combo.open .combo-toggle{transform:translateY(-50%) rotate(180deg);}
+  .combo-list{
+    position:absolute;top:calc(100% + 5px);left:0;right:0;max-height:230px;overflow-y:auto;
+    background:#fff;border:1.5px solid var(--border-gold);border-radius:10px;
+    box-shadow:0 16px 38px rgba(60,45,20,0.22);z-index:40;display:none;
+  }
+  .combo.open .combo-list{display:block;}
+  .combo-opt{
+    padding:10px 13px;font-size:0.86rem;color:var(--ink-sub);cursor:pointer;
+    border-bottom:1px solid var(--border);transition:background 0.12s;
+  }
+  .combo-opt:last-child{border-bottom:none;}
+  .combo-opt:hover,.combo-opt.hi{background:var(--gold-dim);color:var(--ink);}
+  .combo-opt.add-new{color:var(--stamp-teal);font-weight:700;background:rgba(14,130,114,0.06);}
+  .combo-opt.add-new:hover,.combo-opt.add-new.hi{background:rgba(14,130,114,0.14);}
+  .combo-empty{padding:12px 13px;font-size:0.78rem;color:var(--ink-dim);font-style:italic;}
+  .combo-loading{padding:12px 13px;font-size:0.78rem;color:var(--ink-dim);}
+  .new-badge{
+    display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:3px 9px;
+    background:rgba(14,130,114,0.10);color:var(--stamp-teal);border:1px solid rgba(14,130,114,0.28);
+    border-radius:20px;font-size:0.66rem;font-weight:700;letter-spacing:0.03em;
+  }
+
+  /* ── submit ── */
+  .submit-btn{
+    width:100%;padding:14px;margin-top:6px;background:linear-gradient(135deg,var(--gold),var(--gold-bright));
+    border:none;border-radius:12px;color:#2A1E0E;font-family:'Inter',sans-serif;font-weight:800;
+    font-size:0.92rem;letter-spacing:0.03em;cursor:pointer;box-shadow:0 6px 20px var(--gold-glow);
+    transition:all 0.15s var(--ease);
+  }
+  .submit-btn:hover{filter:brightness(1.06);transform:translateY(-1px);}
+  .submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;filter:none;}
+  .form-status{min-height:20px;margin-top:10px;font-size:0.78rem;font-weight:600;text-align:center;}
+  .form-status.err{color:var(--stamp-red);}
+  .form-status.ok{color:var(--stamp-teal);}
+
+  /* ── stamp confirmation overlay ── */
+  .stamp-overlay{
+    position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;
+    background:rgba(42,32,20,0.35);backdrop-filter:blur(3px);opacity:0;visibility:hidden;
+    transition:opacity 0.2s,visibility 0.2s;
+  }
+  .stamp-overlay.show{opacity:1;visibility:visible;}
+  .stamp{
+    width:168px;height:168px;border-radius:50%;border:5px solid var(--stamp-teal);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;
+    color:var(--stamp-teal);background:rgba(251,247,237,0.96);
+    transform:rotate(-11deg) scale(0.5);opacity:0;
+  }
+  .stamp-overlay.show .stamp{animation:stampDown 0.5s cubic-bezier(0.2,1.4,0.5,1) forwards;}
+  @keyframes stampDown{
+    0%{transform:rotate(-11deg) scale(2.2);opacity:0;}
+    55%{transform:rotate(-11deg) scale(0.94);opacity:1;}
+    75%{transform:rotate(-11deg) scale(1.05);}
+    100%{transform:rotate(-11deg) scale(1);opacity:1;}
+  }
+  .stamp-word{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.15rem;letter-spacing:0.06em;}
+  .stamp-sub{font-family:'JetBrains Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;}
+
+  footer{position:relative;z-index:1;text-align:center;font-size:0.68rem;color:var(--ink-dim);padding:22px 16px 8px;}
+
+  @media(max-width:400px){
+    .h-title{font-size:1.2rem;}
+    .tab{font-size:0.78rem;padding:11px 6px 13px;}
+    .card{padding:18px 14px 16px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="crest">T</div>
+    <div class="h-text">
+      <div class="h-title">THORE Operations</div>
+      <div class="h-sub">Master Data Desk</div>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" id="tabProject" onclick="switchPanel('project')"><span class="tab-ic">📁</span> Add Project</button>
+    <button class="tab" id="tabEmployee" onclick="switchPanel('employee')"><span class="tab-ic">🧑‍💼</span> Add Employee</button>
+  </div>
+
+  <div class="card">
+    <div class="card-inner">
+
+      <!-- ADD PROJECT -->
+      <div class="panel show" id="panelProject">
+        <div class="panel-title">File a new project</div>
+        <div class="panel-desc">Adds a row to <strong>Project Master</strong> — it'll appear in every project dropdown across the Friday Lineup form and dashboards right after.</div>
+
+        <div class="flash-note">
+          <div class="ic">✍️</div>
+          <p>Please add new names carefully — check spelling, case, and stray whitespace before submitting. This becomes the exact name used everywhere downstream.</p>
+        </div>
+
+        <form id="formProject" onsubmit="return false;">
+          <div class="field">
+            <label>Project Name <span class="req">*</span></label>
+            <input type="text" id="pj-name" placeholder="e.g. Skyline Meridian" autocomplete="off">
+          </div>
+
+          <div class="field combo" id="combo-dev">
+            <label>Developer Name <span class="req">*</span></label>
+            <div class="combo-input-wrap">
+              <input type="text" id="pj-dev-input" placeholder="Search or type developer name…" autocomplete="off">
+              <div class="combo-toggle">▾</div>
+            </div>
+            <div class="combo-list" id="pj-dev-list"></div>
+            <div id="pj-dev-newbadge"></div>
+          </div>
+
+          <button class="submit-btn" id="pj-submit" onclick="submitProject()">📁 File Project</button>
+          <div class="form-status" id="pj-status"></div>
+        </form>
+      </div>
+
+      <!-- ADD EMPLOYEE -->
+      <div class="panel" id="panelEmployee">
+        <div class="panel-title">File a new employee</div>
+        <div class="panel-desc">Adds a row to <strong>Employee Master</strong> — drives dashboard scoping, so double-check the hierarchy before filing.</div>
+
+        <div class="flash-note">
+          <div class="ic">✍️</div>
+          <p>Please add new names carefully — check spelling, case, and stray whitespace before submitting. This becomes the exact name used everywhere downstream.</p>
+        </div>
+
+        <form id="formEmployee" onsubmit="return false;">
+          <div class="field">
+            <label>Employee Name <span class="req">*</span></label>
+            <input type="text" id="em-name" placeholder="e.g. Rohit Kadam" autocomplete="off">
+          </div>
+
+          <div class="field combo" id="combo-tl">
+            <label>Team Lead <span class="req">*</span></label>
+            <div class="combo-input-wrap">
+              <input type="text" id="em-tl-input" placeholder="Search or type team lead…" autocomplete="off">
+              <div class="combo-toggle">▾</div>
+            </div>
+            <div class="combo-list" id="em-tl-list"></div>
+            <div id="em-tl-newbadge"></div>
+          </div>
+
+          <div class="field combo" id="combo-mgr">
+            <label>Manager <span class="req">*</span></label>
+            <div class="combo-input-wrap">
+              <input type="text" id="em-mgr-input" placeholder="Search or type manager…" autocomplete="off">
+              <div class="combo-toggle">▾</div>
+            </div>
+            <div class="combo-list" id="em-mgr-list"></div>
+            <div id="em-mgr-newbadge"></div>
+          </div>
+
+          <div class="field combo" id="combo-pnl">
+            <label>PNL Head <span class="req">*</span></label>
+            <div class="combo-input-wrap">
+              <input type="text" id="em-pnl-input" placeholder="Search or type PNL head…" autocomplete="off">
+              <div class="combo-toggle">▾</div>
+            </div>
+            <div class="combo-list" id="em-pnl-list"></div>
+            <div id="em-pnl-newbadge"></div>
+          </div>
+
+          <div class="field">
+            <label>Cluster <span class="req">*</span></label>
+            <select id="em-cluster">
+              <option value="">Select cluster…</option>
+              <option>Bangalore</option>
+              <option>Hyderabad</option>
+              <option>Mumbai</option>
+              <option>Pune East</option>
+              <option>Pune West</option>
+              <option>Kolkata</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Status <span class="req">*</span></label>
+            <select id="em-status">
+              <option value="">Select status…</option>
+              <option>Active</option>
+              <option>Inactive</option>
+            </select>
+          </div>
+
+          <button class="submit-btn" id="em-submit" onclick="submitEmployee()">🧑‍💼 File Employee</button>
+          <div class="form-status" id="em-status-msg"></div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>Operations Department · THORE India</footer>
+</div>
+
+<div class="stamp-overlay" id="stampOverlay">
+  <div class="stamp">
+    <div class="stamp-word" id="stampWord">FILED</div>
+    <div class="stamp-sub">Master Data</div>
+  </div>
+</div>
+
+<script>
+const GAS_URL='https://script.google.com/macros/s/AKfycbwL4V1nCL4M-BAMbHX0Wupfa_2mxaJXrb_p9japd1ZdAkesb4BUumSJBFGH54js7pe3/exec';
+
+let opsData={developers:[],teamLeads:[],managers:[],pnlHeads:[]},opsLoaded=false;
+
+function switchPanel(which){
+  document.getElementById('tabProject').classList.toggle('active',which==='project');
+  document.getElementById('tabEmployee').classList.toggle('active',which==='employee');
+  document.getElementById('panelProject').classList.toggle('show',which==='project');
+  document.getElementById('panelEmployee').classList.toggle('show',which==='employee');
+  closeAllCombos();
+}
+
+function jsonpFetch(url,params,onSuccess,onError){
+  const cbName='__cb_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),script=document.createElement('script');
+  const qs=Object.entries({...params,callback:cbName}).map(([k,v])=>`${k}=${encodeURIComponent(v)}`).join('&');
+  const timer=setTimeout(()=>{cleanup();if(onError)onError(new Error('Timeout'));},15000);
+  window[cbName]=data=>{cleanup();onSuccess(data);};script.onerror=()=>{cleanup();if(onError)onError(new Error('Load failed'));};
+  function cleanup(){clearTimeout(timer);delete window[cbName];if(script.parentNode)script.parentNode.removeChild(script);}
+  script.src=url+'?'+qs;document.head.appendChild(script);
+}
+
+function loadOpsData(){
+  jsonpFetch(GAS_URL,{action:'getOpsMasterData'},d=>{
+    if(d.ok){
+      opsData={developers:d.developers||[],teamLeads:d.teamLeads||[],managers:d.managers||[],pnlHeads:d.pnlHeads||[]};
+      opsLoaded=true;
+      renderComboList('pj-dev',opsData.developers);
+      renderComboList('em-tl',opsData.teamLeads);
+      renderComboList('em-mgr',opsData.managers);
+      renderComboList('em-pnl',opsData.pnlHeads);
+    }else{
+      opsLoaded=true; // still allow free-text entry even if master list failed to load
+      ['pj-dev','em-tl','em-mgr','em-pnl'].forEach(id=>{
+        document.getElementById(id+'-list').innerHTML='<div class="combo-empty">Couldn\'t load existing names — you can still type one.</div>';
+      });
+    }
+  },()=>{
+    opsLoaded=true;
+    ['pj-dev','em-tl','em-mgr','em-pnl'].forEach(id=>{
+      document.getElementById(id+'-list').innerHTML='<div class="combo-empty">Network error loading names — you can still type one.</div>';
+    });
+  });
+}
+
+// ── searchable combobox ──
+const comboState={}; // id -> {values:[], filtered:[], hiIndex:-1}
+function renderComboList(id,values){
+  comboState[id]={values,filtered:values,hiIndex:-1};
+  filterCombo(id,'');
+}
+function filterCombo(id,query){
+  const st=comboState[id];
+  const listEl=document.getElementById(id+'-list');
+  if(!st){listEl.innerHTML='<div class="combo-loading">Loading names…</div>';return;}
+  const q=query.trim().toLowerCase();
+  const filtered=q?st.values.filter(v=>v.toLowerCase().includes(q)):st.values;
+  st.filtered=filtered;st.hiIndex=-1;
+  const exactMatch=st.values.some(v=>v.toLowerCase()===q);
+  let html='';
+  if(filtered.length){
+    html+=filtered.map((v,i)=>`<div class="combo-opt" data-idx="${i}" onclick="pickCombo('${id}','${escJs(v)}')">${escHtml(v)}</div>`).join('');
+  }else if(!q){
+    html+='<div class="combo-empty">No names on file yet — type to add the first one.</div>';
+  }
+  if(q&&!exactMatch){
+    html+=`<div class="combo-opt add-new" data-idx="new" onclick="pickCombo('${id}','${escJs(query.trim())}')">➕ Add "${escHtml(query.trim())}" as new</div>`;
+  }
+  listEl.innerHTML=html||'<div class="combo-empty">No matches — try a different search.</div>';
+}
+function pickCombo(id,value){
+  document.getElementById(id+'-input').value=value;
+  closeCombo(id);
+  const st=comboState[id];
+  const isNew=st&&!st.values.some(v=>v.toLowerCase()===value.toLowerCase());
+  const badge=document.getElementById(id+'-newbadge');
+  badge.innerHTML=isNew&&value?`<span class="new-badge">✨ New — will be added to master data</span>`:'';
+}
+function openCombo(id){
+  document.getElementById('combo-'+comboShort(id)).classList.add('open');
+}
+function closeCombo(id){
+  document.getElementById('combo-'+comboShort(id)).classList.remove('open');
+}
+function closeAllCombos(){
+  document.querySelectorAll('.combo.open').forEach(c=>c.classList.remove('open'));
+}
+function comboShort(id){return id.replace(/^(pj|em)-/,'').replace('-input','');}
+
+['pj-dev','em-tl','em-mgr','em-pnl'].forEach(id=>{
+  const input=document.getElementById(id+'-input');
+  input.addEventListener('focus',()=>{openCombo(id);filterCombo(id,input.value);});
+  input.addEventListener('input',()=>{openCombo(id);filterCombo(id,input.value);
+    const badge=document.getElementById(id+'-newbadge');if(badge)badge.innerHTML='';
+  });
+  input.addEventListener('keydown',e=>{
+    const st=comboState[id];if(!st)return;
+    if(e.key==='Escape'){closeCombo(id);input.blur();}
+    if(e.key==='Enter'){e.preventDefault();
+      const q=input.value.trim();
+      if(q)pickCombo(id,q);
+    }
+  });
+});
+document.addEventListener('click',e=>{
+  document.querySelectorAll('.combo').forEach(c=>{
+    if(!c.contains(e.target))c.classList.remove('open');
+  });
+});
+
+function escHtml(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function escJs(s){return String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
+
+function setStatus(elId,msg,cls){const el=document.getElementById(elId);el.textContent=msg;el.className='form-status'+(cls?' '+cls:'');}
+
+function showStamp(word){
+  document.getElementById('stampWord').textContent=word;
+  const ov=document.getElementById('stampOverlay');
+  ov.classList.add('show');
+  setTimeout(()=>ov.classList.remove('show'),1100);
+}
+
+// ── ADD PROJECT ──
+function submitProject(){
+  const projectName=document.getElementById('pj-name').value.trim();
+  const developerName=document.getElementById('pj-dev-input').value.trim();
+  if(!projectName){setStatus('pj-status','Project Name is required.','err');return;}
+  if(!developerName){setStatus('pj-status','Developer Name is required.','err');return;}
+
+  const btn=document.getElementById('pj-submit');btn.disabled=true;setStatus('pj-status','Filing…');
+  const payload=JSON.stringify({action:'addProject',projectName,developerName});
+  fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'data='+encodeURIComponent(payload)})
+  .then(res=>res.json()).then(data=>{
+    btn.disabled=false;
+    if(data.ok){
+      setStatus('pj-status','✓ Project filed successfully.','ok');
+      showStamp('FILED');
+      if(!opsData.developers.some(v=>v.toLowerCase()===developerName.toLowerCase())){
+        opsData.developers.push(developerName);opsData.developers.sort((a,b)=>a.localeCompare(b));
+      }
+      document.getElementById('pj-name').value='';
+      document.getElementById('pj-dev-input').value='';
+      document.getElementById('pj-dev-newbadge').innerHTML='';
+    }else{
+      setStatus('pj-status','Error: '+(data.error||'Unknown error'),'err');
+    }
+  }).catch(()=>{btn.disabled=false;setStatus('pj-status','Network error. Please retry.','err');});
+}
+
+// ── ADD EMPLOYEE ──
+function submitEmployee(){
+  const employeeName=document.getElementById('em-name').value.trim();
+  const teamLead=document.getElementById('em-tl-input').value.trim();
+  const manager=document.getElementById('em-mgr-input').value.trim();
+  const pnlHead=document.getElementById('em-pnl-input').value.trim();
+  const cluster=document.getElementById('em-cluster').value;
+  const status=document.getElementById('em-status').value;
+
+  if(!employeeName){setStatus('em-status-msg','Employee Name is required.','err');return;}
+  if(!teamLead){setStatus('em-status-msg','Team Lead is required.','err');return;}
+  if(!manager){setStatus('em-status-msg','Manager is required.','err');return;}
+  if(!pnlHead){setStatus('em-status-msg','PNL Head is required.','err');return;}
+  if(!cluster){setStatus('em-status-msg','Please select a cluster.','err');return;}
+  if(!status){setStatus('em-status-msg','Please select a status.','err');return;}
+
+  const btn=document.getElementById('em-submit');btn.disabled=true;setStatus('em-status-msg','Filing…');
+  const payload=JSON.stringify({action:'addEmployee',employeeName,teamLead,manager,pnlHead,cluster,status});
+  fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'data='+encodeURIComponent(payload)})
+  .then(res=>res.json()).then(data=>{
+    btn.disabled=false;
+    if(data.ok){
+      setStatus('em-status-msg','✓ Employee filed successfully.','ok');
+      showStamp('FILED');
+      [['teamLeads',teamLead],['managers',manager],['pnlHeads',pnlHead]].forEach(([key,val])=>{
+        if(!opsData[key].some(v=>v.toLowerCase()===val.toLowerCase())){
+          opsData[key].push(val);opsData[key].sort((a,b)=>a.localeCompare(b));
+        }
+      });
+      document.getElementById('em-name').value='';
+      document.getElementById('em-tl-input').value='';
+      document.getElementById('em-mgr-input').value='';
+      document.getElementById('em-pnl-input').value='';
+      document.getElementById('em-cluster').value='';
+      document.getElementById('em-status').value='';
+      ['em-tl-newbadge','em-mgr-newbadge','em-pnl-newbadge'].forEach(id=>document.getElementById(id).innerHTML='');
+    }else{
+      setStatus('em-status-msg','Error: '+(data.error||'Unknown error'),'err');
+    }
+  }).catch(()=>{btn.disabled=false;setStatus('em-status-msg','Network error. Please retry.','err');});
+}
+
+loadOpsData();
+</script>
+</body>
+</html>
