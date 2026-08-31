@@ -309,6 +309,12 @@
     footer{background:var(--surface);border-top:1px solid var(--border);padding:12px 20px;text-align:center;font-size:0.70rem;color:var(--text-dim);position:relative;z-index:1;}
     footer a{color:var(--gold);text-decoration:none;}
     footer a:hover{text-decoration:underline;}
+    /* ── MAINTENANCE PLACEHOLDER ── */
+    .maintenance-placeholder{display:flex;align-items:center;justify-content:center;min-height:320px;margin:8px 16px 20px;}
+    .maintenance-box{background:var(--surface);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid var(--border-mid);border-radius:var(--radius-lg);padding:2.5rem 2rem;text-align:center;max-width:420px;box-shadow:0 12px 40px rgba(60,45,20,0.12);}
+    .maintenance-icon{font-size:2rem;margin-bottom:10px;}
+    .maintenance-title{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--gold);margin-bottom:6px;}
+    .maintenance-sub{font-size:0.82rem;color:var(--text-dim);line-height:1.5;}
     @media(max-width:768px){
       .header-top{padding:8px 12px;gap:8px;flex-wrap:wrap;}
       .header-left{gap:10px;flex:1;min-width:0;}
@@ -512,6 +518,14 @@
 
     <!-- MARKETING DASHBOARD -->
     <div id="marketingDash" style="display:none;">
+      <div class="maintenance-placeholder" id="marketingMaintenance" style="display:none;">
+        <div class="maintenance-box">
+          <div class="maintenance-icon">🛠️</div>
+          <div class="maintenance-title">Marketing Dashboard — Temporarily Closed</div>
+          <div class="maintenance-sub">This section is paused for a bit. Check back soon.</div>
+        </div>
+      </div>
+      <div id="marketingContent">
       <!-- <div class="metrics-row">
         <div class="metric-card"><div class="metric-icon gold">🧲</div><div class="metric-body"><div class="metric-value" id="mpm-leads">—</div><div class="metric-label">Total Leads</div></div></div>
         <div class="metric-card"><div class="metric-icon blue">💸</div><div class="metric-body"><div class="metric-value" id="mpm-spent">—</div><div class="metric-label">Total Spent</div></div></div>
@@ -546,10 +560,19 @@
           <div class="chart-card"><div class="chart-card-title">Project-wise <span>Spent/Revenue % &amp; Conversion Ratios</span></div><div class="chart-card-body"><canvas id="mp-chart-project"></canvas></div></div>
         </div>
       </div>
+      </div><!-- /marketingContent -->
     </div>
 
     <!-- SALES DASHBOARD -->
     <div id="salesDash" style="display:none;">
+      <div class="maintenance-placeholder" id="salesMaintenance" style="display:none;">
+        <div class="maintenance-box">
+          <div class="maintenance-icon">🛠️</div>
+          <div class="maintenance-title">Sales Dashboard — Temporarily Closed</div>
+          <div class="maintenance-sub">This section is paused for a bit. Check back soon.</div>
+        </div>
+      </div>
+      <div id="salesContent">
       <!-- <div class="metrics-row">
         <div class="metric-card"><div class="metric-icon gold">🧲</div><div class="metric-body"><div class="metric-value" id="spm-leads">—</div><div class="metric-label">Total Leads</div></div></div>
         <div class="metric-card"><div class="metric-icon blue">🏠</div><div class="metric-body"><div class="metric-value" id="spm-sv">—</div><div class="metric-label">Site Visits</div></div></div>
@@ -644,6 +667,7 @@
           <div class="admin-save-status" id="tgtSaveStatus"></div>
         </div>
       </div>
+      </div><!-- /salesContent -->
     </div>
 
   </div>
@@ -717,6 +741,9 @@ let mpView='table',mpCharts={},mpAgg=null;
 
 // ── Weekly Targets (Sales Dashboard sub-view) state ──
 let tgtAll=[],tgtCharts={};
+
+// ── Temporary section toggles — flip to false to bring a section back ──
+const MAINTENANCE_MODE={marketing:true,salesdash:true};
 
 // ── Dynamic header-height sync (fixes sticky metrics row / refresh pill overlap on mobile) ──
 function syncHeaderHeight(){
@@ -849,10 +876,20 @@ function switchDashboard(which){
   document.getElementById('fnDash').style.display=which==='fnclients'?'block':'none';
   document.getElementById('marketingDash').style.display=which==='marketing'?'block':'none';
   document.getElementById('salesDash').style.display=which==='salesdash'?'block':'none';
+
+  if(which==='marketing'){
+    document.getElementById('marketingMaintenance').style.display=MAINTENANCE_MODE.marketing?'flex':'none';
+    document.getElementById('marketingContent').style.display=MAINTENANCE_MODE.marketing?'none':'block';
+  }
+  if(which==='salesdash'){
+    document.getElementById('salesMaintenance').style.display=MAINTENANCE_MODE.salesdash?'flex':'none';
+    document.getElementById('salesContent').style.display=MAINTENANCE_MODE.salesdash?'none':'block';
+  }
+
   if(which==='fnclients'&&fnAll.length===0&&auth)loadFNData();
   if(which==='visitdone'&&vdAll.length===0&&auth)loadVDData();
-  if(which==='salesdash'&&spPerfAll.length===0&&spLeadAll.length===0&&auth)loadSalesPerformanceData();
-  if(which==='marketing'&&mpAll.length===0&&auth)loadMarketingPerformanceData();
+  if(which==='salesdash'&&!MAINTENANCE_MODE.salesdash&&spPerfAll.length===0&&spLeadAll.length===0&&auth)loadSalesPerformanceData();
+  if(which==='marketing'&&!MAINTENANCE_MODE.marketing&&mpAll.length===0&&auth)loadMarketingPerformanceData();
 }
 
 function startAutoRefresh(){if(refreshTimer)clearInterval(refreshTimer);refreshTimer=setInterval(()=>{if(!isRefreshing&&auth)refreshAll();},30000);}
