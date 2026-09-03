@@ -792,22 +792,24 @@
   //     }
   //   }, () => showGate('error'));
   // }
-  function checkFormStatus() {
-    jsonpFetch({ action: 'getFormStatus' }, data => {
-      if (!data.ok) { 
-        showGate('error'); 
-        return; 
-      }
-  
-      if (data.formStatus === 'open') {
-        document.getElementById('form-wrapper').style.display = 'block';
-        document.getElementById('status-gate').classList.remove('visible');
-        loadMasterData();
-      } else {
-        window.location.href = 'closed.html';
-      }
-    }, () => showGate('error'));
-  }
+
+    function checkFormStatus() {
+      jsonpFetch({ action: 'getFormStatus' }, data => {
+        if (!data.ok) { 
+          showGate('error'); 
+          return; 
+        }
+    
+        if (data.formStatus === 'open') {
+          document.getElementById('form-wrapper').style.display = 'block';
+          document.getElementById('status-gate').classList.remove('visible');
+          loadMasterData();
+        } else {
+          window.location.href = 'closed.html';
+        }
+      }, () => showGate('error'));
+    }
+
 
   // function checkFormStatus() {
   //   document.getElementById('form-wrapper').style.display = 'block';
@@ -1136,6 +1138,7 @@
 
     const leadratPayload = {
       appSecret: LEADRAT_APP_SECRET,
+      source: 'friday-lineup-form',
       assignedToName: v.employee,
       customerName: v.cname,
       mobileNumber: '+' + v.phoneCountryCode + v.phone,
