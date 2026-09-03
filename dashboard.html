@@ -2404,14 +2404,10 @@ function wtPctPill(achieved,target){
   return`<span class="ratio-pill ${cls}">${p.toFixed(0)}%</span>`;
 }
 function wtWeekRangeLabel(weekStart,weekEnd){
-  const d=new Date(weekStart);
-  if(isNaN(d))return(weekStart||'')+' – '+(weekEnd||'');
-  const target=new Date(d.valueOf());
-  const dayNr=(d.getDay()+6)%7;
-  target.setDate(target.getDate()-dayNr+3);
-  const firstThursday=new Date(target.getFullYear(),0,4);
-  const weekNum=1+Math.round(((target-firstThursday)/86400000-3+((firstThursday.getDay()+6)%7))/7);
-  return`Week ${weekNum} - ${d.toLocaleDateString('en-IN',{month:'short'})} ${d.getFullYear()}`;
+  const ds=new Date(weekStart),de=new Date(weekEnd||weekStart);
+  if(isNaN(ds))return(weekStart||'')+' – '+(weekEnd||'');
+  const dayMon=d=>d.toLocaleDateString('en-IN',{day:'2-digit',month:'long'});
+  return`${dayMon(ds)} to ${isNaN(de)?dayMon(ds):dayMon(de)} ${(isNaN(de)?ds:de).getFullYear()}`;
 }
 
 function renderWTTable(rows){
