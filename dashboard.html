@@ -113,7 +113,8 @@
     #dashPanel > #visitdoneDash,
     #dashPanel > #fnDash,
     #dashPanel > #marketingDash,
-    #dashPanel > #salesDash{display:none !important;}
+    #dashPanel > #salesDash,
+    #dashPanel > #weeklytargetsDash{display:none !important;}
     #dashPanel > .dashboard-section-active{display:block !important;}
 
 
@@ -664,6 +665,7 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
         <button class="dash-tab" data-dash="fnclients" onclick="switchDashboard('fnclients')">🏆 FN Clients <span class="tab-badge" id="tabBadge-fnclients">0</span></button>
         <button class="dash-tab" id="marketingTabBtn" data-dash="marketing" onclick="switchDashboard('marketing')">📈 Marketing <span class="tab-badge" id="tabBadge-marketing">0</span></button>
         <button class="dash-tab" data-dash="salesdash" onclick="switchDashboard('salesdash')">📊 Sales <span class="tab-badge" id="tabBadge-salesdash">0</span></button>
+        <button class="dash-tab" data-dash="weeklytargets" onclick="switchDashboard('weeklytargets')">🎯 Weekly Targets <span class="tab-badge" id="tabBadge-weeklytargets">0</span></button>
       </div>
     </div>
   </div>
@@ -992,6 +994,50 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
       </div><!-- /salesContent -->
     </div>
 
+    <!-- WEEKLY TARGETS -->
+    <div id="weeklytargetsDash" style="display:none;">
+      <div class="section-head"><div><div class="section-kicker">WEEKLY TARGETS</div><h1>Target vs Achievement</h1><p>Rolling 12-month view of weekly Site Visit, VC and Booking targets against actuals.</p></div><div class="section-live"><span></span> Performance view</div></div>
+
+      <div class="filters-bar"><div class="filters-grid">
+        <div class="filter-item"><label>Leader Level</label>
+          <select id="wt-levelFilter" onchange="applyWTFilters()">
+            <option value="PNL Head">PNL Head</option>
+            <option value="Manager">Manager</option>
+          </select>
+        </div>
+        <div class="filter-item"><label>Leader Name</label><select id="wt-leaderFilter" onchange="applyWTFilters()"><option value="">All (Combined)</option></select></div>
+        <div class="filter-item"><label>Metric Focus</label>
+          <select id="wt-metricFocus" onchange="applyWTFilters()">
+            <option value="all">All 3 metrics (stacked)</option>
+            <option value="sv">Site Visits only</option>
+            <option value="vc">VCs only</option>
+            <option value="booking">Bookings (Cr.) only</option>
+          </select>
+        </div>
+        <div class="filter-item"><label>&nbsp;</label><button class="clear-btn" onclick="clearWTFilters()">Clear</button></div>
+      </div></div>
+
+      <div class="prefilter-note" style="display:flex;">ℹ️ <span>Showing the rolling last 52 weeks (~12 months) only. Site Visits &amp; VCs are counts; Bookings are shown in ₹ Crores (revenue-based achievement).</span></div>
+
+      <div class="table-meta"><div class="row-count" id="wt-rowCount">Loading…</div><div class="last-updated" id="wt-lastUpdated"></div></div>
+
+      <div class="chart-grid" id="wt-chartGrid">
+        <div class="chart-card full" id="wt-card-sv"><div class="chart-card-title">🏠 Site Visits <span>Weekly Target vs Achieved · count</span></div><div class="chart-card-body tall"><canvas id="wt-chart-sv"></canvas></div></div>
+        <div class="chart-card full" id="wt-card-vc"><div class="chart-card-title">🤝 VCs (Video Calls) <span>Weekly Target vs Achieved · count</span></div><div class="chart-card-body tall"><canvas id="wt-chart-vc"></canvas></div></div>
+        <div class="chart-card full" id="wt-card-booking"><div class="chart-card-title">💰 Bookings <span>Weekly Target vs Achieved · ₹ Cr</span></div><div class="chart-card-body tall"><canvas id="wt-chart-booking"></canvas></div></div>
+      </div>
+
+      <div class="table-meta"><div class="row-count">Week-wise summary — last 52 weeks</div></div>
+      <div class="table-wrap">
+        <table id="wt-table"><thead><tr>
+          <th>Week</th><th>Leader</th>
+          <th>SV Target</th><th>SV Achieved</th><th>SV %</th>
+          <th>VC Target</th><th>VC Achieved</th><th>VC %</th>
+          <th>Booking Target (Cr)</th><th>Booking Achieved (Cr)</th><th>Booking %</th>
+        </tr></thead><tbody id="wt-tbody"></tbody></table>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1076,6 +1122,8 @@ let mpView='table',mpCharts={},mpAgg=null;
 
 // ── Weekly Targets (Sales Dashboard sub-view) state ──
 let tgtAll=[],tgtCharts={};
+// ── Weekly Targets (top-level tab) state — shares tgtAll/spPerfAll with the sub-view above ──
+let wtCharts={};
 
 // ── Temporary section toggles — flip to false to bring a section back ──
 const MAINTENANCE_MODE={marketing:true,salesdash:true};
@@ -1204,11 +1252,11 @@ function switchDashboard(which){
   if(isLoanDept()&&which!=='fnclients')return;
   if(which==='marketing'&&!isMarketingDashAdmin())return;
   activeDash=which;
-  const order=['visits','visitdone','fnclients','marketing','salesdash'];
+  const order=['visits','visitdone','fnclients','marketing','salesdash','weeklytargets'];
   document.querySelectorAll('.dash-tab').forEach((t,i)=>t.classList.toggle('active',order[i]===which));
   // Keep dashboard sections mutually exclusive. Use !important so responsive/theme CSS
   // can never accidentally force a hidden dashboard back into the document flow.
-  const dashSections={visits:'visitsDash',visitdone:'visitdoneDash',fnclients:'fnDash',marketing:'marketingDash',salesdash:'salesDash'};
+  const dashSections={visits:'visitsDash',visitdone:'visitdoneDash',fnclients:'fnDash',marketing:'marketingDash',salesdash:'salesDash',weeklytargets:'weeklytargetsDash'};
   Object.entries(dashSections).forEach(([key,id])=>{
     const el=document.getElementById(id);
     if(!el)return;
@@ -1229,6 +1277,12 @@ function switchDashboard(which){
   if(which==='visitdone'&&vdAll.length===0&&auth)loadVDData();
   if(which==='salesdash'&&!MAINTENANCE_MODE.salesdash&&spPerfAll.length===0&&spLeadAll.length===0&&auth)loadSalesPerformanceData();
   if(which==='marketing'&&!MAINTENANCE_MODE.marketing&&mpAll.length===0&&auth)loadMarketingPerformanceData();
+  if(which==='weeklytargets'&&auth){
+    // Achievement figures are computed from Sales Performance rows — load them
+    // independently of MAINTENANCE_MODE.salesdash so this tab works standalone.
+    if(spPerfAll.length===0&&spLeadAll.length===0)loadSalesPerformanceData();
+    if(tgtAll.length===0)loadWTData();else{populateWTFilters();wtApplyMetricFocus();wtRenderSection();}
+  }
 }
 
 function startAutoRefresh(){if(refreshTimer)clearInterval(refreshTimer);refreshTimer=setInterval(()=>{if(!isRefreshing&&auth)refreshAll();},30000);}
@@ -1784,6 +1838,7 @@ function renderSalesPerformanceData(data){
   // Weekly Targets sub-view depends on spPerfAll for achievement — refresh it
   // if it's already loaded and currently visible so achievements aren't stale.
   if(spView==='targets'&&tgtAll.length>0)renderTargetsSection();
+  if(activeDash==='weeklytargets'&&tgtAll.length>0)wtRenderSection();
 }
 function populateSPFilters(){
   const clusterVals=new Set(),pnlVals=new Set(),mgrVals=new Set(),tlVals=new Set(),empVals=new Set(),projVals=new Set(),devVals=new Set();
@@ -2216,6 +2271,166 @@ function saveWeeklyTargetEntry(){
 }
 function setTgtSaveStatus(msg,isErr){const el=document.getElementById('tgtSaveStatus');el.textContent=msg;el.className='admin-save-status'+(isErr===false?' ok':isErr?' err':'');}
 
+// ══════════════════════════════════════════════════════════
+//  WEEKLY TARGETS — top-level "🎯 Weekly Targets" tab
+//  ─────────────────────────────────────────────────────────
+//  Standalone analytics view of the same "Weekly Targets" GAS
+//  sheet used by the Sales Dashboard's Targets sub-view above.
+//  Reuses tgtAll / spPerfAll / GAS_URL / jsonpFetch / parseBudget /
+//  fillSelect / esc / spCssVar / tgtWeekLabel — no new backend
+//  endpoints or data structures were introduced. Differences from
+//  the sub-view: (1) rolling last-52-week window only, (2) grouped
+//  bar charts instead of line charts, (3) Booking figures shown in
+//  ₹ Cr (achievement summed from revenue via parseBudget, /1e7),
+//  (4) 100% / 80% / <80% completion pill thresholds, (5) a metric
+//  focus toggle on top of the 3 stacked chart cards.
+// ══════════════════════════════════════════════════════════
+function wtCutoffDate_(){const d=new Date();d.setDate(d.getDate()-364);return d.toISOString().slice(0,10);}
+
+function loadWTData(){
+  document.getElementById('wt-rowCount').textContent='Loading…';
+  jsonpFetch(GAS_URL,{action:'getWeeklyTargetsData',role:auth.role,username:auth.user,password:auth.pass},d=>{
+    if(d.ok){
+      tgtAll=d.data||[];
+      populateWTFilters();
+      wtApplyMetricFocus();
+      wtRenderSection();
+      document.getElementById('wt-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
+    }else{
+      document.getElementById('wt-rowCount').textContent='Failed to load: '+(d.error||'unknown');
+    }
+  },()=>{document.getElementById('wt-rowCount').textContent='Network error loading target data.';});
+}
+
+function populateWTFilters(){
+  const level=document.getElementById('wt-levelFilter').value;
+  const names=[...new Set(tgtAll.filter(r=>r.leaderLevel===level).map(r=>r.leaderName))].sort();
+  fillSelect('wt-leaderFilter',names,'All (Combined)');
+}
+function applyWTFilters(){populateWTFilters();wtApplyMetricFocus();wtRenderSection();}
+function clearWTFilters(){
+  document.getElementById('wt-levelFilter').value='PNL Head';
+  populateWTFilters();
+  document.getElementById('wt-leaderFilter').value='';
+  document.getElementById('wt-metricFocus').value='all';
+  wtApplyMetricFocus();
+  wtRenderSection();
+}
+function wtApplyMetricFocus(){
+  const focus=document.getElementById('wt-metricFocus').value;
+  ['sv','vc','booking'].forEach(m=>{const card=document.getElementById('wt-card-'+m);if(card)card.style.display=(focus==='all'||focus===m)?'':'none';});
+}
+
+// Achievement for SV/VC stays a count (matches the sub-view's logic exactly);
+// Booking achievement is summed from revenue and converted to ₹ Cr instead of
+// counted, so it lines up with the "Bookings tracked in ₹ Cr" requirement.
+function wtComputeAchievement_(t){
+  const field=t.leaderLevel==='PNL Head'?'pnlHead':'manager';
+  let sv=0,vc=0,bookingRupees=0;
+  spPerfAll.forEach(r=>{
+    if(!r.updatedDate)return;
+    if(r.updatedDate<t.weekStart||r.updatedDate>t.weekEnd)return;
+    if(tnorm_(r[field])!==tnorm_(t.leaderName))return;
+    if(r.type==='SV')sv++;
+    else if(r.type==='Meeting')vc++;
+    else if(r.type==='Booking')bookingRupees+=parseBudget(r.revenue);
+  });
+  return{sv,vc,bookingCr:bookingRupees/1e7};
+}
+function wtBuildRows_(){
+  const level=document.getElementById('wt-levelFilter').value;
+  const leaderSel=document.getElementById('wt-leaderFilter').value;
+  const cutoff=wtCutoffDate_();
+  let rows=tgtAll.filter(r=>r.leaderLevel===level&&r.weekStart>=cutoff);
+  if(leaderSel)rows=rows.filter(r=>r.leaderName===leaderSel);
+  rows=rows.map(r=>{
+    const ach=wtComputeAchievement_(r);
+    return{...r,svAchieved:ach.sv,vcAchieved:ach.vc,bookingTargetCr:Number(r.bookingTarget)||0,bookingAchievedCr:ach.bookingCr};
+  });
+  rows.sort((a,b)=>a.weekStart.localeCompare(b.weekStart)||a.leaderName.localeCompare(b.leaderName));
+  return rows;
+}
+function wtAggregateByWeek_(rows){
+  const map={};
+  rows.forEach(r=>{
+    if(!map[r.weekStart])map[r.weekStart]={weekStart:r.weekStart,weekEnd:r.weekEnd,leaderName:'Combined',svTarget:0,vcTarget:0,bookingTargetCr:0,svAchieved:0,vcAchieved:0,bookingAchievedCr:0};
+    const m=map[r.weekStart];
+    m.svTarget+=r.svTarget;m.vcTarget+=r.vcTarget;m.bookingTargetCr+=r.bookingTargetCr;
+    m.svAchieved+=r.svAchieved;m.vcAchieved+=r.vcAchieved;m.bookingAchievedCr+=r.bookingAchievedCr;
+    if(r.weekEnd>m.weekEnd)m.weekEnd=r.weekEnd;
+  });
+  return Object.values(map).sort((a,b)=>a.weekStart.localeCompare(b.weekStart));
+}
+// Green ≥100% target met, Amber 80–99%, Red <80% — per the Weekly Targets spec.
+function wtPctPill(achieved,target){
+  if(!target)return'<span class="ratio-pill ratio-na">—</span>';
+  const p=achieved/target*100;
+  const cls=p>=100?'ratio-good':p>=80?'ratio-mid':'ratio-low';
+  return`<span class="ratio-pill ${cls}">${p.toFixed(0)}%</span>`;
+}
+function wtWeekRangeLabel(weekStart,weekEnd){
+  const d=new Date(weekStart);
+  if(isNaN(d))return(weekStart||'')+' – '+(weekEnd||'');
+  const target=new Date(d.valueOf());
+  const dayNr=(d.getDay()+6)%7;
+  target.setDate(target.getDate()-dayNr+3);
+  const firstThursday=new Date(target.getFullYear(),0,4);
+  const weekNum=1+Math.round(((target-firstThursday)/86400000-3+((firstThursday.getDay()+6)%7))/7);
+  return`Week ${weekNum} - ${d.toLocaleDateString('en-IN',{month:'short'})} ${d.getFullYear()}`;
+}
+
+function renderWTTable(rows){
+  const tbody=document.getElementById('wt-tbody');
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="11" class="no-data">No weekly targets recorded in the last 12 months for this selection.</td></tr>';syncDataLabels('wt-table');return;}
+  tbody.innerHTML=rows.map(r=>`<tr>
+    <td style="white-space:nowrap">${esc(wtWeekRangeLabel(r.weekStart,r.weekEnd))}</td>
+    <td style="font-weight:600;color:var(--text)">${esc(r.leaderName)}</td>
+    <td>${r.svTarget}</td><td>${r.svAchieved}</td><td>${wtPctPill(r.svAchieved,r.svTarget)}</td>
+    <td>${r.vcTarget}</td><td>${r.vcAchieved}</td><td>${wtPctPill(r.vcAchieved,r.vcTarget)}</td>
+    <td>${Number(r.bookingTargetCr).toFixed(2)}</td><td>${Number(r.bookingAchievedCr).toFixed(2)}</td><td>${wtPctPill(r.bookingAchievedCr,r.bookingTargetCr)}</td>
+  </tr>`).join('');
+  syncDataLabels('wt-table');
+}
+
+function destroyWTChart(id){if(wtCharts[id]){wtCharts[id].destroy();delete wtCharts[id];}}
+function renderWTCharts(rows,seriesLabel){
+  if(typeof Chart==='undefined')return;
+  const blue=spCssVar('--blue'),green=spCssVar('--green'),orange=spCssVar('--orange'),gold=spCssVar('--gold'),textDim=spCssVar('--text-dim');
+  Chart.defaults.color=textDim;Chart.defaults.font.family="'Inter',sans-serif";Chart.defaults.font.size=10.5;
+  const labels=rows.map(r=>tgtWeekLabel(r.weekStart));
+  const barOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:9,font:{size:10}}}},scales:{x:{ticks:{font:{size:9}},grid:{display:false}},y:{beginAtZero:true,grid:{color:'rgba(120,120,120,0.12)'}}}};
+
+  destroyWTChart('sv');
+  wtCharts.sv=new Chart(document.getElementById('wt-chart-sv'),{type:'bar',data:{labels,datasets:[
+    {label:'Target — '+seriesLabel,data:rows.map(r=>r.svTarget),backgroundColor:blue+'99',borderColor:blue,borderWidth:1,borderRadius:4,maxBarThickness:26},
+    {label:'Achieved — '+seriesLabel,data:rows.map(r=>r.svAchieved),backgroundColor:gold,borderColor:gold,borderWidth:1,borderRadius:4,maxBarThickness:26}
+  ]},options:barOpts});
+
+  destroyWTChart('vc');
+  wtCharts.vc=new Chart(document.getElementById('wt-chart-vc'),{type:'bar',data:{labels,datasets:[
+    {label:'Target — '+seriesLabel,data:rows.map(r=>r.vcTarget),backgroundColor:orange+'99',borderColor:orange,borderWidth:1,borderRadius:4,maxBarThickness:26},
+    {label:'Achieved — '+seriesLabel,data:rows.map(r=>r.vcAchieved),backgroundColor:gold,borderColor:gold,borderWidth:1,borderRadius:4,maxBarThickness:26}
+  ]},options:barOpts});
+
+  destroyWTChart('booking');
+  wtCharts.booking=new Chart(document.getElementById('wt-chart-booking'),{type:'bar',data:{labels,datasets:[
+    {label:'Target (₹ Cr) — '+seriesLabel,data:rows.map(r=>Number(r.bookingTargetCr.toFixed(2))),backgroundColor:green+'99',borderColor:green,borderWidth:1,borderRadius:4,maxBarThickness:26},
+    {label:'Achieved (₹ Cr) — '+seriesLabel,data:rows.map(r=>Number(r.bookingAchievedCr.toFixed(2))),backgroundColor:gold,borderColor:gold,borderWidth:1,borderRadius:4,maxBarThickness:26}
+  ]},options:barOpts});
+}
+
+function wtRenderSection(){
+  if(!auth)return;
+  const level=document.getElementById('wt-levelFilter').value;
+  const leaderSel=document.getElementById('wt-leaderFilter').value;
+  const rawRows=wtBuildRows_();
+  const chartRows=leaderSel?rawRows:wtAggregateByWeek_(rawRows);
+  const leaderCount=new Set(rawRows.map(r=>r.leaderName)).size;
+  document.getElementById('wt-rowCount').textContent=rawRows.length+' weekly target record(s) · last 12 months'+(leaderSel?'':' · combined across '+leaderCount+' '+level+'(s)');
+  renderWTTable(rawRows);
+  renderWTCharts(chartRows,leaderSel?leaderSel:('All '+level+'s'));
+}
+
 function toggleTheme(){const html=document.documentElement,isDark=html.getAttribute('data-theme')==='dark',next=isDark?'light':'dark';html.setAttribute('data-theme',next);document.getElementById('themeBtn').textContent=next==='dark'?'☀️':'🌙';try{localStorage.setItem('dash_theme',next);}catch(_){}}
 (function(){try{const saved=localStorage.getItem('dash_theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.addEventListener('DOMContentLoaded',()=>{const btn=document.getElementById('themeBtn');if(btn)btn.textContent=saved==='dark'?'☀️':'🌙';});}}catch(_){}})();
 
@@ -2235,16 +2450,16 @@ openDetailModal=function(r){_openDetailModal(r);const activity=document.getEleme
    UI OVERHAUL BEHAVIOUR — additive only
    ================================================================ */
 function updateTabBadges(){
-  const vals={visits:visitsFiltered.length||visitsAll.length,visitdone:vdFiltered.length||vdAll.length,fnclients:fnFiltered.length||fnAll.length,marketing:mpAgg&&mpAgg.campaigns?mpAgg.campaigns.length:mpAll.length,salesdash:spAgg&&spAgg.employees?spAgg.employees.length:(new Set(spLeadAll.map(r=>r.employee).filter(Boolean))).size};
+  const vals={visits:visitsFiltered.length||visitsAll.length,visitdone:vdFiltered.length||vdAll.length,fnclients:fnFiltered.length||fnAll.length,marketing:mpAgg&&mpAgg.campaigns?mpAgg.campaigns.length:mpAll.length,salesdash:spAgg&&spAgg.employees?spAgg.employees.length:(new Set(spLeadAll.map(r=>r.employee).filter(Boolean))).size,weeklytargets:tgtAll.length};
   Object.keys(vals).forEach(k=>{const el=document.getElementById('tabBadge-'+k);if(el)el.textContent=Number(vals[k]||0).toLocaleString('en-IN');});
 }
 function clearGlobalSearch(prefix){const el=document.getElementById(prefix+'-globalSearch');if(el){el.value='';if(prefix==='v')applyVisitFilters();else if(prefix==='vd')applyVDFilters();else if(prefix==='fn')applyFNFilters();else if(prefix==='mp')applyMPFilters();else if(prefix==='sp')applySPFilters();}}
-function focusActiveSearch(){const el=document.getElementById(activeDash==='visits'?'v-globalSearch':activeDash==='visitdone'?'vd-globalSearch':activeDash==='fnclients'?'fn-globalSearch':activeDash==='marketing'?'mp-globalSearch':'sp-globalSearch');if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'});}}
-function clearActiveFilters(){if(activeDash==='visits')clearVisitFilters();else if(activeDash==='visitdone')clearVDFilters();else if(activeDash==='fnclients')clearFNFilters();else if(activeDash==='marketing')clearMPFilters();else if(activeDash==='salesdash')clearSPFilters();}
+function focusActiveSearch(){const el=document.getElementById(activeDash==='visits'?'v-globalSearch':activeDash==='visitdone'?'vd-globalSearch':activeDash==='fnclients'?'fn-globalSearch':activeDash==='marketing'?'mp-globalSearch':activeDash==='weeklytargets'?'':'sp-globalSearch');if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'});}}
+function clearActiveFilters(){if(activeDash==='visits')clearVisitFilters();else if(activeDash==='visitdone')clearVDFilters();else if(activeDash==='fnclients')clearFNFilters();else if(activeDash==='marketing')clearMPFilters();else if(activeDash==='salesdash')clearSPFilters();else if(activeDash==='weeklytargets')clearWTFilters();}
 function renderFilterChips(prefix,items){const host=document.getElementById(prefix+'-filterChips');if(!host)return;host.innerHTML=items.filter(x=>x.value!==undefined&&x.value!==null&&String(x.value).trim()!=='').map(x=>`<span class="filter-chip">${esc(x.label)}: ${esc(x.value)} <button type="button" aria-label="Remove ${esc(x.label)} filter" onclick="removeFilter('${prefix}','${x.id}')">×</button></span>`).join('');}
 function removeFilter(prefix,id){const el=document.getElementById(id);if(!el)return;if(el.tagName==='INPUT'||el.tagName==='SELECT')el.value='';if(prefix==='v')applyVisitFilters();else if(prefix==='vd')applyVDFilters();else if(prefix==='fn')applyFNFilters();else if(prefix==='mp')applyMPFilters();else if(prefix==='sp')applySPFilters();}
 function syncDataLabels(tableId,labels){const table=document.getElementById(tableId);if(!table)return;const th=[...table.querySelectorAll('thead th')].map(x=>x.textContent.trim());table.querySelectorAll('tbody tr').forEach(tr=>{[...tr.children].forEach((td,i)=>{if(th[i])td.setAttribute('data-label',th[i]);});});}
-function syncAllDataLabels(){syncDataLabels('v-table');syncDataLabels('vd-table');syncDataLabels('fn-table');syncDataLabels('mp-table');syncDataLabels('sp-table');syncDataLabels('tgt-table');}
+function syncAllDataLabels(){syncDataLabels('v-table');syncDataLabels('vd-table');syncDataLabels('fn-table');syncDataLabels('mp-table');syncDataLabels('sp-table');syncDataLabels('tgt-table');syncDataLabels('wt-table');}
 const _renderVisitTable=renderVisitTable;renderVisitTable=function(rows){_renderVisitTable(rows);syncDataLabels('v-table');updateTabBadges();};
 const _renderVDTable=renderVDTable;renderVDTable=function(rows){_renderVDTable(rows);syncDataLabels('vd-table');updateTabBadges();};
 const _renderFNTable=renderFNTable;renderFNTable=function(rows){_renderFNTable(rows);syncDataLabels('fn-table');updateTabBadges();};
