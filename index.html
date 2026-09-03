@@ -792,12 +792,28 @@
   //     }
   //   }, () => showGate('error'));
   // }
-
   function checkFormStatus() {
-    document.getElementById('form-wrapper').style.display = 'block';
-    document.getElementById('status-gate').classList.remove('visible');
-    loadMasterData();
+    jsonpFetch({ action: 'getFormStatus' }, data => {
+      if (!data.ok) { 
+        showGate('error'); 
+        return; 
+      }
+  
+      if (data.formStatus === 'open') {
+        document.getElementById('form-wrapper').style.display = 'block';
+        document.getElementById('status-gate').classList.remove('visible');
+        loadMasterData();
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    }, () => showGate('error'));
   }
+
+  // function checkFormStatus() {
+  //   document.getElementById('form-wrapper').style.display = 'block';
+  //   document.getElementById('status-gate').classList.remove('visible');
+  //   loadMasterData();
+  // }
 
   function showGate(type, message) {
     document.getElementById('form-wrapper').style.display = 'none';
