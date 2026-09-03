@@ -1017,7 +1017,7 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
         <div class="filter-item"><label>&nbsp;</label><button class="clear-btn" onclick="clearWTFilters()">Clear</button></div>
       </div></div>
 
-      <div class="prefilter-note" style="display:flex;">ℹ️ <span>Showing the rolling last 52 weeks (~12 months) only. Site Visits &amp; VCs are counts; Bookings are shown in ₹ Crores (revenue-based achievement).</span></div>
+      <div class="prefilter-note" style="display:flex;">ℹ️ <span>Showing the rolling last 52 weeks (~12 months) only. Targets <strong>and</strong> Achievements are entered manually, weekly, below. Site Visits &amp; VCs are counts; Bookings are in ₹ Crores.</span></div>
 
       <div class="table-meta"><div class="row-count" id="wt-rowCount">Loading…</div><div class="last-updated" id="wt-lastUpdated"></div></div>
 
@@ -1035,6 +1035,38 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
           <th>VC Target</th><th>VC Achieved</th><th>VC %</th>
           <th>Booking Target (Cr)</th><th>Booking Achieved (Cr)</th><th>Booking %</th>
         </tr></thead><tbody id="wt-tbody"></tbody></table>
+      </div>
+
+      <div class="admin-edit-panel" id="wtAdminPanel" style="display:none;margin:8px 16px 20px;">
+        <div class="admin-edit-title">🎯 Set / Update Weekly Target &amp; Achievement</div>
+        <div class="admin-edit-row">
+          <div><div class="admin-edit-label">Week Start</div><input type="date" class="admin-edit-select" id="wtNewWeekStart" onchange="wtAutoFillWeekEnd()"></div>
+          <div><div class="admin-edit-label">Week End</div><input type="date" class="admin-edit-select" id="wtNewWeekEnd"></div>
+        </div>
+        <div class="admin-edit-row">
+          <div><div class="admin-edit-label">Leader Level</div>
+            <select class="admin-edit-select" id="wtNewLevel">
+              <option value="PNL Head">PNL Head</option>
+              <option value="Manager">Manager</option>
+            </select>
+          </div>
+          <div><div class="admin-edit-label">Leader Name</div><input type="text" class="admin-edit-select" id="wtNewLeaderName" list="wt-leaderNameList" placeholder="Type or pick a name…"><datalist id="wt-leaderNameList"></datalist></div>
+        </div>
+        <div class="admin-edit-row">
+          <div><div class="admin-edit-label">SV Target</div><input type="number" min="0" class="admin-edit-select" id="wtNewSVTarget" placeholder="0"></div>
+          <div><div class="admin-edit-label">SV Achievement</div><input type="number" min="0" class="admin-edit-select" id="wtNewSVAch" placeholder="0"></div>
+        </div>
+        <div class="admin-edit-row">
+          <div><div class="admin-edit-label">VC Target</div><input type="number" min="0" class="admin-edit-select" id="wtNewVCTarget" placeholder="0"></div>
+          <div><div class="admin-edit-label">VC Achievement</div><input type="number" min="0" class="admin-edit-select" id="wtNewVCAch" placeholder="0"></div>
+        </div>
+        <div class="admin-edit-row">
+          <div><div class="admin-edit-label">Booking Target (₹ Cr)</div><input type="number" min="0" step="0.01" class="admin-edit-select" id="wtNewBookingTarget" placeholder="0"></div>
+          <div><div class="admin-edit-label">Booking Achievement (₹ Cr)</div><input type="number" min="0" step="0.01" class="admin-edit-select" id="wtNewBookingAch" placeholder="0"></div>
+        </div>
+        <div class="admin-edit-row full"><div style="font-size:0.72rem;color:var(--text-dim);">Leave a Target or Achievement field blank to keep its existing saved value — only the fields you fill in are updated. Picking a Week Start + Leader that already has a row loads it below for editing.</div></div>
+        <button class="admin-save-btn" onclick="saveWTEntry()">Save Target &amp; Achievement</button>
+        <div class="admin-save-status" id="wtSaveStatus"></div>
       </div>
     </div>
 
@@ -1278,10 +1310,10 @@ function switchDashboard(which){
   if(which==='salesdash'&&!MAINTENANCE_MODE.salesdash&&spPerfAll.length===0&&spLeadAll.length===0&&auth)loadSalesPerformanceData();
   if(which==='marketing'&&!MAINTENANCE_MODE.marketing&&mpAll.length===0&&auth)loadMarketingPerformanceData();
   if(which==='weeklytargets'&&auth){
-    // Achievement figures are computed from Sales Performance rows — load them
-    // independently of MAINTENANCE_MODE.salesdash so this tab works standalone.
-    if(spPerfAll.length===0&&spLeadAll.length===0)loadSalesPerformanceData();
+    // Targets AND Achievements are both stored directly on the Weekly Targets
+    // sheet now (manual weekly entry) — no dependency on Sales Performance data.
     if(tgtAll.length===0)loadWTData();else{populateWTFilters();wtApplyMetricFocus();wtRenderSection();}
+    document.getElementById('wtAdminPanel').style.display=isAdmin()?'block':'none';
   }
 }
 
@@ -1838,7 +1870,6 @@ function renderSalesPerformanceData(data){
   // Weekly Targets sub-view depends on spPerfAll for achievement — refresh it
   // if it's already loaded and currently visible so achievements aren't stale.
   if(spView==='targets'&&tgtAll.length>0)renderTargetsSection();
-  if(activeDash==='weeklytargets'&&tgtAll.length>0)wtRenderSection();
 }
 function populateSPFilters(){
   const clusterVals=new Set(),pnlVals=new Set(),mgrVals=new Set(),tlVals=new Set(),empVals=new Set(),projVals=new Set(),devVals=new Set();
@@ -2274,16 +2305,14 @@ function setTgtSaveStatus(msg,isErr){const el=document.getElementById('tgtSaveSt
 // ══════════════════════════════════════════════════════════
 //  WEEKLY TARGETS — top-level "🎯 Weekly Targets" tab
 //  ─────────────────────────────────────────────────────────
-//  Standalone analytics view of the same "Weekly Targets" GAS
-//  sheet used by the Sales Dashboard's Targets sub-view above.
-//  Reuses tgtAll / spPerfAll / GAS_URL / jsonpFetch / parseBudget /
-//  fillSelect / esc / spCssVar / tgtWeekLabel — no new backend
-//  endpoints or data structures were introduced. Differences from
-//  the sub-view: (1) rolling last-52-week window only, (2) grouped
-//  bar charts instead of line charts, (3) Booking figures shown in
-//  ₹ Cr (achievement summed from revenue via parseBudget, /1e7),
-//  (4) 100% / 80% / <80% completion pill thresholds, (5) a metric
-//  focus toggle on top of the 3 stacked chart cards.
+//  Standalone view of the "Weekly Targets" GAS sheet. Targets
+//  AND Achievements are both entered manually (weekly, by an
+//  Admin/Management user via the form below) and stored directly
+//  as columns on the sheet — there is no live derivation from
+//  Sales Performance, so this tab has zero dependency on that
+//  sheet or on MAINTENANCE_MODE.salesdash. Booking figures are
+//  entered directly in ₹ Cr. Reuses GAS_URL / jsonpFetch / fillSelect /
+//  esc / spCssVar / tgtWeekLabel / isAdmin from elsewhere in this file.
 // ══════════════════════════════════════════════════════════
 function wtCutoffDate_(){const d=new Date();d.setDate(d.getDate()-364);return d.toISOString().slice(0,10);}
 
@@ -2293,6 +2322,8 @@ function loadWTData(){
     if(d.ok){
       tgtAll=d.data||[];
       populateWTFilters();
+      populateWTLeaderDatalist();
+      document.getElementById('wtAdminPanel').style.display=isAdmin()?'block':'none';
       wtApplyMetricFocus();
       wtRenderSection();
       document.getElementById('wt-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
@@ -2307,6 +2338,16 @@ function populateWTFilters(){
   const names=[...new Set(tgtAll.filter(r=>r.leaderLevel===level).map(r=>r.leaderName))].sort();
   fillSelect('wt-leaderFilter',names,'All (Combined)');
 }
+// Datalist suggestions for the admin form's free-text Leader Name field —
+// sourced from leaders who already have at least one target row. It's an
+// autocomplete convenience only; typing a brand-new name is still allowed
+// (e.g. a PNL Head who's never had a target set before).
+function populateWTLeaderDatalist(){
+  const dl=document.getElementById('wt-leaderNameList');
+  if(!dl)return;
+  const names=[...new Set(tgtAll.map(r=>r.leaderName))].sort();
+  dl.innerHTML=names.map(n=>`<option value="${esc(n)}">`).join('');
+}
 function applyWTFilters(){populateWTFilters();wtApplyMetricFocus();wtRenderSection();}
 function clearWTFilters(){
   document.getElementById('wt-levelFilter').value='PNL Head';
@@ -2320,33 +2361,27 @@ function wtApplyMetricFocus(){
   const focus=document.getElementById('wt-metricFocus').value;
   ['sv','vc','booking'].forEach(m=>{const card=document.getElementById('wt-card-'+m);if(card)card.style.display=(focus==='all'||focus===m)?'':'none';});
 }
-
-// Achievement for SV/VC stays a count (matches the sub-view's logic exactly);
-// Booking achievement is summed from revenue and converted to ₹ Cr instead of
-// counted, so it lines up with the "Bookings tracked in ₹ Cr" requirement.
-function wtComputeAchievement_(t){
-  const field=t.leaderLevel==='PNL Head'?'pnlHead':'manager';
-  let sv=0,vc=0,bookingRupees=0;
-  spPerfAll.forEach(r=>{
-    if(!r.updatedDate)return;
-    if(r.updatedDate<t.weekStart||r.updatedDate>t.weekEnd)return;
-    if(tnorm_(r[field])!==tnorm_(t.leaderName))return;
-    if(r.type==='SV')sv++;
-    else if(r.type==='Meeting')vc++;
-    else if(r.type==='Booking')bookingRupees+=parseBudget(r.revenue);
-  });
-  return{sv,vc,bookingCr:bookingRupees/1e7};
+// A Week Start 7 days later than itself, inclusive, as a convenience default —
+// admin can still override Week End manually before saving.
+function wtAutoFillWeekEnd(){
+  const startEl=document.getElementById('wtNewWeekStart'),endEl=document.getElementById('wtNewWeekEnd');
+  if(!startEl.value||endEl.value)return;
+  const d=new Date(startEl.value);d.setDate(d.getDate()+6);
+  endEl.value=d.toISOString().slice(0,10);
 }
+
 function wtBuildRows_(){
   const level=document.getElementById('wt-levelFilter').value;
   const leaderSel=document.getElementById('wt-leaderFilter').value;
   const cutoff=wtCutoffDate_();
   let rows=tgtAll.filter(r=>r.leaderLevel===level&&r.weekStart>=cutoff);
   if(leaderSel)rows=rows.filter(r=>r.leaderName===leaderSel);
-  rows=rows.map(r=>{
-    const ach=wtComputeAchievement_(r);
-    return{...r,svAchieved:ach.sv,vcAchieved:ach.vc,bookingTargetCr:Number(r.bookingTarget)||0,bookingAchievedCr:ach.bookingCr};
-  });
+  rows=rows.map(r=>({...r,
+    svAchieved:Number(r.svAchievement)||0,
+    vcAchieved:Number(r.vcAchievement)||0,
+    bookingTargetCr:Number(r.bookingTarget)||0,
+    bookingAchievedCr:Number(r.bookingAchievement)||0
+  }));
   rows.sort((a,b)=>a.weekStart.localeCompare(b.weekStart)||a.leaderName.localeCompare(b.leaderName));
   return rows;
 }
@@ -2430,6 +2465,36 @@ function wtRenderSection(){
   renderWTTable(rawRows);
   renderWTCharts(chartRows,leaderSel?leaderSel:('All '+level+'s'));
 }
+
+// Saves target + achievement together via the same upsert-merge saveWeeklyTarget
+// GAS action used by the Sales Dashboard's sub-view — a blank numeric field is
+// sent as undefined so the backend keeps whatever was already saved for it,
+// letting you fill in just Achievements for a week whose Targets already exist.
+function wtNumOrUndef_(id){const v=document.getElementById(id).value;return v===''?undefined:Number(v);}
+function saveWTEntry(){
+  const weekStart=document.getElementById('wtNewWeekStart').value;
+  const weekEnd=document.getElementById('wtNewWeekEnd').value;
+  const leaderLevel=document.getElementById('wtNewLevel').value;
+  const leaderName=document.getElementById('wtNewLeaderName').value.trim();
+  if(!weekStart||!leaderName){setWTSaveStatus('Week Start and Leader Name are required.',true);return;}
+  if(weekEnd&&weekEnd<weekStart){setWTSaveStatus('Week End must be on or after Week Start.',true);return;}
+  setWTSaveStatus('Saving…');
+  const payload=JSON.stringify({
+    action:'saveWeeklyTarget',weekStart,weekEnd,leaderLevel,leaderName,
+    svTarget:wtNumOrUndef_('wtNewSVTarget'),vcTarget:wtNumOrUndef_('wtNewVCTarget'),bookingTarget:wtNumOrUndef_('wtNewBookingTarget'),
+    svAchievement:wtNumOrUndef_('wtNewSVAch'),vcAchievement:wtNumOrUndef_('wtNewVCAch'),bookingAchievement:wtNumOrUndef_('wtNewBookingAch'),
+    username:auth.user,password:auth.pass,role:auth.role
+  });
+  fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'data='+encodeURIComponent(payload)})
+  .then(res=>res.json()).then(data=>{
+    if(data.ok){
+      setWTSaveStatus('✓ Saved successfully!',false);
+      ['wtNewSVTarget','wtNewVCTarget','wtNewBookingTarget','wtNewSVAch','wtNewVCAch','wtNewBookingAch'].forEach(id=>document.getElementById(id).value='');
+      loadWTData();
+    }else setWTSaveStatus('Error: '+(data.error||'Unknown error'),true);
+  }).catch(()=>setWTSaveStatus('Network error. Please retry.',true));
+}
+function setWTSaveStatus(msg,isErr){const el=document.getElementById('wtSaveStatus');el.textContent=msg;el.className='admin-save-status'+(isErr===false?' ok':isErr?' err':'');}
 
 function toggleTheme(){const html=document.documentElement,isDark=html.getAttribute('data-theme')==='dark',next=isDark?'light':'dark';html.setAttribute('data-theme',next);document.getElementById('themeBtn').textContent=next==='dark'?'☀️':'🌙';try{localStorage.setItem('dash_theme',next);}catch(_){}}
 (function(){try{const saved=localStorage.getItem('dash_theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.addEventListener('DOMContentLoaded',()=>{const btn=document.getElementById('themeBtn');if(btn)btn.textContent=saved==='dark'?'☀️':'🌙';});}}catch(_){}})();
