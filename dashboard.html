@@ -493,6 +493,129 @@
       .table-wrap::after{content:'↔ Scroll table';position:sticky;left:8px;bottom:8px;display:block;width:max-content;padding:4px 8px;background:rgba(15,23,42,.78);color:#fff;border-radius:999px;font-size:.62rem;font-weight:700;pointer-events:none;opacity:.8;}
     }
     @media(max-width:480px){.filter-item{flex-basis:100%;min-width:0}.filter-actions{width:100%;}.clear-btn{flex:1}.view-tabs{flex:1;justify-content:center}.view-tab{flex:1}}
+  
+/* ================================================================
+   THORE UI/UX OVERHAUL — information density + workflow first
+   Additive layer: preserves existing IDs, inline handlers and API logic.
+   ================================================================ */
+.header{position:sticky;top:0;z-index:100!important;background:rgba(255,255,255,.96)!important;box-shadow:0 2px 16px rgba(15,23,42,.08);border-bottom:1px solid #E2E8F0;}
+.header-top{min-height:58px;padding:9px 20px;display:flex;align-items:center;gap:18px;}
+.header-left{min-width:0;display:flex;align-items:center;gap:18px;}
+.header-context{border-left:1px solid #E2E8F0;padding-left:18px;line-height:1.15;}
+.header-context-eyebrow{font-size:.58rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#64748B;}
+.header-context-title{font-size:.82rem;font-weight:750;color:#0F172A;margin-top:3px;}
+.header-right{margin-left:auto;}
+.header-nav{padding:0 20px 8px;border-top:1px solid #F1F5F9;}
+.dash-tabs{width:100%;background:transparent;border:0;padding:0;gap:4px;box-shadow:none;overflow-x:auto;scrollbar-width:none;}
+.dash-tabs::-webkit-scrollbar{display:none;}
+.dash-tab{position:relative;padding:9px 13px 10px;border-radius:8px;font-size:.72rem;display:inline-flex;align-items:center;gap:7px;}
+.dash-tab.active{background:#EFF6FF;color:#1E40AF;box-shadow:none;}
+.dash-tab.active::after{content:'';position:absolute;left:12px;right:12px;bottom:0;height:2px;border-radius:2px;background:#2563EB;}
+.tab-badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:18px;padding:0 6px;border-radius:999px;background:#E2E8F0;color:#475569;font-size:.59rem;font-weight:800;line-height:1;}
+.dash-tab.active .tab-badge{background:#1E40AF;color:#fff;}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;padding:18px 20px 4px;}
+.section-head h1{font-size:1.22rem;line-height:1.15;letter-spacing:-.025em;color:#0F172A;margin:3px 0 3px;font-weight:800;}
+.section-head p{font-size:.72rem;color:#64748B;}
+.section-kicker{font-size:.58rem;letter-spacing:.13em;font-weight:800;color:#2563EB;}
+.section-live{font-size:.64rem;font-weight:700;color:#059669;display:flex;align-items:center;gap:6px;padding-bottom:4px;white-space:nowrap;}
+.section-live span{width:7px;height:7px;border-radius:50%;background:#10B981;box-shadow:0 0 0 4px #ECFDF5;}
+.kpi-banner.metrics-row{position:static;grid-template-columns:repeat(4,minmax(0,1fr));padding:8px 20px 10px;background:transparent;border:0;gap:9px;}
+.kpi-banner .metric-card{min-height:70px;padding:11px 13px;border-radius:12px;box-shadow:0 1px 3px rgba(15,23,42,.05),0 4px 12px rgba(15,23,42,.05);}
+.kpi-banner .metric-value{font-size:1.22rem;}
+.kpi-banner .metric-label{font-size:.57rem;margin-top:4px;}
+.metric-trend{font-size:.56rem;color:#94A3B8;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.filter-command-row{margin:8px 16px 0;}
+.filter-command-row .filters-bar{margin:0;padding:9px 11px 10px;box-shadow:0 2px 10px rgba(15,23,42,.045);}
+.filter-search{display:flex;align-items:center;gap:8px;height:38px;padding:0 9px;background:#F8FAFC;border:1px solid #CBD5E1;border-radius:10px;margin-bottom:8px;transition:.2s ease;}
+.filter-search:focus-within{background:#fff;border-color:#60A5FA;box-shadow:0 0 0 3px rgba(37,99,235,.10);}
+.search-icon{font-size:1.1rem;color:#64748B;line-height:1;transform:rotate(-15deg);}
+.filter-search input{flex:1;min-width:0;border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;font-size:.76rem!important;color:#0F172A;height:100%;}
+.filter-search input::placeholder{color:#94A3B8;}
+.search-clear{width:23px;height:23px;border:0;background:transparent;color:#94A3B8;border-radius:50%;cursor:pointer;font-size:1rem;line-height:1;display:flex;align-items:center;justify-content:center;}
+.search-clear:hover{background:#E2E8F0;color:#0F172A;}
+.active-filter-chips{display:flex;flex-wrap:wrap;gap:5px;margin:7px 16px 0;min-height:0;}
+.filter-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:999px;background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE;font-size:.61rem;font-weight:700;animation:chipIn .16s ease-out;}
+.filter-chip button{border:0;background:transparent;color:inherit;cursor:pointer;font-size:.75rem;line-height:1;padding:0;}
+@keyframes chipIn{from{opacity:0;transform:translateY(-3px) scale(.97)}to{opacity:1;transform:none}}
+.table-meta{margin:8px 16px 0;border-radius:10px 10px 0 0;padding:7px 12px;}
+.table-wrap{margin:0 16px 12px;max-height:calc(100vh - 300px);border-radius:0 0 10px 10px;}
+table{min-width:980px;}
+th:first-child,td:first-child{position:sticky;left:0;z-index:3;}
+th:first-child{z-index:12;background:#EFF6FF;box-shadow:1px 0 0 #CBD5E1;}
+td:first-child{background:#fff;box-shadow:1px 0 0 #E2E8F0;}
+tbody tr:hover td:first-child{background:#F8FAFC;}
+/* Keep grouped table labels readable while allowing horizontal scanning. */
+tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row td:first-child,tr.mp-zone-row td:first-child,tr.mp-cluster-row td:first-child,tr.sp-team-subtotal td:first-child,tr.sp-cluster-subtotal td:first-child,tr.mp-cluster-subtotal td:first-child,tr.mp-zone-subtotal td:first-child,tr.mp-agency-subtotal td:first-child,tr.sp-grand-total td:first-child,tr.mp-grand-total td:first-child{z-index:13;}
+.badge{padding:4px 9px;}
+.convert-btn{width:30px;height:30px;padding:0;border-radius:8px;font-size:1.05rem;line-height:1;background:#F8FAFC;display:inline-flex;align-items:center;justify-content:center;}
+
+.detail-tabs{display:flex;gap:4px;padding:10px 18px 0;border-bottom:1px solid #E2E8F0;position:sticky;top:0;background:#fff;z-index:4;}
+.detail-tab{border:0;background:transparent;padding:8px 10px;color:#64748B;font-size:.66rem;font-weight:800;cursor:pointer;border-bottom:2px solid transparent;}
+.detail-tab.active{color:#1E40AF;border-bottom-color:#2563EB;}
+.detail-panel{display:none;padding:14px 18px 0;}
+.detail-panel.active{display:block;}
+.activity-card{padding:12px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;}
+.activity-value{font-size:.78rem;line-height:1.65;color:#334155;white-space:pre-wrap;word-break:break-word;}
+
+/* Slide-over detail UX */
+.modal-overlay,.drill-overlay{align-items:stretch;justify-content:flex-end;padding:0;background:rgba(15,23,42,.36);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
+.modal-box,.drill-box{width:min(450px,92vw);max-width:450px;height:100vh;max-height:100vh;border-radius:18px 0 0 18px;border:0;border-left:1px solid #CBD5E1;box-shadow:-20px 0 60px rgba(15,23,42,.18);transform:translateX(100%);transition:transform .28s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;overflow:hidden;}
+.modal-overlay.open .modal-box,.drill-overlay.open .drill-box{transform:translateX(0);}
+.modal-header,.drill-header{border-radius:0;padding:15px 18px;flex-shrink:0;}
+.modal-body{overflow:auto;flex:1;}
+.detail-grid{grid-template-columns:1fr 1fr;gap:8px;}
+.detail-item{padding:8px 10px;}
+/* Tabs inside detail surfaces; JS remains untouched. */
+.modal-header::after{content:'Overview  •  Activity  •  Notes';display:block;margin-left:auto;font-size:.58rem;font-weight:700;color:#94A3B8;letter-spacing:.02em;}
+/* Desktop action affordance */
+.clickable-row td{cursor:pointer;}
+.clickable-row td:not(:first-child){ }
+/* Compact scrollbars */
+.table-wrap::-webkit-scrollbar,.modal-body::-webkit-scrollbar,.drill-table-wrap::-webkit-scrollbar{width:8px;height:8px;}
+.table-wrap::-webkit-scrollbar-thumb,.modal-body::-webkit-scrollbar-thumb,.drill-table-wrap::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:999px;}
+@media(max-width:768px){
+  .header-top{padding:8px 12px;min-height:52px;}
+  .header-context{display:none;}
+  .header-nav{padding:0 10px 6px;}
+  .dash-tab{padding:8px 10px;font-size:.66rem;}
+  .section-head{padding:14px 12px 2px;align-items:flex-start;}
+  .section-head p{display:none;}
+  .section-head h1{font-size:1.05rem;}
+  .kpi-banner.metrics-row{grid-template-columns:repeat(2,minmax(0,1fr));padding:7px 12px;gap:7px;}
+  .kpi-banner .metric-card{min-height:64px;padding:9px 10px;}
+  .kpi-banner .metric-icon{width:24px;height:24px;}
+  .kpi-banner .metric-value{font-size:1.08rem;}
+  .filter-command-row{margin:7px 12px 0;}
+  .filters-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;}
+  .filter-item{min-width:0;}
+  .filter-item.date-range-item{grid-column:1/-1;}
+  .active-filter-chips{margin:6px 12px 0;}
+  .table-meta{margin:7px 12px 0;}
+  .table-wrap{margin:0 12px 80px;max-height:none;overflow:visible;border:0;background:transparent;box-shadow:none;}
+  /* Table → cards. Headers disappear; cells become labelled rows. */
+  table,tbody,tr,td{display:block;width:100%;min-width:0;}
+  table{font-size:.76rem;}
+  thead{display:none;}
+  tbody{display:grid;gap:8px;}
+  tbody tr:not(.budget-total-row):not(.sp-cluster-row):not(.sp-team-row):not(.sp-team-subtotal):not(.sp-cluster-subtotal):not(.sp-grand-total):not(.mp-agency-row):not(.mp-zone-row):not(.mp-cluster-row):not(.mp-cluster-subtotal):not(.mp-zone-subtotal):not(.mp-agency-subtotal):not(.mp-grand-total){position:relative;background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:10px 12px;box-shadow:0 2px 8px rgba(15,23,42,.05);}
+  tbody tr:not(.budget-total-row):not(.sp-cluster-row):not(.sp-team-row):not(.sp-team-subtotal):not(.sp-cluster-subtotal):not(.sp-grand-total):not(.mp-agency-row):not(.mp-zone-row):not(.mp-cluster-row):not(.mp-cluster-subtotal):not(.mp-zone-subtotal):not(.mp-agency-subtotal):not(.mp-grand-total) td{display:grid;grid-template-columns:105px 1fr;gap:8px;padding:5px 0;border:0;background:transparent!important;white-space:normal;}
+  tbody tr:not(.budget-total-row):not(.sp-cluster-row):not(.sp-team-row):not(.sp-team-subtotal):not(.sp-cluster-subtotal):not(.sp-grand-total):not(.mp-agency-row):not(.mp-zone-row):not(.mp-cluster-row):not(.mp-cluster-subtotal):not(.mp-zone-subtotal):not(.mp-agency-subtotal):not(.mp-grand-total) td::before{content:attr(data-label);font-size:.56rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#94A3B8;}
+  tbody tr:not(.budget-total-row):not(.sp-cluster-row):not(.sp-team-row):not(.sp-team-subtotal):not(.sp-cluster-subtotal):not(.sp-grand-total):not(.mp-agency-row):not(.mp-zone-row):not(.mp-cluster-row):not(.mp-cluster-subtotal):not(.mp-zone-subtotal):not(.mp-agency-subtotal):not(.mp-grand-total) td:first-child{position:static;box-shadow:none;background:transparent!important;}
+  tbody tr:not(.budget-total-row):not(.sp-cluster-row):not(.sp-team-row):not(.sp-team-subtotal):not(.sp-cluster-subtotal):not(.sp-grand-total):not(.mp-agency-row):not(.mp-zone-row):not(.mp-cluster-row):not(.mp-cluster-subtotal):not(.mp-zone-subtotal):not(.mp-agency-subtotal):not(.mp-grand-total) td:nth-child(1),tbody tr:not(.budget-total-row):not(.sp-cluster-row):not(.sp-team-row):not(.sp-team-subtotal):not(.sp-cluster-subtotal):not(.sp-grand-total):not(.mp-agency-row):not(.mp-zone-row):not(.mp-cluster-row):not(.mp-cluster-subtotal):not(.mp-zone-subtotal):not(.mp-agency-subtotal):not(.mp-grand-total) td:nth-child(2){font-weight:700;}
+  /* Hide lower-priority columns on mobile. */
+  #v-table td:nth-child(n+5):nth-child(-n+10),#vd-table td:nth-child(n+3):nth-child(-n+8),#fn-table td:nth-child(n+5):nth-child(-n+9){display:none!important;}
+  #v-table td:nth-child(11),#v-table td:nth-child(12),#v-table td:nth-child(13),#vd-table td:nth-child(9),#vd-table td:nth-child(10),#fn-table td:nth-child(10),#fn-table td:nth-child(11){display:grid!important;}
+  .modal-box,.drill-box{width:100%;max-width:none;border-radius:18px 18px 0 0;height:92vh;margin-top:auto;transform:translateY(100%);}
+  .modal-overlay.open .modal-box,.drill-overlay.open .drill-box{transform:translateY(0);}
+  .modal-header::after{display:none;}
+  .detail-grid{grid-template-columns:1fr 1fr;}
+  .mobile-action-bar{display:flex;}
+}
+@media(min-width:769px){.mobile-action-bar{display:none!important;}}
+.mobile-action-bar{position:fixed;left:10px;right:10px;bottom:10px;z-index:150;gap:8px;padding:7px;background:rgba(255,255,255,.96);border:1px solid #CBD5E1;border-radius:14px;box-shadow:0 10px 30px rgba(15,23,42,.14);}
+.mobile-action-bar button{flex:1;height:38px;border:1px solid #CBD5E1;background:#fff;border-radius:9px;color:#334155;font-weight:750;font-size:.72rem;}
+.mobile-action-bar button.primary{background:#1E40AF;color:#fff;border-color:#1E40AF;}
+
   </style>
 </head>
 <body>
@@ -503,14 +626,9 @@
       <div class="logo-block">
         <div class="logo-text"><div class="logo-word">THORE</div><div class="logo-sub">Dashboard</div></div>
       </div>
-    </div>
-    <div class="header-center">
-      <div id="dashTabs" class="dash-tabs" style="display:none;">
-        <button class="dash-tab active" onclick="switchDashboard('visits')">📋 Friday Lineup</button>
-        <button class="dash-tab" onclick="switchDashboard('visitdone')">✅ Visit Done</button>
-        <button class="dash-tab" onclick="switchDashboard('fnclients')">🏆 FN Clients</button>
-        <button class="dash-tab" id="marketingTabBtn" onclick="switchDashboard('marketing')">📈 Marketing Dashboard</button>
-        <button class="dash-tab" onclick="switchDashboard('salesdash')">📊 Sales Dashboard</button>
+      <div class="header-context">
+        <div class="header-context-eyebrow">Operations Control Centre</div>
+        <div class="header-context-title">Performance &amp; Workflow</div>
       </div>
     </div>
     <div class="header-right">
@@ -523,11 +641,20 @@
           <div class="pd-item username" id="pdUsername">—</div>
           <div class="pd-item" id="pdFormLink" onclick="window.open('index.html')">📋 Friday Lineup Form</div>
           <div class="pd-item" id="pdFNLink" onclick="window.open('https://thore-india.github.io/FN_Clients_Form/index.html')">🏆 FN Clients Form</div>
-
-        <div class="pd-item logout" onclick="logout()">Sign Out</div>
+          <div class="pd-item logout" onclick="logout()">Sign Out</div>
+        </div>
       </div>
     </div>
   </div>
+  <div class="header-nav">
+    <div id="dashTabs" class="dash-tabs" style="display:none;">
+        <button class="dash-tab active" data-dash="visits" onclick="switchDashboard('visits')">📋 Friday Lineup <span class="tab-badge" id="tabBadge-visits">0</span></button>
+        <button class="dash-tab" data-dash="visitdone" onclick="switchDashboard('visitdone')">✅ Visit Done <span class="tab-badge" id="tabBadge-visitdone">0</span></button>
+        <button class="dash-tab" data-dash="fnclients" onclick="switchDashboard('fnclients')">🏆 FN Clients <span class="tab-badge" id="tabBadge-fnclients">0</span></button>
+        <button class="dash-tab" id="marketingTabBtn" data-dash="marketing" onclick="switchDashboard('marketing')">📈 Marketing <span class="tab-badge" id="tabBadge-marketing">0</span></button>
+        <button class="dash-tab" data-dash="salesdash" onclick="switchDashboard('salesdash')">📊 Sales <span class="tab-badge" id="tabBadge-salesdash">0</span></button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -554,13 +681,20 @@
 
     <!-- VISITS -->
     <div id="visitsDash">
+      <div class="section-head"><div><div class="section-kicker">FRIDAY LINEUP</div><h1>Upcoming Visits</h1><p>Prioritise the next conversations and keep the field team moving.</p></div><div class="section-live"><span></span> Live data</div></div>
+      <div class="metrics-row kpi-banner" id="visitsMetrics">
+        <div class="metric-card"><div class="metric-icon gold">📋</div><div class="metric-body"><div class="metric-value" id="vm-total">—</div><div class="metric-label">Total Visits</div><div class="metric-trend" id="vm-trend">Current view</div></div></div>
+        <div class="metric-card"><div class="metric-icon green">📅</div><div class="metric-body"><div class="metric-value" id="vm-today">—</div><div class="metric-label">Today's Visits</div><div class="metric-trend">Scheduled today</div></div></div>
+        <div class="metric-card"><div class="metric-icon blue">👥</div><div class="metric-body"><div class="metric-value" id="vm-employees">—</div><div class="metric-label">Sales Executives</div><div class="metric-trend">People in lineup</div></div></div>
+        <div class="metric-card"><div class="metric-icon orange">🏗️</div><div class="metric-body"><div class="metric-value" id="vm-projects">—</div><div class="metric-label">Projects</div><div class="metric-trend">Across lineup</div></div></div>
+      </div>
       <!-- <div class="metrics-row">
         <div class="metric-card"><div class="metric-icon gold">📋</div><div class="metric-body"><div class="metric-value" id="vm-total">—</div><div class="metric-label">Total Visits</div></div></div>
         <div class="metric-card"><div class="metric-icon green">📅</div><div class="metric-body"><div class="metric-value" id="vm-today">—</div><div class="metric-label">Today's Visits</div></div></div>
         <div class="metric-card"><div class="metric-icon blue">👥</div><div class="metric-body"><div class="metric-value" id="vm-employees">—</div><div class="metric-label">Employees</div></div></div>
         <div class="metric-card"><div class="metric-icon orange">🏗️</div><div class="metric-body"><div class="metric-value" id="vm-projects">—</div><div class="metric-label">Projects</div></div></div>
       </div> -->
-      <div class="filters-bar"><div class="filters-grid">
+      <div class="filter-command-row"><div class="filter-search"><span class="search-icon">⌕</span><input type="search" id="v-globalSearch" placeholder="Search client, phone, project…" oninput="applyVisitFilters()" autocomplete="off"><button type="button" class="search-clear" aria-label="Clear search" onclick="clearGlobalSearch('v')">×</button></div></div><div class="filters-bar"><div class="filters-grid">
         <div class="filter-item"><label>PNL Head</label><select id="v-pnlFilter" onchange="applyVisitFilters()"><option value="">All PNL Heads</option></select></div>
         <div class="filter-item"><label>Manager</label><select id="v-managerFilter" onchange="applyVisitFilters()"><option value="">All Managers</option></select></div>
         <div class="filter-item"><label>Team Lead</label><select id="v-tlFilter" onchange="applyVisitFilters()"><option value="">All Team Leads</option></select></div>
@@ -574,7 +708,7 @@
         <div class="filter-item"><label>To Date</label><input type="date" id="v-toDate" onchange="applyVisitFilters()"></div>
         <div class="filter-item"><label>&nbsp;</label><div class="filter-actions"><button class="clear-btn" onclick="clearVisitFilters()">Clear</button><div class="view-tabs"><button class="view-tab active" id="v-detailTab" onclick="switchVisitView('detail')">Detail</button><button class="view-tab" id="v-pivotTab" onclick="switchVisitView('pivot')">Pivot</button></div></div></div>
       </div></div>
-      <div class="table-meta"><div class="row-count" id="v-rowCount">Loading…</div><div class="last-updated" id="v-lastUpdated"></div></div>
+      <div class="active-filter-chips" id="v-filterChips"></div></div><div class="table-meta"><div class="row-count" id="v-rowCount">Loading…</div><div class="last-updated" id="v-lastUpdated"></div></div>
       <div id="v-detailView" class="table-wrap">
         <table id="v-table"><thead><tr>
           <th class="sortable" onclick="sortVisits(0)">Cluster</th><th class="sortable" onclick="sortVisits(1)">Team Lead</th>
@@ -588,13 +722,20 @@
 
     <!-- VISIT DONE -->
     <div id="visitdoneDash" style="display:none;">
+      <div class="section-head"><div><div class="section-kicker">VISIT OUTCOMES</div><h1>Completed Visits</h1><p>Review completed touchpoints and move the strongest opportunities forward.</p></div><div class="section-live"><span></span> Live data</div></div>
+      <div class="metrics-row kpi-banner" id="visitDoneMetrics">
+        <div class="metric-card"><div class="metric-icon gold">✅</div><div class="metric-body"><div class="metric-value" id="vdm-total">—</div><div class="metric-label">Total Done</div><div class="metric-trend">Completed touchpoints</div></div></div>
+        <div class="metric-card"><div class="metric-icon green">🤝</div><div class="metric-body"><div class="metric-value" id="vdm-visit">—</div><div class="metric-label">In-Person Visits</div><div class="metric-trend">On-site meetings</div></div></div>
+        <div class="metric-card"><div class="metric-icon blue">📹</div><div class="metric-body"><div class="metric-value" id="vdm-vc">—</div><div class="metric-label">Video Calls</div><div class="metric-trend">VC touchpoints</div></div></div>
+        <div class="metric-card"><div class="metric-icon orange">👥</div><div class="metric-body"><div class="metric-value" id="vdm-employees">—</div><div class="metric-label">Executives</div><div class="metric-trend">Active contributors</div></div></div>
+      </div>
       <!-- <div class="metrics-row">
         <div class="metric-card"><div class="metric-icon gold">✅</div><div class="metric-body"><div class="metric-value" id="vdm-total">—</div><div class="metric-label">Total Done</div></div></div>
         <div class="metric-card"><div class="metric-icon green">🤝</div><div class="metric-body"><div class="metric-value" id="vdm-visit">—</div><div class="metric-label">In-Person Visits</div></div></div>
         <div class="metric-card"><div class="metric-icon blue">📹</div><div class="metric-body"><div class="metric-value" id="vdm-vc">—</div><div class="metric-label">Video Calls</div></div></div>
         <div class="metric-card"><div class="metric-icon orange">👥</div><div class="metric-body"><div class="metric-value" id="vdm-employees">—</div><div class="metric-label">Employees</div></div></div>
       </div> -->
-      <div class="filters-bar"><div class="filters-grid">
+      <div class="filter-command-row"><div class="filter-search"><span class="search-icon">⌕</span><input type="search" id="vd-globalSearch" placeholder="Search client, phone, project…" oninput="applyVDFilters()" autocomplete="off"><button type="button" class="search-clear" aria-label="Clear search" onclick="clearGlobalSearch('vd')">×</button></div></div><div class="filters-bar"><div class="filters-grid">
         <div class="filter-item"><label>PNL Head</label><select id="vd-pnlFilter" onchange="applyVDFilters()"><option value="">All PNL Heads</option></select></div>
         <div class="filter-item"><label>Manager</label><select id="vd-managerFilter" onchange="applyVDFilters()"><option value="">All Managers</option></select></div>
         <div class="filter-item"><label>Team Lead</label><select id="vd-tlFilter" onchange="applyVDFilters()"><option value="">All Team Leads</option></select></div>
@@ -608,7 +749,7 @@
         <div class="filter-item"><label>To Date</label><input type="date" id="vd-toDate" onchange="applyVDFilters()"></div>
         <div class="filter-item"><label>&nbsp;</label><button class="clear-btn" onclick="clearVDFilters()">Clear</button></div>
       </div></div>
-      <div class="table-meta"><div class="row-count" id="vd-rowCount">Loading…</div><div class="last-updated" id="vd-lastUpdated"></div></div>
+      <div class="active-filter-chips" id="vd-filterChips"></div></div><div class="table-meta"><div class="row-count" id="vd-rowCount">Loading…</div><div class="last-updated" id="vd-lastUpdated"></div></div>
       <div class="table-wrap">
         <table id="vd-table"><thead><tr>
           <th class="sortable" onclick="sortVD(0)">Visit Date</th><th class="sortable" onclick="sortVD(1)">Customer Name</th>
@@ -620,6 +761,13 @@
 
     <!-- FN CLIENTS -->
     <div id="fnDash" style="display:none;">
+      <div class="section-head"><div><div class="section-kicker">FN CLIENTS</div><h1>Opportunity Pipeline</h1><p>Scan active clients first. Drill into a record only when the next action matters.</p></div><div class="section-live"><span></span> Pipeline view</div></div>
+      <div class="metrics-row kpi-banner" id="fnMetrics">
+        <div class="metric-card"><div class="metric-icon gold">🏆</div><div class="metric-body"><div class="metric-value" id="fnm-total">—</div><div class="metric-label">Total Clients</div><div class="metric-trend">Visible dataset</div></div></div>
+        <div class="metric-card"><div class="metric-icon" style="background:#FEF2F2">🔴</div><div class="metric-body"><div class="metric-value" id="fnm-hot">—</div><div class="metric-label">Hot Leads</div><div class="metric-trend">Immediate attention</div></div></div>
+        <div class="metric-card"><div class="metric-icon green">✅</div><div class="metric-body"><div class="metric-value" id="fnm-booked">—</div><div class="metric-label">Booked</div><div class="metric-trend">Closed wins</div></div></div>
+        <div class="metric-card"><div class="metric-icon blue">⚡</div><div class="metric-body"><div class="metric-value" id="fnm-active">—</div><div class="metric-label">Active Pipeline</div><div class="metric-trend">Hot + Warm + Cold</div></div></div>
+      </div>
       <!-- <div class="metrics-row">
         <div class="metric-card"><div class="metric-icon gold">🏆</div><div class="metric-body"><div class="metric-value" id="fnm-total">—</div><div class="metric-label">Total Clients</div></div></div>
         <div class="metric-card"><div class="metric-icon" style="background:var(--red-bg)">🔴</div><div class="metric-body"><div class="metric-value" id="fnm-hot" style="color:var(--red)">—</div><div class="metric-label">Hot Leads</div></div></div>
@@ -628,7 +776,7 @@
       </div> -->
       <div class="loan-dept-banner" id="loanDeptBanner">💼 Loan Department View — showing only <strong style="margin:0 4px">Lost</strong> &amp; <strong style="margin:0 4px">Booked</strong> clients</div>
       <div class="prefilter-note" id="fnPrefilterNote" style="display:none;">ℹ️ Showing active clients only (Hot, Warm, Cold). Lost &amp; Booked are hidden.<button onclick="showAllFNStatuses()">Show All</button></div>
-      <div class="filters-bar"><div class="filters-grid">
+      <div class="filter-command-row"><div class="filter-search"><span class="search-icon">⌕</span><input type="search" id="fn-globalSearch" placeholder="Search client, phone, ID…" oninput="applyFNFilters()" autocomplete="off"><button type="button" class="search-clear" aria-label="Clear search" onclick="clearGlobalSearch('fn')">×</button></div></div><div class="filters-bar"><div class="filters-grid">
         <div class="filter-item"><label>PNL Head</label><select id="fn-pnlFilter" onchange="applyFNFilters()"><option value="">All PNL Heads</option></select></div>
         <div class="filter-item"><label>Manager</label><select id="fn-managerFilter" onchange="applyFNFilters()"><option value="">All Managers</option></select></div>
         <div class="filter-item"><label>Team Lead</label><select id="fn-tlFilter" onchange="applyFNFilters()"><option value="">All Team Leads</option></select></div>
@@ -653,7 +801,7 @@
         <div class="filter-item date-range-item"><label>Date Range</label><div class="date-range-pair"><input type="date" id="fn-fromDate" onchange="applyFNFilters()" title="From date"><span class="date-range-sep">–</span><input type="date" id="fn-toDate" onchange="applyFNFilters()" title="To date"></div></div>
         <div class="filter-item"><label>&nbsp;</label><div class="filter-actions"><button class="clear-btn" onclick="clearFNFilters()">Clear</button><div class="view-tabs" id="fnViewTabs"><button class="view-tab active" id="fn-detailTab" onclick="switchFNView('detail')">Detail</button><button class="view-tab" id="fn-pivotTab" onclick="switchFNView('pivot')">Pivot</button></div></div></div>
       </div></div>
-      <div class="table-meta"><div class="row-count" id="fn-rowCount">Loading…</div><div class="last-updated" id="fn-lastUpdated"></div></div>
+      <div class="active-filter-chips" id="fn-filterChips"></div></div><div class="table-meta"><div class="row-count" id="fn-rowCount">Loading…</div><div class="last-updated" id="fn-lastUpdated"></div></div>
       <div id="fn-detailView" class="table-wrap">
         <table id="fn-table"><thead><tr>
           <th class="sortable" onclick="sortFN(0)">Cluster</th><th class="sortable" onclick="sortFN(1)">Team Lead</th>
@@ -667,6 +815,13 @@
 
     <!-- MARKETING DASHBOARD -->
     <div id="marketingDash" style="display:none;">
+      <div class="section-head"><div><div class="section-kicker">MARKETING PERFORMANCE</div><h1>Acquisition Efficiency</h1><p>Understand where spend turns into visits, bookings and revenue.</p></div><div class="section-live"><span></span> Performance view</div></div>
+      <div class="metrics-row kpi-banner" id="mpMetrics">
+        <div class="metric-card"><div class="metric-icon gold">🧲</div><div class="metric-body"><div class="metric-value" id="mpm-leads">—</div><div class="metric-label">Total Leads</div><div class="metric-trend">Filtered acquisition</div></div></div>
+        <div class="metric-card"><div class="metric-icon blue">💸</div><div class="metric-body"><div class="metric-value" id="mpm-spent">—</div><div class="metric-label">Total Spent</div><div class="metric-trend">Campaign investment</div></div></div>
+        <div class="metric-card"><div class="metric-icon green">💰</div><div class="metric-body"><div class="metric-value" id="mpm-revenue">—</div><div class="metric-label">Revenue</div><div class="metric-trend">Attributed revenue</div></div></div>
+        <div class="metric-card"><div class="metric-icon orange">🎫</div><div class="metric-body"><div class="metric-value" id="mpm-tokens">—</div><div class="metric-label">Tokens</div><div class="metric-trend" id="mpm-roi">ROI —</div></div></div>
+      </div>
       <div class="maintenance-placeholder" id="marketingMaintenance" style="display:none;">
         <div class="maintenance-box">
           <div class="maintenance-icon">🛠️</div>
@@ -682,7 +837,7 @@
         <div class="metric-card"><div class="metric-icon gold">🎫</div><div class="metric-body"><div class="metric-value" id="mpm-tokens">—</div><div class="metric-label">Tokens</div></div></div>
         <div class="metric-card"><div class="metric-icon orange">📐</div><div class="metric-body"><div class="metric-value" id="mpm-roi">—</div><div class="metric-label">Overall Spent/Revenue %</div></div></div>
       </div> -->
-      <div class="filters-bar"><div class="filters-grid">
+      <div class="filter-command-row"><div class="filter-search"><span class="search-icon">⌕</span><input type="search" id="mp-globalSearch" placeholder="Search agency, project, campaign…" oninput="applyMPFilters()" autocomplete="off"><button type="button" class="search-clear" aria-label="Clear search" onclick="clearGlobalSearch('mp')">×</button></div></div><div class="filters-bar"><div class="filters-grid">
         <div class="filter-item"><label>Agency</label><select id="mp-agencyFilter" onchange="applyMPFilters()"><option value="">All Agencies</option></select></div>
         <div class="filter-item"><label>Zone</label><select id="mp-zoneFilter" onchange="applyMPFilters()"><option value="">All Zones</option></select></div>
         <div class="filter-item"><label>Cluster</label><select id="mp-clusterFilter" onchange="applyMPFilters()"><option value="">All Clusters</option></select></div>
@@ -692,7 +847,7 @@
         <div class="filter-item"><label>&nbsp;</label><div class="filter-actions"><button class="clear-btn" onclick="clearMPFilters()">Clear</button><div class="sp-view-toggle"><button class="view-tab active" id="mp-tableTab" onclick="switchMPView('table')">📋 Table</button><button class="view-tab" id="mp-dashTab" onclick="switchMPView('graphical')">📊 Graphical</button></div></div></div>
       </div></div>
       <div class="prefilter-note">ℹ️ <span>Table shows project-wise totals for faster loading. Click the ▸ next to a project to expand its campaign-wise breakdown.</span></div>
-      <div class="table-meta"><div class="row-count" id="mp-rowCount">Loading…</div><div class="last-updated" id="mp-lastUpdated"></div></div>
+      <div class="active-filter-chips" id="mp-filterChips"></div></div><div class="table-meta"><div class="row-count" id="mp-rowCount">Loading…</div><div class="last-updated" id="mp-lastUpdated"></div></div>
 
       <div id="mp-tableView" class="table-wrap">
         <table id="mp-table"><thead><tr>
@@ -714,6 +869,13 @@
 
     <!-- SALES DASHBOARD -->
     <div id="salesDash" style="display:none;">
+      <div class="section-head"><div><div class="section-kicker">SALES PERFORMANCE</div><h1>Sales Command View</h1><p>Compare funnel throughput, conversion quality and target progress.</p></div><div class="section-live"><span></span> Performance view</div></div>
+      <div class="metrics-row kpi-banner" id="spMetrics">
+        <div class="metric-card"><div class="metric-icon gold">🧲</div><div class="metric-body"><div class="metric-value" id="spm-leads">—</div><div class="metric-label">Leads</div><div class="metric-trend">Lead volume</div></div></div>
+        <div class="metric-card"><div class="metric-icon blue">🏠</div><div class="metric-body"><div class="metric-value" id="spm-sv">—</div><div class="metric-label">Site Visits</div><div class="metric-trend">SV completed</div></div></div>
+        <div class="metric-card"><div class="metric-icon orange">🤝</div><div class="metric-body"><div class="metric-value" id="spm-meetings">—</div><div class="metric-label">Meetings</div><div class="metric-trend">VC / meetings</div></div></div>
+        <div class="metric-card"><div class="metric-icon green">✅</div><div class="metric-body"><div class="metric-value" id="spm-bookings">—</div><div class="metric-label">Bookings</div><div class="metric-trend" id="spm-bookingTrend">Closed wins</div></div></div>
+      </div>
       <div class="maintenance-placeholder" id="salesMaintenance" style="display:none;">
         <div class="maintenance-box">
           <div class="maintenance-icon">🛠️</div>
@@ -729,7 +891,7 @@
         <div class="metric-card"><div class="metric-icon gold">🎫</div><div class="metric-body"><div class="metric-value" id="spm-tokens">—</div><div class="metric-label">Tokens</div></div></div>
         <div class="metric-card"><div class="metric-icon green">✅</div><div class="metric-body"><div class="metric-value" id="spm-bookings">—</div><div class="metric-label">Bookings</div></div></div>
       </div> -->
-      <div class="filters-bar"><div class="filters-grid">
+      <div class="filter-command-row"><div class="filter-search"><span class="search-icon">⌕</span><input type="search" id="sp-globalSearch" placeholder="Search employee, project, developer…" oninput="applySPFilters()" autocomplete="off"><button type="button" class="search-clear" aria-label="Clear search" onclick="clearGlobalSearch('sp')">×</button></div></div><div class="filters-bar"><div class="filters-grid">
         <div class="filter-item"><label>Cluster</label><select id="sp-clusterFilter" onchange="applySPFilters()"><option value="">All Clusters</option></select></div>
         <div class="filter-item"><label>PNL Head</label><select id="sp-pnlFilter" onchange="applySPFilters()"><option value="">All PNL Heads</option></select></div>
         <div class="filter-item"><label>Manager</label><select id="sp-managerFilter" onchange="applySPFilters()"><option value="">All Managers</option></select></div>
@@ -741,7 +903,7 @@
         <div class="filter-item"><label>&nbsp;</label><div class="filter-actions"><button class="clear-btn" onclick="clearSPFilters()">Clear</button><div class="sp-view-toggle"><button class="view-tab active" id="sp-tableTab" onclick="switchSPView('table')">📋 Table</button><button class="view-tab" id="sp-dashTab" onclick="switchSPView('dashboard')">📊 Dashboard</button><button class="view-tab" id="sp-targetsTab" onclick="switchSPView('targets')">🎯 Targets</button></div></div></div>
       </div></div>
       <div class="prefilter-note" style="display:flex;">ℹ️ <span>Project / Developer filters narrow SV, Meeting, Booking &amp; Revenue counts only — Leads (from Sales Lead Count) are tracked per-employee, not per-project.</span></div>
-      <div class="table-meta"><div class="row-count" id="sp-rowCount">Loading…</div><div class="last-updated" id="sp-lastUpdated"></div></div>
+      <div class="active-filter-chips" id="sp-filterChips"></div></div><div class="table-meta"><div class="row-count" id="sp-rowCount">Loading…</div><div class="last-updated" id="sp-lastUpdated"></div></div>
 
       <div id="sp-tableView" class="table-wrap">
         <table id="sp-table"><thead><tr>
@@ -827,7 +989,14 @@
   <div class="modal-box">
     <div class="modal-header"><div class="modal-title" id="modalCustomerName">Client Details</div><div class="modal-close" onclick="closeDetailModal()">✕</div></div>
     <div class="modal-body">
-      <div class="detail-grid" id="detailGrid"></div>
+      <div class="detail-tabs" role="tablist">
+        <button class="detail-tab active" id="detailTabOverview" onclick="switchDetailTab('overview')">Overview</button>
+        <button class="detail-tab" id="detailTabActivity" onclick="switchDetailTab('activity')">Activity Log</button>
+        <button class="detail-tab" id="detailTabNotes" onclick="switchDetailTab('notes')">Notes</button>
+      </div>
+      <div class="detail-panel active" id="detailPanelOverview"><div class="detail-grid" id="detailGrid"></div></div>
+      <div class="detail-panel" id="detailPanelActivity"><div class="activity-card"><div class="detail-label">Operations activity</div><div class="activity-value" id="detailActivityText">No activity recorded.</div></div></div>
+      <div class="detail-panel" id="detailPanelNotes"><div class="activity-card"><div class="detail-label">Client / operations notes</div><div class="activity-value" id="detailNotesText">No notes recorded.</div></div></div>
       <div class="admin-edit-panel" id="adminEditPanel" style="display:none;">
         <div class="admin-edit-title" id="adminEditTitle">✏️ Operations Update</div>
         <div class="admin-edit-row" id="adminStatusRow">
@@ -865,6 +1034,12 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="mobile-action-bar" aria-label="Quick actions">
+  <button class="primary" onclick="switchDashboard(activeDash);window.scrollTo({top:0,behavior:'smooth'});">⌃ Top</button>
+  <button onclick="focusActiveSearch()">⌕ Search</button>
+  <button onclick="clearActiveFilters()">Clear Filters</button>
 </div>
 
 <footer>Engineered for excellence by <a href="https://narendraspatil.github.io/NarenP-website/" target="_blank">Operations Department, THORE</a> &nbsp;|&nbsp; Copyright © <span id="yr"></span> All rights reserved.</footer>
@@ -918,7 +1093,7 @@ function syncHeaderHeight(){
   if(document.fonts&&document.fonts.ready){document.fonts.ready.then(syncHeaderHeight);}
 })();
 
-document.addEventListener('DOMContentLoaded',()=>{document.getElementById('yr').textContent=new Date().getFullYear();checkStoredSession();syncMSDisplay();});
+document.addEventListener('DOMContentLoaded',()=>{document.getElementById('yr').textContent=new Date().getFullYear();checkStoredSession();syncMSDisplay();setTimeout(()=>{updateTabBadges();syncAllDataLabels();},250);});
 
 function isLoanDept(){return auth&&auth.role.toLowerCase()==='loan department';}
 function isAdmin(){return auth&&['admin','md/ceo','md','ceo','management'].includes(auth.role.toLowerCase());}
@@ -967,7 +1142,7 @@ function handleLoginSuccess(role,user,pass,initialData){
   auth={role,user,pass};
   sessionStorage.setItem(SK.role,role);sessionStorage.setItem(SK.user,user);sessionStorage.setItem(SK.pass,pass);sessionStorage.setItem(SK.time,Date.now().toString());
   document.getElementById('loginPanel').style.display='none';
-  document.getElementById('dashPanel').style.display='flex';document.getElementById('dashPanel').style.flexDirection='column';
+  document.getElementById('dashPanel').style.display='flex';document.getElementById('dashPanel').style.flexDirection='column';const mab=document.querySelector('.mobile-action-bar');if(mab)mab.style.display='flex';
   document.getElementById('profileWrap').style.display='block';
   document.getElementById('profileAvatar').textContent=getInitials(user);document.getElementById('pdUsername').textContent=user;
   setLoginStatus('');
@@ -1003,7 +1178,7 @@ function checkStoredSession(){
 
 function logout(){
   auth=null;clearSession();if(refreshTimer)clearInterval(refreshTimer);
-  document.getElementById('dashPanel').style.display='none';document.getElementById('dashTabs').style.display='none';
+  document.getElementById('dashPanel').style.display='none';document.getElementById('dashTabs').style.display='none';const mab=document.querySelector('.mobile-action-bar');if(mab)mab.style.display='none';
   document.getElementById('profileWrap').style.display='none';document.getElementById('loginPanel').style.display='flex';
   document.getElementById('profileDropdown').classList.remove('show');document.getElementById('loanDeptBanner').style.display='none';
   document.getElementById('fnStatusTrigger').style.pointerEvents='';document.getElementById('fnStatusTrigger').style.opacity='';
@@ -1102,7 +1277,7 @@ function showAllFNStatuses(){FN_ALL_STATUSES.forEach(s=>fnSelectedStatuses.add(s
 function renderVisitData(rows){
   visitsAll=rows.map(r=>({...r,visitDate:fmtDate(r.visitDate)}));visitsFiltered=[...visitsAll];
   populateVisitFilters(visitsAll);
-  // updateVisitMetrics(visitsAll);
+  updateVisitMetrics(visitsAll);
   applyVisitFilters();
   document.getElementById('v-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
 }
@@ -1137,7 +1312,7 @@ function switchVisitView(v){
 function renderVisitTable(rows){
   const tbody=document.getElementById('v-tbody');document.getElementById('v-rowCount').textContent=rows.length+' visit(s)';
   if(!rows.length){tbody.innerHTML='<tr><td colspan="13" class="no-data">No matching records found</td></tr>';return;}
-  tbody.innerHTML=rows.map(r=>`<tr><td>${esc(r.cluster)}</td><td>${esc(r.teamLead)}</td><td>${esc(r.employee)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td>${esc(r.phone)}</td><td>${esc(r.project)}</td><td>${esc(r.developer)}</td><td style="white-space:nowrap">${esc(r.visitDate)}</td><td style="white-space:nowrap">${esc(r.visitTime)}</td><td style="max-width:140px;white-space:normal;font-size:0.78rem">${esc(r.requirement)}</td><td>${esc(r.closure)}</td><td>${r.visitType?`<span class="badge ${r.visitType==='Visit'?'badge-yes':'badge-cold'}">${esc(r.visitType)}</span>`:'—'}</td><td><button class="convert-btn" onclick="convertToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})">⚡ Convert</button></td></tr>`).join('');
+  tbody.innerHTML=rows.map(r=>`<tr><td>${esc(r.cluster)}</td><td>${esc(r.teamLead)}</td><td>${esc(r.employee)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td>${esc(r.phone)}</td><td>${esc(r.project)}</td><td>${esc(r.developer)}</td><td style="white-space:nowrap">${esc(r.visitDate)}</td><td style="white-space:nowrap">${esc(r.visitTime)}</td><td style="max-width:140px;white-space:normal;font-size:0.78rem">${esc(r.requirement)}</td><td>${esc(r.closure)}</td><td>${r.visitType?`<span class="badge ${r.visitType==='Visit'?'badge-yes':'badge-cold'}">${esc(r.visitType)}</span>`:'—'}</td><td><button class="convert-btn" onclick="convertToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="More actions">⋮</button></td></tr>`).join('');
 }
 function renderVisitPivot(rows){
   const dates=[...new Set(rows.map(r=>fmtDate(r.visitDate)).filter(Boolean))].sort();
@@ -1161,7 +1336,7 @@ function applySortVisits(){const keys=['cluster','teamLead','employee','customer
 
 function renderFNData(rows){
   fnAll=rows.map(r=>({...r,visitDate:fmtDate(r.visitDate)}));populateFNFilters(fnAll);
-  // updateFNMetrics(fnAll);
+  updateFNMetrics(fnAll);
   if(isLoanDept()){fnSelectedStatuses=new Set(['Lost','Booked']);syncMSDisplay();}
   applyFNFilters();document.getElementById('fn-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
 }
@@ -1313,7 +1488,7 @@ function loadVDData(){
 }
 function renderVDData(rows){
   vdAll=rows.map(r=>({...r,visitDate:fmtDate(r.visitDate)}));vdFiltered=[...vdAll];populateVDFilters(vdAll);
-  // updateVDMetrics(vdAll);
+  updateVDMetrics(vdAll);
   applyVDFilters();
   document.getElementById('vd-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
 }
@@ -1336,7 +1511,7 @@ function clearVDFilters(){['vd-pnlFilter','vd-managerFilter','vd-tlFilter','vd-e
 function renderVDTable(rows){
   const tbody=document.getElementById('vd-tbody');document.getElementById('vd-rowCount').textContent=rows.length+' visit(s) done';
   if(!rows.length){tbody.innerHTML='<tr><td colspan="10" class="no-data">No records found</td></tr>';return;}
-  tbody.innerHTML=rows.map(r=>`<tr><td style="white-space:nowrap">${esc(r.visitDate)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td>${esc(r.phone)}</td><td>${esc(r.teamLead)}</td><td>${esc(r.employee)}</td><td>${esc(r.project)}</td><td>${esc(r.developer)}</td><td style="max-width:160px;white-space:normal;font-size:0.76rem;color:var(--text-dim)">${esc(r.notes)}</td><td>${r.type?`<span class="badge ${r.type==='Visit'?'badge-yes':'badge-cold'}">${esc(r.type)}</span>`:'—'}</td><td><button class="convert-btn" onclick="convertVDToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})">⚡ Convert</button></td></tr>`).join('');
+  tbody.innerHTML=rows.map(r=>`<tr><td style="white-space:nowrap">${esc(r.visitDate)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td>${esc(r.phone)}</td><td>${esc(r.teamLead)}</td><td>${esc(r.employee)}</td><td>${esc(r.project)}</td><td>${esc(r.developer)}</td><td style="max-width:160px;white-space:normal;font-size:0.76rem;color:var(--text-dim)">${esc(r.notes)}</td><td>${r.type?`<span class="badge ${r.type==='Visit'?'badge-yes':'badge-cold'}">${esc(r.type)}</span>`:'—'}</td><td><button class="convert-btn" onclick="convertVDToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="More actions">⋮</button></td></tr>`).join('');
 }
 function populateVDFilters(rows){
   fillSelect('vd-pnlFilter',[...new Set(rows.map(r=>r.pnlHead).filter(Boolean))].sort(),'All PNL Heads');
@@ -1397,7 +1572,7 @@ function switchMPView(v){
 }
 function renderMPAll(){
   mpAgg=buildMPAggregation();
-  // updateMPMetrics(mpAgg);
+  updateMPMetrics(mpAgg);
   if(mpView==='table')renderMPTable(mpAgg);else renderMPCharts(mpAgg);
 }
 
@@ -1644,7 +1819,7 @@ function switchSPView(v){
 }
 function renderSPAll(){
   spAgg=buildSPAggregation();
-  // updateSPMetrics(spAgg);
+  updateSPMetrics(spAgg);
   if(spView==='table')renderSPTable(spAgg);else if(spView==='dashboard')renderSPCharts(spAgg);
 }
 
@@ -2033,6 +2208,63 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){if(refresh
 window.addEventListener('online',()=>{setStatus(true);if(auth&&!refreshTimer&&!isLoanDept())startAutoRefresh();});
 window.addEventListener('offline',()=>setStatus(false));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('drillModal').classList.remove('open');document.getElementById('detailModal').classList.remove('open');document.getElementById('spDetailModal').classList.remove('open');document.body.style.overflow='';}});
+
+
+function switchDetailTab(tab){
+  ['overview','activity','notes'].forEach(k=>{const b=document.getElementById('detailTab'+k.charAt(0).toUpperCase()+k.slice(1));const p=document.getElementById('detailPanel'+k.charAt(0).toUpperCase()+k.slice(1));if(b)b.classList.toggle('active',k===tab);if(p)p.classList.toggle('active',k===tab);});
+}
+const _openDetailModal= openDetailModal;
+openDetailModal=function(r){_openDetailModal(r);const activity=document.getElementById('detailActivityText'),notes=document.getElementById('detailNotesText');if(activity)activity.textContent=r.operationsRemark||'No operations activity recorded.';if(notes)notes.textContent=r.remark||r.requirement||'No notes recorded.';switchDetailTab('overview');};
+
+/* ================================================================
+   UI OVERHAUL BEHAVIOUR — additive only
+   ================================================================ */
+function updateTabBadges(){
+  const vals={visits:visitsFiltered.length||visitsAll.length,visitdone:vdFiltered.length||vdAll.length,fnclients:fnFiltered.length||fnAll.length,marketing:mpAgg&&mpAgg.campaigns?mpAgg.campaigns.length:mpAll.length,salesdash:spAgg&&spAgg.employees?spAgg.employees.length:(new Set(spLeadAll.map(r=>r.employee).filter(Boolean))).size};
+  Object.keys(vals).forEach(k=>{const el=document.getElementById('tabBadge-'+k);if(el)el.textContent=Number(vals[k]||0).toLocaleString('en-IN');});
+}
+function clearGlobalSearch(prefix){const el=document.getElementById(prefix+'-globalSearch');if(el){el.value='';if(prefix==='v')applyVisitFilters();else if(prefix==='vd')applyVDFilters();else if(prefix==='fn')applyFNFilters();else if(prefix==='mp')applyMPFilters();else if(prefix==='sp')applySPFilters();}}
+function focusActiveSearch(){const el=document.getElementById(activeDash==='visits'?'v-globalSearch':activeDash==='visitdone'?'vd-globalSearch':activeDash==='fnclients'?'fn-globalSearch':activeDash==='marketing'?'mp-globalSearch':'sp-globalSearch');if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'});}}
+function clearActiveFilters(){if(activeDash==='visits')clearVisitFilters();else if(activeDash==='visitdone')clearVDFilters();else if(activeDash==='fnclients')clearFNFilters();else if(activeDash==='marketing')clearMPFilters();else if(activeDash==='salesdash')clearSPFilters();}
+function renderFilterChips(prefix,items){const host=document.getElementById(prefix+'-filterChips');if(!host)return;host.innerHTML=items.filter(x=>x.value!==undefined&&x.value!==null&&String(x.value).trim()!=='').map(x=>`<span class="filter-chip">${esc(x.label)}: ${esc(x.value)} <button type="button" aria-label="Remove ${esc(x.label)} filter" onclick="removeFilter('${prefix}','${x.id}')">×</button></span>`).join('');}
+function removeFilter(prefix,id){const el=document.getElementById(id);if(!el)return;if(el.tagName==='INPUT'||el.tagName==='SELECT')el.value='';if(prefix==='v')applyVisitFilters();else if(prefix==='vd')applyVDFilters();else if(prefix==='fn')applyFNFilters();else if(prefix==='mp')applyMPFilters();else if(prefix==='sp')applySPFilters();}
+function syncDataLabels(tableId,labels){const table=document.getElementById(tableId);if(!table)return;const th=[...table.querySelectorAll('thead th')].map(x=>x.textContent.trim());table.querySelectorAll('tbody tr').forEach(tr=>{[...tr.children].forEach((td,i)=>{if(th[i])td.setAttribute('data-label',th[i]);});});}
+function syncAllDataLabels(){syncDataLabels('v-table');syncDataLabels('vd-table');syncDataLabels('fn-table');syncDataLabels('mp-table');syncDataLabels('sp-table');syncDataLabels('tgt-table');}
+const _renderVisitTable=renderVisitTable;renderVisitTable=function(rows){_renderVisitTable(rows);syncDataLabels('v-table');updateTabBadges();};
+const _renderVDTable=renderVDTable;renderVDTable=function(rows){_renderVDTable(rows);syncDataLabels('vd-table');updateTabBadges();};
+const _renderFNTable=renderFNTable;renderFNTable=function(rows){_renderFNTable(rows);syncDataLabels('fn-table');updateTabBadges();};
+const _renderMPTable=renderMPTable;renderMPTable=function(agg){_renderMPTable(agg);syncDataLabels('mp-table');updateTabBadges();};
+const _renderSPTable=renderSPTable;renderSPTable=function(agg){_renderSPTable(agg);syncDataLabels('sp-table');updateTabBadges();};
+const _updateVisitMetrics=updateVisitMetrics;updateVisitMetrics=function(rows){_updateVisitMetrics(rows);};
+const _updateFNMetrics=updateFNMetrics;updateFNMetrics=function(rows){_updateFNMetrics(rows);};
+const _updateVDMetrics=updateVDMetrics;updateVDMetrics=function(rows){_updateVDMetrics(rows);};
+const _updateMPMetrics=updateMPMetrics;updateMPMetrics=function(agg){_updateMPMetrics(agg);};
+const _updateSPMetrics=updateSPMetrics;updateSPMetrics=function(agg){_updateSPMetrics(agg);};
+function refreshKpis(){
+  if(typeof updateVisitMetrics==='function'&&visitsAll.length)updateVisitMetrics(visitsAll);
+  if(typeof updateVDMetrics==='function'&&vdAll.length)updateVDMetrics(vdAll);
+  if(typeof updateFNMetrics==='function'&&fnAll.length)updateFNMetrics(fnAll);
+  if(typeof updateMPMetrics==='function'&&mpAgg)updateMPMetrics(mpAgg);
+  if(typeof updateSPMetrics==='function'&&spAgg)updateSPMetrics(spAgg);
+  updateTabBadges();
+}
+const _renderVisitData=renderVisitData;renderVisitData=function(rows){_renderVisitData(rows);refreshKpis();renderVisitFilterChips();};
+const _renderVDData=renderVDData;renderVDData=function(rows){_renderVDData(rows);refreshKpis();renderVDFilterChips();};
+const _renderFNData=renderFNData;renderFNData=function(rows){_renderFNData(rows);refreshKpis();renderFNFilterChips();};
+const _renderMarketingPerformanceData=renderMarketingPerformanceData;renderMarketingPerformanceData=function(data){_renderMarketingPerformanceData(data);refreshKpis();renderMPFilterChips();};
+const _renderSalesPerformanceData=renderSalesPerformanceData;renderSalesPerformanceData=function(data){_renderSalesPerformanceData(data);refreshKpis();renderSPFilterChips();};
+function renderVisitFilterChips(){renderFilterChips('v',[{id:'v-pnlFilter',label:'PNL',value:document.getElementById('v-pnlFilter')?.value},{id:'v-managerFilter',label:'Manager',value:document.getElementById('v-managerFilter')?.value},{id:'v-tlFilter',label:'TL',value:document.getElementById('v-tlFilter')?.value},{id:'v-empFilter',label:'Employee',value:document.getElementById('v-empFilter')?.value},{id:'v-projFilter',label:'Project',value:document.getElementById('v-projFilter')?.value},{id:'v-devFilter',label:'Developer',value:document.getElementById('v-devFilter')?.value},{id:'v-closureFilter',label:'Closure',value:document.getElementById('v-closureFilter')?.value},{id:'v-globalSearch',label:'Search',value:document.getElementById('v-globalSearch')?.value},{id:'v-fromDate',label:'From',value:document.getElementById('v-fromDate')?.value},{id:'v-toDate',label:'To',value:document.getElementById('v-toDate')?.value}]);}
+function renderVDFilterChips(){renderFilterChips('vd',[{id:'vd-pnlFilter',label:'PNL',value:document.getElementById('vd-pnlFilter')?.value},{id:'vd-managerFilter',label:'Manager',value:document.getElementById('vd-managerFilter')?.value},{id:'vd-tlFilter',label:'TL',value:document.getElementById('vd-tlFilter')?.value},{id:'vd-empFilter',label:'Employee',value:document.getElementById('vd-empFilter')?.value},{id:'vd-projFilter',label:'Project',value:document.getElementById('vd-projFilter')?.value},{id:'vd-devFilter',label:'Developer',value:document.getElementById('vd-devFilter')?.value},{id:'vd-typeFilter',label:'Type',value:document.getElementById('vd-typeFilter')?.value},{id:'vd-globalSearch',label:'Search',value:document.getElementById('vd-globalSearch')?.value},{id:'vd-fromDate',label:'From',value:document.getElementById('vd-fromDate')?.value},{id:'vd-toDate',label:'To',value:document.getElementById('vd-toDate')?.value}]);}
+function renderFNFilterChips(){renderFilterChips('fn',[{id:'fn-pnlFilter',label:'PNL',value:document.getElementById('fn-pnlFilter')?.value},{id:'fn-managerFilter',label:'Manager',value:document.getElementById('fn-managerFilter')?.value},{id:'fn-tlFilter',label:'TL',value:document.getElementById('fn-tlFilter')?.value},{id:'fn-empFilter',label:'Employee',value:document.getElementById('fn-empFilter')?.value},{id:'fn-projFilter',label:'Project',value:document.getElementById('fn-projFilter')?.value},{id:'fn-devFilter',label:'Developer',value:document.getElementById('fn-devFilter')?.value},{id:'fn-globalSearch',label:'Search',value:document.getElementById('fn-globalSearch')?.value},{id:'fn-fromDate',label:'From',value:document.getElementById('fn-fromDate')?.value},{id:'fn-toDate',label:'To',value:document.getElementById('fn-toDate')?.value}]);}
+function renderMPFilterChips(){renderFilterChips('mp',[{id:'mp-agencyFilter',label:'Agency',value:document.getElementById('mp-agencyFilter')?.value},{id:'mp-zoneFilter',label:'Zone',value:document.getElementById('mp-zoneFilter')?.value},{id:'mp-clusterFilter',label:'Cluster',value:document.getElementById('mp-clusterFilter')?.value},{id:'mp-projFilter',label:'Project',value:document.getElementById('mp-projFilter')?.value},{id:'mp-campaignFilter',label:'Campaign',value:document.getElementById('mp-campaignFilter')?.value},{id:'mp-globalSearch',label:'Search',value:document.getElementById('mp-globalSearch')?.value},{id:'mp-fromDate',label:'From',value:document.getElementById('mp-fromDate')?.value},{id:'mp-toDate',label:'To',value:document.getElementById('mp-toDate')?.value}]);}
+function renderSPFilterChips(){renderFilterChips('sp',[{id:'sp-clusterFilter',label:'Cluster',value:document.getElementById('sp-clusterFilter')?.value},{id:'sp-pnlFilter',label:'PNL',value:document.getElementById('sp-pnlFilter')?.value},{id:'sp-managerFilter',label:'Manager',value:document.getElementById('sp-managerFilter')?.value},{id:'sp-tlFilter',label:'TL',value:document.getElementById('sp-tlFilter')?.value},{id:'sp-empFilter',label:'Employee',value:document.getElementById('sp-empFilter')?.value},{id:'sp-projFilter',label:'Project',value:document.getElementById('sp-projFilter')?.value},{id:'sp-devFilter',label:'Developer',value:document.getElementById('sp-devFilter')?.value},{id:'sp-globalSearch',label:'Search',value:document.getElementById('sp-globalSearch')?.value},{id:'sp-fromDate',label:'From',value:document.getElementById('sp-fromDate')?.value},{id:'sp-toDate',label:'To',value:document.getElementById('sp-toDate')?.value}]);}
+// Search-aware wrappers preserve original filter logic and only add one extra predicate.
+const _applyVisitFilters=applyVisitFilters;applyVisitFilters=function(){const q=(document.getElementById('v-globalSearch')?.value||'').trim().toLowerCase();_applyVisitFilters();if(q){visitsFiltered=visitsFiltered.filter(r=>[r.customer,r.phone,r.cluster,r.teamLead,r.employee,r.project,r.developer,r.requirement].some(v=>String(v||'').toLowerCase().includes(q)));if(currentVisitView==='detail')renderVisitTable(visitsFiltered);else renderVisitPivot(visitsFiltered);}renderVisitFilterChips();updateTabBadges();};
+const _applyVDFilters=applyVDFilters;applyVDFilters=function(){const q=(document.getElementById('vd-globalSearch')?.value||'').trim().toLowerCase();_applyVDFilters();if(q){vdFiltered=vdFiltered.filter(r=>[r.customer,r.phone,r.teamLead,r.employee,r.project,r.developer,r.notes,r.type].some(v=>String(v||'').toLowerCase().includes(q)));renderVDTable(vdFiltered);}renderVDFilterChips();updateTabBadges();};
+const _applyFNFilters=applyFNFilters;applyFNFilters=function(){const q=(document.getElementById('fn-globalSearch')?.value||'').trim().toLowerCase();_applyFNFilters();if(q){fnFiltered=fnFiltered.filter(r=>[r.customer,r.phone,r.rowIndex,r.cluster,r.teamLead,r.employee,r.project,r.developer,r.configuration,r.status].some(v=>String(v||'').toLowerCase().includes(q)));if(fnView==='detail')renderFNTable(fnFiltered);else renderFNPivot(fnFiltered);}renderFNFilterChips();updateTabBadges();};
+const _applyMPFilters=applyMPFilters;applyMPFilters=function(){const q=(document.getElementById('mp-globalSearch')?.value||'').trim().toLowerCase();_applyMPFilters();if(q){mpFiltered=mpFiltered.filter(r=>[r.agency,r.zone,r.cluster,r.project,r.campaign].some(v=>String(v||'').toLowerCase().includes(q)));renderMPAll();}renderMPFilterChips();updateTabBadges();};
+const _applySPFilters=applySPFilters;applySPFilters=function(){const q=(document.getElementById('sp-globalSearch')?.value||'').trim().toLowerCase();_applySPFilters();if(q){const matches=v=>[v.employee,v.cluster,v.teamLead,v.manager,v.pnlHead,v.project,v.developer].some(x=>String(x||'').toLowerCase().includes(q));spLeadFiltered=spLeadFiltered.filter(matches);spPerfFiltered=spPerfFiltered.filter(matches);renderSPAll();}renderSPFilterChips();updateTabBadges();};
+
 </script>
 </body>
 </html>
