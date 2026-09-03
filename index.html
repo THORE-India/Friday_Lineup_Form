@@ -282,6 +282,11 @@
     select option { background: var(--surface2); }
     textarea { resize: vertical; min-height: 110px; }
 
+    /* ── Phone row (country code + number) ─────────────────────── */
+    .phone-row { display: flex; gap: 0.5rem; }
+    .phone-row select { flex: 0 0 92px; padding-left: 0.7rem; padding-right: 28px; }
+    .phone-row input { flex: 1; }
+
     /* ── Autocomplete ───────────────────────────────────────────── */
     .autocomplete-items {
       position: absolute;
@@ -429,6 +434,56 @@
     #toast.success { background: rgba(82,196,126,0.15); border-color: rgba(82,196,126,0.4); color: var(--green); }
     #toast.error   { background: rgba(224,92,92,0.15); border-color: rgba(224,92,92,0.4); color: var(--red); }
 
+    /* ── CRM update modal ─────────────────────────────────────────── */
+    #crm-modal-backdrop {
+      display: none;
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(30,22,10,0.35);
+      backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+      padding: 1.2rem;
+    }
+    #crm-modal-backdrop.show { display: flex; }
+    .crm-modal {
+      background: var(--surface3);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      max-width: 420px;
+      width: 100%;
+      padding: 2rem 1.8rem 1.6rem;
+      text-align: center;
+    }
+    .crm-modal-icon { font-size: 2.4rem; margin-bottom: 0.6rem; }
+    .crm-modal-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 0.6rem;
+    }
+    .crm-modal.is-error .crm-modal-title { color: var(--red); }
+    .crm-modal-msg { font-size: 0.92rem; color: var(--text-dim); line-height: 1.55; margin-bottom: 1.4rem; }
+    .crm-modal-btn {
+      width: 100%;
+      padding: 0.8rem 1.2rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+      color: #fffaf2;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .crm-modal-btn:hover { filter: brightness(1.08); }
+    .crm-modal.is-error .crm-modal-btn { background: var(--red); }
+
     /* ── Status Gate ────────────────────────────────────────────── */
     #status-gate {
       display: none;
@@ -566,7 +621,19 @@
               </div>
               <div class="field">
                 <label for="phone">Phone Number <span class="req">*</span></label>
-                <input type="text" id="phone" placeholder="10-digit mobile" inputmode="numeric" maxlength="10">
+                <div class="phone-row">
+                  <select id="phoneCountryCode" aria-label="Country code">
+                    <option value="91" selected>🇮🇳 +91</option>
+                    <option value="971">🇦🇪 +971</option>
+                    <option value="1">🇺🇸 +1</option>
+                    <option value="44">🇬🇧 +44</option>
+                    <option value="65">🇸🇬 +65</option>
+                    <option value="61">🇦🇺 +61</option>
+                    <option value="966">🇸🇦 +966</option>
+                    <option value="974">🇶🇦 +974</option>
+                  </select>
+                  <input type="text" id="phone" placeholder="10-digit mobile" inputmode="numeric" maxlength="10">
+                </div>
               </div>
             </div>
 
@@ -659,11 +726,38 @@
 
 <div id="toast"></div>
 
+<!-- CRM update result modal -->
+<div id="crm-modal-backdrop">
+  <div class="crm-modal" id="crm-modal">
+    <div class="crm-modal-icon" id="crm-modal-icon">✅</div>
+    <div class="crm-modal-title" id="crm-modal-title">Lead updated in CRM</div>
+    <div class="crm-modal-msg" id="crm-modal-msg"></div>
+    <button class="crm-modal-btn" onclick="closeCrmModal()">Got it</button>
+  </div>
+</div>
+
 <script>
   // ── CONFIG ────────────────────────────────────────────────────
   // Replace with your deployed GAS Web App URL
   const GAS_URL = 'https://script.google.com/macros/s/AKfycbwL4V1nCL4M-BAMbHX0Wupfa_2mxaJXrb_p9japd1ZdAkesb4BUumSJBFGH54js7pe3/exec';
   const DASHBOARD_URL = 'dashboard.html';
+
+  // ── LEADRAT CRM CONFIG ──────────────────────────────────────────
+  // Set these to your deployed Leadrat lead-updater Web App (the
+  // leadrat-lead-update-test project's Code.gs) and its shared secret.
+  const LEADRAT_GAS_URL = 'https://script.google.com/macros/s/AKfycbz-vsPECs2MvOW8KzbEvHGNzy_L0SpPUnG7XhoyTrIIncrCNOwEHzE8pOosh60LSz1Qqg/exec';
+  const LEADRAT_APP_SECRET = 'hYwpG8NtI9SkegrQ';
+
+  // Maps this form's "Type" field to a status/sub-status pair the
+  // Leadrat backend accepts. ASSUMPTION, not confirmed against a CRM
+  // spec: "Visit" -> Site Visit Scheduled / First Visit (always "First
+  // Visit", since this form doesn't distinguish first visit vs revisit);
+  // "VC" -> Meeting Scheduled / VC/Online. Adjust here if that's wrong —
+  // nothing else needs to change.
+  const VISIT_TYPE_TO_LEADRAT_STATUS = {
+    'Visit': { statusKey: 'site_visit_scheduled', subStatusKey: 'first_visit' },
+    'VC':    { statusKey: 'meeting_scheduled',    subStatusKey: 'vc_online' }
+  };
 
   // ── STATE ─────────────────────────────────────────────────────
   let masterData = {};
@@ -915,6 +1009,7 @@
     const cluster   = document.getElementById('cluster').value;
     const cname     = (document.getElementById('cname').value     || '').trim();
     const phone     = (document.getElementById('phone').value     || '').trim();
+    const phoneCountryCode = document.getElementById('phoneCountryCode').value;
     const project   = (document.getElementById('project').value   || '').trim();
     const developer = (document.getElementById('developer').value || '').trim();
     const visitDate = document.getElementById('visitDate').value;
@@ -951,6 +1046,8 @@
     btn.textContent = 'Submitting…';
     btn.disabled    = true;
 
+    // ── 1. Sheet write — UNCHANGED payload/shape, same as before. ──
+    // This keeps the existing Friday Lineup automation untouched.
     const payload = JSON.stringify({
       action: 'submitVisit',
       employee, customerName: cname, phone, project, developer,
@@ -977,8 +1074,15 @@
       btn.textContent = 'Submit Entry';
       btn.disabled    = false;
     });
+
+    // ── 2. CRM lead status update — separate call, own feedback modal. ──
+    // Runs independently of the sheet write above; a failure here never
+    // blocks or rolls back the sheet entry, and vice versa.
+    updateLeadInCrm({
+      employee, cname, phone, phoneCountryCode, project, visitDate, visitTime, visitType, remark
+    });
   }
-  
+
   function resetForm() {
     document.getElementById('form').reset();
     document.getElementById('teamLead').value = '';
@@ -986,6 +1090,77 @@
     const devEl = document.getElementById('developer');
     devEl.value    = '';
     devEl.readOnly = false;
+  }
+
+  // ── CRM (LEADRAT) UPDATE ─────────────────────────────────────────
+  function buildScheduledDateTimeLocal_(visitDate, visitTimeStr) {
+    // visitDate: "YYYY-MM-DD" from <input type=date>.
+    // visitTimeStr: "h:mm AM/PM" from flatpickr (dateFormat 'h:i K').
+    // Returns "YYYY-MM-DDTHH:MM" (24h, local) — parseable by `new Date()`
+    // unambiguously across browsers, unlike mixing the two strings as-is.
+    const m = /^(\d{1,2}):(\d{2})\s*([AP]M)$/i.exec((visitTimeStr || '').trim());
+    if (!visitDate || !m) return null;
+    let hour = parseInt(m[1], 10);
+    const minute = m[2];
+    const ampm = m[3].toUpperCase();
+    if (ampm === 'PM' && hour !== 12) hour += 12;
+    if (ampm === 'AM' && hour === 12) hour = 0;
+    return visitDate + 'T' + String(hour).padStart(2, '0') + ':' + minute;
+  }
+
+  function updateLeadInCrm(v) {
+    if (LEADRAT_GAS_URL.indexOf('PASTE_') === 0) return; // not configured yet — skip silently
+
+    const scheduledDate = buildScheduledDateTimeLocal_(v.visitDate, v.visitTime);
+    const statusMap = VISIT_TYPE_TO_LEADRAT_STATUS[v.visitType];
+    if (!scheduledDate || !statusMap) {
+      showCrmModal(false, "Couldn't update the lead in CRM — unrecognized visit type or date/time. Please update this lead manually in CRM.");
+      return;
+    }
+
+    const leadratPayload = {
+      appSecret: LEADRAT_APP_SECRET,
+      assignedToName: v.employee,
+      customerName: v.cname,
+      mobileNumber: '+' + v.phoneCountryCode + v.phone,
+      projectName: v.project,
+      statusKey: statusMap.statusKey,
+      subStatusKey: statusMap.subStatusKey,
+      scheduledDate: scheduledDate,
+      notes: v.remark,
+      dryRun: false
+    };
+
+    // GET with the payload in the query string (not POST-with-body):
+    // Apps Script always 302-redirects, and fetch() silently downgrades a
+    // POST to GET (dropping the body) when following that redirect.
+    const url = LEADRAT_GAS_URL + '?payload=' + encodeURIComponent(JSON.stringify(leadratPayload));
+
+    fetch(url, { method: 'GET' })
+      .then(res => res.json())
+      .then(data => {
+        if (data.succeeded) {
+          showCrmModal(true, 'Your lead has been updated to Schedule ' + (statusMap.statusKey === 'meeting_scheduled' ? 'Meeting' : 'SV') + ' in Leadrat. Please check and mark it Done after your scheduled date in CRM.');
+        } else {
+          showCrmModal(false, (data.error || 'Lead not updated — please update manually in CRM.'));
+        }
+      })
+      .catch(() => {
+        showCrmModal(false, 'Could not reach the CRM update service. Please update this lead manually in CRM.');
+      });
+  }
+
+  function showCrmModal(isSuccess, message) {
+    const modal = document.getElementById('crm-modal');
+    modal.classList.toggle('is-error', !isSuccess);
+    document.getElementById('crm-modal-icon').textContent = isSuccess ? '✅' : '⚠️';
+    document.getElementById('crm-modal-title').textContent = isSuccess ? 'Lead updated in CRM' : 'CRM update issue';
+    document.getElementById('crm-modal-msg').textContent = message;
+    document.getElementById('crm-modal-backdrop').classList.add('show');
+  }
+
+  function closeCrmModal() {
+    document.getElementById('crm-modal-backdrop').classList.remove('show');
   }
 
   // ── COUNTDOWN TIMER (header) ──────────────────────────────────
