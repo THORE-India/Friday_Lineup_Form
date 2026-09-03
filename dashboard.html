@@ -105,6 +105,17 @@
     .login-status{text-align:center;font-size:0.80rem;color:var(--text-dim);margin-top:14px;min-height:20px;}
     .login-status.err{color:var(--red);}
     #dashPanel{display:none;flex-direction:column;flex:1;}
+    /* ── SINGLE-VIEW DASHBOARD ARCHITECTURE ─────────────────────
+       Only the currently selected top-level dashboard participates in layout.
+       This is deliberately stronger than ordinary display:none because the
+       dashboard contains several large tables/charts and must never stack. */
+    #dashPanel > #visitsDash,
+    #dashPanel > #visitdoneDash,
+    #dashPanel > #fnDash,
+    #dashPanel > #marketingDash,
+    #dashPanel > #salesDash{display:none !important;}
+    #dashPanel > .dashboard-section-active{display:block !important;}
+
 
     /* ── SMALLER METRIC CARDS ── */
     .metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;padding:8px 20px;background:rgba(255,255,255,0.45);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border-bottom:1px solid var(--border);position:sticky;top:var(--header-h);z-index:90;}
@@ -708,7 +719,7 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
         <div class="filter-item"><label>To Date</label><input type="date" id="v-toDate" onchange="applyVisitFilters()"></div>
         <div class="filter-item"><label>&nbsp;</label><div class="filter-actions"><button class="clear-btn" onclick="clearVisitFilters()">Clear</button><div class="view-tabs"><button class="view-tab active" id="v-detailTab" onclick="switchVisitView('detail')">Detail</button><button class="view-tab" id="v-pivotTab" onclick="switchVisitView('pivot')">Pivot</button></div></div></div>
       </div></div>
-      <div class="active-filter-chips" id="v-filterChips"></div></div><div class="table-meta"><div class="row-count" id="v-rowCount">Loading…</div><div class="last-updated" id="v-lastUpdated"></div></div>
+      <div class="active-filter-chips" id="v-filterChips"></div><div class="table-meta"><div class="row-count" id="v-rowCount">Loading…</div><div class="last-updated" id="v-lastUpdated"></div></div>
       <div id="v-detailView" class="table-wrap">
         <table id="v-table"><thead><tr>
           <th class="sortable" onclick="sortVisits(0)">Cluster</th><th class="sortable" onclick="sortVisits(1)">Team Lead</th>
@@ -749,7 +760,7 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
         <div class="filter-item"><label>To Date</label><input type="date" id="vd-toDate" onchange="applyVDFilters()"></div>
         <div class="filter-item"><label>&nbsp;</label><button class="clear-btn" onclick="clearVDFilters()">Clear</button></div>
       </div></div>
-      <div class="active-filter-chips" id="vd-filterChips"></div></div><div class="table-meta"><div class="row-count" id="vd-rowCount">Loading…</div><div class="last-updated" id="vd-lastUpdated"></div></div>
+      <div class="active-filter-chips" id="vd-filterChips"></div><div class="table-meta"><div class="row-count" id="vd-rowCount">Loading…</div><div class="last-updated" id="vd-lastUpdated"></div></div>
       <div class="table-wrap">
         <table id="vd-table"><thead><tr>
           <th class="sortable" onclick="sortVD(0)">Visit Date</th><th class="sortable" onclick="sortVD(1)">Customer Name</th>
@@ -801,7 +812,7 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
         <div class="filter-item date-range-item"><label>Date Range</label><div class="date-range-pair"><input type="date" id="fn-fromDate" onchange="applyFNFilters()" title="From date"><span class="date-range-sep">–</span><input type="date" id="fn-toDate" onchange="applyFNFilters()" title="To date"></div></div>
         <div class="filter-item"><label>&nbsp;</label><div class="filter-actions"><button class="clear-btn" onclick="clearFNFilters()">Clear</button><div class="view-tabs" id="fnViewTabs"><button class="view-tab active" id="fn-detailTab" onclick="switchFNView('detail')">Detail</button><button class="view-tab" id="fn-pivotTab" onclick="switchFNView('pivot')">Pivot</button></div></div></div>
       </div></div>
-      <div class="active-filter-chips" id="fn-filterChips"></div></div><div class="table-meta"><div class="row-count" id="fn-rowCount">Loading…</div><div class="last-updated" id="fn-lastUpdated"></div></div>
+      <div class="active-filter-chips" id="fn-filterChips"></div><div class="table-meta"><div class="row-count" id="fn-rowCount">Loading…</div><div class="last-updated" id="fn-lastUpdated"></div></div>
       <div id="fn-detailView" class="table-wrap">
         <table id="fn-table"><thead><tr>
           <th class="sortable" onclick="sortFN(0)">Cluster</th><th class="sortable" onclick="sortFN(1)">Team Lead</th>
@@ -847,7 +858,7 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
         <div class="filter-item"><label>&nbsp;</label><div class="filter-actions"><button class="clear-btn" onclick="clearMPFilters()">Clear</button><div class="sp-view-toggle"><button class="view-tab active" id="mp-tableTab" onclick="switchMPView('table')">📋 Table</button><button class="view-tab" id="mp-dashTab" onclick="switchMPView('graphical')">📊 Graphical</button></div></div></div>
       </div></div>
       <div class="prefilter-note">ℹ️ <span>Table shows project-wise totals for faster loading. Click the ▸ next to a project to expand its campaign-wise breakdown.</span></div>
-      <div class="active-filter-chips" id="mp-filterChips"></div></div><div class="table-meta"><div class="row-count" id="mp-rowCount">Loading…</div><div class="last-updated" id="mp-lastUpdated"></div></div>
+      <div class="active-filter-chips" id="mp-filterChips"></div><div class="table-meta"><div class="row-count" id="mp-rowCount">Loading…</div><div class="last-updated" id="mp-lastUpdated"></div></div>
 
       <div id="mp-tableView" class="table-wrap">
         <table id="mp-table"><thead><tr>
@@ -903,7 +914,7 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
         <div class="filter-item"><label>&nbsp;</label><div class="filter-actions"><button class="clear-btn" onclick="clearSPFilters()">Clear</button><div class="sp-view-toggle"><button class="view-tab active" id="sp-tableTab" onclick="switchSPView('table')">📋 Table</button><button class="view-tab" id="sp-dashTab" onclick="switchSPView('dashboard')">📊 Dashboard</button><button class="view-tab" id="sp-targetsTab" onclick="switchSPView('targets')">🎯 Targets</button></div></div></div>
       </div></div>
       <div class="prefilter-note" style="display:flex;">ℹ️ <span>Project / Developer filters narrow SV, Meeting, Booking &amp; Revenue counts only — Leads (from Sales Lead Count) are tracked per-employee, not per-project.</span></div>
-      <div class="active-filter-chips" id="sp-filterChips"></div></div><div class="table-meta"><div class="row-count" id="sp-rowCount">Loading…</div><div class="last-updated" id="sp-lastUpdated"></div></div>
+      <div class="active-filter-chips" id="sp-filterChips"></div><div class="table-meta"><div class="row-count" id="sp-rowCount">Loading…</div><div class="last-updated" id="sp-lastUpdated"></div></div>
 
       <div id="sp-tableView" class="table-wrap">
         <table id="sp-table"><thead><tr>
@@ -1195,11 +1206,15 @@ function switchDashboard(which){
   activeDash=which;
   const order=['visits','visitdone','fnclients','marketing','salesdash'];
   document.querySelectorAll('.dash-tab').forEach((t,i)=>t.classList.toggle('active',order[i]===which));
-  document.getElementById('visitsDash').style.display=which==='visits'?'block':'none';
-  document.getElementById('visitdoneDash').style.display=which==='visitdone'?'block':'none';
-  document.getElementById('fnDash').style.display=which==='fnclients'?'block':'none';
-  document.getElementById('marketingDash').style.display=which==='marketing'?'block':'none';
-  document.getElementById('salesDash').style.display=which==='salesdash'?'block':'none';
+  // Keep dashboard sections mutually exclusive. Use !important so responsive/theme CSS
+  // can never accidentally force a hidden dashboard back into the document flow.
+  const dashSections={visits:'visitsDash',visitdone:'visitdoneDash',fnclients:'fnDash',marketing:'marketingDash',salesdash:'salesDash'};
+  Object.entries(dashSections).forEach(([key,id])=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.classList.toggle('dashboard-section-active',key===which);
+    el.style.setProperty('display',key===which?'block':'none','important');
+  });
 
   if(which==='marketing'){
     document.getElementById('marketingMaintenance').style.display=MAINTENANCE_MODE.marketing?'flex':'none';
