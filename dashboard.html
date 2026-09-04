@@ -1160,6 +1160,8 @@ let wtCharts={};
 // ── Temporary section toggles — flip to false to bring a section back ──
 const MAINTENANCE_MODE={marketing:true,salesdash:true};
 
+const WT_ADMIN_ENABLED = false; // flip to true when you want the Target/Achievement form back
+
 // ── Dynamic header-height sync (fixes sticky metrics row / refresh pill overlap on mobile) ──
 function syncHeaderHeight(){
   const header=document.querySelector('.header');
@@ -1313,7 +1315,7 @@ function switchDashboard(which){
     // Targets AND Achievements are both stored directly on the Weekly Targets
     // sheet now (manual weekly entry) — no dependency on Sales Performance data.
     if(tgtAll.length===0)loadWTData();else{populateWTFilters();wtApplyMetricFocus();wtRenderSection();}
-    document.getElementById('wtAdminPanel').style.display=isAdmin()?'block':'none';
+    document.getElementById('wtAdminPanel').style.display=(WT_ADMIN_ENABLED&&isAdmin())?'block':'none';
   }
 }
 
@@ -2323,7 +2325,7 @@ function loadWTData(){
       tgtAll=d.data||[];
       populateWTFilters();
       populateWTLeaderDatalist();
-      document.getElementById('wtAdminPanel').style.display=isAdmin()?'block':'none';
+      document.getElementById('wtAdminPanel').style.display=(WT_ADMIN_ENABLED&&isAdmin())?'block':'none';
       wtApplyMetricFocus();
       wtRenderSection();
       document.getElementById('wt-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
@@ -2429,25 +2431,25 @@ function renderWTCharts(rows,seriesLabel){
   const blue=spCssVar('--blue'),green=spCssVar('--green'),orange=spCssVar('--orange'),gold=spCssVar('--gold'),textDim=spCssVar('--text-dim');
   Chart.defaults.color=textDim;Chart.defaults.font.family="'Inter',sans-serif";Chart.defaults.font.size=10.5;
   const labels=rows.map(r=>tgtWeekLabel(r.weekStart));
-  const barOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:9,font:{size:10}}}},scales:{x:{ticks:{font:{size:9}},grid:{display:false}},y:{beginAtZero:true,grid:{color:'rgba(120,120,120,0.12)'}}}};
+  const lineOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:9,font:{size:10}}}},scales:{x:{ticks:{font:{size:9}},grid:{display:false}},y:{beginAtZero:true,grid:{color:'rgba(120,120,120,0.12)'}}},elements:{point:{radius:3,hoverRadius:5}}};
 
   destroyWTChart('sv');
-  wtCharts.sv=new Chart(document.getElementById('wt-chart-sv'),{type:'bar',data:{labels,datasets:[
-    {label:'Target — '+seriesLabel,data:rows.map(r=>r.svTarget),backgroundColor:blue+'99',borderColor:blue,borderWidth:1,borderRadius:4,maxBarThickness:26},
-    {label:'Achieved — '+seriesLabel,data:rows.map(r=>r.svAchieved),backgroundColor:gold,borderColor:gold,borderWidth:1,borderRadius:4,maxBarThickness:26}
-  ]},options:barOpts});
+  wtCharts.sv=new Chart(document.getElementById('wt-chart-sv'),{type:'line',data:{labels,datasets:[
+    {label:'Target — '+seriesLabel,data:rows.map(r=>r.svTarget),borderColor:blue,backgroundColor:blue,borderWidth:2,borderDash:[6,4],fill:false,tension:0.25},
+    {label:'Achieved — '+seriesLabel,data:rows.map(r=>r.svAchieved),borderColor:gold,backgroundColor:gold,borderWidth:2,fill:false,tension:0.25}
+  ]},options:lineOpts});
 
   destroyWTChart('vc');
-  wtCharts.vc=new Chart(document.getElementById('wt-chart-vc'),{type:'bar',data:{labels,datasets:[
-    {label:'Target — '+seriesLabel,data:rows.map(r=>r.vcTarget),backgroundColor:orange+'99',borderColor:orange,borderWidth:1,borderRadius:4,maxBarThickness:26},
-    {label:'Achieved — '+seriesLabel,data:rows.map(r=>r.vcAchieved),backgroundColor:gold,borderColor:gold,borderWidth:1,borderRadius:4,maxBarThickness:26}
-  ]},options:barOpts});
+  wtCharts.vc=new Chart(document.getElementById('wt-chart-vc'),{type:'line',data:{labels,datasets:[
+    {label:'Target — '+seriesLabel,data:rows.map(r=>r.vcTarget),borderColor:orange,backgroundColor:orange,borderWidth:2,borderDash:[6,4],fill:false,tension:0.25},
+    {label:'Achieved — '+seriesLabel,data:rows.map(r=>r.vcAchieved),borderColor:gold,backgroundColor:gold,borderWidth:2,fill:false,tension:0.25}
+  ]},options:lineOpts});
 
   destroyWTChart('booking');
-  wtCharts.booking=new Chart(document.getElementById('wt-chart-booking'),{type:'bar',data:{labels,datasets:[
-    {label:'Target (₹ Cr) — '+seriesLabel,data:rows.map(r=>Number(r.bookingTargetCr.toFixed(2))),backgroundColor:green+'99',borderColor:green,borderWidth:1,borderRadius:4,maxBarThickness:26},
-    {label:'Achieved (₹ Cr) — '+seriesLabel,data:rows.map(r=>Number(r.bookingAchievedCr.toFixed(2))),backgroundColor:gold,borderColor:gold,borderWidth:1,borderRadius:4,maxBarThickness:26}
-  ]},options:barOpts});
+  wtCharts.booking=new Chart(document.getElementById('wt-chart-booking'),{type:'line',data:{labels,datasets:[
+    {label:'Target (₹ Cr) — '+seriesLabel,data:rows.map(r=>Number(r.bookingTargetCr.toFixed(2))),borderColor:green,backgroundColor:green,borderWidth:2,borderDash:[6,4],fill:false,tension:0.25},
+    {label:'Achieved (₹ Cr) — '+seriesLabel,data:rows.map(r=>Number(r.bookingAchievedCr.toFixed(2))),borderColor:gold,backgroundColor:gold,borderWidth:2,fill:false,tension:0.25}
+  ]},options:lineOpts});
 }
 
 function wtRenderSection(){
