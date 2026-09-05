@@ -1002,34 +1002,34 @@ a:hover { color: var(--primary); }
     // Pure client-side check now — no backend call needed at all. Mirrors the
     // old getFormStatus() GAS logic exactly: open only Friday, 10am–9pm, and
     // only if access.json's form_status flag also says "open".
-    // async function checkFormStatus() {
-    //   try {
-    //     const res = await fetch(ACCESS_JSON_URL);
-    //     const accessData = await res.json();
-    //     const now = new Date();
-    //     const day = now.getDay();
-    //     const currentTime = now.getHours() + now.getMinutes() / 60;
-    //     const isOpen = (accessData.form_status || '').toLowerCase() === 'open'
-    //                    && day === 5 && currentTime >= 10 && currentTime <= 21;
+    async function checkFormStatus() {
+      try {
+        const res = await fetch(ACCESS_JSON_URL);
+        const accessData = await res.json();
+        const now = new Date();
+        const day = now.getDay();
+        const currentTime = now.getHours() + now.getMinutes() / 60;
+        const isOpen = (accessData.form_status || '').toLowerCase() === 'open'
+                       && day === 5 && currentTime >= 10 && currentTime <= 21;
 
-    //     if (isOpen) {
-    //       document.getElementById('form-wrapper').style.display = 'block';
-    //       document.getElementById('status-gate').classList.remove('visible');
-    //       loadMasterData();
-    //     } else {
-    //       window.location.href = 'closed.html';
-    //     }
-    //   } catch (err) {
-    //     showGate('error');
-    //   }
-    // }
+        if (isOpen) {
+          document.getElementById('form-wrapper').style.display = 'block';
+          document.getElementById('status-gate').classList.remove('visible');
+          loadMasterData();
+        } else {
+          window.location.href = 'closed.html';
+        }
+      } catch (err) {
+        showGate('error');
+      }
+    }
 
 
-   function checkFormStatus() {
-     document.getElementById('form-wrapper').style.display = 'block';
-     document.getElementById('status-gate').classList.remove('visible');
-     loadMasterData();
-   }
+   // function checkFormStatus() {
+   //   document.getElementById('form-wrapper').style.display = 'block';
+   //   document.getElementById('status-gate').classList.remove('visible');
+   //   loadMasterData();
+   // }
 
   function showGate(type, message) {
     document.getElementById('form-wrapper').style.display = 'none';
