@@ -1335,6 +1335,38 @@ function refreshAll(){
   },()=>{setStatus(false);done();});
 }
 
+async function fnClientChangeStatus(recordId, newStatus) {
+  if (!recordId || !newStatus) return;
+
+  // Validate status against DB constraint values
+  const allowedStatuses = ['Hot', 'Warm', 'Cold', 'Token', 'Lost', 'Booked', ''];
+  if (!allowedStatuses.includes(newStatus)) {
+    console.error('Invalid status value provided:', newStatus);
+    alert(`Invalid status. Must be one of: ${allowedStatuses.join(', ')}`);
+    return;
+  }
+
+  try {
+    const { data, error } = await supabaseClient
+      .from('fn_clients')
+      .update({ status: newStatus })
+      .eq('id', recordId); // Target numeric primary key 'id'
+
+    if (error) {
+      console.error('Error updating status:', error);
+      alert('Failed to update status: ' + error.message);
+      return;
+    }
+
+    alert('Status updated successfully!');
+    if (typeof loadFNClientsData === 'function') {
+      loadFNClientsData();
+    }
+  } catch (err) {
+    console.error('Unexpected error:', err);
+  }
+}
+
 function loadFNData(){
   document.getElementById('fn-rowCount').textContent='Loading…';
   jsonpFetch(GAS_URL,{action:'getFNClientsData',role:auth.role,username:auth.user,password:auth.pass},d=>{
