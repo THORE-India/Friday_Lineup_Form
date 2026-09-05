@@ -936,10 +936,15 @@ a:hover { color: var(--primary); }
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   // ── CONFIG ────────────────────────────────────────────────────
-  // Replace with your deployed GAS Web App URL
-  const GAS_URL = 'https://script.google.com/macros/s/AKfycbwL4V1nCL4M-BAMbHX0Wupfa_2mxaJXrb_p9japd1ZdAkesb4BUumSJBFGH54js7pe3/exec';
+  const SUPABASE_URL      = 'https://ivetvywbdewkkqbazjxu.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2ZXR2eXdiZGV3a2txYmF6anh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NzQ2NzcsImV4cCI6MjEwNDE1MDY3N30.1lFi27ywZ1iVAU7NykMKY_Lie3krA58rBFXICXZstgo';
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: false } // this page never logs a user in
+  });
+  const ACCESS_JSON_URL = 'https://raw.githubusercontent.com/VisionInData/TrueorFalse/main/Check/access.json';
   const DASHBOARD_URL = 'dashboard.html';
 
   // ── LEADRAT CRM CONFIG ──────────────────────────────────────────
@@ -993,21 +998,29 @@ a:hover { color: var(--primary); }
   //   }, () => showGate('error'));
   // }
 
-    function checkFormStatus() {
-      jsonpFetch({ action: 'getFormStatus' }, data => {
-        if (!data.ok) { 
-          showGate('error'); 
-          return; 
-        }
-    
-        if (data.formStatus === 'open') {
+    // Pure client-side check now — no backend call needed at all. Mirrors the
+    // old getFormStatus() GAS logic exactly: open only Friday, 10am–9pm, and
+    // only if access.json's form_status flag also says "open".
+    async function checkFormStatus() {
+      try {
+        const res = await fetch(ACCESS_JSON_URL);
+        const accessData = await res.json();
+        const now = new Date();
+        const day = now.getDay();
+        const currentTime = now.getHours() + now.getMinutes() / 60;
+        const isOpen = (accessData.form_status || '').toLowerCase() === 'open'
+                       && day === 5 && currentTime >= 10 && currentTime <= 21;
+
+        if (isOpen) {
           document.getElementById('form-wrapper').style.display = 'block';
           document.getElementById('status-gate').classList.remove('visible');
           loadMasterData();
         } else {
           window.location.href = 'closed.html';
         }
-      }, () => showGate('error'));
+      } catch (err) {
+        showGate('error');
+      }
     }
 
 
@@ -1088,9 +1101,26 @@ a:hover { color: var(--primary); }
   }
 
   // ── LOAD MASTER DATA ─────────────────────────────────────────
-  function loadMasterData() {
-    jsonpFetch({ action: 'getMasterData' }, data => {
-      if (!data.ok) { showToast('Failed to load form data', 'error'); return; }
+  async function loadMasterData() {
+    try {
+      const [{ data: profilesRaw, error: profErr }, { data: staffRaw, error: staffErr }, { data: projectsRaw, error: projErr }] = await Promise.all([
+        supabaseClient.from('profiles').select('full_name, team_lead, cluster, pnl_head'),
+        supabaseClient.from('employee_master').select('full_name, team_lead, cluster, pnl_head'),
+        supabaseClient.from('project_master').select('project_name, developer_name')
+      ]);
+      if (profErr || staffErr || projErr) { showToast('Failed to load form data', 'error'); return; }
+
+      // profiles = employees with a Supabase Auth login (Team Lead and above);
+      // employee_master = everyone else (Sales Executives etc. with no login).
+      // Both are needed for a complete employee/dropdown list.
+      const allEmployees = [...(profilesRaw || []), ...(staffRaw || [])];
+
+      const data = {
+        ok: true,
+        employees: allEmployees.map(e => ({ name: e.full_name, teamLead: e.team_lead, cluster: e.cluster, pnlHead: e.pnl_head })),
+        projects: projectsRaw.map(p => ({ projectName: p.project_name, developerName: p.developer_name })),
+        developerList: [...new Set(projectsRaw.map(p => p.developer_name))].filter(Boolean).sort()
+      };
       masterData = data;
 
       // Build project → developer map
@@ -1136,7 +1166,9 @@ a:hover { color: var(--primary); }
         time_24hr:  false,
         theme:      'dark'
       });
-    }, () => showToast('Network error loading form data', 'error'));
+    } catch (err) {
+      showToast('Network error loading form data', 'error');
+    }
   }
 
   function syncEmployee() {
@@ -1217,7 +1249,7 @@ a:hover { color: var(--primary); }
   }
 
   // ── SUBMIT ────────────────────────────────────────────────────
-  function submitForm() {
+  async function submitForm() {
     const now    = new Date();
     const cutoff = new Date(); cutoff.setHours(21, 0, 0, 0);
     if (now > cutoff) { showToast('Form submission is closed after 9:00 PM', 'error'); return; }
@@ -1264,21 +1296,25 @@ a:hover { color: var(--primary); }
     btn.textContent = 'Submitting…';
     btn.disabled    = true;
 
-    // ── 1. Sheet write — UNCHANGED payload/shape, same as before. ──
-    // This keeps the existing Friday Lineup automation untouched.
-    const payload = JSON.stringify({
-      action: 'submitVisit',
-      employee, customerName: cname, phone, project, developer,
-      visitDate, visitTime, requirement, closure, visitType, remark
-    });
-
-    fetch(GAS_URL, {
-      method:  'POST',
-      mode:    'no-cors',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body:    'data=' + encodeURIComponent(payload)
-    })
-    .then(() => {
+    // ── 1. Supabase insert — same field set as the old GAS submitVisit ──
+    // action, just written directly to Postgres instead of relayed to GAS.
+    try {
+      const { error } = await supabaseClient.from('friday_lineup_visits').insert({
+        employee_name:  employee,
+        team_lead:      teamLead || null,
+        cluster:        cluster || null,
+        customer_name:  cname,
+        phone:          phone,
+        project_name:   project,
+        developer_name: developer,
+        visit_date:     visitDate,
+        visit_time:     visitTime,
+        requirements:   Array.isArray(requirement) ? requirement.join(', ') : requirement,
+        closure_chance: closure,
+        visit_type:     visitType,
+        remark:         remark
+      });
+      if (error) throw error;
       showToast('Form submitted successfully!', 'success');
       document.getElementById('form').reset();
       document.getElementById('teamLead').value = '';
@@ -1286,12 +1322,12 @@ a:hover { color: var(--primary); }
       const devEl = document.getElementById('developer');
       devEl.value    = '';
       devEl.readOnly = false;
-    })
-    .catch(() => showToast('Submission failed. Please try again.', 'error'))
-    .finally(() => {
+    } catch (err) {
+      showToast('Submission failed. Please try again.', 'error');
+    } finally {
       btn.textContent = 'Submit Entry';
       btn.disabled    = false;
-    });
+    }
 
     // ── 2. CRM lead status update — separate call, own feedback modal. ──
     // Runs independently of the sheet write above; a failure here never
@@ -1405,30 +1441,9 @@ a:hover { color: var(--primary); }
     if (diff > 0) setTimeout(() => location.reload(), diff);
   }
 
-  // ── JSONP FETCH HELPER ────────────────────────────────────────
-  function jsonpFetch(params, onSuccess, onError) {
-    const cbName = '__cb_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-    const script = document.createElement('script');
-    const qs     = Object.entries({ ...params, callback: cbName })
-                         .map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&');
-
-    const timer = setTimeout(() => {
-      cleanup();
-      if (onError) onError(new Error('Timeout'));
-    }, 12000);
-
-    window[cbName] = data => { cleanup(); onSuccess(data); };
-    script.onerror = () => { cleanup(); if (onError) onError(new Error('Script load failed')); };
-
-    function cleanup() {
-      clearTimeout(timer);
-      delete window[cbName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-    }
-
-    script.src = GAS_URL + '?' + qs;
-    document.head.appendChild(script);
-  }
+  // ── (JSONP helper removed — no more GAS calls on this page except
+  //    the untouched Leadrat CRM bridge below, which uses a plain
+  //    no-cors fetch, not JSONP.) ────────────────────────────────
 
   // ── TOAST ──────────────────────────────────────────────────────
   let toastTimer;
