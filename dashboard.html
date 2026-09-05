@@ -1247,6 +1247,46 @@ function handleLoginSuccess(role,user,pass,initialData){
   setTimeout(syncHeaderHeight,50);
 }
 
+function applyRoleFilter(query, user) {
+  // user object containing role and name details
+  switch (user.role) {
+    case 'admin':
+      // Admin sees everything; no filter applied
+      return query;
+
+    case 'pnl_head':
+      // PnL Head sees all teams under their hierarchy
+      return query.eq('pnl_head', user.fullName);
+
+    case 'manager':
+      // Manager sees records linked to their management group
+      return query.eq('manager', user.fullName);
+
+    case 'team_lead':
+      // Team Lead sees only their specific team records
+      return query.eq('team_lead', user.fullName);
+
+    default:
+      // Restrict access for undefined roles
+      return query.eq('sales_executive_name', user.fullName);
+  }
+}
+
+// Example Usage when loading FN Clients, Friday Lineup, or Weekly Targets:
+async function fetchDashboardData(tableName, user) {
+  let query = supabaseClient.from(tableName).select('*');
+  
+  // Apply hierarchy filter
+  query = applyRoleFilter(query, user);
+
+  const { data, error } = await query;
+  if (error) {
+    console.error(`Error loading ${tableName}:`, error);
+    return [];
+  }
+  return data;
+}
+
 function setupLoanDeptView(){
   const tabsEl=document.getElementById('dashTabs');tabsEl.style.display='flex';
   tabsEl.querySelectorAll('.dash-tab').forEach((btn,i)=>{btn.style.display=i===2?'block':'none';});
