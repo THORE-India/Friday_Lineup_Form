@@ -680,8 +680,10 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
       <div class="login-eyebrow">THORE India</div>
       <div class="login-title">Welcome Back</div>
       <div class="login-sub">Sign in to your dashboard</div>
-      <!-- Role is no longer picked here — it comes from your Supabase profile after sign-in. -->
-      <div class="form-field"><label>Email</label><input id="username" type="email" placeholder="you@thore.example" autocomplete="username"></div>
+      <div class="form-field"><label>Role</label>
+        <select id="role"><option>Team Lead</option><option>Manager</option><option>PNL Head</option><option>Admin</option><option>MD/CEO</option><option>Loan Department</option></select>
+      </div>
+      <div class="form-field"><label>Username</label><input id="username" type="text" placeholder="Enter username" autocomplete="username"></div>
       <div class="form-field"><label>Password</label><input id="password" type="password" placeholder="Enter password" autocomplete="current-password"></div>
       <button class="login-btn" id="loginBtn" onclick="login()">Sign In</button>
       <div class="login-status" id="loginStatus"></div>
@@ -1131,149 +1133,11 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
 
 <footer>Engineered for excellence by <a href="https://narendraspatil.github.io/NarenP-website/" target="_blank">Operations Department, THORE</a> &nbsp;|&nbsp; Copyright © <span id="yr"></span> All rights reserved.</footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ============================================================
-//  SUPABASE CONFIG — fill these in from Project Settings → API
-// ============================================================
-const SUPABASE_URL      = 'https://ivetvywbdewkkqbazjxu.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2ZXR2eXdiZGV3a2txYmF6anh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NzQ2NzcsImV4cCI6MjEwNDE1MDY3N30.1lFi27ywZ1iVAU7NykMKY_Lie3krA58rBFXICXZstgo';
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: { persistSession: true, autoRefreshToken: true }
-});
-
-// ============================================================
-//  SUPABASE DATA HELPERS
-//  (used in place of the old jsonpFetch(GAS_URL, {action:'get...'}) calls)
-// ============================================================
-async function sbSignIn(email, password){
-  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-  if (error) throw new Error(error.message);
-  const profile = await sbGetProfile();
-  if (!profile) throw new Error('Login succeeded but no profile is provisioned for this account.');
-  if (!profile.active) throw new Error('This account has been deactivated.');
-  return profile;
-}
-async function sbSignOut(){ await supabaseClient.auth.signOut(); }
-async function sbGetProfile(){
-  const { data:{ user } } = await supabaseClient.auth.getUser();
-  if (!user) return null;
-  const { data, error } = await supabaseClient.from('profiles')
-    .select('id, full_name, role, team_lead, manager, pnl_head, cluster, active')
-    .eq('id', user.id).single();
-  if (error) { console.error('sbGetProfile error:', error); return null; }
-  return data;
-}
-
-// row-shape adapters — keep every renderXTable() function completely unchanged
-function mapVisitRow(r){
-  return {
-    rowIndex: r.id, timestamp: new Date(r.submitted_at).toLocaleString(),
-    cluster: r.cluster||'', pnlHead: r.pnl_head||'', manager: r.manager||'',
-    teamLead: r.team_lead||'', employee: r.employee_name||'', customer: r.customer_name||'',
-    phone: r.phone||'', project: r.project_name||'', developer: r.developer_name||'',
-    visitDate: r.visit_date||'', visitTime: r.visit_time||'', requirement: r.requirements||'',
-    closure: r.closure_chance||'', visitType: r.visit_type||'', remark: r.remark||''
-  };
-}
-function mapFNRow(r){
-  return {
-    rowIndex: r.id, timestamp: new Date(r.created_at).toLocaleString(),
-    cluster: r.cluster||'', pnlHead: r.pnl_head||'', manager: r.manager||'', teamLead: r.team_lead||'',
-    employee: r.sales_executive_name||'', customer: r.customer_name||'', phone: r.contact_number||'',
-    propertyType: r.property_type||'', configuration: r.configuration||'', budget: r.budget||'',
-    project: r.project_name||'', developer: r.developer_name||'', status: r.status||'',
-    visitDate: r.visit_date||'', remark: r.remark||'', operationsRemark: r.operations_remark||'',
-    converted: r.converted_from_visit ? 'Yes' : 'No'
-  };
-}
-function mapVDRow(r){
-  return {
-    visitDate: r.visit_date||'', customer: r.customer_name||'', phone: r.customer_number||'',
-    employee: r.sales_executive_name||'', teamLead: r.team_lead||'', cluster: r.cluster||'',
-    pnlHead: r.pnl_head||'', manager: r.manager||'', project: r.project_name||'',
-    developer: r.developer_name||'', notes: r.notes||'', type: r.type||''
-  };
-}
-function mapSPRow(r){
-  return {
-    updatedDate: r.updated_date||'', customer: r.customer_name||'', contact: r.contact_no||'',
-    typeRaw: r.type_raw||'', leadSource: r.lead_source||'', subSource: r.sub_source||'',
-    agency: r.agency_name||'', employee: r.sales_person||'', teamLead: r.team_lead||'',
-    manager: r.manager||'', pnlHead: r.pnl_head||'', cluster: r.cluster||'',
-    project: r.project_name||'', developer: r.developer_name||'', revenue: r.revenue ?? '',
-    bookingSource: r.booking_after_sv_or_vc||''
-  };
-}
-function mapSLCRow(r){
-  return {
-    updatedDate: r.updated_date||'', employee: r.employee_name||'', teamLead: r.team_lead||'',
-    manager: r.manager||'', pnlHead: r.pnl_head||'', cluster: r.cluster||'', leadCount: r.lead_count||0
-  };
-}
-function mapMPRow(r){
-  return {
-    updatedDate: r.updated_date||'', zone: r.zone||'', cluster: r.cluster||'', project: r.project_name||'',
-    agency: r.agency||'', campaign: r.campaign_name||'', leads: r.leads||0, spent: r.amount_spent||0,
-    sv: r.sv||0, meetings: r.meetings||0, bookings: r.bookings||0, revenue: r.revenue||0,
-    bookingAfterSV: r.booking_after_sv||0, bookingAfterVC: r.booking_after_vc||0, tokens: r.tokens||0
-  };
-}
-function mapWTRow(r){
-  return {
-    rowIndex: r.id, weekStart: r.week_start||'', weekEnd: r.week_end||'', leaderLevel: r.leader_level||'',
-    leaderName: r.leader_name||'', svTarget: r.sv_target||0, vcTarget: r.vc_target||0,
-    bookingTarget: r.booking_target||0, enteredBy: r.entered_by||'',
-    svAchievement: r.sv_achievement||0, vcAchievement: r.vc_achievement||0, bookingAchievement: r.booking_achievement||0
-  };
-}
-
-async function sbFetchVisits(){ const {data,error}=await supabaseClient.from('friday_lineup_visits').select('*').order('submitted_at',{ascending:false}); if(error)throw new Error(error.message); return data.map(mapVisitRow); }
-async function sbFetchFN(){ const {data,error}=await supabaseClient.from('fn_clients').select('*').order('created_at',{ascending:false}); if(error)throw new Error(error.message); return data.map(mapFNRow); }
-async function sbFetchVD(){ const {data,error}=await supabaseClient.from('visit_done').select('*'); if(error)throw new Error(error.message); return data.map(mapVDRow); }
-async function sbFetchMarketing(){ const {data,error}=await supabaseClient.from('marketing_campaigns').select('*'); if(error)throw new Error(error.message); return data.map(mapMPRow); }
-async function sbFetchSalesPerformance(){
-  const [perf,lead]=await Promise.all([
-    supabaseClient.from('sales_performance').select('*'),
-    supabaseClient.from('sales_lead_count').select('*')
-  ]);
-  if(perf.error)throw new Error(perf.error.message);
-  if(lead.error)throw new Error(lead.error.message);
-  return { performance: perf.data.map(mapSPRow), leadCount: lead.data.map(mapSLCRow) };
-}
-async function sbFetchWeeklyTargets(){ const {data,error}=await supabaseClient.from('weekly_targets').select('*'); if(error)throw new Error(error.message); return data.map(mapWTRow); }
-
-async function sbUpdateFNClient({rowIndex,newStatus,operationsRemark}){
-  const patch={ operations_remark: operationsRemark ?? null };
-  if(newStatus!==undefined) patch.status=newStatus;
-  const {error}=await supabaseClient.from('fn_clients').update(patch).eq('id',rowIndex);
-  if(error)throw new Error(error.message);
-}
-async function sbSaveWeeklyTarget(t){
-  const row={
-    week_start:t.weekStart, week_end:t.weekEnd||t.weekStart, leader_level:t.leaderLevel, leader_name:t.leaderName
-  };
-  if(t.svTarget!==undefined) row.sv_target=t.svTarget;
-  if(t.vcTarget!==undefined) row.vc_target=t.vcTarget;
-  if(t.bookingTarget!==undefined) row.booking_target=t.bookingTarget;
-  if(t.svAchievement!==undefined) row.sv_achievement=t.svAchievement;
-  if(t.vcAchievement!==undefined) row.vc_achievement=t.vcAchievement;
-  if(t.bookingAchievement!==undefined) row.booking_achievement=t.bookingAchievement;
-  row.entered_by = auth ? auth.user : null;
-  const {error}=await supabaseClient.from('weekly_targets')
-    .upsert(row,{onConflict:'week_start,leader_level,leader_name'});
-  if(error)throw new Error(error.message);
-}
-function sbSubscribeVisits(onChange){
-  const channel=supabaseClient.channel('friday-lineup-visits-changes')
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'friday_lineup_visits'},p=>onChange())
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'friday_lineup_visits'},p=>onChange())
-    .subscribe();
-  return ()=>supabaseClient.removeChannel(channel);
-}
-
+const GAS_URL='https://script.google.com/macros/s/AKfycbwL4V1nCL4M-BAMbHX0Wupfa_2mxaJXrb_p9japd1ZdAkesb4BUumSJBFGH54js7pe3/exec';
 const FN_FORM_URL='https://thore-india.github.io/FN_Clients_Form/index.html';
-let auth=null,stopVisitSubscription=null,isRefreshing=false,activeDash='visits',currentVisitView='detail';
+const SK={role:'d_role',user:'d_user',pass:'d_pass',time:'d_time'};
+let auth=null,refreshTimer=null,isRefreshing=false,activeDash='visits',currentVisitView='detail';
 let visitsAll=[],visitsFiltered=[],vSortCol=-1,vSortDir='asc';
 let vdAll=[],vdFiltered=[],vdSortCol=-1,vdSortDir='asc';
 let fnAll=[],fnFiltered=[],fnSortCol=-1,fnSortDir='asc',fnView='detail';
@@ -1355,29 +1219,28 @@ function formatBudgetTotal(rupees){
   return(lakh%1===0?lakh.toFixed(0):lakh.toFixed(2))+' Lakh';
 }
 
-async function login(){
-  const email=document.getElementById('username').value.trim(),pass=document.getElementById('password').value;
-  if(!email||!pass){setLoginStatus('Enter email and password',true);return;}
+function login(){
+  const role=document.getElementById('role').value.trim(),user=document.getElementById('username').value.trim(),pass=document.getElementById('password').value;
+  if(!user||!pass){setLoginStatus('Enter username and password',true);return;}
   setLoginStatus('Checking credentials…');document.getElementById('loginBtn').disabled=true;
-  try{
-    const profile=await sbSignIn(email,pass);
+  const loginAction=role.toLowerCase()==='loan department'?'getFNClientsData':'getVisitData';
+  jsonpFetch(GAS_URL,{action:loginAction,role,username:user,password:pass},data=>{
     document.getElementById('loginBtn').disabled=false;
-    await handleLoginSuccess(profile.role,profile.full_name);
-  }catch(err){
-    document.getElementById('loginBtn').disabled=false;
-    setLoginStatus(err.message||'Invalid credentials',true);
-  }
+    if(!data.ok){setLoginStatus(data.error||'Invalid credentials',true);return;}
+    handleLoginSuccess(role,user,pass,data.data,loginAction);
+  },()=>{document.getElementById('loginBtn').disabled=false;setLoginStatus('Network error. Please try again.',true);});
 }
 
-async function handleLoginSuccess(role,user){
-  auth={role,user};
+function handleLoginSuccess(role,user,pass,initialData){
+  auth={role,user,pass};
+  sessionStorage.setItem(SK.role,role);sessionStorage.setItem(SK.user,user);sessionStorage.setItem(SK.pass,pass);sessionStorage.setItem(SK.time,Date.now().toString());
   document.getElementById('loginPanel').style.display='none';
   document.getElementById('dashPanel').style.display='flex';document.getElementById('dashPanel').style.flexDirection='column';const mab=document.querySelector('.mobile-action-bar');if(mab)mab.style.display='flex';
   document.getElementById('profileWrap').style.display='block';
   document.getElementById('profileAvatar').textContent=getInitials(user);document.getElementById('pdUsername').textContent=user;
   setLoginStatus('');
-  if(role.toLowerCase()==='loan department'){setupLoanDeptView();renderFNData(await sbFetchFN());document.getElementById('loanDeptBanner').style.display='flex';}
-  else{document.getElementById('dashTabs').style.display='flex';document.getElementById('pdFormLink').style.display='block';document.getElementById('pdFNLink').style.display='block';document.getElementById('marketingTabBtn').style.display=isMarketingDashAdmin()?'block':'none';renderVisitData(await sbFetchVisits());startAutoRefresh();}
+  if(role.toLowerCase()==='loan department'){setupLoanDeptView();renderFNData(initialData);document.getElementById('loanDeptBanner').style.display='flex';}
+  else{document.getElementById('dashTabs').style.display='flex';document.getElementById('pdFormLink').style.display='block';document.getElementById('pdFNLink').style.display='block';document.getElementById('marketingTabBtn').style.display=isMarketingDashAdmin()?'block':'none';renderVisitData(initialData);startAutoRefresh();}
   setStatus(true);
   // Header just changed shape (tabs/profile appeared) — resync sticky offset, next frame + short delay for safety.
   requestAnimationFrame(syncHeaderHeight);
@@ -1393,19 +1256,21 @@ function setupLoanDeptView(){
   document.getElementById('fnViewTabs').style.display='none';switchDashboard('fnclients');
 }
 
-async function checkStoredSession(){
-  const {data:{session}}=await supabaseClient.auth.getSession();
-  if(!session)return;
-  setLoginStatus('Auto-logging in…');
-  const profile=await sbGetProfile();
-  if(!profile){setLoginStatus('Session expired, please log in.',true);return;}
-  document.getElementById('username').value=profile.full_name;
-  await handleLoginSuccess(profile.role,profile.full_name);
+function checkStoredSession(){
+  const role=sessionStorage.getItem(SK.role),user=sessionStorage.getItem(SK.user),pass=sessionStorage.getItem(SK.pass),time=parseInt(sessionStorage.getItem(SK.time)||'0');
+  if(role&&user&&pass&&Date.now()-time<8*3600*1000){
+    setLoginStatus('Auto-logging in…');
+    const loginAction=role.toLowerCase()==='loan department'?'getFNClientsData':'getVisitData';
+    jsonpFetch(GAS_URL,{action:loginAction,role,username:user,password:pass},data=>{
+      if(!data.ok){clearSession();setLoginStatus('Session expired, please log in.',true);return;}
+      document.getElementById('role').value=role;document.getElementById('username').value=user;
+      handleLoginSuccess(role,user,pass,data.data);
+    },()=>setLoginStatus(''));
+  }
 }
 
-async function logout(){
-  await sbSignOut();
-  auth=null;if(stopVisitSubscription){stopVisitSubscription();stopVisitSubscription=null;}
+function logout(){
+  auth=null;clearSession();if(refreshTimer)clearInterval(refreshTimer);
   document.getElementById('dashPanel').style.display='none';document.getElementById('dashTabs').style.display='none';const mab=document.querySelector('.mobile-action-bar');if(mab)mab.style.display='none';
   document.getElementById('profileWrap').style.display='none';document.getElementById('loginPanel').style.display='flex';
   document.getElementById('profileDropdown').classList.remove('show');document.getElementById('loanDeptBanner').style.display='none';
@@ -1414,6 +1279,7 @@ async function logout(){
   requestAnimationFrame(syncHeaderHeight);
 }
 
+function clearSession(){Object.values(SK).forEach(k=>sessionStorage.removeItem(k));}
 function setLoginStatus(msg,isErr){const el=document.getElementById('loginStatus');el.textContent=msg;el.className='login-status'+(isErr?' err':'');}
 
 function switchDashboard(which){
@@ -1453,35 +1319,27 @@ function switchDashboard(which){
   }
 }
 
-// Push-based refresh: Realtime replaces the old 30s poll. This is the fix for
-// the concurrent-Friday-submission failures GAS used to have.
-function startAutoRefresh(){
-  if(stopVisitSubscription)stopVisitSubscription();
-  stopVisitSubscription=sbSubscribeVisits(()=>refreshAll());
-}
+function startAutoRefresh(){if(refreshTimer)clearInterval(refreshTimer);refreshTimer=setInterval(()=>{if(!isRefreshing&&auth)refreshAll();},30000);}
 
-async function refreshAll(){
+function refreshAll(){
   if(!auth||isRefreshing)return;isRefreshing=true;document.getElementById('refreshInd').classList.add('show');
   const done=()=>{isRefreshing=false;document.getElementById('refreshInd').classList.remove('show');};
-  try{
-    renderVisitData(await sbFetchVisits());
-    if(fnAll.length>0)renderFNData(await sbFetchFN());
-    if(vdAll.length>0)renderVDData(await sbFetchVD());
+  jsonpFetch(GAS_URL,{action:'getVisitData',role:auth.role,username:auth.user,password:auth.pass},data=>{
+    if(data.ok)renderVisitData(data.data);
+    let pending=0;const checkDone=()=>{if(--pending<=0)done();};
+    if(fnAll.length>0){pending++;jsonpFetch(GAS_URL,{action:'getFNClientsData',role:auth.role,username:auth.user,password:auth.pass},d=>{if(d.ok)renderFNData(d.data);checkDone();},checkDone);}
+    if(vdAll.length>0){pending++;jsonpFetch(GAS_URL,{action:'getVisitDoneData',role:auth.role,username:auth.user,password:auth.pass},d=>{if(d.ok)renderVDData(d.data);checkDone();},checkDone);}
     // Sales Dashboard & Marketing Dashboard intentionally excluded from auto-refresh —
     // this data changes infrequently, so it's only (re)loaded on login or tab switch.
-    setStatus(true);
-  }catch(err){
-    console.error('refreshAll error:',err);setStatus(false);
-  }finally{done();}
+    if(pending===0)done();setStatus(true);
+  },()=>{setStatus(false);done();});
 }
 
-async function loadFNData(){
+function loadFNData(){
   document.getElementById('fn-rowCount').textContent='Loading…';
-  try{
-    renderFNData(await sbFetchFN());
-  }catch(err){
-    document.getElementById('fn-rowCount').textContent='Failed to load: '+err.message;
-  }
+  jsonpFetch(GAS_URL,{action:'getFNClientsData',role:auth.role,username:auth.user,password:auth.pass},d=>{
+    if(d.ok)renderFNData(d.data);else document.getElementById('fn-rowCount').textContent='Failed to load: '+(d.error||'unknown');
+  },()=>{document.getElementById('fn-rowCount').textContent='Network error loading FN Clients data.';});
 }
 
 function toggleMSDropdown(){
@@ -1694,7 +1552,7 @@ function getInitials(u){const n=u.split('@')[0].split(/[.\-_]/);return n.length>
 function setStatus(online){const el=document.getElementById('connStatus');el.className='status-pill '+(online?'online':'offline');el.innerHTML=`<div class="status-dot"></div> ${online?'Online':'Connection issues'}`;}
 function toggleProfile(){document.getElementById('profileDropdown').classList.toggle('show');}
 
-async function saveAdminUpdate(){
+function saveAdminUpdate(){
   const r=window._currentDetailRecord;if(!r)return;
   const newStatus=isLoanDept()?'':document.getElementById('adminStatusSelect').value,newRemark=document.getElementById('adminRemarkInput').value.trim();
   if(!newStatus&&!newRemark){setAdminSaveStatus('Please change the status or add a remark before saving.',true);return;}
@@ -1704,26 +1562,32 @@ async function saveAdminUpdate(){
   if(newRemark)parts.push(`${dayStr} - ${newRemark}`);
   const combinedRemark=parts.join(', ');
   document.getElementById('adminSaveBtn').disabled=true;setAdminSaveStatus('Saving…');
-  try{
-    await sbUpdateFNClient({rowIndex:r.rowIndex,newStatus:isLoanDept()?undefined:(newStatus||r.status),operationsRemark:combinedRemark});
-    if(newStatus)r.status=newStatus;r.operationsRemark=combinedRemark;
-    document.getElementById('adminCurrentStatus').textContent=r.status||'—';document.getElementById('adminStatusSelect').value='';document.getElementById('adminRemarkInput').value='';
-    const upd=arr=>{const f=arr.find(x=>x.rowIndex===r.rowIndex);if(f){if(newStatus)f.status=r.status;f.operationsRemark=r.operationsRemark;}};upd(fnAll);upd(fnFiltered);
-    if(fnView==='detail')renderFNTable(fnFiltered);else renderFNPivot(fnFiltered);
-    setAdminSaveStatus('✓ Saved successfully!',false);document.getElementById('adminSaveBtn').disabled=false;
-  }catch(err){
-    setAdminSaveStatus('Error: '+err.message,true);document.getElementById('adminSaveBtn').disabled=false;
-  }
+  const payload=JSON.stringify({action:'updateFNClient',rowIndex:r.rowIndex,newStatus:newStatus||r.status,operationsRemark:combinedRemark,customerName:r.customer||'',phone:r.phone||'',username:auth.user,password:auth.pass,role:auth.role});
+  fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'data='+encodeURIComponent(payload)})
+  .then(res=>res.json()).then(data=>{
+    if(data.ok){
+      if(newStatus)r.status=newStatus;r.operationsRemark=combinedRemark;
+      document.getElementById('adminCurrentStatus').textContent=r.status||'—';document.getElementById('adminStatusSelect').value='';document.getElementById('adminRemarkInput').value='';
+      const upd=arr=>{const f=arr.find(x=>x.rowIndex===r.rowIndex);if(f){if(newStatus)f.status=r.status;f.operationsRemark=r.operationsRemark;}};upd(fnAll);upd(fnFiltered);
+      if(fnView==='detail')renderFNTable(fnFiltered);else renderFNPivot(fnFiltered);
+      setAdminSaveStatus('✓ Saved successfully!',false);document.getElementById('adminSaveBtn').disabled=false;
+    }else{setAdminSaveStatus('Error: '+(data.error||'Unknown error'),true);document.getElementById('adminSaveBtn').disabled=false;}
+  }).catch(()=>{setAdminSaveStatus('Network error. Please retry.',true);document.getElementById('adminSaveBtn').disabled=false;});
 }
 function setAdminSaveStatus(msg,isErr){const el=document.getElementById('adminSaveStatus');el.textContent=msg;el.className='admin-save-status'+(isErr===false?' ok':isErr?' err':'');}
 
-async function loadVDData(){
+function jsonpFetch(url,params,onSuccess,onError){
+  const cbName='__cb_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),script=document.createElement('script');
+  const qs=Object.entries({...params,callback:cbName}).map(([k,v])=>`${k}=${encodeURIComponent(v)}`).join('&');
+  const timer=setTimeout(()=>{cleanup();if(onError)onError(new Error('Timeout'));},15000);
+  window[cbName]=data=>{cleanup();onSuccess(data);};script.onerror=()=>{cleanup();if(onError)onError(new Error('Load failed'));};
+  function cleanup(){clearTimeout(timer);delete window[cbName];if(script.parentNode)script.parentNode.removeChild(script);}
+  script.src=url+'?'+qs;document.head.appendChild(script);
+}
+
+function loadVDData(){
   document.getElementById('vd-rowCount').textContent='Loading…';
-  try{
-    renderVDData(await sbFetchVD());
-  }catch(err){
-    document.getElementById('vd-rowCount').textContent='Failed to load Visit Done data.';
-  }
+  jsonpFetch(GAS_URL,{action:'getVisitDoneData',role:auth.role,username:auth.user,password:auth.pass},d=>{if(d.ok)renderVDData(d.data);else document.getElementById('vd-rowCount').textContent='Failed to load Visit Done data.';},()=>{document.getElementById('vd-rowCount').textContent='Network error loading Visit Done data.';});
 }
 function renderVDData(rows){
   vdAll=rows.map(r=>({...r,visitDate:fmtDate(r.visitDate)}));vdFiltered=[...vdAll];populateVDFilters(vdAll);
@@ -1767,13 +1631,11 @@ function convertVDToFN(row){const params=new URLSearchParams({prefill:'1',custom
 // ══════════════════════════════════════════════════════════
 //  MARKETING DASHBOARD
 // ══════════════════════════════════════════════════════════
-async function loadMarketingPerformanceData(){
+function loadMarketingPerformanceData(){
   document.getElementById('mp-rowCount').textContent='Loading…';
-  try{
-    renderMarketingPerformanceData(await sbFetchMarketing());
-  }catch(err){
-    document.getElementById('mp-rowCount').textContent='Failed to load: '+err.message;
-  }
+  jsonpFetch(GAS_URL,{action:'getMarketingPerformanceData',role:auth.role,username:auth.user,password:auth.pass},d=>{
+    if(d.ok)renderMarketingPerformanceData(d.data);else document.getElementById('mp-rowCount').textContent='Failed to load: '+(d.error||'unknown');
+  },()=>{document.getElementById('mp-rowCount').textContent='Network error loading Marketing Dashboard data.';});
 }
 function renderMarketingPerformanceData(data){
   mpAll=(data||[]).map(r=>({...r,updatedDate:fmtDate(r.updatedDate)}));
@@ -1996,13 +1858,11 @@ function renderMPCharts(agg){
 // ══════════════════════════════════════════════════════════
 let spAgg=null;
 
-async function loadSalesPerformanceData(){
+function loadSalesPerformanceData(){
   document.getElementById('sp-rowCount').textContent='Loading…';
-  try{
-    renderSalesPerformanceData(await sbFetchSalesPerformance());
-  }catch(err){
-    document.getElementById('sp-rowCount').textContent='Failed to load: '+err.message;
-  }
+  jsonpFetch(GAS_URL,{action:'getSalesPerformanceData',role:auth.role,username:auth.user,password:auth.pass},d=>{
+    if(d.ok)renderSalesPerformanceData(d.data);else document.getElementById('sp-rowCount').textContent='Failed to load: '+(d.error||'unknown');
+  },()=>{document.getElementById('sp-rowCount').textContent='Network error loading Sales Dashboard data.';});
 }
 function renderSalesPerformanceData(data){
   spPerfAll=(data&&data.performance)?data.performance.map(r=>({...r,updatedDate:fmtDate(r.updatedDate)})):[];
@@ -2284,18 +2144,20 @@ function renderSPCharts(agg){
 // ══════════════════════════════════════════════════════════
 function tnorm_(s){return String(s||'').trim().toLowerCase();}
 
-async function loadWeeklyTargetsData(){
+function loadWeeklyTargetsData(){
   document.getElementById('tgt-rowCount').textContent='Loading…';
-  try{
-    tgtAll=await sbFetchWeeklyTargets();
-    populateTargetFilters();
-    document.getElementById('tgtAdminPanel').style.display=isAdmin()?'block':'none';
-    if(isAdmin())populateTargetLeaderOptions();
-    renderTargetsSection();
-    document.getElementById('tgt-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
-  }catch(err){
-    document.getElementById('tgt-rowCount').textContent='Failed to load: '+err.message;
-  }
+  jsonpFetch(GAS_URL,{action:'getWeeklyTargetsData',role:auth.role,username:auth.user,password:auth.pass},d=>{
+    if(d.ok){
+      tgtAll=d.data||[];
+      populateTargetFilters();
+      document.getElementById('tgtAdminPanel').style.display=isAdmin()?'block':'none';
+      if(isAdmin())populateTargetLeaderOptions();
+      renderTargetsSection();
+      document.getElementById('tgt-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
+    }else{
+      document.getElementById('tgt-rowCount').textContent='Failed to load: '+(d.error||'unknown');
+    }
+  },()=>{document.getElementById('tgt-rowCount').textContent='Network error loading Targets data.';});
 }
 
 function populateTargetFilters(){
@@ -2422,7 +2284,7 @@ function renderTargetsCharts(rows,seriesLabel){
   ]},options:opts});
 }
 
-async function saveWeeklyTargetEntry(){
+function saveWeeklyTargetEntry(){
   const weekStart=document.getElementById('tgtNewWeekStart').value;
   const weekEnd=document.getElementById('tgtNewWeekEnd').value;
   const leaderLevel=document.getElementById('tgtNewLevel').value;
@@ -2433,12 +2295,12 @@ async function saveWeeklyTargetEntry(){
   if(!weekStart||!weekEnd||!leaderName){setTgtSaveStatus('Week Start, Week End and Leader Name are required.',true);return;}
   if(weekEnd<weekStart){setTgtSaveStatus('Week End must be on or after Week Start.',true);return;}
   setTgtSaveStatus('Saving…');
-  try{
-    await sbSaveWeeklyTarget({weekStart,weekEnd,leaderLevel,leaderName,svTarget,vcTarget,bookingTarget});
-    setTgtSaveStatus('✓ Saved successfully!',false);loadWeeklyTargetsData();
-  }catch(err){
-    setTgtSaveStatus('Error: '+err.message,true);
-  }
+  const payload=JSON.stringify({action:'saveWeeklyTarget',weekStart,weekEnd,leaderLevel,leaderName,svTarget,vcTarget,bookingTarget,username:auth.user,password:auth.pass,role:auth.role});
+  fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'data='+encodeURIComponent(payload)})
+  .then(res=>res.json()).then(data=>{
+    if(data.ok){setTgtSaveStatus('✓ Saved successfully!',false);loadWeeklyTargetsData();}
+    else setTgtSaveStatus('Error: '+(data.error||'Unknown error'),true);
+  }).catch(()=>setTgtSaveStatus('Network error. Please retry.',true));
 }
 function setTgtSaveStatus(msg,isErr){const el=document.getElementById('tgtSaveStatus');el.textContent=msg;el.className='admin-save-status'+(isErr===false?' ok':isErr?' err':'');}
 
@@ -2451,24 +2313,26 @@ function setTgtSaveStatus(msg,isErr){const el=document.getElementById('tgtSaveSt
 //  as columns on the sheet — there is no live derivation from
 //  Sales Performance, so this tab has zero dependency on that
 //  sheet or on MAINTENANCE_MODE.salesdash. Booking figures are
-//  entered directly in ₹ Cr. Reuses sbFetchWeeklyTargets / fillSelect /
+//  entered directly in ₹ Cr. Reuses GAS_URL / jsonpFetch / fillSelect /
 //  esc / spCssVar / tgtWeekLabel / isAdmin from elsewhere in this file.
 // ══════════════════════════════════════════════════════════
 function wtCutoffDate_(){const d=new Date();d.setDate(d.getDate()-364);return d.toISOString().slice(0,10);}
 
-async function loadWTData(){
+function loadWTData(){
   document.getElementById('wt-rowCount').textContent='Loading…';
-  try{
-    tgtAll=await sbFetchWeeklyTargets();
-    populateWTFilters();
-    populateWTLeaderDatalist();
-    document.getElementById('wtAdminPanel').style.display=(WT_ADMIN_ENABLED&&isAdmin())?'block':'none';
-    wtApplyMetricFocus();
-    wtRenderSection();
-    document.getElementById('wt-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
-  }catch(err){
-    document.getElementById('wt-rowCount').textContent='Failed to load: '+err.message;
-  }
+  jsonpFetch(GAS_URL,{action:'getWeeklyTargetsData',role:auth.role,username:auth.user,password:auth.pass},d=>{
+    if(d.ok){
+      tgtAll=d.data||[];
+      populateWTFilters();
+      populateWTLeaderDatalist();
+      document.getElementById('wtAdminPanel').style.display=(WT_ADMIN_ENABLED&&isAdmin())?'block':'none';
+      wtApplyMetricFocus();
+      wtRenderSection();
+      document.getElementById('wt-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
+    }else{
+      document.getElementById('wt-rowCount').textContent='Failed to load: '+(d.error||'unknown');
+    }
+  },()=>{document.getElementById('wt-rowCount').textContent='Network error loading target data.';});
 }
 
 function populateWTFilters(){
@@ -2605,7 +2469,7 @@ function wtRenderSection(){
 // sent as undefined so the backend keeps whatever was already saved for it,
 // letting you fill in just Achievements for a week whose Targets already exist.
 function wtNumOrUndef_(id){const v=document.getElementById(id).value;return v===''?undefined:Number(v);}
-async function saveWTEntry(){
+function saveWTEntry(){
   const weekStart=document.getElementById('wtNewWeekStart').value;
   const weekEnd=document.getElementById('wtNewWeekEnd').value;
   const leaderLevel=document.getElementById('wtNewLevel').value;
@@ -2613,26 +2477,28 @@ async function saveWTEntry(){
   if(!weekStart||!leaderName){setWTSaveStatus('Week Start and Leader Name are required.',true);return;}
   if(weekEnd&&weekEnd<weekStart){setWTSaveStatus('Week End must be on or after Week Start.',true);return;}
   setWTSaveStatus('Saving…');
-  try{
-    await sbSaveWeeklyTarget({
-      weekStart,weekEnd,leaderLevel,leaderName,
-      svTarget:wtNumOrUndef_('wtNewSVTarget'),vcTarget:wtNumOrUndef_('wtNewVCTarget'),bookingTarget:wtNumOrUndef_('wtNewBookingTarget'),
-      svAchievement:wtNumOrUndef_('wtNewSVAch'),vcAchievement:wtNumOrUndef_('wtNewVCAch'),bookingAchievement:wtNumOrUndef_('wtNewBookingAch')
-    });
-    setWTSaveStatus('✓ Saved successfully!',false);
-    ['wtNewSVTarget','wtNewVCTarget','wtNewBookingTarget','wtNewSVAch','wtNewVCAch','wtNewBookingAch'].forEach(id=>document.getElementById(id).value='');
-    loadWTData();
-  }catch(err){
-    setWTSaveStatus('Error: '+err.message,true);
-  }
+  const payload=JSON.stringify({
+    action:'saveWeeklyTarget',weekStart,weekEnd,leaderLevel,leaderName,
+    svTarget:wtNumOrUndef_('wtNewSVTarget'),vcTarget:wtNumOrUndef_('wtNewVCTarget'),bookingTarget:wtNumOrUndef_('wtNewBookingTarget'),
+    svAchievement:wtNumOrUndef_('wtNewSVAch'),vcAchievement:wtNumOrUndef_('wtNewVCAch'),bookingAchievement:wtNumOrUndef_('wtNewBookingAch'),
+    username:auth.user,password:auth.pass,role:auth.role
+  });
+  fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'data='+encodeURIComponent(payload)})
+  .then(res=>res.json()).then(data=>{
+    if(data.ok){
+      setWTSaveStatus('✓ Saved successfully!',false);
+      ['wtNewSVTarget','wtNewVCTarget','wtNewBookingTarget','wtNewSVAch','wtNewVCAch','wtNewBookingAch'].forEach(id=>document.getElementById(id).value='');
+      loadWTData();
+    }else setWTSaveStatus('Error: '+(data.error||'Unknown error'),true);
+  }).catch(()=>setWTSaveStatus('Network error. Please retry.',true));
 }
 function setWTSaveStatus(msg,isErr){const el=document.getElementById('wtSaveStatus');el.textContent=msg;el.className='admin-save-status'+(isErr===false?' ok':isErr?' err':'');}
 
 function toggleTheme(){const html=document.documentElement,isDark=html.getAttribute('data-theme')==='dark',next=isDark?'light':'dark';html.setAttribute('data-theme',next);document.getElementById('themeBtn').textContent=next==='dark'?'☀️':'🌙';try{localStorage.setItem('dash_theme',next);}catch(_){}}
 (function(){try{const saved=localStorage.getItem('dash_theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.addEventListener('DOMContentLoaded',()=>{const btn=document.getElementById('themeBtn');if(btn)btn.textContent=saved==='dark'?'☀️':'🌙';});}}catch(_){}})();
 
-document.addEventListener('visibilitychange',()=>{if(document.hidden){if(stopVisitSubscription){stopVisitSubscription();stopVisitSubscription=null;}}else if(auth&&!isLoanDept()){startAutoRefresh();setTimeout(refreshAll,1000);}});
-window.addEventListener('online',()=>{setStatus(true);if(auth&&!stopVisitSubscription&&!isLoanDept())startAutoRefresh();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){if(refreshTimer)clearInterval(refreshTimer);}else if(auth&&!isLoanDept()){startAutoRefresh();setTimeout(refreshAll,1000);}});
+window.addEventListener('online',()=>{setStatus(true);if(auth&&!refreshTimer&&!isLoanDept())startAutoRefresh();});
 window.addEventListener('offline',()=>setStatus(false));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('drillModal').classList.remove('open');document.getElementById('detailModal').classList.remove('open');document.getElementById('spDetailModal').classList.remove('open');document.body.style.overflow='';}});
 
