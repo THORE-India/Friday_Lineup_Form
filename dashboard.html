@@ -1176,7 +1176,7 @@ async function sbGetProfile(){
 // row-shape adapters — keep every renderXTable() function completely unchanged
 function mapVisitRow(r){
   return {
-    rowIndex: r.id, timestamp: new Date(r.submitted_at).toLocaleString(),
+    rowIndex: r.id, timestamp: r.submitted_at||'',
     cluster: r.cluster||'', pnlHead: r.pnl_head||'', manager: r.manager||'',
     teamLead: r.team_lead||'', employee: r.employee_name||'', customer: r.customer_name||'',
     phone: r.phone||'', project: r.project_name||'', developer: r.developer_name||'',
@@ -1186,7 +1186,7 @@ function mapVisitRow(r){
 }
 function mapFNRow(r){
   return {
-    rowIndex: r.id, timestamp: new Date(r.created_at).toLocaleString(),
+    rowIndex: r.id, timestamp: r.created_at||'',
     cluster: r.cluster||'', pnlHead: r.pnl_head||'', manager: r.manager||'', teamLead: r.team_lead||'',
     employee: r.sales_executive_name||'', customer: r.customer_name||'', phone: r.contact_number||'',
     propertyType: r.property_type||'', configuration: r.configuration||'', budget: r.budget||'',
@@ -1692,7 +1692,7 @@ function renderFNTable(rows){
 
   // build data rows
   let rowsHtml=rows.map((r,i)=>{
-    let cd='—';if(r.timestamp){try{const d=new Date(r.timestamp);if(!isNaN(d))cd=d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});else cd=r.timestamp;}catch(_){cd=r.timestamp;}}
+    let cd='—';if(r.timestamp){try{const d=new Date(r.timestamp);if(!isNaN(d))cd=d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'});else cd=r.timestamp;}catch(_){cd=r.timestamp;}}
     return`<tr class="clickable-row" onclick="openDetailModal(fnFiltered[${i}])"><td>${esc(r.cluster)}</td><td>${esc(r.teamLead)}</td><td>${esc(r.employee)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td style="white-space:nowrap;font-size:0.78rem">${esc(cd)}</td><td>${esc(r.project)}</td><td>${esc(r.developer||r.builderSourcingName||'—')}</td><td>${esc(r.configuration)}</td><td>${esc(r.budget)}</td><td>${statusBadge(r.status)}</td><td style="white-space:nowrap">${esc(r.visitDate)}</td></tr>`;
   }).join('');
 
@@ -1732,7 +1732,7 @@ function applySortFN(){const keys=['cluster','teamLead','employee','customer','t
 
 function openDetailModal(r){
   document.getElementById('modalCustomerName').textContent=r.customer||'Client Details';
-  let createdOn='—';if(r.timestamp){try{const d=new Date(r.timestamp);if(!isNaN(d)){createdOn=d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});}else createdOn=r.timestamp;}catch(_){createdOn=r.timestamp;}}
+  let createdOn='—';if(r.timestamp){try{const d=new Date(r.timestamp);if(!isNaN(d)){createdOn=d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'})+' '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true,timeZone:'UTC'});}else createdOn=r.timestamp;}catch(_){createdOn=r.timestamp;}}
   const fields=[{label:'Created On',value:createdOn,full:false,gold:true},{label:'Status',value:r.status,full:false,badge:true},{label:'Cluster',value:r.cluster,full:false},{label:'PNL Head',value:r.pnlHead,full:false},{label:'Team Leader',value:r.teamLead,full:false},{label:'Sales Executive',value:r.employee,full:false},{label:'Customer Name',value:r.customer,full:false},{label:'Contact Number',value:r.phone,full:false},{label:'Property Type',value:r.propertyType,full:false},{label:'Configuration',value:r.configuration,full:false},{label:'Budget',value:r.budget?'₹ '+r.budget:'',full:false},{label:'Visit Date',value:r.visitDate,full:false},{label:'Project Name',value:r.project,full:false},{label:'Developer / Builder',value:r.developer||r.builderSourcingName,full:false},{label:'Builder Sourcing Manager',value:r.builderSourcingName,full:false},{label:'Sourcing Manager Contact',value:r.builderSourcingContact,full:false},{label:'Builder Closing Manager',value:r.builderClosingName,full:false},{label:'Remarks',value:r.remark,full:true},{label:'Operations Remark',value:r.operationsRemark,full:true}];
   const grid=document.getElementById('detailGrid');
   grid.innerHTML=fields.map(f=>{const val=f.value?String(f.value).trim():'';const display=val?(f.badge?statusBadge(val):`<div class="detail-value ${f.gold?'gold':''}">${esc(val)}</div>`):`<div class="detail-value muted">—</div>`;return`<div class="detail-item ${f.full?'full':''}"><div class="detail-label">${f.label}</div>${display}</div>`;}).join('');
@@ -1761,8 +1761,31 @@ function convertToFN(row){const params=new URLSearchParams({prefill:'1',customer
 function statusBadge(s){if(!s)return'—';const c={Hot:'badge-hot',Warm:'badge-warm',Cold:'badge-cold',Token:'badge-token',Lost:'badge-lost',Booked:'badge-booked'};return`<span class="badge ${c[s]||''}">${esc(s)}</span>`;}
 function fillSelect(id,values,placeholder){const sel=document.getElementById(id),curr=sel.value;sel.innerHTML=`<option value="">${placeholder}</option>`;values.forEach(v=>sel.innerHTML+=`<option value="${esc(v)}">${esc(v)}</option>`);if(curr)sel.value=curr;}
 function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
-function fmtDate(s){if(!s)return'';const d=new Date(s);if(isNaN(d))return s;return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
-function fmtDateDay(s){const d=new Date(s);if(isNaN(d))return s;return s+' (['+'Sun,Mon,Tue,Wed,Thu,Fri,Sat'.split(',')[d.getDay()]+'])';}
+// Normalizes any date-ish string to a plain YYYY-MM-DD. Dates that already
+// start with YYYY-MM-DD (the vast majority — Supabase date/timestamp columns)
+// are extracted directly via string match, with NO Date object involved, so
+// there is no local-timezone shift at all. Anything else falls back to
+// Date.UTC-based parsing/reading so the result is still timezone-independent.
+function fmtDate(s){
+  if(!s)return'';
+  const str=String(s);
+  const m=str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(m)return m[1]+'-'+m[2]+'-'+m[3];
+  const d=new Date(str);
+  if(isNaN(d))return s;
+  return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');
+}
+// Day-of-week label for an already-normalized YYYY-MM-DD string. Built via
+// Date.UTC (never the local-timezone Date constructor), so the weekday
+// shown is always the weekday of the calendar date itself, regardless of
+// the viewer's machine timezone.
+function fmtDateDay(s){
+  const m=String(s||'').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(!m)return s;
+  const d=new Date(Date.UTC(+m[1],+m[2]-1,+m[3]));
+  if(isNaN(d))return s;
+  return s+' (['+'Sun,Mon,Tue,Wed,Thu,Fri,Sat'.split(',')[d.getUTCDay()]+'])';
+}
 function getInitials(u){const n=u.split('@')[0].split(/[.\-_]/);return n.length>=2?(n[0][0]+n[1][0]).toUpperCase():u.slice(0,2).toUpperCase();}
 function setStatus(online){const el=document.getElementById('connStatus');el.className='status-pill '+(online?'online':'offline');el.innerHTML=`<div class="status-dot"></div> ${online?'Online':'Connection issues'}`;}
 function toggleProfile(){document.getElementById('profileDropdown').classList.toggle('show');}
@@ -2440,9 +2463,11 @@ function pctPill(achieved,target){
   return`<span class="ratio-pill ${cls}">${p.toFixed(0)}%</span>`;
 }
 function tgtWeekLabel(w){
-  const d=new Date(w);
+  const m=String(w||'').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(!m)return w;
+  const d=new Date(Date.UTC(+m[1],+m[2]-1,+m[3]));
   if(isNaN(d))return w;
-  return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
+  return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',timeZone:'UTC'});
 }
 
 function renderTargetsSection(){
@@ -2528,7 +2553,10 @@ function setTgtSaveStatus(msg,isErr){const el=document.getElementById('tgtSaveSt
 //  entered directly in ₹ Cr. Reuses sbFetchWeeklyTargets / fillSelect /
 //  esc / spCssVar / tgtWeekLabel / isAdmin from elsewhere in this file.
 // ══════════════════════════════════════════════════════════
-function wtCutoffDate_(){const d=new Date();d.setDate(d.getDate()-364);return d.toISOString().slice(0,10);}
+// Computed entirely in UTC (today's UTC calendar date minus 364 days) so the
+// cutoff is identical for every viewer regardless of local machine timezone,
+// and stays directly comparable to the UTC-normalized weekStart strings.
+function wtCutoffDate_(){const now=new Date();const d=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()-364));return d.toISOString().slice(0,10);}
 
 async function loadWTData(){
   document.getElementById('wt-rowCount').textContent='Loading…';
@@ -2578,7 +2606,10 @@ function wtApplyMetricFocus(){
 function wtAutoFillWeekEnd(){
   const startEl=document.getElementById('wtNewWeekStart'),endEl=document.getElementById('wtNewWeekEnd');
   if(!startEl.value||endEl.value)return;
-  const d=new Date(startEl.value);d.setDate(d.getDate()+6);
+  const m=startEl.value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(!m)return;
+  const d=new Date(Date.UTC(+m[1],+m[2]-1,+m[3]));
+  d.setUTCDate(d.getUTCDate()+6);
   endEl.value=d.toISOString().slice(0,10);
 }
 
@@ -2616,10 +2647,11 @@ function wtPctPill(achieved,target){
   return`<span class="ratio-pill ${cls}">${p.toFixed(0)}%</span>`;
 }
 function wtWeekRangeLabel(weekStart,weekEnd){
-  const ds=new Date(weekStart),de=new Date(weekEnd||weekStart);
+  const parseUTC_=s=>{const m=String(s||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return m?new Date(Date.UTC(+m[1],+m[2]-1,+m[3])):new Date(NaN);};
+  const ds=parseUTC_(weekStart),de=parseUTC_(weekEnd||weekStart);
   if(isNaN(ds))return(weekStart||'')+' – '+(weekEnd||'');
-  const dayMon=d=>d.toLocaleDateString('en-IN',{day:'2-digit',month:'long'});
-  return`${dayMon(ds)} to ${isNaN(de)?dayMon(ds):dayMon(de)} ${(isNaN(de)?ds:de).getFullYear()}`;
+  const dayMon=d=>d.toLocaleDateString('en-IN',{day:'2-digit',month:'long',timeZone:'UTC'});
+  return`${dayMon(ds)} to ${isNaN(de)?dayMon(ds):dayMon(de)} ${(isNaN(de)?ds:de).getUTCFullYear()}`;
 }
 
 function renderWTTable(rows){
