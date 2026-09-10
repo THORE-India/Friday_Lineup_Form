@@ -284,8 +284,13 @@
 
     /* ── Phone row (country code + number) ─────────────────────── */
     .phone-row { display: flex; gap: 0.5rem; }
-    .phone-row select { flex: 0 0 92px; padding-left: 0.7rem; padding-right: 28px; }
+    .phone-row select { flex: 0 0 110px; padding-left: 0.7rem; padding-right: 28px; }
     .phone-row input { flex: 1; }
+
+    /* ── Budget row (amount + denomination) ─────────────────────── */
+    .budget-row { display: flex; gap: 0.5rem; }
+    .budget-row input { flex: 1; }
+    .budget-row select { flex: 0 0 110px; padding-left: 0.7rem; padding-right: 28px; }
 
     /* ── Autocomplete ───────────────────────────────────────────── */
     .autocomplete-items {
@@ -462,10 +467,38 @@
       font-size: 1.25rem;
       font-weight: 700;
       color: var(--gold);
-      margin-bottom: 0.6rem;
+      margin-bottom: 1rem;
     }
     .crm-modal.is-error .crm-modal-title { color: var(--red); }
     .crm-modal-msg { font-size: 0.92rem; color: var(--text-dim); line-height: 1.55; margin-bottom: 1.4rem; }
+    .crm-modal-detail { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin: -0.9rem 0 1.2rem; }
+
+    /* ── Dual submission status rows ──────────────────────────────── */
+    .status-dashboard { display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 1.2rem; }
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.8rem 0.9rem;
+      background: var(--surface2);
+      border: 1.5px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      text-align: left;
+    }
+    .status-row-icon { font-size: 1.4rem; flex-shrink: 0; width: 1.6rem; text-align: center; }
+    .status-row-text { flex: 1; }
+    .status-row-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      margin-bottom: 0.15rem;
+    }
+    .status-row-value { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+    .status-row.is-success .status-row-value { color: var(--green); }
+    .status-row.is-error .status-row-value { color: var(--red); }
+    .status-row.is-warning .status-row-value { color: var(--red); }
     .crm-modal-btn {
       width: 100%;
       padding: 0.8rem 1.2rem;
@@ -824,13 +857,31 @@ a:hover { color: var(--primary); }
                 <div class="phone-row">
                   <select id="phoneCountryCode" aria-label="Country code">
                     <option value="91" selected>🇮🇳 +91</option>
-                    <option value="971">🇦🇪 +971</option>
-                    <option value="1">🇺🇸 +1</option>
-                    <option value="44">🇬🇧 +44</option>
-                    <option value="65">🇸🇬 +65</option>
-                    <option value="61">🇦🇺 +61</option>
-                    <option value="966">🇸🇦 +966</option>
-                    <option value="974">🇶🇦 +974</option>
+                    <optgroup label="Middle East / Gulf">
+                      <option value="971">🇦🇪 +971</option>
+                      <option value="966">🇸🇦 +966</option>
+                      <option value="974">🇶🇦 +974</option>
+                      <option value="965">🇰🇼 +965</option>
+                      <option value="968">🇴🇲 +968</option>
+                      <option value="973">🇧🇭 +973</option>
+                    </optgroup>
+                    <optgroup label="Americas">
+                      <option value="1">🇺🇸 +1</option>
+                    </optgroup>
+                    <optgroup label="Europe & UK">
+                      <option value="44">🇬🇧 +44</option>
+                      <option value="49">🇩🇪 +49</option>
+                      <option value="33">🇫🇷 +33</option>
+                      <option value="39">🇮🇹 +39</option>
+                      <option value="34">🇪🇸 +34</option>
+                      <option value="31">🇳🇱 +31</option>
+                    </optgroup>
+                    <optgroup label="Asia-Pacific">
+                      <option value="65">🇸🇬 +65</option>
+                      <option value="81">🇯🇵 +81</option>
+                      <option value="86">🇨🇳 +86</option>
+                      <option value="61">🇦🇺 +61</option>
+                    </optgroup>
                   </select>
                   <input type="text" id="phone" placeholder="10-digit mobile" inputmode="numeric" maxlength="10">
                 </div>
@@ -876,6 +927,21 @@ a:hover { color: var(--primary); }
               <label class="checkbox-item"><input type="checkbox" name="requirement" value="Villa"><label>Villa</label></label>
             </div>
 
+            <div class="section-title">Budget</div>
+            <div class="form-grid row-2">
+              <div class="field">
+                <label for="budgetValue">Budget Amount <span class="req">*</span></label>
+                <div class="budget-row">
+                  <input type="number" id="budgetValue" placeholder="e.g. 80" min="1" max="99.99" step="0.01" inputmode="decimal">
+                  <select id="budgetDenomination" aria-label="Budget denomination">
+                    <option value="" disabled selected>Unit</option>
+                    <option value="Lakhs">Lakhs</option>
+                    <option value="Cr">Crore</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
             <div class="section-title">Assessment</div>
             <div class="form-grid row-2">
               <div class="field">
@@ -901,8 +967,8 @@ a:hover { color: var(--primary); }
 
             <div class="section-title">Remarks</div>
             <div class="field">
-              <label for="remark">Detailed Remarks <span class="req">*</span></label>
-              <textarea id="remark" placeholder="Budget range, preferred locality, specific requirements, timeline…"></textarea>
+              <label for="remark">Remarks <span class="req">*</span></label>
+              <textarea id="remark" placeholder="Preferred locality, specific requirements, timeline…"></textarea>
             </div>
 
             <div class="btn-group">
@@ -926,12 +992,30 @@ a:hover { color: var(--primary); }
 
 <div id="toast"></div>
 
-<!-- CRM update result modal -->
+<!-- Dual submission status modal -->
 <div id="crm-modal-backdrop">
   <div class="crm-modal" id="crm-modal">
-    <div class="crm-modal-icon" id="crm-modal-icon">✅</div>
-    <div class="crm-modal-title" id="crm-modal-title">Lead updated in CRM</div>
+    <div class="crm-modal-title" id="crm-modal-title">Submission Status</div>
+
+    <div class="status-dashboard">
+      <div class="status-row" id="db-status-row">
+        <span class="status-row-icon" id="db-status-icon">⏳</span>
+        <div class="status-row-text">
+          <div class="status-row-label">Friday Lineup Entry</div>
+          <div class="status-row-value" id="db-status-value">Submitting…</div>
+        </div>
+      </div>
+      <div class="status-row" id="crm-status-row">
+        <span class="status-row-icon" id="crm-status-icon">⏳</span>
+        <div class="status-row-text">
+          <div class="status-row-label">CRM Lead Status Update</div>
+          <div class="status-row-value" id="crm-status-value">Updating…</div>
+        </div>
+      </div>
+    </div>
+
     <div class="crm-modal-msg" id="crm-modal-msg"></div>
+    <div class="crm-modal-detail" id="crm-modal-detail"></div>
     <button class="crm-modal-btn" onclick="closeCrmModal()">Got it</button>
   </div>
 </div>
@@ -1249,6 +1333,61 @@ a:hover { color: var(--primary); }
     return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   }
 
+  // ── PHONE: dynamic validation per country code ─────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    const countryEl = document.getElementById('phoneCountryCode');
+    const phoneEl    = document.getElementById('phone');
+    countryEl.addEventListener('change', () => {
+      phoneEl.value = ''; // avoid stale digits that no longer fit the new rule
+      if (countryEl.value === '91') {
+        phoneEl.setAttribute('maxlength', '10');
+        phoneEl.placeholder = '10-digit mobile';
+      } else {
+        phoneEl.setAttribute('maxlength', '15');
+        phoneEl.placeholder = 'Mobile number';
+      }
+    });
+  });
+
+  // ── BUDGET & NOTE FORMATTING ─────────────────────────────────────
+  // Uses the raw typed string (not a re-parsed float) so trailing decimals
+  // like "1.20" are preserved exactly as entered — matches spec examples
+  // ("1.20 Cr" alongside "27 Cr", "77.89 Cr").
+  function formatBudgetString(rawValue, denomination) {
+    const v = (rawValue || '').toString().trim();
+    if (!v || !denomination) return '';
+    return v + ' ' + denomination;
+  }
+
+  // "YYYY-MM-DD" + "h:mm AM/PM" -> "Friday, 12 Oct 2026 at 04:30 PM"
+  function formatNoteDateTime(visitDate, visitTimeStr) {
+    if (!visitDate || !visitTimeStr) return '';
+    const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const [y, m, d] = visitDate.split('-').map(Number);
+    if (!y || !m || !d) return '';
+    const dateObj = new Date(y, m - 1, d);
+    const dayName   = DAYS[dateObj.getDay()];
+    const dd        = String(d).padStart(2, '0');
+    const monthName = MONTHS[m - 1];
+
+    const tm = /^(\d{1,2}):(\d{2})\s*([AP]M)$/i.exec(visitTimeStr.trim());
+    const timeStr = tm
+      ? String(tm[1]).padStart(2, '0') + ':' + tm[2] + ' ' + tm[3].toUpperCase()
+      : visitTimeStr;
+
+    return `${dayName}, ${dd} ${monthName} ${y} at ${timeStr}`;
+  }
+
+  // Builds the single standardized note used for both the Supabase
+  // `remark` column and the CRM `notes` field.
+  function buildStructuredNote({ visitType, project, requirement, budgetStr, employee, visitDate, visitTime }) {
+    const actionType = visitType === 'VC' ? 'meeting scheduled' : 'site visit scheduled';
+    const configurations = Array.isArray(requirement) ? requirement.join(', ') : (requirement || '');
+    const dateTimeStr = formatNoteDateTime(visitDate, visitTime);
+    return `${actionType} for project - ${project}, Configuration required - ${configurations}, Budget - ${budgetStr}, by ${employee}, on ${dateTimeStr}`;
+  }
+
   // ── SUBMIT ────────────────────────────────────────────────────
   async function submitForm() {
     const now    = new Date();
@@ -1268,6 +1407,8 @@ a:hover { color: var(--primary); }
     const closure   = document.getElementById('closure').value;
     const visitType = document.getElementById('visitType').value;
     const remark    = (document.getElementById('remark').value    || '').trim();
+    const budgetValueRaw    = (document.getElementById('budgetValue').value || '').trim();
+    const budgetDenomination = document.getElementById('budgetDenomination').value;
     const requirement = [...document.querySelectorAll('input[name="requirement"]:checked')].map(c => c.value);
 
     // Validate
@@ -1290,15 +1431,37 @@ a:hover { color: var(--primary); }
     if (!cname || !phone || !project || !developer || !visitDate || !visitTime || !closure || !visitType || !remark) {
       showToast('Please fill all required fields', 'error'); return;
     }
-    if (!/^\d{10}$/.test(phone)) { showToast('Enter a valid 10-digit phone number', 'error'); return; }
+    const isIndiaPhone = phoneCountryCode === '91';
+    const phoneRegex   = isIndiaPhone ? /^\d{10}$/ : /^\d{6,15}$/;
+    if (!phoneRegex.test(phone)) {
+      showToast(isIndiaPhone ? 'Enter a valid 10-digit phone number' : 'Enter a valid phone number (6–15 digits)', 'error');
+      return;
+    }
     if (requirement.length === 0) { showToast('Select at least one property requirement', 'error'); return; }
+    const budgetNum = parseFloat(budgetValueRaw);
+    if (!budgetValueRaw || isNaN(budgetNum) || budgetNum < 1 || budgetNum > 99.99) {
+      showToast('Enter a valid budget between 1 and 99.99', 'error'); return;
+    }
+    if (!budgetDenomination) { showToast('Select a budget denomination (Lakhs / Cr)', 'error'); return; }
+
+    // ── Structured note — single source of truth for both the Supabase
+    // `remark` column and the CRM `notes` field. The SE's Remarks text is
+    // mandatory and is appended as the final segment of the note.
+    const budgetStr = formatBudgetString(budgetValueRaw, budgetDenomination);
+    const structuredNote = buildStructuredNote({
+      visitType, project, requirement, budgetStr, employee, visitDate, visitTime
+    });
+    const finalNote = `${structuredNote}, Remarks - ${remark}`;
 
     const btn = document.getElementById('form').querySelector('.btn-primary');
     btn.textContent = 'Submitting…';
     btn.disabled    = true;
 
+    showSubmissionModal();
+
     // ── 1. Supabase insert — same field set as the old GAS submitVisit ──
     // action, just written directly to Postgres instead of relayed to GAS.
+    let dbSucceeded = false;
     try {
       const { error } = await supabaseClient.from('friday_lineup_visits').insert({
         employee_name:  employee,
@@ -1313,10 +1476,11 @@ a:hover { color: var(--primary); }
         requirements:   Array.isArray(requirement) ? requirement.join(', ') : requirement,
         closure_chance: closure,
         visit_type:     visitType,
-        remark:         remark
+        remark:         finalNote
       });
       if (error) throw error;
-      showToast('Form submitted successfully!', 'success');
+      dbSucceeded = true;
+      setDbStatus(true);
       document.getElementById('form').reset();
       document.getElementById('teamLead').value = '';
       document.getElementById('cluster').value  = '';
@@ -1324,17 +1488,17 @@ a:hover { color: var(--primary); }
       devEl.value    = '';
       devEl.readOnly = false;
     } catch (err) {
-      showToast('Submission failed. Please try again.', 'error');
+      setDbStatus(false);
     } finally {
       btn.textContent = 'Submit Entry';
       btn.disabled    = false;
     }
 
-    // ── 2. CRM lead status update — separate call, own feedback modal. ──
-    // Runs independently of the sheet write above; a failure here never
-    // blocks or rolls back the sheet entry, and vice versa.
+    // ── 2. CRM lead status update — separate call, own status row in the
+    // same modal. Runs independently of the sheet write above; a failure
+    // here never blocks or rolls back the sheet entry, and vice versa.
     updateLeadInCrm({
-      employee, cname, phone, phoneCountryCode, project, visitDate, visitTime, visitType, remark
+      employee, cname, phone, phoneCountryCode, project, visitDate, visitTime, visitType, remark: finalNote
     });
   }
 
@@ -1345,6 +1509,8 @@ a:hover { color: var(--primary); }
     const devEl = document.getElementById('developer');
     devEl.value    = '';
     devEl.readOnly = false;
+    document.getElementById('phone').setAttribute('maxlength', '10');
+    document.getElementById('phone').placeholder = '10-digit mobile';
   }
 
   // ── CRM (LEADRAT) UPDATE ─────────────────────────────────────────
@@ -1364,12 +1530,16 @@ a:hover { color: var(--primary); }
   }
 
   function updateLeadInCrm(v) {
-    if (LEADRAT_GAS_URL.indexOf('PASTE_') === 0) return; // not configured yet — skip silently
+    if (LEADRAT_GAS_URL.indexOf('PASTE_') === 0) {
+      // not configured yet
+      setCrmStatus(false, 'CRM auto-update is not configured for this form yet.');
+      return;
+    }
 
     const scheduledDate = buildScheduledDateTimeLocal_(v.visitDate, v.visitTime);
     const statusMap = VISIT_TYPE_TO_LEADRAT_STATUS[v.visitType];
     if (!scheduledDate || !statusMap) {
-      showCrmModal(false, "Couldn't update the lead in CRM — unrecognized visit type or date/time. Please update this lead manually in CRM.");
+      setCrmStatus(false, "Unrecognized visit type or date/time.");
       return;
     }
 
@@ -1396,23 +1566,48 @@ a:hover { color: var(--primary); }
       .then(res => res.json())
       .then(data => {
         if (data.succeeded) {
-          showCrmModal(true, 'Your lead has been updated to Schedule ' + (statusMap.statusKey === 'meeting_scheduled' ? 'Meeting' : 'SV') + ' in Leadrat. Please check and mark it Done after your scheduled date in CRM.');
+          setCrmStatus(true);
         } else {
-          showCrmModal(false, (data.error || 'Lead not updated — please update manually in CRM.'));
+          setCrmStatus(false, data.error || 'Lead not updated in CRM.');
         }
       })
       .catch(() => {
-        showCrmModal(false, 'Could not reach the CRM update service. Please update this lead manually in CRM.');
+        setCrmStatus(false, 'Could not reach the CRM update service.');
       });
   }
 
-  function showCrmModal(isSuccess, message) {
-    const modal = document.getElementById('crm-modal');
-    modal.classList.toggle('is-error', !isSuccess);
-    document.getElementById('crm-modal-icon').textContent = isSuccess ? '✅' : '⚠️';
-    document.getElementById('crm-modal-title').textContent = isSuccess ? 'Lead updated in CRM' : 'CRM update issue';
-    document.getElementById('crm-modal-msg').textContent = message;
+  // ── Dual submission status modal ─────────────────────────────────
+  function showSubmissionModal() {
+    document.getElementById('crm-modal').classList.remove('is-error');
+    document.getElementById('db-status-row').className  = 'status-row';
+    document.getElementById('crm-status-row').className = 'status-row';
+    document.getElementById('db-status-icon').textContent  = '⏳';
+    document.getElementById('db-status-value').textContent = 'Submitting…';
+    document.getElementById('crm-status-icon').textContent  = '⏳';
+    document.getElementById('crm-status-value').textContent = 'Updating…';
+    document.getElementById('crm-modal-msg').textContent = '';
+    document.getElementById('crm-modal-detail').textContent = '';
     document.getElementById('crm-modal-backdrop').classList.add('show');
+  }
+
+  function setDbStatus(isSuccess) {
+    const row = document.getElementById('db-status-row');
+    row.className = 'status-row ' + (isSuccess ? 'is-success' : 'is-error');
+    document.getElementById('db-status-icon').textContent  = isSuccess ? '✅' : '❌';
+    document.getElementById('db-status-value').textContent = isSuccess ? 'Submitted Successfully' : 'Submission Failed';
+  }
+
+  function setCrmStatus(isSuccess, detail) {
+    const row = document.getElementById('crm-status-row');
+    row.className = 'status-row ' + (isSuccess ? 'is-success' : 'is-warning');
+    document.getElementById('crm-status-icon').textContent  = isSuccess ? '✅' : '⚠️';
+    document.getElementById('crm-status-value').textContent = isSuccess ? 'Lead Status Updated in CRM' : 'Action Required: CRM Update Failed';
+
+    document.getElementById('crm-modal').classList.toggle('is-error', !isSuccess);
+    document.getElementById('crm-modal-msg').textContent = isSuccess
+      ? 'Your lead status has been updated automatically in CRM. You do not need to change the status manually for successful CRM submissions.'
+      : '⚠️ CRM update could not be completed automatically. Please change status manually for unsuccessful submission into CRM.';
+    document.getElementById('crm-modal-detail').textContent = (!isSuccess && detail) ? ('Details: ' + detail) : '';
   }
 
   function closeCrmModal() {
