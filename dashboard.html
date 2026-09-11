@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THORE — Dashboard</title>
+  <title>THORE PULSE — Business Performance &amp; Intelligence System</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
@@ -54,7 +54,7 @@
     [data-theme="dark"] body::before{background:radial-gradient(ellipse 55% 45% at 10% 6%,rgba(212,168,83,0.12) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 94% 10%,rgba(92,160,240,0.10) 0%,transparent 60%),radial-gradient(ellipse 55% 50% at 88% 94%,rgba(64,212,184,0.08) 0%,transparent 60%),radial-gradient(ellipse 45% 40% at 6% 92%,rgba(212,168,83,0.08) 0%,transparent 60%);}
     .header{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.55);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid var(--border-mid);display:flex;flex-direction:column;}
     [data-theme="dark"] .header{background:rgba(15,20,32,0.80);}
-    .header-top{display:flex;align-items:center;padding:9px 20px;gap:16px;min-height:44px;}
+    .header-top{display:flex;align-items:center;padding:9px 20px;gap:16px;min-height:44px;position:relative;}
     .header-left{display:flex;align-items:center;gap:14px;flex-shrink:0;}
     .logo-block{display:flex;align-items:center;gap:10px;}
     .logo-text{display:flex;flex-direction:column;gap:1px;}
@@ -628,6 +628,54 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
 .mobile-action-bar button{flex:1;height:38px;border:1px solid #CBD5E1;background:#fff;border-radius:9px;color:#334155;font-weight:750;font-size:.72rem;}
 .mobile-action-bar button.primary{background:#1E40AF;color:#fff;border-color:#1E40AF;}
 
+/* ================================================================
+   THORE PULSE — rebrand, pulse-line animation, splash screen,
+   FN quick-status control, read-only Friday Lineup detail modal.
+   ================================================================ */
+.logo-pulse-word{font-family:'DM Serif Display',serif;font-weight:700;background:linear-gradient(90deg,#1E3A8A,#D4A853 55%,#DC2626);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#1E3A8A;letter-spacing:0.08em;}
+.pulse-line-svg{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:14px;overflow:visible;pointer-events:none;z-index:1;}
+.pulse-line-path{fill:none;stroke:#1E3A8A;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:0.55;stroke-dasharray:70 540;stroke-dashoffset:0;animation:pulseTravel 3.6s linear infinite;filter:drop-shadow(0 0 3px rgba(212,168,83,0.55));}
+@keyframes pulseTravel{
+  0%{stroke-dashoffset:610;stroke:#1E3A8A;}
+  50%{stroke:#D4A853;}
+  100%{stroke-dashoffset:-610;stroke:#DC2626;}
+}
+@media(prefers-reduced-motion:reduce){.pulse-line-path{animation:none;stroke-dashoffset:0;stroke-dasharray:none;}}
+
+/* FN Clients — inline quick status control */
+.fn-status-quick{appearance:none;-webkit-appearance:none;border-radius:9999px;border:1px solid transparent;padding:4px 24px 4px 10px;font-size:0.7rem;font-weight:700;letter-spacing:0.03em;cursor:pointer;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2.5'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 6px center;background-size:11px;transition:box-shadow .2s ease,transform .12s ease;}
+.fn-status-quick:hover{box-shadow:0 0 0 2px rgba(15,23,42,.08);}
+.fn-status-quick:focus{outline:none;box-shadow:0 0 0 2px rgba(30,64,175,.35);}
+.fn-status-quick:disabled{opacity:0.55;cursor:wait;}
+.fn-status-quick.st-hot{background-color:#FEF2F2;color:#DC2626;border-color:#FECACA;}
+.fn-status-quick.st-warm{background-color:#FFFBEB;color:#D97706;border-color:#FDE68A;}
+.fn-status-quick.st-cold{background-color:#EFF6FF;color:#2563EB;border-color:#BFDBFE;}
+.fn-status-quick.st-token{background-color:#EFF6FF;color:#1D4ED8;border-color:#BFDBFE;}
+.fn-status-quick.st-lost{background-color:#F1F5F9;color:#64748B;border-color:#E2E8F0;}
+.fn-status-quick.st-booked{background-color:#ECFDF5;color:#059669;border-color:#A7F3D0;}
+.fn-status-quick.fn-status-flash{animation:fnStatusFlash 0.9s ease;}
+@keyframes fnStatusFlash{0%{box-shadow:0 0 0 0 rgba(5,150,105,.55);}70%{box-shadow:0 0 0 7px rgba(5,150,105,0);}100%{box-shadow:0 0 0 0 rgba(5,150,105,0);}}
+.quick-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(12px);background:#0F172A;color:#F8FAFC;padding:9px 18px;border-radius:9999px;font-size:0.78rem;font-weight:600;box-shadow:0 12px 30px rgba(15,23,42,.28);z-index:900;opacity:0;pointer-events:none;transition:opacity .22s ease,transform .22s ease;}
+.quick-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.quick-toast.err{background:#DC2626;}
+.quick-toast.ok{background:#059669;}
+
+/* Splash screen */
+#splashScreen{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:rgba(245,239,227,0.72);backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);opacity:0;pointer-events:none;transition:opacity .45s ease;}
+#splashScreen.open{opacity:1;pointer-events:auto;}
+.splash-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:38px 46px;background:rgba(255,255,255,0.72);border:1px solid rgba(255,255,255,0.9);border-radius:24px;box-shadow:0 30px 80px rgba(15,23,42,.16),0 0 0 1px rgba(212,168,83,.15);text-align:center;transform:translateY(10px) scale(.97);transition:transform .45s cubic-bezier(.2,.9,.25,1.1);max-width:90vw;}
+#splashScreen.open .splash-card{transform:translateY(0) scale(1);}
+.splash-mark{font-family:'DM Serif Display',serif;font-size:1.9rem;letter-spacing:.1em;color:#1E3A8A;}
+.splash-mark .splash-mark-pulse{background:linear-gradient(90deg,#1E3A8A,#D4A853 55%,#DC2626);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.splash-greeting{font-size:1.05rem;font-weight:700;color:#0F172A;margin-top:4px;}
+.splash-message{font-size:.76rem;font-weight:600;letter-spacing:.03em;color:#64748B;min-height:1.1em;}
+.splash-pulse-svg{width:220px;height:34px;margin-top:4px;overflow:visible;}
+.splash-pulse-path{fill:none;stroke:#1E3A8A;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60 400;stroke-dashoffset:0;animation:pulseTravel 2.2s linear infinite;filter:drop-shadow(0 0 4px rgba(212,168,83,.6));}
+@media(prefers-reduced-motion:reduce){.splash-pulse-path{animation:none;}}
+
+/* Friday Lineup — read-only detail modal reuses .modal-box / .detail-grid */
+.detail-value.muted{color:var(--text-dim);}
+
   </style>
 </head>
 <body>
@@ -636,7 +684,10 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
   <div class="header-top">
     <div class="header-left">
       <div class="logo-block">
-        <div class="logo-text"><div class="logo-word">THORE</div><div class="logo-sub">Dashboard</div></div>
+        <div class="logo-text">
+          <div class="logo-word">THORE <span class="logo-pulse-word">PULSE</span></div>
+          <div class="logo-sub">Business Performance &amp; Intelligence System</div>
+        </div>
       </div>
       <div class="header-context">
         <div class="header-context-eyebrow">Operations Control Centre</div>
@@ -645,7 +696,6 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
     </div>
     <div class="header-right">
       <div id="connStatus" class="status-pill online"><div class="status-dot"></div> Online</div>
-      <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
       <a href="index.html" class="icon-btn" title="Go to Form" style="font-size:0.76rem;font-weight:700;">←</a>
       <div class="profile-wrap" id="profileWrap" style="display:none;">
         <div class="profile-avatar" onclick="toggleProfile()" id="profileAvatar">?</div>
@@ -657,6 +707,9 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
         </div>
       </div>
     </div>
+    <svg class="pulse-line-svg" viewBox="0 0 600 24" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path class="pulse-line-path" d="M0,12 L140,12 L158,12 L168,-4 L180,28 L192,2 L204,12 L222,12 L600,12" />
+    </svg>
   </div>
   <div class="header-nav">
     <div id="dashTabs" class="dash-tabs" style="display:none;">
@@ -1100,6 +1153,28 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
   </div>
 </div>
 
+<!-- FRIDAY LINEUP — READ-ONLY CLIENT DETAIL MODAL (no status controls, view-only) -->
+<div class="modal-overlay" id="visitDetailModal" onclick="closeVisitDetailModal(event)">
+  <div class="modal-box">
+    <div class="modal-header"><div class="modal-title" id="visitModalCustomerName">Visit Details</div><div class="modal-close" onclick="closeVisitDetailModal()">✕</div></div>
+    <div class="modal-body">
+      <div class="detail-grid" id="visitDetailGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SPLASH SCREEN -->
+<div id="splashScreen" onclick="dismissSplashScreen()">
+  <div class="splash-card" onclick="event.stopPropagation()">
+    <div class="splash-mark">THORE <span class="splash-mark-pulse">PULSE</span></div>
+    <div class="splash-greeting" id="splashGreeting">Welcome Back</div>
+    <svg class="splash-pulse-svg" viewBox="0 0 220 34" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path class="splash-pulse-path" d="M0,17 L60,17 L72,17 L80,2 L90,32 L100,6 L110,17 L124,17 L220,17" />
+    </svg>
+    <div class="splash-message" id="splashMessage">Initializing Performance Intelligence…</div>
+  </div>
+</div>
+
 <!-- DRILL MODAL -->
 <div class="drill-overlay" id="drillModal" onclick="closeDrillModal(event)">
   <div class="drill-box">
@@ -1422,6 +1497,7 @@ async function login(){
 
 async function handleLoginSuccess(role,user){
   auth={role,user};
+  showSplashScreen(user);
   document.getElementById('loginPanel').style.display='none';
   document.getElementById('dashPanel').style.display='flex';document.getElementById('dashPanel').style.flexDirection='column';const mab=document.querySelector('.mobile-action-bar');if(mab)mab.style.display='flex';
   document.getElementById('profileWrap').style.display='block';
@@ -1629,7 +1705,7 @@ function switchVisitView(v){
 function renderVisitTable(rows){
   const tbody=document.getElementById('v-tbody');document.getElementById('v-rowCount').textContent=rows.length+' visit(s)';
   if(!rows.length){tbody.innerHTML='<tr><td colspan="13" class="no-data">No matching records found</td></tr>';return;}
-  tbody.innerHTML=rows.map(r=>`<tr><td>${esc(r.cluster)}</td><td>${esc(r.teamLead)}</td><td>${esc(r.employee)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td>${esc(r.phone)}</td><td>${esc(r.project)}</td><td>${esc(r.developer)}</td><td style="white-space:nowrap">${esc(r.visitDate)}</td><td style="white-space:nowrap">${esc(r.visitTime)}</td><td style="max-width:140px;white-space:normal;font-size:0.78rem">${esc(r.requirement)}</td><td>${esc(r.closure)}</td><td>${r.visitType?`<span class="badge ${r.visitType==='Visit'?'badge-yes':'badge-cold'}">${esc(r.visitType)}</span>`:'—'}</td><td><button class="convert-btn" onclick="convertToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="More actions">⋮</button></td></tr>`).join('');
+  tbody.innerHTML=rows.map((r,i)=>`<tr class="clickable-row" onclick="openVisitDetailModal(visitsFiltered[${i}])"><td>${esc(r.cluster)}</td><td>${esc(r.teamLead)}</td><td>${esc(r.employee)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td>${esc(r.phone)}</td><td>${esc(r.project)}</td><td>${esc(r.developer)}</td><td style="white-space:nowrap">${esc(r.visitDate)}</td><td style="white-space:nowrap">${esc(r.visitTime)}</td><td style="max-width:140px;white-space:normal;font-size:0.78rem">${esc(r.requirement)}</td><td>${esc(r.closure)}</td><td>${r.visitType?`<span class="badge ${r.visitType==='Visit'?'badge-yes':'badge-cold'}">${esc(r.visitType)}</span>`:'—'}</td><td onclick="event.stopPropagation()"><button class="convert-btn" onclick="convertToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="More actions">⋮</button></td></tr>`).join('');
 }
 function renderVisitPivot(rows){
   const dates=[...new Set(rows.map(r=>fmtDate(r.visitDate)).filter(Boolean))].sort();
@@ -1693,7 +1769,7 @@ function renderFNTable(rows){
   // build data rows
   let rowsHtml=rows.map((r,i)=>{
     let cd='—';if(r.timestamp){try{const d=new Date(r.timestamp);if(!isNaN(d))cd=d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'});else cd=r.timestamp;}catch(_){cd=r.timestamp;}}
-    return`<tr class="clickable-row" onclick="openDetailModal(fnFiltered[${i}])"><td>${esc(r.cluster)}</td><td>${esc(r.teamLead)}</td><td>${esc(r.employee)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td style="white-space:nowrap;font-size:0.78rem">${esc(cd)}</td><td>${esc(r.project)}</td><td>${esc(r.developer||r.builderSourcingName||'—')}</td><td>${esc(r.configuration)}</td><td>${esc(r.budget)}</td><td>${statusBadge(r.status)}</td><td style="white-space:nowrap">${esc(r.visitDate)}</td></tr>`;
+    return`<tr class="clickable-row" onclick="openDetailModal(fnFiltered[${i}])"><td>${esc(r.cluster)}</td><td>${esc(r.teamLead)}</td><td>${esc(r.employee)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td style="white-space:nowrap;font-size:0.78rem">${esc(cd)}</td><td>${esc(r.project)}</td><td>${esc(r.developer||r.builderSourcingName||'—')}</td><td>${esc(r.configuration)}</td><td>${esc(r.budget)}</td><td onclick="event.stopPropagation()">${fnStatusCell(r,i)}</td><td style="white-space:nowrap">${esc(r.visitDate)}</td></tr>`;
   }).join('');
 
   // budget total row
@@ -1743,6 +1819,80 @@ function openDetailModal(r){
   document.getElementById('detailModal').classList.add('open');document.body.style.overflow='hidden';
 }
 function closeDetailModal(e){if(e&&e.target!==document.getElementById('detailModal'))return;document.getElementById('detailModal').classList.remove('open');document.body.style.overflow='';}
+
+// ---- Friday Lineup: read-only client detail modal (no status controls) ----
+function openVisitDetailModal(r){
+  document.getElementById('visitModalCustomerName').textContent=r.customer||'Visit Details';
+  const fields=[
+    {label:'Cluster',value:r.cluster},{label:'PNL Head',value:r.pnlHead},{label:'Manager',value:r.manager},
+    {label:'Team Leader',value:r.teamLead},{label:'Sales Executive',value:r.employee},
+    {label:'Customer Name',value:r.customer},{label:'Contact Number',value:r.phone},
+    {label:'Project Name',value:r.project},{label:'Developer / Builder',value:r.developer},
+    {label:'Visit Date',value:r.visitDate},{label:'Visit Time',value:r.visitTime},
+    {label:'Closure Chance',value:r.closure},{label:'Visit Type',value:r.visitType,badge:true},
+    {label:'Requirements',value:r.requirement,full:true},{label:'Notes',value:r.remark,full:true}
+  ];
+  const grid=document.getElementById('visitDetailGrid');
+  grid.innerHTML=fields.map(f=>{const val=f.value?String(f.value).trim():'';const display=val?(f.badge?`<span class="badge ${val==='Visit'?'badge-yes':'badge-cold'}">${esc(val)}</span>`:`<div class="detail-value">${esc(val)}</div>`):`<div class="detail-value muted">—</div>`;return`<div class="detail-item ${f.full?'full':''}"><div class="detail-label">${f.label}</div>${display}</div>`;}).join('');
+  document.getElementById('visitDetailModal').classList.add('open');document.body.style.overflow='hidden';
+}
+function closeVisitDetailModal(e){if(e&&e.target!==document.getElementById('visitDetailModal'))return;document.getElementById('visitDetailModal').classList.remove('open');document.body.style.overflow='';}
+
+// ---- FN Clients: frictionless inline status change (no modal needed) ----
+function fnStatusClassOf(s){return{Hot:'st-hot',Warm:'st-warm',Cold:'st-cold',Token:'st-token',Lost:'st-lost',Booked:'st-booked'}[s]||'';}
+function fnStatusCell(r,i){
+  if(!isAdmin())return statusBadge(r.status);
+  const statuses=['Hot','Warm','Cold','Token','Lost','Booked'];
+  const opts=statuses.map(s=>`<option value="${s}" ${r.status===s?'selected':''}>${s}</option>`).join('');
+  return`<select class="fn-status-quick ${fnStatusClassOf(r.status)}" onclick="event.stopPropagation()" onchange="quickUpdateFNStatus(this,${i})" title="Change status — updates instantly">${opts}</select>`;
+}
+async function quickUpdateFNStatus(selectEl,i){
+  const r=fnFiltered[i];if(!r)return;
+  const newStatus=selectEl.value,prevStatus=r.status;
+  if(newStatus===prevStatus)return;
+  selectEl.disabled=true;
+  try{
+    await sbUpdateFNClient({rowIndex:r.rowIndex,newStatus,operationsRemark:r.operationsRemark??null});
+    r.status=newStatus;
+    const upd=arr=>{const f=arr.find(x=>x.rowIndex===r.rowIndex);if(f)f.status=newStatus;};upd(fnAll);upd(fnFiltered);
+    selectEl.className='fn-status-quick '+fnStatusClassOf(newStatus);
+    void selectEl.offsetWidth;selectEl.classList.add('fn-status-flash');
+    setTimeout(()=>selectEl.classList.remove('fn-status-flash'),900);
+    updateFNMetrics(fnAll);
+    showQuickToast('Status updated to '+newStatus,'ok');
+  }catch(err){
+    selectEl.value=prevStatus;
+    showQuickToast('Failed to update status: '+(err.message||'Unknown error'),'err');
+  }finally{
+    selectEl.disabled=false;
+  }
+}
+let _quickToastTimer=null;
+function showQuickToast(msg,kind){
+  let el=document.getElementById('quickToast');
+  if(!el){el=document.createElement('div');el.id='quickToast';el.className='quick-toast';document.body.appendChild(el);}
+  el.textContent=msg;el.className='quick-toast show '+(kind==='err'?'err':kind==='ok'?'ok':'');
+  clearTimeout(_quickToastTimer);_quickToastTimer=setTimeout(()=>{el.classList.remove('show');},2200);
+}
+
+// ---- Splash screen ----
+const SPLASH_MESSAGES=['Initializing Performance Intelligence…','Syncing latest lineup data…','System Ready'];
+let _splashDismissTimer=null;
+function showSplashScreen(name){
+  const el=document.getElementById('splashScreen');if(!el)return;
+  document.getElementById('splashGreeting').textContent='Welcome Back, '+(name||'').split('@')[0].split(/[.\-_]/).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
+  const msgEl=document.getElementById('splashMessage');let step=0;msgEl.textContent=SPLASH_MESSAGES[0];
+  clearInterval(el._msgInterval);
+  el._msgInterval=setInterval(()=>{step=(step+1)%SPLASH_MESSAGES.length;msgEl.textContent=SPLASH_MESSAGES[step];},800);
+  el.classList.add('open');
+  clearTimeout(_splashDismissTimer);
+  _splashDismissTimer=setTimeout(dismissSplashScreen,2300);
+}
+function dismissSplashScreen(){
+  const el=document.getElementById('splashScreen');if(!el)return;
+  clearTimeout(_splashDismissTimer);clearInterval(el._msgInterval);
+  el.classList.remove('open');
+}
 
 function openDrillModal(e,employeeName,statusLabel){
   e.stopPropagation();
@@ -2734,8 +2884,10 @@ async function saveWTEntry(){
 }
 function setWTSaveStatus(msg,isErr){const el=document.getElementById('wtSaveStatus');el.textContent=msg;el.className='admin-save-status'+(isErr===false?' ok':isErr?' err':'');}
 
-function toggleTheme(){const html=document.documentElement,isDark=html.getAttribute('data-theme')==='dark',next=isDark?'light':'dark';html.setAttribute('data-theme',next);document.getElementById('themeBtn').textContent=next==='dark'?'☀️':'🌙';try{localStorage.setItem('dash_theme',next);}catch(_){}}
-(function(){try{const saved=localStorage.getItem('dash_theme');if(saved){document.documentElement.setAttribute('data-theme',saved);document.addEventListener('DOMContentLoaded',()=>{const btn=document.getElementById('themeBtn');if(btn)btn.textContent=saved==='dark'?'☀️':'🌙';});}}catch(_){}})();
+// THORE PULSE — Light Theme is permanently enforced. The theme toggle has
+// been removed; data-theme is locked to "light" and any legacy stored
+// preference is cleared so it can never flip the app into dark mode.
+(function(){document.documentElement.setAttribute('data-theme','light');try{localStorage.setItem('dash_theme','light');}catch(_){}})();
 
 document.addEventListener('visibilitychange',()=>{if(document.hidden){if(stopVisitSubscription){stopVisitSubscription();stopVisitSubscription=null;}}else if(auth&&!isLoanDept()){startAutoRefresh();setTimeout(refreshAll,1000);}});
 window.addEventListener('online',()=>{setStatus(true);if(auth&&!stopVisitSubscription&&!isLoanDept())startAutoRefresh();});
