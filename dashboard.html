@@ -321,6 +321,24 @@
     footer{background:var(--surface);border-top:1px solid var(--border);padding:12px 20px;text-align:center;font-size:0.70rem;color:var(--text-dim);position:relative;z-index:1;}
     footer a{color:var(--gold);text-decoration:none;}
     footer a:hover{text-decoration:underline;}
+
+    /* ── SALES DASHBOARD V2 — hierarchy table row styles ───────────── */
+    tr.sp2-cluster-row td{background:var(--gold-dim);color:var(--gold);font-weight:800;font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;padding:8px 12px;border-top:2px solid var(--border-gold);border-bottom:1px solid var(--border-gold);}
+    tr.sp2-cluster-row:hover td{background:var(--gold-dim);}
+    tr.sp2-pnl-row td{background:var(--surface4);color:var(--text);font-weight:700;font-size:0.70rem;letter-spacing:0.02em;padding:7px 12px 7px 26px;border-bottom:1px solid var(--border-mid);}
+    tr.sp2-pnl-row:hover td{background:var(--surface4);}
+    tr.sp2-mgr-row td{background:var(--surface3);color:var(--text-sub);font-weight:700;font-size:0.68rem;padding:6px 12px 6px 42px;border-bottom:1px solid var(--border-mid);}
+    tr.sp2-mgr-row:hover td{background:var(--surface3);}
+    tr.sp2-emp-row td:first-child{padding-left:58px;}
+    tr.sp2-mgr-subtotal td{background:var(--surface2);color:var(--text);font-weight:700;font-size:0.73rem;border-top:1px solid var(--border);border-bottom:1px solid var(--border-mid);}
+    tr.sp2-mgr-subtotal:hover td{background:var(--surface2);}
+    tr.sp2-pnl-subtotal td{background:var(--surface3);color:var(--text);font-weight:700;font-size:0.74rem;border-bottom:1px solid var(--border-mid);}
+    tr.sp2-pnl-subtotal:hover td{background:var(--surface3);}
+    tr.sp2-cluster-subtotal td{background:rgba(169,121,59,0.09);color:var(--gold);font-weight:800;font-size:0.76rem;border-bottom:2px solid var(--border-gold);}
+    tr.sp2-cluster-subtotal:hover td{background:rgba(169,121,59,0.09);}
+    tr.sp2-grand-total td{position:sticky;bottom:0;background:var(--th-bg);border-top:2px solid var(--gold);color:var(--gold);font-weight:800;font-size:0.80rem;z-index:5;}
+
+    
     /* ── MAINTENANCE PLACEHOLDER ── */
     .maintenance-placeholder{display:flex;align-items:center;justify-content:center;min-height:320px;margin:8px 16px 20px;}
     .maintenance-box{background:var(--surface);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid var(--border-mid);border-radius:var(--radius-lg);padding:2.5rem 2rem;text-align:center;max-width:420px;box-shadow:0 12px 40px rgba(60,45,20,0.12);}
@@ -933,117 +951,80 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
 
     <!-- SALES DASHBOARD -->
     <div id="salesDash" style="display:none;">
-      <div class="section-head"><div><div class="section-kicker">SALES PERFORMANCE</div><h1>Sales Command View</h1><p>Compare funnel throughput, conversion quality and target progress.</p></div><div class="section-live"><span></span> Performance view</div></div>
-      <div class="metrics-row kpi-banner" id="spMetrics">
-        <div class="metric-card"><div class="metric-icon gold">🧲</div><div class="metric-body"><div class="metric-value" id="spm-leads">—</div><div class="metric-label">Leads</div><div class="metric-trend">Lead volume</div></div></div>
-        <div class="metric-card"><div class="metric-icon blue">🏠</div><div class="metric-body"><div class="metric-value" id="spm-sv">—</div><div class="metric-label">Site Visits</div><div class="metric-trend">SV completed</div></div></div>
-        <div class="metric-card"><div class="metric-icon orange">🤝</div><div class="metric-body"><div class="metric-value" id="spm-meetings">—</div><div class="metric-label">Meetings</div><div class="metric-trend">VC / meetings</div></div></div>
-        <div class="metric-card"><div class="metric-icon green">✅</div><div class="metric-body"><div class="metric-value" id="spm-bookings">—</div><div class="metric-label">Bookings</div><div class="metric-trend" id="spm-bookingTrend">Closed wins</div></div></div>
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">SALES PERFORMANCE</div>
+        <h1>Sales Command View</h1>
+        <p>Funnel ratios and totals in one view — filter once, scroll through everything.</p>
       </div>
-      <div class="maintenance-placeholder" id="salesMaintenance" style="display:none;">
-        <div class="maintenance-box">
-          <div class="maintenance-icon">🛠️</div>
-          <div class="maintenance-title">Sales Dashboard — Temporarily Closed</div>
-          <div class="maintenance-sub">This section is paused for a bit. Check back soon.</div>
-        </div>
-      </div>
-      <div id="salesContent">
-      <!-- <div class="metrics-row">
-        <div class="metric-card"><div class="metric-icon gold">🧲</div><div class="metric-body"><div class="metric-value" id="spm-leads">—</div><div class="metric-label">Total Leads</div></div></div>
-        <div class="metric-card"><div class="metric-icon blue">🏠</div><div class="metric-body"><div class="metric-value" id="spm-sv">—</div><div class="metric-label">Site Visits</div></div></div>
-        <div class="metric-card"><div class="metric-icon orange">🤝</div><div class="metric-body"><div class="metric-value" id="spm-meetings">—</div><div class="metric-label">Meetings</div></div></div>
-        <div class="metric-card"><div class="metric-icon gold">🎫</div><div class="metric-body"><div class="metric-value" id="spm-tokens">—</div><div class="metric-label">Tokens</div></div></div>
-        <div class="metric-card"><div class="metric-icon green">✅</div><div class="metric-body"><div class="metric-value" id="spm-bookings">—</div><div class="metric-label">Bookings</div></div></div>
-      </div> -->
-      <div class="filter-command-row"><div class="filter-search"><span class="search-icon">⌕</span><input type="search" id="sp-globalSearch" placeholder="Search employee, project, developer…" oninput="applySPFilters()" autocomplete="off"><button type="button" class="search-clear" aria-label="Clear search" onclick="clearGlobalSearch('sp')">×</button></div></div><div class="filters-bar"><div class="filters-grid">
-        <div class="filter-item"><label>Cluster</label><select id="sp-clusterFilter" onchange="applySPFilters()"><option value="">All Clusters</option></select></div>
-        <div class="filter-item"><label>PNL Head</label><select id="sp-pnlFilter" onchange="applySPFilters()"><option value="">All PNL Heads</option></select></div>
-        <div class="filter-item"><label>Manager</label><select id="sp-managerFilter" onchange="applySPFilters()"><option value="">All Managers</option></select></div>
-        <div class="filter-item"><label>Team Lead</label><select id="sp-tlFilter" onchange="applySPFilters()"><option value="">All Team Leads</option></select></div>
-        <div class="filter-item"><label>Employee</label><select id="sp-empFilter" onchange="applySPFilters()"><option value="">All Employees</option></select></div>
-        <div class="filter-item"><label>Project</label><select id="sp-projFilter" onchange="applySPFilters()"><option value="">All Projects</option></select></div>
-        <div class="filter-item"><label>Developer</label><select id="sp-devFilter" onchange="applySPFilters()"><option value="">All Developers</option></select></div>
-        <div class="filter-item date-range-item"><label>Updated Date</label><div class="date-range-pair"><input type="date" id="sp-fromDate" onchange="applySPFilters()" title="From date"><span class="date-range-sep">–</span><input type="date" id="sp-toDate" onchange="applySPFilters()" title="To date"></div></div>
-        <div class="filter-item"><label>&nbsp;</label><div class="filter-actions"><button class="clear-btn" onclick="clearSPFilters()">Clear</button><div class="sp-view-toggle"><button class="view-tab active" id="sp-tableTab" onclick="switchSPView('table')">📋 Table</button><button class="view-tab" id="sp-dashTab" onclick="switchSPView('dashboard')">📊 Dashboard</button><button class="view-tab" id="sp-targetsTab" onclick="switchSPView('targets')">🎯 Targets</button></div></div></div>
-      </div></div>
-      <div class="prefilter-note" style="display:flex;">ℹ️ <span>Project / Developer filters narrow SV, Meeting, Booking &amp; Revenue counts only — Leads (from Sales Lead Count) are tracked per-employee, not per-project.</span></div>
-      <div class="active-filter-chips" id="sp-filterChips"></div><div class="table-meta"><div class="row-count" id="sp-rowCount">Loading…</div><div class="last-updated" id="sp-lastUpdated"></div></div>
-
-      <div id="sp-tableView" class="table-wrap">
-        <table id="sp-table"><thead><tr>
-          <th>Manager</th><th>Employee</th><th>Leads</th><th>SV</th><th>Meeting</th><th>Tokens</th><th>Bookings</th><th>Revenue</th>
-          <th>Leads:SV</th><th>Leads:Meeting</th><th>SV:Booking</th><th>Meeting:Booking</th>
-        </tr></thead><tbody id="sp-tbody"></tbody></table>
-      </div>
-
-      <div id="sp-dashboardView" style="display:none;">
-        <div class="chart-grid">
-          <div class="chart-card"><div class="chart-card-title">Cluster-wise <span>Leads / SV / Meetings / Bookings</span></div><div class="chart-card-body"><canvas id="sp-chart-cluster"></canvas></div></div>
-          <div class="chart-card"><div class="chart-card-title">PNL Head-wise <span>Leads / SV / Meetings / Bookings</span></div><div class="chart-card-body"><canvas id="sp-chart-team"></canvas></div></div>
-          <div class="chart-card"><div class="chart-card-title">Cluster-wise <span>Conversion Ratios (%)</span></div><div class="chart-card-body"><canvas id="sp-chart-cluster-ratio"></canvas></div></div>
-          <div class="chart-card"><div class="chart-card-title">PNL Head-wise <span>Conversion Ratios (%)</span></div><div class="chart-card-body"><canvas id="sp-chart-team-ratio"></canvas></div></div>
-          <div class="chart-card full"><div class="chart-card-title">Project-wise <span>SV + Meeting → Booking Ratio</span></div><div class="chart-card-body tall"><canvas id="sp-chart-project-ratio"></canvas></div></div>
-          <div class="chart-card full"><div class="chart-card-title">Developer-wise <span>SV + Meeting → Booking Ratio</span></div><div class="chart-card-body tall"><canvas id="sp-chart-developer-ratio"></canvas></div></div>
-        </div>
-      </div>
-
-      <div id="sp-targetsView" style="display:none;">
-        <div class="filters-bar"><div class="filters-grid">
-          <div class="filter-item"><label>Leader Level</label>
-            <select id="tgt-levelFilter" onchange="applyTargetFilters()">
-              <option value="PNL Head">PNL Head</option>
-              <option value="Manager">Manager</option>
-            </select>
-          </div>
-          <div class="filter-item"><label>Leader Name</label><select id="tgt-leaderFilter" onchange="applyTargetFilters()"><option value="">All (Combined)</option></select></div>
-          <div class="filter-item"><label>&nbsp;</label><button class="clear-btn" onclick="clearTargetFilters()">Clear</button></div>
-        </div></div>
-
-        <div class="table-meta"><div class="row-count" id="tgt-rowCount">Loading…</div><div class="last-updated" id="tgt-lastUpdated"></div></div>
-
-        <div class="chart-grid">
-          <div class="chart-card full"><div class="chart-card-title">Site Visits (SV) <span>Target vs Achieved — weekly</span></div><div class="chart-card-body tall"><canvas id="tgt-chart-sv"></canvas></div></div>
-          <div class="chart-card full"><div class="chart-card-title">VC / Meetings <span>Target vs Achieved — weekly</span></div><div class="chart-card-body tall"><canvas id="tgt-chart-vc"></canvas></div></div>
-          <div class="chart-card full"><div class="chart-card-title">Bookings (Incremental) <span>Target vs Achieved — weekly</span></div><div class="chart-card-body tall"><canvas id="tgt-chart-booking"></canvas></div></div>
-        </div>
-
-        <div class="table-meta"><div class="row-count">Weekly completion — %</div></div>
-        <div class="table-wrap">
-          <table id="tgt-table"><thead><tr>
-            <th>Week</th><th>Leader</th><th>SV Target</th><th>SV Achieved</th><th>SV %</th>
-            <th>VC Target</th><th>VC Achieved</th><th>VC %</th>
-            <th>Booking Target</th><th>Booking Achieved</th><th>Booking %</th>
-          </tr></thead><tbody id="tgt-tbody"></tbody></table>
-        </div>
-
-        <div class="admin-edit-panel" id="tgtAdminPanel" style="display:none;margin:8px 16px 20px;">
-          <div class="admin-edit-title">🎯 Set / Update Weekly Target</div>
-          <div class="admin-edit-row">
-            <div><div class="admin-edit-label">Week Start</div><input type="date" class="admin-edit-select" id="tgtNewWeekStart"></div>
-            <div><div class="admin-edit-label">Week End</div><input type="date" class="admin-edit-select" id="tgtNewWeekEnd"></div>
-          </div>
-          <div class="admin-edit-row">
-            <div><div class="admin-edit-label">Leader Level</div>
-              <select class="admin-edit-select" id="tgtNewLevel" onchange="populateTargetLeaderOptions()">
-                <option value="PNL Head">PNL Head</option>
-                <option value="Manager">Manager</option>
-              </select>
-            </div>
-            <div><div class="admin-edit-label">Leader Name</div><select class="admin-edit-select" id="tgtNewLeaderName"></select></div>
-          </div>
-          <div class="admin-edit-row">
-            <div><div class="admin-edit-label">SV Target</div><input type="number" min="0" class="admin-edit-select" id="tgtNewSV" value="0"></div>
-            <div><div class="admin-edit-label">VC Target</div><input type="number" min="0" class="admin-edit-select" id="tgtNewVC" value="0"></div>
-          </div>
-          <div class="admin-edit-row full">
-            <div><div class="admin-edit-label">Booking Target (Incremental)</div><input type="number" min="0" class="admin-edit-select" id="tgtNewBooking" value="0"></div>
-          </div>
-          <button class="admin-save-btn" onclick="saveWeeklyTargetEntry()">Save Target</button>
-          <div class="admin-save-status" id="tgtSaveStatus"></div>
-        </div>
-      </div>
-      </div><!-- /salesContent -->
+      <div class="section-live"><span></span> Live data</div>
     </div>
+  
+    <div class="metrics-row kpi-banner" id="sp2Metrics">
+      <div class="metric-card"><div class="metric-icon gold">🧲</div><div class="metric-body"><div class="metric-value" id="sp2m-leads">—</div><div class="metric-label">Leads</div><div class="metric-trend">Lead volume</div></div></div>
+      <div class="metric-card"><div class="metric-icon blue">🏠</div><div class="metric-body"><div class="metric-value" id="sp2m-sv">—</div><div class="metric-label">Site Visits</div><div class="metric-trend">SV completed</div></div></div>
+      <div class="metric-card"><div class="metric-icon orange">🤝</div><div class="metric-body"><div class="metric-value" id="sp2m-vc">—</div><div class="metric-label">VC / Meetings</div><div class="metric-trend">Video calls</div></div></div>
+      <div class="metric-card"><div class="metric-icon green">✅</div><div class="metric-body"><div class="metric-value" id="sp2m-booking">—</div><div class="metric-label">Bookings</div><div class="metric-trend" id="sp2m-revenue">Revenue —</div></div></div>
+    </div>
+  
+    <div class="filter-command-row">
+      <div class="filters-bar"><div class="filters-grid">
+        <div class="filter-item"><label>Cluster</label><select id="sp2-clusterFilter" onchange="applySP2Filters()"><option value="">All Clusters</option></select></div>
+        <div class="filter-item"><label>PNL Head</label><select id="sp2-pnlFilter" onchange="applySP2Filters()"><option value="">All PNL Heads</option></select></div>
+        <div class="filter-item"><label>Manager</label><select id="sp2-managerFilter" onchange="applySP2Filters()"><option value="">All Managers</option></select></div>
+        <div class="filter-item"><label>Team Lead</label><select id="sp2-tlFilter" onchange="applySP2Filters()"><option value="">All Team Leads</option></select></div>
+        <div class="filter-item"><label>Employee</label><select id="sp2-empFilter" onchange="applySP2Filters()"><option value="">All Employees</option></select></div>
+        <div class="filter-item date-range-item"><label>Report End Date</label>
+          <div class="date-range-pair">
+            <input type="date" id="sp2-fromDate" onchange="applySP2Filters()" title="From date">
+            <span class="date-range-sep">–</span>
+            <input type="date" id="sp2-toDate" onchange="applySP2Filters()" title="To date">
+          </div>
+        </div>
+        <div class="filter-item"><label>&nbsp;</label><button class="clear-btn" onclick="clearSP2Filters()">Clear</button></div>
+      </div></div>
+    </div>
+  
+    <div class="table-meta"><div class="row-count" id="sp2-rowCount">Loading…</div><div class="last-updated" id="sp2-lastUpdated"></div></div>
+  
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-card-title">Manager-wise <span>Leads:SV % &amp; SV:Booking %</span></div>
+        <div class="chart-card-body"><canvas id="sp2-chart-sv-manager"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-title">Manager-wise <span>Leads:VC % &amp; VC:Booking %</span></div>
+        <div class="chart-card-body"><canvas id="sp2-chart-vc-manager"></canvas></div>
+      </div>
+      <div class="chart-card full">
+        <div class="chart-card-title">Company-wide <span>Ratio Trend — by Report End Date</span></div>
+        <div class="chart-card-body tall"><canvas id="sp2-chart-trend"></canvas></div>
+      </div>
+    </div>
+  
+    <div class="table-wrap">
+      <table id="sp2-table"><thead><tr>
+        <th>Cluster / PNL Head / Manager / Employee</th><th>Leads</th><th>SV</th><th>VC</th><th>Tokens</th><th>Bookings</th><th>Revenue</th>
+        <th>Leads:SV</th><th>Leads:VC</th><th>Leads:Booking</th><th>SV:Booking</th><th>VC:Booking</th>
+      </tr></thead><tbody id="sp2-tbody"></tbody></table>
+    </div>
+  </div>
+  
+  <!-- Employee detail drawer — new id, doesn't clash with the existing spDetailModal -->
+  <div class="drill-overlay" id="sp2DetailModal" onclick="closeSP2DetailModal(event)">
+    <div class="drill-box">
+      <div class="drill-header"><div class="drill-title" id="sp2DetailTitle">Employee</div><div class="modal-close" onclick="closeSP2DetailModal()">✕</div></div>
+      <div class="modal-body" style="overflow-y:auto;flex:1;">
+        <div class="sp-detail-summary" id="sp2DetailSummary" style="grid-template-columns:repeat(3,1fr);"></div>
+        <div class="drill-table-wrap" style="overflow:visible;flex:none;">
+          <table class="sp-proj-table"><thead><tr>
+            <th>Report Period</th><th>Leads</th><th>SV</th><th>VC</th><th>Tokens</th><th>Bookings</th><th>Revenue</th><th>Leads:SV</th><th>SV:Booking</th>
+          </tr></thead><tbody id="sp2DetailPeriodTbody"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
     <!-- WEEKLY TARGETS -->
     <div id="weeklytargetsDash" style="display:none;">
@@ -1420,7 +1401,7 @@ let tgtAll=[],tgtCharts={};
 let wtCharts={};
 
 // ── Temporary section toggles — flip to false to bring a section back ──
-const MAINTENANCE_MODE={marketing:true,salesdash:true};
+const MAINTENANCE_MODE={marketing:true,salesdash:false};
 
 const WT_ADMIN_ENABLED = false; // flip to true when you want the Target/Achievement form back
 
@@ -2239,282 +2220,348 @@ function renderMPCharts(agg){
 }
 
 // ══════════════════════════════════════════════════════════
-//  SALES DASHBOARD
+//  SALES DASHBOARD V2 — sales_performance (new aggregated schema)
 // ══════════════════════════════════════════════════════════
-let spAgg=null;
 
-async function loadSalesPerformanceData(){
-  document.getElementById('sp-rowCount').textContent='Loading…';
-  try{
-    renderSalesPerformanceData(await sbFetchSalesPerformance());
-  }catch(err){
-    document.getElementById('sp-rowCount').textContent='Failed to load: '+err.message;
-  }
-}
-function renderSalesPerformanceData(data){
-  spPerfAll=(data&&data.performance)?data.performance.map(r=>({...r,updatedDate:fmtDate(r.updatedDate)})):[];
-  spLeadAll=(data&&data.leadCount)?data.leadCount.map(r=>({...r,updatedDate:fmtDate(r.updatedDate)})):[];
-  populateSPFilters();applySPFilters();
-  document.getElementById('sp-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
-  // Weekly Targets sub-view depends on spPerfAll for achievement — refresh it
-  // if it's already loaded and currently visible so achievements aren't stale.
-  if(spView==='targets'&&tgtAll.length>0)renderTargetsSection();
-}
-function populateSPFilters(){
-  const clusterVals=new Set(),pnlVals=new Set(),mgrVals=new Set(),tlVals=new Set(),empVals=new Set(),projVals=new Set(),devVals=new Set();
-  spPerfAll.forEach(r=>{r.cluster&&clusterVals.add(r.cluster);r.pnlHead&&pnlVals.add(r.pnlHead);r.manager&&mgrVals.add(r.manager);r.teamLead&&tlVals.add(r.teamLead);r.employee&&empVals.add(r.employee);r.project&&projVals.add(r.project);r.developer&&devVals.add(r.developer);});
-  spLeadAll.forEach(r=>{r.cluster&&clusterVals.add(r.cluster);r.pnlHead&&pnlVals.add(r.pnlHead);r.manager&&mgrVals.add(r.manager);r.teamLead&&tlVals.add(r.teamLead);r.employee&&empVals.add(r.employee);});
-  fillSelect('sp-clusterFilter',[...clusterVals].sort(),'All Clusters');
-  fillSelect('sp-pnlFilter',[...pnlVals].sort(),'All PNL Heads');
-  fillSelect('sp-managerFilter',[...mgrVals].sort(),'All Managers');
-  fillSelect('sp-tlFilter',[...tlVals].sort(),'All Team Leads');
-  fillSelect('sp-empFilter',[...empVals].sort(),'All Employees');
-  fillSelect('sp-projFilter',[...projVals].sort(),'All Projects');
-  fillSelect('sp-devFilter',[...devVals].sort(),'All Developers');
-}
-function applySPFilters(){
-  const cluster=document.getElementById('sp-clusterFilter').value,pnl=document.getElementById('sp-pnlFilter').value,mgr=document.getElementById('sp-managerFilter').value,tl=document.getElementById('sp-tlFilter').value,emp=document.getElementById('sp-empFilter').value,proj=document.getElementById('sp-projFilter').value,dev=document.getElementById('sp-devFilter').value;
-  const from=document.getElementById('sp-fromDate').value,to=document.getElementById('sp-toDate').value;
-  spLeadFiltered=spLeadAll.filter(r=>{
-    if(cluster&&r.cluster!==cluster)return false;if(pnl&&r.pnlHead!==pnl)return false;if(mgr&&r.manager!==mgr)return false;if(tl&&r.teamLead!==tl)return false;if(emp&&r.employee!==emp)return false;
-    if(from&&r.updatedDate<from)return false;if(to&&r.updatedDate>to)return false;
-    return true;
-  });
-  spPerfFiltered=spPerfAll.filter(r=>{
-    if(cluster&&r.cluster!==cluster)return false;if(pnl&&r.pnlHead!==pnl)return false;if(mgr&&r.manager!==mgr)return false;if(tl&&r.teamLead!==tl)return false;if(emp&&r.employee!==emp)return false;
-    if(proj&&r.project!==proj)return false;if(dev&&r.developer!==dev)return false;
-    if(from&&r.updatedDate<from)return false;if(to&&r.updatedDate>to)return false;
-    return true;
-  });
-  renderSPAll();
-}
-function clearSPFilters(){
-  ['sp-clusterFilter','sp-pnlFilter','sp-managerFilter','sp-tlFilter','sp-empFilter','sp-projFilter','sp-devFilter','sp-fromDate','sp-toDate'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  spLeadFiltered=[...spLeadAll];spPerfFiltered=[...spPerfAll];renderSPAll();
-}
-function switchSPView(v){
-  spView=v;
-  document.getElementById('sp-tableTab').classList.toggle('active',v==='table');
-  document.getElementById('sp-dashTab').classList.toggle('active',v==='dashboard');
-  document.getElementById('sp-targetsTab').classList.toggle('active',v==='targets');
-  document.getElementById('sp-tableView').style.display=v==='table'?'block':'none';
-  document.getElementById('sp-dashboardView').style.display=v==='dashboard'?'block':'none';
-  document.getElementById('sp-targetsView').style.display=v==='targets'?'block':'none';
-  if(v==='table')renderSPTable(spAgg);
-  else if(v==='dashboard')renderSPCharts(spAgg);
-  else if(v==='targets'){
-    if(tgtAll.length===0&&auth)loadWeeklyTargetsData();
-    else renderTargetsSection();
-  }
-}
-function renderSPAll(){
-  spAgg=buildSPAggregation();
-  updateSPMetrics(spAgg);
-  if(spView==='table')renderSPTable(spAgg);else if(spView==='dashboard')renderSPCharts(spAgg);
-}
+// Flip to true only if your *_ratio columns are stored as 0–1 fractions
+// instead of already-percentage numbers.
+const SP2_RATIO_IS_FRACTION = false;
 
-// ── Aggregation: joins Sales Lead Count (leads) with Sales Performance
-//    (SV/Meeting/Booking/Revenue) per employee, grouped Cluster → Team,
-//    plus separate Project-wise / Developer-wise rollups for charts.
-function spZeroActivity(){return{sv:0,meetings:0,tokens:0,bookings:0,svBookings:0,vcBookings:0,revenue:0};}
-function spAddActivity(target,r){
-  if(r.type==='SV')target.sv++;
-  else if(r.type==='Meeting')target.meetings++;
-  else if(r.type==='Token')target.tokens++;
-  else if(r.type==='Booking'){
-    target.bookings++;
-    target.revenue+=parseBudget(r.revenue);
-    if(r.bookingSource==='SV')target.svBookings++;
-    else if(r.bookingSource==='VC')target.vcBookings++;
-  }
-}
+let sp2All = [], sp2Filtered = [], sp2Charts = {};
 
-function buildSPAggregation(){
-  const leadByEmp={};
-  spLeadFiltered.forEach(r=>{
-    const key=r.employee||'—';
-    if(!leadByEmp[key])leadByEmp[key]={cluster:r.cluster||'—',team:r.teamLead||'—',manager:r.manager||'—',pnlHead:r.pnlHead||'—',leads:0};
-    leadByEmp[key].leads+=r.leadCount||0;
-  });
-  const perfByEmp={};
-  spPerfFiltered.forEach(r=>{
-    const key=r.employee||'—';
-    if(!perfByEmp[key])perfByEmp[key]={cluster:r.cluster||'—',team:r.teamLead||'—',manager:r.manager||'—',pnlHead:r.pnlHead||'—',...spZeroActivity(),projects:{}};
-    const e=perfByEmp[key];
-    spAddActivity(e,r);
-    const pk=(r.project||'—')+'||'+(r.developer||'—');
-    if(!e.projects[pk])e.projects[pk]={project:r.project||'—',developer:r.developer||'—',...spZeroActivity()};
-    spAddActivity(e.projects[pk],r);
-  });
-  const empNames=new Set([...Object.keys(leadByEmp),...Object.keys(perfByEmp)]);
-  const employees=[...empNames].map(name=>{
-    const l=leadByEmp[name],p=perfByEmp[name];
-    const pick=(a,b)=>(a&&a!=='—')?a:((b&&b!=='—')?b:'—');
-    return{
-      employee:name,
-      cluster:pick(p&&p.cluster,l&&l.cluster),
-      team:pick(p&&p.team,l&&l.team),
-      manager:pick(p&&p.manager,l&&l.manager),
-      pnlHead:pick(p&&p.pnlHead,l&&l.pnlHead),
-      leads:l?l.leads:0,
-      sv:p?p.sv:0,meetings:p?p.meetings:0,tokens:p?p.tokens:0,bookings:p?p.bookings:0,
-      svBookings:p?p.svBookings:0,vcBookings:p?p.vcBookings:0,revenue:p?p.revenue:0,
-      projects:p?Object.values(p.projects).sort((a,b)=>a.project.localeCompare(b.project)):[]
-    };
-  });
-  const clusterMap={};
-  employees.forEach(e=>{
-    if(!clusterMap[e.cluster])clusterMap[e.cluster]={cluster:e.cluster,teams:{},leads:0,...spZeroActivity()};
-    const c=clusterMap[e.cluster];
-    if(!c.teams[e.pnlHead])c.teams[e.pnlHead]={team:e.pnlHead,employees:[],leads:0,...spZeroActivity()};
-    const t=c.teams[e.pnlHead];
-    t.employees.push(e);
-    ['leads','sv','meetings','tokens','bookings','svBookings','vcBookings','revenue'].forEach(k=>{t[k]+=e[k];c[k]+=e[k];});
-  });
-  const clusters=Object.values(clusterMap).sort((a,b)=>a.cluster.localeCompare(b.cluster));
-  clusters.forEach(c=>{c.teamList=Object.values(c.teams).sort((a,b)=>a.team.localeCompare(b.team));c.teamList.forEach(t=>t.employees.sort((a,b)=>a.employee.localeCompare(b.employee)));});
-  const grand={leads:0,...spZeroActivity()};
-  employees.forEach(e=>{['leads','sv','meetings','tokens','bookings','svBookings','vcBookings','revenue'].forEach(k=>{grand[k]+=e[k];});});
-  const projAgg={},devAgg={};
-  spPerfFiltered.forEach(r=>{
-    const pk=r.project||'—';
-    if(!projAgg[pk])projAgg[pk]={key:pk,...spZeroActivity()};
-    spAddActivity(projAgg[pk],r);
-    const dk=r.developer||'—';
-    if(!devAgg[dk])devAgg[dk]={key:dk,...spZeroActivity()};
-    spAddActivity(devAgg[dk],r);
-  });
-  return{clusters,employees,grand,projAgg:Object.values(projAgg),devAgg:Object.values(devAgg)};
-}
-
-function ratioPct(num,den){return den>0?(num/den*100):null;}
-function ratioClass(p){if(p===null)return'ratio-na';if(p>=40)return'ratio-good';if(p>=15)return'ratio-mid';return'ratio-low';}
-function ratioPill(num,den){const p=ratioPct(num,den);return`<span class="ratio-pill ${ratioClass(p)}">${p===null?'—':p.toFixed(1)+'%'}</span>`;}
-
-function updateSPMetrics(agg){
-  document.getElementById('spm-leads').textContent=agg.grand.leads.toLocaleString('en-IN');
-  document.getElementById('spm-sv').textContent=agg.grand.sv.toLocaleString('en-IN');
-  document.getElementById('spm-meetings').textContent=agg.grand.meetings.toLocaleString('en-IN');
-  document.getElementById('spm-tokens').textContent=agg.grand.tokens.toLocaleString('en-IN');
-  document.getElementById('spm-bookings').textContent=agg.grand.bookings.toLocaleString('en-IN');
-}
-
-function renderSPTable(agg){
-  if(!agg)return;
-  const tbody=document.getElementById('sp-tbody');
-  if(!agg.employees.length){tbody.innerHTML='<tr><td colspan="12" class="no-data">No sales performance data found for the current filters</td></tr>';document.getElementById('sp-rowCount').textContent='0 employees';return;}
-  let html='';
-  agg.clusters.forEach(c=>{
-    html+=`<tr class="sp-cluster-row"><td colspan="12">📍 ${esc(c.cluster)}</td></tr>`;
-    c.teamList.forEach(t=>{
-      html+=`<tr class="sp-team-row"><td colspan="12">👥 PNL Head: ${esc(t.team)}</td></tr>`;
-      t.employees.forEach(e=>{
-        html+=`<tr class="sp-emp-row">
-          <td>${esc(e.manager)}</td>
-          <td><button class="sp-expand-btn" onclick="openSPEmployeeDetail(${JSON.stringify(e).replace(/"/g,'&quot;')})" title="View project-wise detail">▸</button>${esc(e.employee)}</td>
-          <td>${e.leads.toLocaleString('en-IN')}</td>
-          <td>${e.sv.toLocaleString('en-IN')}</td>
-          <td>${e.meetings.toLocaleString('en-IN')}</td>
-          <td>${e.tokens.toLocaleString('en-IN')}</td>
-          <td>${e.bookings.toLocaleString('en-IN')}</td>
-          <td>${e.revenue?formatBudgetTotal(e.revenue):'—'}</td>
-          <td>${ratioPill(e.sv,e.leads)}</td>
-          <td>${ratioPill(e.meetings,e.leads)}</td>
-          <td>${ratioPill(e.svBookings,e.sv)}</td>
-          <td>${ratioPill(e.vcBookings,e.meetings)}</td>
-        </tr>`;
-      });
-      html+=`<tr class="sp-team-subtotal"><td colspan="2">Subtotal — ${esc(t.team)}</td><td>${t.leads.toLocaleString('en-IN')}</td><td>${t.sv.toLocaleString('en-IN')}</td><td>${t.meetings.toLocaleString('en-IN')}</td><td>${t.tokens.toLocaleString('en-IN')}</td><td>${t.bookings.toLocaleString('en-IN')}</td><td>${t.revenue?formatBudgetTotal(t.revenue):'—'}</td><td>${ratioPill(t.sv,t.leads)}</td><td>${ratioPill(t.meetings,t.leads)}</td><td>${ratioPill(t.svBookings,t.sv)}</td><td>${ratioPill(t.vcBookings,t.meetings)}</td></tr>`;
-    });
-    html+=`<tr class="sp-cluster-subtotal"><td colspan="2">Cluster Total — ${esc(c.cluster)}</td><td>${c.leads.toLocaleString('en-IN')}</td><td>${c.sv.toLocaleString('en-IN')}</td><td>${c.meetings.toLocaleString('en-IN')}</td><td>${c.tokens.toLocaleString('en-IN')}</td><td>${c.bookings.toLocaleString('en-IN')}</td><td>${c.revenue?formatBudgetTotal(c.revenue):'—'}</td><td>${ratioPill(c.sv,c.leads)}</td><td>${ratioPill(c.meetings,c.leads)}</td><td>${ratioPill(c.svBookings,c.sv)}</td><td>${ratioPill(c.vcBookings,c.meetings)}</td></tr>`;
-  });
-  html+=`<tr class="sp-grand-total"><td colspan="2">GRAND TOTAL</td><td>${agg.grand.leads.toLocaleString('en-IN')}</td><td>${agg.grand.sv.toLocaleString('en-IN')}</td><td>${agg.grand.meetings.toLocaleString('en-IN')}</td><td>${agg.grand.tokens.toLocaleString('en-IN')}</td><td>${agg.grand.bookings.toLocaleString('en-IN')}</td><td>${agg.grand.revenue?formatBudgetTotal(agg.grand.revenue):'—'}</td><td>${ratioPill(agg.grand.sv,agg.grand.leads)}</td><td>${ratioPill(agg.grand.meetings,agg.grand.leads)}</td><td>${ratioPill(agg.grand.svBookings,agg.grand.sv)}</td><td>${ratioPill(agg.grand.vcBookings,agg.grand.meetings)}</td></tr>`;
-  tbody.innerHTML=html;
-  document.getElementById('sp-rowCount').textContent=agg.employees.length+' employee(s) across '+agg.clusters.length+' cluster(s)';
-}
-
-function openSPEmployeeDetail(e){
-  document.getElementById('spDetailTitle').innerHTML=`${esc(e.employee)} <span>— ${esc(e.pnlHead)}</span>`;
-  const summary=[
-    {label:'Cluster',value:e.cluster},{label:'Manager',value:e.manager},{label:'PNL Head',value:e.pnlHead},
-    {label:'Leads',value:e.leads.toLocaleString('en-IN'),gold:true},{label:'SV',value:e.sv.toLocaleString('en-IN')},{label:'Meetings',value:e.meetings.toLocaleString('en-IN')},
-    {label:'Tokens',value:e.tokens.toLocaleString('en-IN')},{label:'Bookings',value:e.bookings.toLocaleString('en-IN'),gold:true},{label:'Revenue',value:e.revenue?formatBudgetTotal(e.revenue):'—',gold:true},{label:'Projects Worked',value:e.projects.length}
-  ];
-  document.getElementById('spDetailSummary').innerHTML=summary.map(s=>`<div class="detail-item"><div class="detail-label">${s.label}</div><div class="detail-value ${s.gold?'gold':''}">${esc(String(s.value))}</div></div>`).join('');
-  const tbody=document.getElementById('spDetailProjTbody');
-  if(!e.projects.length){tbody.innerHTML='<tr><td colspan="9" class="no-data">No project-wise activity found</td></tr>';}
-  else{tbody.innerHTML=e.projects.map(p=>`<tr><td style="font-weight:600;color:var(--text)">${esc(p.project)}</td><td>${esc(p.developer)}</td><td>${p.sv}</td><td>${p.meetings}</td><td>${p.tokens}</td><td>${p.bookings}</td><td>${p.revenue?formatBudgetTotal(p.revenue):'—'}</td><td>${ratioPill(p.svBookings,p.sv)}</td><td>${ratioPill(p.vcBookings,p.meetings)}</td></tr>`).join('');}
-  document.getElementById('spDetailModal').classList.add('open');document.body.style.overflow='hidden';
-}
-function closeSPDetailModal(e){if(e&&e.target!==document.getElementById('spDetailModal'))return;document.getElementById('spDetailModal').classList.remove('open');document.body.style.overflow='';}
-
-function spCssVar(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim();}
-function destroySPChart(id){if(spCharts[id]){spCharts[id].destroy();delete spCharts[id];}}
-function spChartOpts(isPercent){
-  return{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:9,font:{size:10}}},tooltip:{callbacks:isPercent?{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toFixed(1)+'%'}:undefined}},
-    scales:{
-      x:{ticks:{autoSkip:false,maxRotation:60,minRotation:0,font:{size:9}},grid:{display:false}},
-      y:{beginAtZero:true,ticks:isPercent?{callback:v=>v+'%'}:{},grid:{color:'rgba(120,120,120,0.12)'}}
-    }
+function mapSP2Row(r){
+  return {
+    rowIndex: r.id,
+    reportStart: r.report_start_date || '', reportEnd: r.report_end_date || '',
+    cluster: r.cluster || '—', pnlHead: r.pnl_head || '—', manager: r.manager || '—', tl: r.tl || '—',
+    name: r.name || '—', joiningDate: r.joining_date || '',
+    leads: r.leads || 0, uniqueLeads: r.unique_leads || 0,
+    followupActivity: r.followup_activity || 0, callActivity: r.call_activity || 0, talktime: r.talktime || 0,
+    sv: r.site_visit || 0, leadsToSvRatio: r.leads_to_sv_ratio,
+    f2f: r.f2f || 0, vc: r.vc || 0, leadsToMeetingRatio: r.leads_to_meeting_ratio,
+    token: r.token || 0, booking: r.booking || 0, leadsToBookingsRatio: r.leads_to_bookings_ratio,
+    svBookings: r.sv_bookings || 0, svToBookingRatio: r.sv_to_booking_ratio,
+    vcBookings: r.vc_bookings || 0, meetingsToBookingRatio: r.meetings_to_booking_ratio,
+    svBookingsRevenue: r.sv_bookings_revenue || 0, vcBookingsRevenue: r.vc_bookings_revenue || 0
   };
 }
-function renderSPCharts(agg){
-  agg=agg||spAgg;
-  if(!agg||typeof Chart==='undefined')return;
-  const gold=spCssVar('--gold'),blue=spCssVar('--blue'),orange=spCssVar('--orange'),green=spCssVar('--green'),red=spCssVar('--red'),textDim=spCssVar('--text-dim');
-  Chart.defaults.color=textDim;Chart.defaults.font.family="'Inter',sans-serif";Chart.defaults.font.size=10.5;
+async function sbFetchSP2(){
+  const {data,error} = await supabaseClient.from('sales_performance').select('*').order('report_end_date',{ascending:true});
+  if(error) throw new Error(error.message);
+  return data.map(mapSP2Row);
+}
 
-  destroySPChart('cluster');
-  const clLabels=agg.clusters.map(c=>c.cluster);
-  spCharts.cluster=new Chart(document.getElementById('sp-chart-cluster'),{type:'bar',data:{labels:clLabels,datasets:[
-    {label:'Leads',data:agg.clusters.map(c=>c.leads),backgroundColor:gold},
-    {label:'SV',data:agg.clusters.map(c=>c.sv),backgroundColor:blue},
-    {label:'Meetings',data:agg.clusters.map(c=>c.meetings),backgroundColor:orange},
-    {label:'Tokens',data:agg.clusters.map(c=>c.tokens),backgroundColor:red},
-    {label:'Bookings',data:agg.clusters.map(c=>c.bookings),backgroundColor:green}
-  ]},options:spChartOpts(false)});
+async function loadSP2Data(){
+  document.getElementById('sp2-rowCount').textContent = 'Loading…';
+  try{
+    sp2All = await sbFetchSP2();
+    populateSP2Filters();
+    sp2Filtered = [...sp2All];
+    renderSP2All();
+    document.getElementById('sp2-lastUpdated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+  }catch(err){
+    document.getElementById('sp2-rowCount').textContent = 'Failed to load: ' + err.message;
+  }
+}
 
-  destroySPChart('team');
-  const allTeams=[];agg.clusters.forEach(c=>c.teamList.forEach(t=>allTeams.push({...t,label:t.team+' ('+c.cluster+')'})));
-  spCharts.team=new Chart(document.getElementById('sp-chart-team'),{type:'bar',data:{labels:allTeams.map(t=>t.label),datasets:[
-    {label:'Leads',data:allTeams.map(t=>t.leads),backgroundColor:gold},
-    {label:'SV',data:allTeams.map(t=>t.sv),backgroundColor:blue},
-    {label:'Meetings',data:allTeams.map(t=>t.meetings),backgroundColor:orange},
-    {label:'Tokens',data:allTeams.map(t=>t.tokens),backgroundColor:red},
-    {label:'Bookings',data:allTeams.map(t=>t.bookings),backgroundColor:green}
-  ]},options:spChartOpts(false)});
+// Cascading dropdowns: Cluster → PNL Head → Manager → Team Lead → Employee
+function populateSP2Filters(){
+  const clEl=document.getElementById('sp2-clusterFilter'), pnlEl=document.getElementById('sp2-pnlFilter'),
+        mgrEl=document.getElementById('sp2-managerFilter'), tlEl=document.getElementById('sp2-tlFilter'),
+        empEl=document.getElementById('sp2-empFilter');
+  const cl=clEl.value, pnl=pnlEl.value, mgr=mgrEl.value, tl=tlEl.value;
+  const forPnl = cl ? sp2All.filter(r=>r.cluster===cl) : sp2All;
+  const forMgr = pnl ? forPnl.filter(r=>r.pnlHead===pnl) : forPnl;
+  const forTl  = mgr ? forMgr.filter(r=>r.manager===mgr) : forMgr;
+  const forEmp = tl ? forTl.filter(r=>r.tl===tl) : forTl;
+  fillSelect('sp2-clusterFilter', [...new Set(sp2All.map(r=>r.cluster))].sort(), 'All Clusters');
+  fillSelect('sp2-pnlFilter', [...new Set(forPnl.map(r=>r.pnlHead))].sort(), 'All PNL Heads');
+  fillSelect('sp2-managerFilter', [...new Set(forMgr.map(r=>r.manager))].sort(), 'All Managers');
+  fillSelect('sp2-tlFilter', [...new Set(forTl.map(r=>r.tl))].sort(), 'All Team Leads');
+  fillSelect('sp2-empFilter', [...new Set(forEmp.map(r=>r.name))].sort(), 'All Employees');
+}
 
-  destroySPChart('clusterRatio');
-  spCharts.clusterRatio=new Chart(document.getElementById('sp-chart-cluster-ratio'),{type:'bar',data:{labels:clLabels,datasets:[
-    {label:'Leads:SV %',data:agg.clusters.map(c=>ratioPct(c.sv,c.leads)||0),backgroundColor:blue},
-    {label:'Leads:Meeting %',data:agg.clusters.map(c=>ratioPct(c.meetings,c.leads)||0),backgroundColor:orange},
-    {label:'SV:Booking %',data:agg.clusters.map(c=>ratioPct(c.svBookings,c.sv)||0),backgroundColor:green},
-    {label:'Meeting:Booking %',data:agg.clusters.map(c=>ratioPct(c.vcBookings,c.meetings)||0),backgroundColor:red}
-  ]},options:spChartOpts(true)});
+function applySP2Filters(){
+  populateSP2Filters();
+  const cl=document.getElementById('sp2-clusterFilter').value, pnl=document.getElementById('sp2-pnlFilter').value,
+        mgr=document.getElementById('sp2-managerFilter').value, tl=document.getElementById('sp2-tlFilter').value,
+        emp=document.getElementById('sp2-empFilter').value;
+  const from=document.getElementById('sp2-fromDate').value, to=document.getElementById('sp2-toDate').value;
+  sp2Filtered = sp2All.filter(r=>{
+    if(cl && r.cluster!==cl) return false;
+    if(pnl && r.pnlHead!==pnl) return false;
+    if(mgr && r.manager!==mgr) return false;
+    if(tl && r.tl!==tl) return false;
+    if(emp && r.name!==emp) return false;
+    if(from && fmtDate(r.reportEnd) < from) return false;
+    if(to && fmtDate(r.reportEnd) > to) return false;
+    return true;
+  });
+  renderSP2All();
+}
+function clearSP2Filters(){
+  ['sp2-clusterFilter','sp2-pnlFilter','sp2-managerFilter','sp2-tlFilter','sp2-empFilter','sp2-fromDate','sp2-toDate']
+    .forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
+  populateSP2Filters();
+  sp2Filtered = [...sp2All];
+  renderSP2All();
+}
 
-  destroySPChart('teamRatio');
-  spCharts.teamRatio=new Chart(document.getElementById('sp-chart-team-ratio'),{type:'bar',data:{labels:allTeams.map(t=>t.label),datasets:[
-    {label:'Leads:SV %',data:allTeams.map(t=>ratioPct(t.sv,t.leads)||0),backgroundColor:blue},
-    {label:'Leads:Meeting %',data:allTeams.map(t=>ratioPct(t.meetings,t.leads)||0),backgroundColor:orange},
-    {label:'SV:Booking %',data:allTeams.map(t=>ratioPct(t.svBookings,t.sv)||0),backgroundColor:green},
-    {label:'Meeting:Booking %',data:allTeams.map(t=>ratioPct(t.vcBookings,t.meetings)||0),backgroundColor:red}
-  ]},options:spChartOpts(true)});
+// ── Ratio helpers ──
+function sp2Pct(v){
+  if(v===null || v===undefined || v==='') return null;
+  const n = Number(v);
+  if(isNaN(n)) return null;
+  return SP2_RATIO_IS_FRACTION ? n*100 : n;
+}
+function sp2RatioClass(p){ if(p===null) return 'ratio-na'; if(p>=40) return 'ratio-good'; if(p>=15) return 'ratio-mid'; return 'ratio-low'; }
+function sp2RatioPill(p){ return `<span class="ratio-pill ${sp2RatioClass(p)}">${p===null?'—':p.toFixed(1)+'%'}</span>`; }
+function sp2Avg(arr){ return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : null; }
 
-  destroySPChart('projRatio');
-  const projSorted=[...agg.projAgg].filter(p=>p.sv>0||p.meetings>0||p.bookings>0).sort((a,b)=>b.bookings-a.bookings).slice(0,20);
-  spCharts.projRatio=new Chart(document.getElementById('sp-chart-project-ratio'),{type:'bar',data:{labels:projSorted.map(p=>p.key),datasets:[
-    {label:'SV:Booking %',data:projSorted.map(p=>ratioPct(p.svBookings,p.sv)||0),backgroundColor:green},
-    {label:'Meeting:Booking %',data:projSorted.map(p=>ratioPct(p.vcBookings,p.meetings)||0),backgroundColor:red}
-  ]},options:spChartOpts(true)});
+// ── Aggregation building blocks: sum every count/revenue field,
+//    collect ratio values for later averaging ──
+function sp2ZeroCounts(){
+  return {
+    leads:0, uniqueLeads:0, followupActivity:0, callActivity:0, talktime:0,
+    sv:0, f2f:0, vc:0, token:0, booking:0, svBookings:0, vcBookings:0, revenue:0,
+    _leadsToSv:[], _leadsToMeeting:[], _leadsToBooking:[], _svToBooking:[], _meetingsToBooking:[]
+  };
+}
+function sp2AddRow(t,r){
+  t.leads += r.leads||0; t.uniqueLeads += r.uniqueLeads||0;
+  t.followupActivity += r.followupActivity||0; t.callActivity += r.callActivity||0; t.talktime += r.talktime||0;
+  t.sv += r.sv||0; t.f2f += r.f2f||0; t.vc += r.vc||0; t.token += r.token||0; t.booking += r.booking||0;
+  t.svBookings += r.svBookings||0; t.vcBookings += r.vcBookings||0;
+  t.revenue += (r.svBookingsRevenue||0) + (r.vcBookingsRevenue||0);
+  const p1=sp2Pct(r.leadsToSvRatio); if(p1!==null) t._leadsToSv.push(p1);
+  const p2=sp2Pct(r.leadsToMeetingRatio); if(p2!==null) t._leadsToMeeting.push(p2);
+  const p3=sp2Pct(r.leadsToBookingsRatio); if(p3!==null) t._leadsToBooking.push(p3);
+  const p4=sp2Pct(r.svToBookingRatio); if(p4!==null) t._svToBooking.push(p4);
+  const p5=sp2Pct(r.meetingsToBookingRatio); if(p5!==null) t._meetingsToBooking.push(p5);
+}
+function sp2Finalize(t){
+  t.avgLeadsToSv = sp2Avg(t._leadsToSv);
+  t.avgLeadsToMeeting = sp2Avg(t._leadsToMeeting);
+  t.avgLeadsToBooking = sp2Avg(t._leadsToBooking);
+  t.avgSvToBooking = sp2Avg(t._svToBooking);
+  t.avgMeetingsToBooking = sp2Avg(t._meetingsToBooking);
+}
 
-  destroySPChart('devRatio');
-  const devSorted=[...agg.devAgg].filter(d=>d.sv>0||d.meetings>0||d.bookings>0).sort((a,b)=>b.bookings-a.bookings).slice(0,20);
-  spCharts.devRatio=new Chart(document.getElementById('sp-chart-developer-ratio'),{type:'bar',data:{labels:devSorted.map(d=>d.key),datasets:[
-    {label:'SV:Booking %',data:devSorted.map(d=>ratioPct(d.svBookings,d.sv)||0),backgroundColor:green},
-    {label:'Meeting:Booking %',data:devSorted.map(d=>ratioPct(d.vcBookings,d.meetings)||0),backgroundColor:red}
-  ]},options:spChartOpts(true)});
+function buildSP2Aggregation(){
+  const clusterMap = {};
+  sp2Filtered.forEach(r=>{
+    const cl=r.cluster||'—', pnl=r.pnlHead||'—', mgr=r.manager||'—';
+    if(!clusterMap[cl]) clusterMap[cl] = {cluster:cl, pnls:{}, ...sp2ZeroCounts()};
+    const c = clusterMap[cl];
+    if(!c.pnls[pnl]) c.pnls[pnl] = {pnlHead:pnl, managers:{}, ...sp2ZeroCounts()};
+    const p = c.pnls[pnl];
+    if(!p.managers[mgr]) p.managers[mgr] = {manager:mgr, employees:{}, ...sp2ZeroCounts()};
+    const m = p.managers[mgr];
+    const empKey = r.name||'—';
+    if(!m.employees[empKey]) m.employees[empKey] = {name:empKey, tl:r.tl, joiningDate:r.joiningDate, rows:[], ...sp2ZeroCounts()};
+    const e = m.employees[empKey];
+    e.rows.push(r);
+    sp2AddRow(e,r); sp2AddRow(m,r); sp2AddRow(p,r); sp2AddRow(c,r);
+  });
+
+  const grand = sp2ZeroCounts();
+  sp2Filtered.forEach(r=>sp2AddRow(grand,r));
+  sp2Finalize(grand);
+
+  const clusters = Object.values(clusterMap).sort((a,b)=>a.cluster.localeCompare(b.cluster));
+  clusters.forEach(c=>{
+    sp2Finalize(c);
+    c.pnlList = Object.values(c.pnls).sort((a,b)=>a.pnlHead.localeCompare(b.pnlHead));
+    c.pnlList.forEach(p=>{
+      sp2Finalize(p);
+      p.managerList = Object.values(p.managers).sort((a,b)=>a.manager.localeCompare(b.manager));
+      p.managerList.forEach(m=>{
+        sp2Finalize(m);
+        m.employeeList = Object.values(m.employees).sort((a,b)=>a.name.localeCompare(b.name));
+        m.employeeList.forEach(e=>sp2Finalize(e));
+      });
+    });
+  });
+
+  // Flat manager rollup (ignores cluster/pnl nesting) for the two bar charts
+  const mgrRollupMap = {};
+  sp2Filtered.forEach(r=>{
+    const mgr = r.manager||'—';
+    if(!mgrRollupMap[mgr]) mgrRollupMap[mgr] = {manager:mgr, ...sp2ZeroCounts()};
+    sp2AddRow(mgrRollupMap[mgr], r);
+  });
+  const managerRollup = Object.values(mgrRollupMap);
+  managerRollup.forEach(sp2Finalize);
+  managerRollup.sort((a,b)=>a.manager.localeCompare(b.manager));
+
+  // Company-wide trend, grouped by report_end_date
+  const dateMap = {};
+  sp2Filtered.forEach(r=>{
+    const d = fmtDate(r.reportEnd); if(!d) return;
+    if(!dateMap[d]) dateMap[d] = {date:d, ...sp2ZeroCounts()};
+    sp2AddRow(dateMap[d], r);
+  });
+  const trend = Object.values(dateMap).sort((a,b)=>a.date.localeCompare(b.date));
+  trend.forEach(sp2Finalize);
+
+  return {clusters, grand, managerRollup, trend};
+}
+function countSP2Employees(agg){
+  let n=0;
+  agg.clusters.forEach(c=>c.pnlList.forEach(p=>p.managerList.forEach(m=>n+=m.employeeList.length)));
+  return n;
+}
+
+function renderSP2All(){
+  const agg = buildSP2Aggregation();
+  updateSP2Metrics(agg);
+  renderSP2Charts(agg);
+  renderSP2Table(agg);
+}
+
+function updateSP2Metrics(agg){
+  document.getElementById('sp2m-leads').textContent = agg.grand.leads.toLocaleString('en-IN');
+  document.getElementById('sp2m-sv').textContent = agg.grand.sv.toLocaleString('en-IN');
+  document.getElementById('sp2m-vc').textContent = agg.grand.vc.toLocaleString('en-IN');
+  document.getElementById('sp2m-booking').textContent = agg.grand.booking.toLocaleString('en-IN');
+  document.getElementById('sp2m-revenue').textContent = 'Revenue ' + (agg.grand.revenue ? formatBudgetTotal(agg.grand.revenue) : '—');
+}
+
+// ── Charts (reuses spCssVar / spChartOpts already defined elsewhere in this file) ──
+function destroySP2Chart(id){ if(sp2Charts[id]){ sp2Charts[id].destroy(); delete sp2Charts[id]; } }
+function renderSP2Charts(agg){
+  if(typeof Chart==='undefined') return;
+  const blue=spCssVar('--blue'), green=spCssVar('--green'), orange=spCssVar('--orange'), red=spCssVar('--red'), textDim=spCssVar('--text-dim');
+  Chart.defaults.color=textDim; Chart.defaults.font.family="'Inter',sans-serif"; Chart.defaults.font.size=10.5;
+  const opts = spChartOpts(true);
+
+  destroySP2Chart('svMgr');
+  sp2Charts.svMgr = new Chart(document.getElementById('sp2-chart-sv-manager'), {
+    type:'bar',
+    data:{ labels: agg.managerRollup.map(m=>m.manager), datasets:[
+      {label:'Leads:SV %', data: agg.managerRollup.map(m=>m.avgLeadsToSv ?? 0), backgroundColor: blue},
+      {label:'SV:Booking %', data: agg.managerRollup.map(m=>m.avgSvToBooking ?? 0), backgroundColor: green}
+    ]},
+    options: opts
+  });
+
+  destroySP2Chart('vcMgr');
+  sp2Charts.vcMgr = new Chart(document.getElementById('sp2-chart-vc-manager'), {
+    type:'bar',
+    data:{ labels: agg.managerRollup.map(m=>m.manager), datasets:[
+      {label:'Leads:VC %', data: agg.managerRollup.map(m=>m.avgLeadsToMeeting ?? 0), backgroundColor: orange},
+      {label:'VC:Booking %', data: agg.managerRollup.map(m=>m.avgMeetingsToBooking ?? 0), backgroundColor: red}
+    ]},
+    options: opts
+  });
+
+  destroySP2Chart('trend');
+  sp2Charts.trend = new Chart(document.getElementById('sp2-chart-trend'), {
+    type:'line',
+    data:{ labels: agg.trend.map(t=>t.date), datasets:[
+      {label:'Leads:SV %', data: agg.trend.map(t=>t.avgLeadsToSv), borderColor: blue, backgroundColor:'transparent', tension:0.25, spanGaps:true},
+      {label:'Leads:VC %', data: agg.trend.map(t=>t.avgLeadsToMeeting), borderColor: orange, backgroundColor:'transparent', tension:0.25, spanGaps:true},
+      {label:'SV:Booking %', data: agg.trend.map(t=>t.avgSvToBooking), borderColor: green, backgroundColor:'transparent', tension:0.25, spanGaps:true},
+      {label:'VC:Booking %', data: agg.trend.map(t=>t.avgMeetingsToBooking), borderColor: red, backgroundColor:'transparent', tension:0.25, spanGaps:true}
+    ]},
+    options: opts
+  });
+}
+
+// ── Table (Cluster → PNL Head → Manager → Employee) ──
+function sp2SubtotalRow(cls,label,t){
+  return `<tr class="${cls}"><td>${label}</td><td>${t.leads.toLocaleString('en-IN')}</td><td>${t.sv.toLocaleString('en-IN')}</td><td>${t.vc.toLocaleString('en-IN')}</td><td>${t.token.toLocaleString('en-IN')}</td><td>${t.booking.toLocaleString('en-IN')}</td><td>${t.revenue?formatBudgetTotal(t.revenue):'—'}</td><td>${sp2RatioPill(t.avgLeadsToSv)}</td><td>${sp2RatioPill(t.avgLeadsToMeeting)}</td><td>${sp2RatioPill(t.avgLeadsToBooking)}</td><td>${sp2RatioPill(t.avgSvToBooking)}</td><td>${sp2RatioPill(t.avgMeetingsToBooking)}</td></tr>`;
+}
+function renderSP2Table(agg){
+  const tbody = document.getElementById('sp2-tbody');
+  if(!agg.clusters.length){
+    tbody.innerHTML = '<tr><td colspan="12" class="no-data">No sales performance data found for the current filters</td></tr>';
+    document.getElementById('sp2-rowCount').textContent = '0 records';
+    return;
+  }
+  let html = '';
+  agg.clusters.forEach(c=>{
+    html += `<tr class="sp2-cluster-row"><td colspan="12">📍 ${esc(c.cluster)}</td></tr>`;
+    c.pnlList.forEach(p=>{
+      html += `<tr class="sp2-pnl-row"><td colspan="12">👤 PNL Head: ${esc(p.pnlHead)}</td></tr>`;
+      p.managerList.forEach(m=>{
+        html += `<tr class="sp2-mgr-row"><td colspan="12">🧑‍💼 Manager: ${esc(m.manager)}</td></tr>`;
+        m.employeeList.forEach(e=>{
+          html += `<tr class="sp2-emp-row">
+            <td><button class="sp-expand-btn" onclick='openSP2EmpDetail(${JSON.stringify(e).replace(/'/g,"&#39;")})' title="View detail">▸</button>${esc(e.name)}</td>
+            <td>${e.leads.toLocaleString('en-IN')}</td>
+            <td>${e.sv.toLocaleString('en-IN')}</td>
+            <td>${e.vc.toLocaleString('en-IN')}</td>
+            <td>${e.token.toLocaleString('en-IN')}</td>
+            <td>${e.booking.toLocaleString('en-IN')}</td>
+            <td>${e.revenue?formatBudgetTotal(e.revenue):'—'}</td>
+            <td>${sp2RatioPill(e.avgLeadsToSv)}</td>
+            <td>${sp2RatioPill(e.avgLeadsToMeeting)}</td>
+            <td>${sp2RatioPill(e.avgLeadsToBooking)}</td>
+            <td>${sp2RatioPill(e.avgSvToBooking)}</td>
+            <td>${sp2RatioPill(e.avgMeetingsToBooking)}</td>
+          </tr>`;
+        });
+        html += sp2SubtotalRow('sp2-mgr-subtotal', `Manager Total — ${esc(m.manager)}`, m);
+      });
+      html += sp2SubtotalRow('sp2-pnl-subtotal', `PNL Head Total — ${esc(p.pnlHead)}`, p);
+    });
+    html += sp2SubtotalRow('sp2-cluster-subtotal', `Cluster Total — ${esc(c.cluster)}`, c);
+  });
+  html += sp2SubtotalRow('sp2-grand-total', 'GRAND TOTAL', agg.grand);
+  tbody.innerHTML = html;
+  document.getElementById('sp2-rowCount').textContent = countSP2Employees(agg) + ' employee(s) across ' + agg.clusters.length + ' cluster(s)';
+}
+
+// ── Employee detail drawer ──
+function openSP2EmpDetail(e){
+  document.getElementById('sp2DetailTitle').innerHTML = `${esc(e.name)} <span>— ${esc(e.tl||'')}</span>`;
+  const summary = [
+    {label:'Joining Date', value: e.joiningDate ? fmtDate(e.joiningDate) : '—'},
+    {label:'Leads', value: e.leads.toLocaleString('en-IN')},
+    {label:'Unique Leads', value: e.uniqueLeads.toLocaleString('en-IN')},
+    {label:'Site Visits', value: e.sv.toLocaleString('en-IN')},
+    {label:'F2F', value: e.f2f.toLocaleString('en-IN')},
+    {label:'VC', value: e.vc.toLocaleString('en-IN')},
+    {label:'Tokens', value: e.token.toLocaleString('en-IN')},
+    {label:'Bookings', value: e.booking.toLocaleString('en-IN'), gold:true},
+    {label:'Revenue', value: e.revenue?formatBudgetTotal(e.revenue):'—', gold:true},
+    {label:'Talktime', value: e.talktime ? e.talktime.toFixed(1) : '—'},
+    {label:'Follow-up Activity', value: e.followupActivity.toLocaleString('en-IN')},
+    {label:'Call Activity', value: e.callActivity.toLocaleString('en-IN')},
+    {label:'Leads:SV %', value: e.avgLeadsToSv!==null ? e.avgLeadsToSv.toFixed(1)+'%' : '—'},
+    {label:'Leads:VC %', value: e.avgLeadsToMeeting!==null ? e.avgLeadsToMeeting.toFixed(1)+'%' : '—'},
+    {label:'SV:Booking %', value: e.avgSvToBooking!==null ? e.avgSvToBooking.toFixed(1)+'%' : '—'},
+    {label:'VC:Booking %', value: e.avgMeetingsToBooking!==null ? e.avgMeetingsToBooking.toFixed(1)+'%' : '—'}
+  ];
+  document.getElementById('sp2DetailSummary').innerHTML = summary.map(s=>
+    `<div class="detail-item"><div class="detail-label">${s.label}</div><div class="detail-value ${s.gold?'gold':''}">${esc(String(s.value))}</div></div>`
+  ).join('');
+
+  const tbody = document.getElementById('sp2DetailPeriodTbody');
+  const rowsSorted = [...e.rows].sort((a,b)=>(a.reportStart||'').localeCompare(b.reportStart||''));
+  if(!rowsSorted.length){
+    tbody.innerHTML = '<tr><td colspan="9" class="no-data">No period-level records found</td></tr>';
+  }else{
+    tbody.innerHTML = rowsSorted.map(r=>{
+      const rev = (r.svBookingsRevenue||0)+(r.vcBookingsRevenue||0);
+      const svp = sp2Pct(r.leadsToSvRatio), bp = sp2Pct(r.svToBookingRatio);
+      return `<tr>
+        <td>${esc(fmtDate(r.reportStart))} – ${esc(fmtDate(r.reportEnd))}</td>
+        <td>${r.leads}</td><td>${r.sv}</td><td>${r.vc}</td><td>${r.token}</td><td>${r.booking}</td>
+        <td>${rev?formatBudgetTotal(rev):'—'}</td>
+        <td>${svp!==null?svp.toFixed(1)+'%':'—'}</td>
+        <td>${bp!==null?bp.toFixed(1)+'%':'—'}</td>
+      </tr>`;
+    }).join('');
+  }
+  document.getElementById('sp2DetailModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeSP2DetailModal(e){
+  if(e && e.target!==document.getElementById('sp2DetailModal')) return;
+  document.getElementById('sp2DetailModal').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 // ══════════════════════════════════════════════════════════
