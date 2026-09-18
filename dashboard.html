@@ -1293,13 +1293,6 @@ async function sbSaveWeeklyTarget(t){
     .upsert(row,{onConflict:'week_start,leader_key'});
   if(error)throw new Error(error.message);
 }
-function sbSubscribeVisits(onChange){
-  const channel=supabaseClient.channel('friday-lineup-visits-changes')
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'friday_lineup_visits'},p=>onChange())
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'friday_lineup_visits'},p=>onChange())
-    .subscribe();
-  return ()=>supabaseClient.removeChannel(channel);
-}
 
 const FN_FORM_URL='https://thore-india.github.io/FN_Clients_Form/index.html';
 let auth=null,stopVisitSubscription=null,isRefreshing=false,activeDash='visits',currentVisitView='detail';
@@ -1393,11 +1386,46 @@ async function handleLoginSuccess(role,user){
   document.getElementById('profileWrap').style.display='block';
   document.getElementById('profileAvatar').textContent=getInitials(user);document.getElementById('pdUsername').textContent=user;
   setLoginStatus('');
-  if(role.toLowerCase()==='loan department'){setupLoanDeptView();renderFNData(await sbFetchFN());document.getElementById('loanDeptBanner').style.display='flex';}
-  else{document.getElementById('dashTabs').style.display='flex';document.getElementById('pdFormLink').style.display='block';document.getElementById('pdFNLink').style.display='block';document.getElementById('marketingTabBtn').style.display=isMarketingDashAdmin()?'block':'none';renderVisitData(await sbFetchVisits());startAutoRefresh();}
+  if(role.toLowerCase()==='loan department'){
+    setupLoanDeptView();renderFNData(await sbFetchFN());document.getElementById('loanDeptBanner').style.display='flex';
+    startAutoRefresh();
+  }else{
+    document.getElementById('dashTabs').style.display='flex';document.getElementById('pdFormLink').style.display='block';document.getElementById('pdFNLink').style.display='block';
+    const canSeeMarketing=isMarketingDashAdmin();
+    document.getElementById('marketingTabBtn').style.display=canSeeMarketing?'block':'none';
+    await loadAllSections(canSeeMarketing);
+    startAutoRefresh();
+  }
   setStatus(true);
   requestAnimationFrame(syncHeaderHeight);
   setTimeout(syncHeaderHeight,50);
+}
+
+// Loads every top-level section up front (instead of lazily per-tab) so the
+// whole dashboard — Friday Lineup, Visit Done, FN Clients, Marketing, Sales
+// Performance, Weekly Targets — is populated the moment someone logs in or
+// the page reloads. switchDashboard()'s own "load if empty" guards become
+// no-ops once this has run, so clicking a tab never re-fetches needlessly.
+async function loadAllSections(canSeeMarketing){
+  const tasks=[
+    sbFetchVisits().then(renderVisitData).catch(err=>{console.error('visits load error',err);setStatus(false);}),
+    sbFetchFN().then(renderFNData).catch(err=>{console.error('fn load error',err);document.getElementById('fn-rowCount').textContent='Failed to load: '+err.message;}),
+    sbFetchVD().then(renderVDData).catch(err=>{console.error('vd load error',err);document.getElementById('vd-rowCount').textContent='Failed to load Visit Done data.';}),
+    (async()=>{
+      sp2All=await sbFetchSP2();populateSP2Filters();sp2Filtered=[...sp2All];renderSP2All();
+      document.getElementById('sp2-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
+    })().catch(err=>{console.error('sales v2 load error',err);document.getElementById('sp2-rowCount').textContent='Failed to load: '+err.message;}),
+    (async()=>{
+      tgtAll=await sbFetchWeeklyTargets();populateWTFilters();populateWTLeaderDatalist();
+      document.getElementById('wtAdminPanel').style.display=(WT_ADMIN_ENABLED&&isAdmin())?'block':'none';
+      wtApplyMetricFocus();wtRenderSection();
+      document.getElementById('wt-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
+    })().catch(err=>{console.error('weekly targets load error',err);document.getElementById('wt-rowCount').textContent='Failed to load: '+err.message;})
+  ];
+  if(canSeeMarketing&&!MAINTENANCE_MODE.marketing){
+    tasks.push(sbFetchMarketing().then(renderMarketingPerformanceData).catch(err=>{console.error('marketing load error',err);document.getElementById('mp-rowCount').textContent='Failed to load: '+err.message;}));
+  }
+  await Promise.all(tasks);
 }
 
 function setupLoanDeptView(){
@@ -1461,22 +1489,75 @@ function switchDashboard(which){
   }
 }
 
-function startAutoRefresh(){
-  if(stopVisitSubscription)stopVisitSubscription();
-  stopVisitSubscription=sbSubscribeVisits(()=>refreshAll());
+// ============================================================
+//  LIVE UPDATES — realtime subscription across every table
+// ============================================================
+// One channel, one subscription per relevant table. Any INSERT/UPDATE/DELETE
+// on any of these tables — from *any* logged-in user — fires here for
+// *everyone* currently online, and we refetch+re-render just that section.
+function sbSubscribeLive(onSectionChange){
+  const tableToSection={
+    friday_lineup_visits:'visits',
+    fn_clients:'fnclients',
+    visit_done:'visitdone',
+    marketing_campaigns:'marketing',
+    sales_performance:'salesdash',
+    sales_lead_count:'salesdash',
+    weekly_targets:'weeklytargets'
+  };
+  const channel=supabaseClient.channel('thore-pulse-live-changes');
+  Object.keys(tableToSection).forEach(table=>{
+    channel.on('postgres_changes',{event:'*',schema:'public',table},()=>onSectionChange(tableToSection[table]));
+  });
+  channel.subscribe();
+  return ()=>supabaseClient.removeChannel(channel);
 }
 
-async function refreshAll(){
-  if(!auth||isRefreshing)return;isRefreshing=true;document.getElementById('refreshInd').classList.add('show');
-  const done=()=>{isRefreshing=false;document.getElementById('refreshInd').classList.remove('show');};
+let _sectionRefreshTimers={};
+function scheduleSectionRefresh(section){
+  // Debounce: a burst of changes on the same table (bulk paste, bulk import)
+  // should trigger one refetch per section, not one per row.
+  clearTimeout(_sectionRefreshTimers[section]);
+  _sectionRefreshTimers[section]=setTimeout(()=>refreshSection(section),700);
+}
+
+function startAutoRefresh(){
+  if(stopVisitSubscription)stopVisitSubscription();
+  stopVisitSubscription=sbSubscribeLive(section=>{
+    if(isLoanDept()&&section!=='fnclients')return; // loan dept only ever sees FN Clients
+    scheduleSectionRefresh(section);
+  });
+}
+
+async function refreshSection(section){
+  if(!auth)return;
+  document.getElementById('refreshInd').classList.add('show');
   try{
-    renderVisitData(await sbFetchVisits());
-    if(fnAll.length>0)renderFNData(await sbFetchFN());
-    if(vdAll.length>0)renderVDData(await sbFetchVD());
+    if(section==='visits'){
+      renderVisitData(await sbFetchVisits());
+    }else if(section==='fnclients'){
+      renderFNData(await sbFetchFN());
+    }else if(section==='visitdone'){
+      renderVDData(await sbFetchVD());
+    }else if(section==='marketing'){
+      if(isMarketingDashAdmin()&&!MAINTENANCE_MODE.marketing)renderMarketingPerformanceData(await sbFetchMarketing());
+    }else if(section==='salesdash'){
+      sp2All=await sbFetchSP2();applySP2Filters();
+      document.getElementById('sp2-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
+    }else if(section==='weeklytargets'){
+      tgtAll=await sbFetchWeeklyTargets();populateWTLeaderDatalist();applyWTFilters();
+      document.getElementById('wt-lastUpdated').textContent='Updated: '+new Date().toLocaleTimeString();
+    }
     setStatus(true);
   }catch(err){
-    console.error('refreshAll error:',err);setStatus(false);
-  }finally{done();}
+    console.error('refreshSection('+section+') failed:',err);setStatus(false);
+  }finally{
+    document.getElementById('refreshInd').classList.remove('show');
+  }
+}
+
+function refreshAll(){
+  ['visits','fnclients','visitdone','marketing','salesdash','weeklytargets'].forEach(scheduleSectionRefresh);
 }
 
 async function loadFNData(){
@@ -2119,10 +2200,31 @@ function mapSP2Row(r){
     svBookingsRevenue: r.sv_bookings_revenue || 0, vcBookingsRevenue: r.vc_bookings_revenue || 0
   };
 }
+
+// Same employee + same reporting week should be exactly one row in
+// sales_performance. If it appears twice (re-upload / accidental double
+// submit for the same week), keep only the highest-id (most recent) copy
+// so counts aren't double-summed downstream in buildSP2Aggregation().
+// NOTE: if what you're actually seeing is the *same employee* showing up
+// as two separate rows in the table (not literal duplicate weeks) — e.g.
+// because the name/manager text was typed slightly differently on two
+// different weeks — that's a data-entry consistency issue, not something
+// dedupe here can fix; tnorm_() below (trim + lowercase) already guards
+// against pure whitespace/case differences when grouping in buildSP2Aggregation().
+function dedupeSP2Rows(rows){
+  const map={};
+  rows.forEach(r=>{
+    const key=[tnorm_(r.name),tnorm_(r.reportStart),tnorm_(r.reportEnd)].join('|');
+    const existing=map[key];
+    if(!existing||(Number(r.rowIndex)||0)>(Number(existing.rowIndex)||0)) map[key]=r;
+  });
+  return Object.values(map);
+}
+
 async function sbFetchSP2(){
   const {data,error} = await supabaseClient.from('sales_performance').select('*').order('report_end_date',{ascending:true});
   if(error) throw new Error(error.message);
-  return data.map(mapSP2Row);
+  return dedupeSP2Rows(data.map(mapSP2Row));
 }
 
 async function loadSP2Data(){
@@ -2236,25 +2338,76 @@ function sp2Finalize(t){
   t.avgMeetingsToBooking = sp2Avg(t._meetingsToBooking);
 }
 
+// Roll already-aggregated totals (an employee, or a manager/PNL/cluster
+// node built from employees) up into a parent node — sums every count/
+// revenue field, and concatenates the underlying ratio-value arrays so a
+// later sp2Finalize() on the parent still averages across every individual
+// weekly data point beneath it (not an "average of averages").
+function sp2MergeInto(parent, agg){
+  parent.leads += agg.leads; parent.uniqueLeads += agg.uniqueLeads;
+  parent.followupActivity += agg.followupActivity; parent.callActivity += agg.callActivity; parent.talktime += agg.talktime;
+  parent.sv += agg.sv; parent.f2f += agg.f2f; parent.vc += agg.vc; parent.token += agg.token; parent.booking += agg.booking;
+  parent.svBookings += agg.svBookings; parent.vcBookings += agg.vcBookings; parent.revenue += agg.revenue;
+  parent._leadsToSv.push(...agg._leadsToSv);
+  parent._leadsToMeeting.push(...agg._leadsToMeeting);
+  parent._leadsToBooking.push(...agg._leadsToBooking);
+  parent._svToBooking.push(...agg._svToBooking);
+  parent._meetingsToBooking.push(...agg._meetingsToBooking);
+}
+
 function buildSP2Aggregation(){
-  const clusterMap = {};
+  // STEP 1 — collapse every weekly row down to ONE totals record per
+  // employee, matched purely by (trimmed, case-insensitive) name. This is
+  // what makes the table show, e.g., four weekly rows for "test"
+  // (SV 25, 9, 16, 7 on 1 Jan / 30 Jan / 15 Feb / 21 Feb) as a single
+  // "test" row with SV = 57 — every row sharing that name is summed,
+  // regardless of report date and regardless of whether cluster/PNL
+  // Head/Manager happened to be recorded slightly differently on any one
+  // of those weekly uploads.
+  const empMap = {};
   sp2Filtered.forEach(r=>{
-    const cl=r.cluster||'—', pnl=r.pnlHead||'—', mgr=r.manager||'—';
+    const empKey = tnorm_(r.name);
+    if(!empMap[empKey]){
+      empMap[empKey] = {name:String(r.name||'—').trim(), tl:r.tl, joiningDate:r.joiningDate, rows:[], _latestEnd:'', _cluster:'—', _pnlHead:'—', _manager:'—', ...sp2ZeroCounts()};
+    }
+    const e = empMap[empKey];
+    e.rows.push(r);
+    sp2AddRow(e,r);
+    // Which Cluster / PNL Head / Manager / Team Lead / display name this
+    // employee is shown under is taken from their most recent weekly row —
+    // the totals above are still summed from ALL of their rows either way.
+    if((r.reportEnd||'') >= e._latestEnd){
+      e._latestEnd = r.reportEnd||'';
+      e.name = String(r.name||'—').trim();
+      e.tl = r.tl; e.joiningDate = r.joiningDate;
+      e._cluster = String(r.cluster||'—').trim();
+      e._pnlHead = String(r.pnlHead||'—').trim();
+      e._manager = String(r.manager||'—').trim();
+    }
+  });
+  const employees = Object.values(empMap);
+  employees.forEach(sp2Finalize);
+
+  // STEP 2 — place each fully-aggregated employee under their current
+  // Cluster → PNL Head → Manager, then roll those already-summed totals
+  // further up the tree. Subtotals here are sums of aggregated employees,
+  // not raw weekly rows, so a manager/PNL/cluster total still equals
+  // exactly the sum of the (already correct) people underneath it.
+  const clusterMap = {};
+  employees.forEach(e=>{
+    const cl=e._cluster||'—', pnl=e._pnlHead||'—', mgr=e._manager||'—';
     if(!clusterMap[cl]) clusterMap[cl] = {cluster:cl, pnls:{}, ...sp2ZeroCounts()};
     const c = clusterMap[cl];
     if(!c.pnls[pnl]) c.pnls[pnl] = {pnlHead:pnl, managers:{}, ...sp2ZeroCounts()};
     const p = c.pnls[pnl];
     if(!p.managers[mgr]) p.managers[mgr] = {manager:mgr, employees:{}, ...sp2ZeroCounts()};
     const m = p.managers[mgr];
-    const empKey = r.name||'—';
-    if(!m.employees[empKey]) m.employees[empKey] = {name:empKey, tl:r.tl, joiningDate:r.joiningDate, rows:[], ...sp2ZeroCounts()};
-    const e = m.employees[empKey];
-    e.rows.push(r);
-    sp2AddRow(e,r); sp2AddRow(m,r); sp2AddRow(p,r); sp2AddRow(c,r);
+    m.employees[e.name] = e;
+    sp2MergeInto(m,e); sp2MergeInto(p,e); sp2MergeInto(c,e);
   });
 
   const grand = sp2ZeroCounts();
-  sp2Filtered.forEach(r=>sp2AddRow(grand,r));
+  employees.forEach(e=>sp2MergeInto(grand,e));
   sp2Finalize(grand);
 
   const clusters = Object.values(clusterMap).sort((a,b)=>a.cluster.localeCompare(b.cluster));
@@ -2267,23 +2420,26 @@ function buildSP2Aggregation(){
       p.managerList.forEach(m=>{
         sp2Finalize(m);
         m.employeeList = Object.values(m.employees).sort((a,b)=>a.name.localeCompare(b.name));
-        m.employeeList.forEach(e=>sp2Finalize(e));
       });
     });
   });
 
-  // Flat manager rollup (ignores cluster/pnl nesting) for the two bar charts
+  // Flat manager rollup (ignores cluster/pnl nesting) for the two bar
+  // charts — built from the already-aggregated employees so it's
+  // consistent with the table above.
   const mgrRollupMap = {};
-  sp2Filtered.forEach(r=>{
-    const mgr = r.manager||'—';
+  employees.forEach(e=>{
+    const mgr = e._manager||'—';
     if(!mgrRollupMap[mgr]) mgrRollupMap[mgr] = {manager:mgr, ...sp2ZeroCounts()};
-    sp2AddRow(mgrRollupMap[mgr], r);
+    sp2MergeInto(mgrRollupMap[mgr], e);
   });
   const managerRollup = Object.values(mgrRollupMap);
   managerRollup.forEach(sp2Finalize);
   managerRollup.sort((a,b)=>a.manager.localeCompare(b.manager));
 
-  // Company-wide trend, grouped by report_end_date
+  // Company-wide trend, grouped by report_end_date. This one intentionally
+  // stays at the raw weekly-row level (not the per-employee totals above) —
+  // the trend chart needs one point per reporting week, not one per employee.
   const dateMap = {};
   sp2Filtered.forEach(r=>{
     const d = fmtDate(r.reportEnd); if(!d) return;
