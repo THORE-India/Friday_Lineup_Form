@@ -676,7 +676,36 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
 /* Friday Lineup — read-only detail modal reuses .modal-box / .detail-grid */
 .detail-value.muted{color:var(--text-dim);}
 
-  </style>
+  
+/* ================================================================
+   THORE_PATCH_SEARCH_EDIT — searchable filters + admin full lead edit
+   ================================================================ */
+/* Searchable filter dropdowns (replaces the look of <select> in .filter-item) */
+.filter-item .ss-input,.filter-item .ss-input:focus,.filter-item .ss-input:hover{cursor:pointer;padding-right:18px;text-overflow:ellipsis;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%236B7D92' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 5px center!important;background-size:10px!important;}
+.filter-item .ss-input:focus{cursor:text;}
+.filter-item .ss-input::placeholder{color:#64748B;opacity:1;}
+.filter-item .ss-input.ss-has-value{font-weight:600;color:#1E40AF;}
+.ss-panel{position:fixed;display:none;z-index:9999;background:#fff;border:1px solid #CBD5E1;border-radius:10px;box-shadow:0 14px 32px rgba(15,23,42,.14),0 4px 10px rgba(15,23,42,.06);overflow-y:auto;overscroll-behavior:contain;padding:4px;box-sizing:border-box;width:max-content;max-width:min(340px,calc(100vw - 16px));}
+.ss-opt{padding:7px 10px;font-size:.76rem;font-weight:500;color:#334155;border-radius:7px;cursor:pointer;word-break:break-word;}
+.ss-opt.active{background:#EFF6FF;color:#0F172A;}
+.ss-opt.selected{color:#1E40AF;font-weight:700;}
+.ss-opt mark{background:#DBEAFE;color:#1E40AF;border-radius:3px;padding:0 1px;}
+.ss-empty{padding:12px;text-align:center;font-size:.74rem;color:#64748B;}
+
+/* FN Clients — admin "Edit lead" */
+.edit-lead-btn{margin-left:auto;align-self:center;display:none;align-items:center;gap:5px;padding:5px 12px;margin-bottom:4px;border:1px solid #93C5FD;background:#fff;color:#1E40AF;border-radius:8px;font-family:'Inter',sans-serif;font-size:.66rem;font-weight:800;cursor:pointer;}
+.edit-lead-btn:hover{background:#EFF6FF;border-color:#1E40AF;}
+#leadEditPanel{display:none;padding:14px 18px 20px;}
+.modal-box.editing #leadEditPanel{display:block;}
+.modal-box.editing .detail-panel,.modal-box.editing #adminEditPanel,.modal-box.editing .edit-lead-btn{display:none!important;}
+.lead-edit-title{font-size:.66rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#1E40AF;margin-bottom:4px;}
+.lead-edit-note{font-size:.7rem;color:#64748B;margin-bottom:10px;}
+#leadEditForm .detail-item .admin-edit-select,#leadEditForm .detail-item .admin-edit-textarea{margin-top:2px;}
+.lead-edit-actions{display:flex;gap:8px;margin-top:14px;}
+.lead-edit-actions .admin-save-btn{flex:1;margin-top:0;}
+.lead-edit-actions .clear-btn{height:auto;padding:0 18px;}
+
+</style>
 </head>
 <body>
 
@@ -1055,11 +1084,21 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
         <button class="detail-tab active" id="detailTabOverview" onclick="switchDetailTab('overview')">Overview</button>
         <button class="detail-tab" id="detailTabActivity" onclick="switchDetailTab('activity')">Activity Log</button>
         <button class="detail-tab" id="detailTabNotes" onclick="switchDetailTab('notes')">Notes</button>
+        <button class="edit-lead-btn" id="editLeadBtn" type="button" onclick="openLeadEdit()" title="Edit all details of this lead">✏️ Edit</button>
       </div>
       <div class="detail-panel active" id="detailPanelOverview"><div class="detail-grid" id="detailGrid"></div></div>
       <div class="detail-panel" id="detailPanelActivity"><div class="activity-card"><div class="detail-label">Operations activity</div><div class="activity-value" id="detailActivityText">No activity recorded.</div></div></div>
       <div class="detail-panel" id="detailPanelNotes"><div class="activity-card"><div class="detail-label">Client / operations notes</div><div class="activity-value" id="detailNotesText">No notes recorded.</div></div></div>
-      <div class="admin-edit-panel" id="adminEditPanel" style="display:none;">
+      <div id="leadEditPanel">
+        <div class="lead-edit-title">✏️ Edit Lead</div>
+        <div class="lead-edit-note">Change any detail of this lead. Only the fields you change are saved.</div>
+        <div id="leadEditForm"></div>
+        <div class="lead-edit-actions">
+          <button class="admin-save-btn" id="leadEditSaveBtn" type="button" onclick="saveLeadEdit()">Save Changes</button>
+          <button class="clear-btn" type="button" onclick="cancelLeadEdit()">Cancel</button>
+        </div>
+        <div class="admin-save-status" id="leadEditStatus"></div>
+      </div> <div class="admin-edit-panel" id="adminEditPanel" style="display:none;">
         <div class="admin-edit-title" id="adminEditTitle">✏️ Operations Update</div>
         <div class="admin-edit-row" id="adminStatusRow">
           <div><div class="admin-edit-label">Change Status</div>
@@ -2812,11 +2851,11 @@ window.addEventListener('offline',()=>setStatus(false));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('drillModal').classList.remove('open');document.getElementById('detailModal').classList.remove('open');document.getElementById('sp2DetailModal').classList.remove('open');document.body.style.overflow='';}});
 
 
-function switchDetailTab(tab){
+function switchDetailTab(tab){const _mb=document.querySelector('#detailModal .modal-box');if(_mb)_mb.classList.remove('editing');
   ['overview','activity','notes'].forEach(k=>{const b=document.getElementById('detailTab'+k.charAt(0).toUpperCase()+k.slice(1));const p=document.getElementById('detailPanel'+k.charAt(0).toUpperCase()+k.slice(1));if(b)b.classList.toggle('active',k===tab);if(p)p.classList.toggle('active',k===tab);});
 }
 const _openDetailModal= openDetailModal;
-openDetailModal=function(r){_openDetailModal(r);const activity=document.getElementById('detailActivityText'),notes=document.getElementById('detailNotesText');if(activity)activity.textContent=r.operationsRemark||'No operations activity recorded.';if(notes)notes.textContent=r.remark||r.requirement||'No notes recorded.';switchDetailTab('overview');};
+openDetailModal=function(r){_openDetailModal(r);const activity=document.getElementById('detailActivityText'),notes=document.getElementById('detailNotesText');if(activity)activity.textContent=r.operationsRemark||'No operations activity recorded.';if(notes)notes.textContent=r.remark||r.requirement||'No notes recorded.';switchDetailTab('overview');const eb=document.getElementById('editLeadBtn');if(eb)eb.style.display=isAdmin()?'inline-flex':'none';};
 
 /* ================================================================
    UI OVERHAUL BEHAVIOUR — additive only
@@ -2859,6 +2898,308 @@ const _applyVisitFilters=applyVisitFilters;applyVisitFilters=function(){const q=
 const _applyVDFilters=applyVDFilters;applyVDFilters=function(){const q=(document.getElementById('vd-globalSearch')?.value||'').trim().toLowerCase();_applyVDFilters();if(q){vdFiltered=vdFiltered.filter(r=>[r.customer,r.phone,r.teamLead,r.employee,r.project,r.developer,r.notes,r.type].some(v=>String(v||'').toLowerCase().includes(q)));renderVDTable(vdFiltered);}renderVDFilterChips();updateTabBadges();};
 const _applyFNFilters=applyFNFilters;applyFNFilters=function(){const q=(document.getElementById('fn-globalSearch')?.value||'').trim().toLowerCase();_applyFNFilters();if(q){fnFiltered=fnFiltered.filter(r=>[r.customer,r.phone,r.rowIndex,r.cluster,r.teamLead,r.employee,r.project,r.developer,r.configuration,r.status].some(v=>String(v||'').toLowerCase().includes(q)));if(fnView==='detail')renderFNTable(fnFiltered);else renderFNPivot(fnFiltered);}renderFNFilterChips();updateTabBadges();};
 const _applyMPFilters=applyMPFilters;applyMPFilters=function(){const q=(document.getElementById('mp-globalSearch')?.value||'').trim().toLowerCase();_applyMPFilters();if(q){mpFiltered=mpFiltered.filter(r=>[r.agency,r.zone,r.cluster,r.project,r.campaign].some(v=>String(v||'').toLowerCase().includes(q)));renderMPAll();}renderMPFilterChips();updateTabBadges();};
+
+
+/* ================================================================
+   THORE_PATCH_SEARCH_EDIT
+   CHANGE 1 — every filter dropdown becomes type-to-search
+   CHANGE 2 — admins can edit ALL details of an FN Client lead
+   ================================================================ */
+
+// ─────────────────────────────────────────────────────────────
+//  CHANGE 1 — Searchable filter dropdowns
+//  The original <select> stays in the DOM (hidden) and remains the
+//  source of truth, so fillSelect(), .value reads/writes, onchange
+//  handlers and every clear-filters function keep working untouched.
+// ─────────────────────────────────────────────────────────────
+(function initSearchableFilters(){
+  // Short fixed lists where typing to search adds nothing
+  const SS_SKIP=new Set(['v-closureFilter','vd-typeFilter','wt-levelFilter','wt-metricFocus']);
+  const valueDesc=Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,'value');
+  const panel=document.createElement('div');
+  panel.className='ss-panel';
+  panel.setAttribute('role','listbox');
+  document.body.appendChild(panel);
+  let cur=null; // widget that currently has the panel open
+
+  const selLabel=sel=>{const o=sel.options[sel.selectedIndex];return o&&o.value!==''?o.text:'';};
+
+  function position(w){
+    const r=w.input.getBoundingClientRect();
+    const vv=window.visualViewport;
+    const vh=vv?vv.height:window.innerHeight;
+    const width=Math.max(r.width,190);
+    const left=Math.max(8,Math.min(r.left,window.innerWidth-width-8));
+    panel.style.minWidth=width+'px';
+    panel.style.left=left+'px';
+    const below=vh-r.bottom-8,above=r.top-8;
+    if(below<180&&above>below){ // not enough room underneath (e.g. mobile keyboard) → open upwards
+      panel.style.maxHeight=Math.min(260,above)+'px';
+      panel.style.top='auto';
+      panel.style.bottom=(window.innerHeight-r.top+4)+'px';
+    }else{
+      panel.style.maxHeight=Math.min(260,Math.max(120,below))+'px';
+      panel.style.bottom='auto';
+      panel.style.top=(r.bottom+4)+'px';
+    }
+  }
+
+  function keepActiveVisible(){
+    const el=panel.querySelector('.ss-opt.active');
+    if(!el)return;
+    const top=el.offsetTop,bottom=top+el.offsetHeight;
+    if(top<panel.scrollTop)panel.scrollTop=top;
+    else if(bottom>panel.scrollTop+panel.clientHeight)panel.scrollTop=bottom-panel.clientHeight;
+  }
+  function markActive(w){
+    panel.querySelectorAll('.ss-opt').forEach((el,i)=>el.classList.toggle('active',i===w.idx));
+    keepActiveVisible();
+  }
+
+  function renderList(w,query){
+    const q=(query||'').trim().toLowerCase();
+    const selected=valueDesc.get.call(w.sel);
+    w.items=[...w.sel.options]
+      .filter(o=>!q||o.text.toLowerCase().includes(q))
+      .map(o=>({value:o.value,text:o.text}));
+    if(!w.items.length){panel.innerHTML='<div class="ss-empty">No matches</div>';w.idx=-1;return;}
+    w.idx=q?0:Math.max(0,w.items.findIndex(it=>it.value===selected));
+    panel.innerHTML=w.items.map((it,i)=>{
+      let html=esc(it.text);
+      if(q){
+        const p=it.text.toLowerCase().indexOf(q);
+        if(p>=0)html=esc(it.text.slice(0,p))+'<mark>'+esc(it.text.slice(p,p+q.length))+'</mark>'+esc(it.text.slice(p+q.length));
+      }
+      return `<div class="ss-opt${it.value===selected?' selected':''}${i===w.idx?' active':''}" data-i="${i}" role="option">${html}</div>`;
+    }).join('');
+    panel.scrollTop=0;
+    keepActiveVisible();
+  }
+
+  function open(w){
+    if(cur&&cur.sel===w.sel)return;
+    if(cur)close();
+    cur=w;
+    const label=selLabel(w.sel);
+    w.input.value='';                                   // empty box = ready to type a search
+    w.input.placeholder=label||'Type to search…';
+    w.input.classList.add('ss-open');
+    renderList(w,'');
+    panel.style.display='block';
+    position(w);
+  }
+  function close(){
+    if(!cur)return;
+    const w=cur;cur=null;
+    panel.style.display='none';
+    w.input.classList.remove('ss-open');
+    w.sync();
+  }
+  function choose(w,i){
+    const it=w.items[i];
+    if(!it)return;
+    const changed=valueDesc.get.call(w.sel)!==it.value;
+    close();
+    w.sel.value=it.value;
+    if(changed)w.sel.dispatchEvent(new Event('change',{bubbles:true})); // fires the inline onchange="applyXFilters()"
+    w.input.blur();
+  }
+
+  panel.addEventListener('mousedown',e=>e.preventDefault()); // keep focus in the search box
+  panel.addEventListener('click',e=>{
+    const el=e.target.closest('.ss-opt');
+    if(el&&cur)choose(cur,+el.dataset.i);
+  });
+  panel.addEventListener('mousemove',e=>{
+    const el=e.target.closest('.ss-opt');
+    if(el&&cur&&cur.idx!==+el.dataset.i){cur.idx=+el.dataset.i;panel.querySelectorAll('.ss-opt').forEach((x,i)=>x.classList.toggle('active',i===cur.idx));}
+  });
+  const reposition=e=>{if(cur&&e.target!==panel)position(cur);};
+  window.addEventListener('scroll',reposition,true);
+  window.addEventListener('resize',()=>{if(cur)position(cur);});
+  if(window.visualViewport)window.visualViewport.addEventListener('resize',()=>{if(cur)position(cur);});
+
+  function enhance(sel){
+    if(sel.dataset.ss||SS_SKIP.has(sel.id))return;
+    sel.dataset.ss='1';
+    const input=document.createElement('input');
+    input.type='text';
+    input.className='ss-input';
+    input.autocomplete='off';
+    input.spellcheck=false;
+    input.setAttribute('role','combobox');
+    input.setAttribute('aria-autocomplete','list');
+    const lab=sel.closest('.filter-item')?.querySelector('label');
+    if(lab)input.setAttribute('aria-label',lab.textContent.trim());
+    sel.style.display='none';
+    sel.insertAdjacentElement('afterend',input);
+
+    const w={sel,input,items:[],idx:-1};
+    w.sync=()=>{
+      if(cur&&cur.sel===sel)return; // don't clobber what the user is typing
+      const l=selLabel(sel);
+      input.value=l;
+      input.placeholder=sel.options[0]?sel.options[0].text:'';
+      input.classList.toggle('ss-has-value',!!l);
+    };
+
+    // Programmatic changes (clear buttons, chips, fillSelect) must refresh the visible box
+    Object.defineProperty(sel,'value',{
+      configurable:true,
+      get(){return valueDesc.get.call(sel);},
+      set(v){valueDesc.set.call(sel,v);w.sync();}
+    });
+    new MutationObserver(w.sync).observe(sel,{childList:true});
+
+    input.addEventListener('focus',()=>open(w));
+    input.addEventListener('click',()=>{if(!cur||cur.sel!==sel)open(w);});
+    input.addEventListener('input',()=>{if(cur&&cur.sel===sel)renderList(w,input.value);});
+    input.addEventListener('keydown',e=>{
+      if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+        e.preventDefault();
+        if(!cur||cur.sel!==sel)open(w);
+        if(!w.items.length)return;
+        w.idx=(w.idx+(e.key==='ArrowDown'?1:-1)+w.items.length)%w.items.length;
+        markActive(w);
+      }else if(e.key==='Enter'){
+        e.preventDefault();
+        if(cur&&cur.sel===sel&&w.idx>=0)choose(w,w.idx);
+      }else if(e.key==='Escape'){
+        close();input.blur();
+      }else if(e.key==='Tab'){
+        close();
+      }
+    });
+    input.addEventListener('blur',()=>setTimeout(()=>{if(cur&&cur.sel===sel)close();},120));
+    w.sync();
+  }
+
+  const run=()=>document.querySelectorAll('.filter-item select').forEach(enhance);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run);else run();
+})();
+
+
+// ─────────────────────────────────────────────────────────────
+//  CHANGE 2 — Admin: edit every detail of an FN Client lead
+// ─────────────────────────────────────────────────────────────
+// Every edit is also logged as a dated line in "Operations Remark"
+// (same style as the existing status-change log). Set to false to turn off.
+const FN_EDIT_AUDIT_LOG=true;
+
+// key = property on the mapped row (see mapFNRow), col = fn_clients column.
+// `suggest` fields get a type-to-search suggestion list built from existing leads.
+const FN_EDIT_FIELDS=[
+  {key:'customer',        col:'customer_name',        label:'Customer Name',   type:'text', required:true},
+  {key:'phone',           col:'contact_number',       label:'Contact Number',  type:'tel'},
+  {key:'status',          col:'status',               label:'Status',          type:'select', options:['Hot','Warm','Cold','Token','Lost','Booked']},
+  {key:'visitDate',       col:'visit_date',           label:'Visit Date',      type:'date'},
+  {key:'cluster',         col:'cluster',              label:'Cluster',         type:'text', suggest:true},
+  {key:'pnlHead',         col:'pnl_head',             label:'PNL Head',        type:'text', suggest:true},
+  {key:'manager',         col:'manager',              label:'Manager',         type:'text', suggest:true},
+  {key:'teamLead',        col:'team_lead',            label:'Team Leader',     type:'text', suggest:true},
+  {key:'employee',        col:'sales_executive_name', label:'Sales Executive', type:'text', suggest:true},
+  {key:'project',         col:'project_name',         label:'Project Name',    type:'text', suggest:true},
+  {key:'developer',       col:'developer_name',       label:'Developer / Builder', type:'text', suggest:true},
+  {key:'propertyType',    col:'property_type',        label:'Property Type',   type:'text', suggest:true},
+  {key:'configuration',   col:'configuration',        label:'Configuration',   type:'text', suggest:true},
+  {key:'budget',          col:'budget',               label:'Budget',          type:'text'},
+  {key:'converted',       col:'converted_from_visit', label:'Converted from Visit', type:'yesno'},
+  {key:'remark',          col:'remark',               label:'Remarks',         type:'textarea', full:true},
+  {key:'operationsRemark',col:'operations_remark',    label:'Operations Remark', type:'textarea', full:true}
+];
+
+async function sbUpdateFNClientFields(rowId,patch){
+  const {data,error}=await supabaseClient.from('fn_clients').update(patch).eq('id',rowId).select('id');
+  if(error)throw new Error(error.message);
+  // Row-level security rejects silently (0 rows) instead of erroring — surface that.
+  if(!data||!data.length)throw new Error('Nothing was saved — your account may not have permission to edit this lead.');
+}
+
+function fnEditControlHtml(f,r){
+  const id='fnEdit_'+f.key;
+  const cur=r[f.key]==null?'':String(r[f.key]);
+  if(f.type==='textarea')return `<textarea class="admin-edit-textarea" id="${id}">${esc(cur)}</textarea>`;
+  if(f.type==='select'||f.type==='yesno'){
+    const opts=f.type==='yesno'?['No','Yes']:[...f.options];
+    if(!opts.includes(cur))opts.unshift(cur);
+    return `<select class="admin-edit-select" id="${id}">${opts.map(o=>`<option value="${esc(o)}"${o===cur?' selected':''}>${o===''?'—':esc(o)}</option>`).join('')}</select>`;
+  }
+  if(f.type==='date')return `<input type="date" class="admin-edit-select" id="${id}" value="${esc(fmtDate(cur))}">`;
+  return `<input type="${f.type==='tel'?'tel':'text'}" class="admin-edit-select" id="${id}" value="${esc(cur)}"${f.suggest?` list="fnEditDL_${f.key}"`:''} autocomplete="off">`;
+}
+function buildLeadEditForm(r){
+  const uniq=key=>[...new Set(fnAll.map(x=>x[key]).filter(Boolean))].sort();
+  const lists=FN_EDIT_FIELDS.filter(f=>f.suggest).map(f=>`<datalist id="fnEditDL_${f.key}">${uniq(f.key).map(v=>`<option value="${esc(v)}">`).join('')}</datalist>`).join('');
+  const fields=FN_EDIT_FIELDS.map(f=>`<div class="detail-item ${f.full?'full':''}"><div class="detail-label">${f.label}${f.required?' *':''}</div>${fnEditControlHtml(f,r)}</div>`).join('');
+  document.getElementById('leadEditForm').innerHTML=`<div class="detail-grid">${fields}</div>${lists}`;
+}
+function setLeadEditStatus(msg,isErr){const el=document.getElementById('leadEditStatus');el.textContent=msg;el.className='admin-save-status'+(isErr===false?' ok':isErr?' err':'');}
+
+function openLeadEdit(){
+  const r=window._currentDetailRecord;
+  if(!r||!isAdmin())return;
+  buildLeadEditForm(r);
+  setLeadEditStatus('');
+  document.getElementById('leadEditSaveBtn').disabled=false;
+  document.querySelector('#detailModal .modal-box').classList.add('editing');
+  document.querySelector('#detailModal .modal-body').scrollTop=0;
+}
+function cancelLeadEdit(){
+  document.querySelector('#detailModal .modal-box').classList.remove('editing');
+}
+
+async function saveLeadEdit(){
+  const r=window._currentDetailRecord;
+  if(!r||!isAdmin())return;
+
+  // 1. collect only the fields that actually changed
+  const changes=[];
+  for(const f of FN_EDIT_FIELDS){
+    const el=document.getElementById('fnEdit_'+f.key);
+    if(!el)continue;
+    const val=String(el.value||'').trim();
+    const old=r[f.key]==null?'':String(r[f.key]).trim();
+    if(f.required&&!val){setLeadEditStatus(f.label+' is required.',true);el.focus();return;}
+    if(val!==old)changes.push({f,old,val});
+  }
+  if(!changes.length){setLeadEditStatus('No changes to save.',true);return;}
+
+  const patch={},local={};
+  changes.forEach(({f,val})=>{
+    patch[f.col]=f.type==='yesno'?val==='Yes':f.type==='date'?(val||null):val;
+    local[f.key]=val;
+  });
+
+  // 2. audit trail inside Operations Remark
+  if(FN_EDIT_AUDIT_LOG){
+    const logged=changes.filter(c=>c.f.key!=='operationsRemark');
+    if(logged.length){
+      const day=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+      const desc=logged.map(c=>c.f.type==='textarea'?`${c.f.label} updated`:`${c.f.label}: "${c.old||'—'}" → "${c.val||'—'}"`).join('; ');
+      const base=('operationsRemark' in local?local.operationsRemark:(r.operationsRemark||'')).trim();
+      const entry=`${day} - Lead edited by ${auth.user} (${desc})`;
+      local.operationsRemark=base?base+', '+entry:entry;
+      patch.operations_remark=local.operationsRemark;
+    }
+  }
+
+  // 3. save, then refresh local state + UI
+  const btn=document.getElementById('leadEditSaveBtn');
+  btn.disabled=true;setLeadEditStatus('Saving…');
+  try{
+    await sbUpdateFNClientFields(r.rowIndex,patch);
+    [r,...fnAll.filter(x=>x.rowIndex===r.rowIndex),...fnFiltered.filter(x=>x.rowIndex===r.rowIndex)].forEach(x=>Object.assign(x,local));
+    populateFNFilters(fnAll);
+    updateFNMetrics(fnAll);
+    applyFNFilters();
+    openDetailModal(r); // re-renders the overview with the new values and leaves edit mode
+    showQuickToast('Lead updated','ok');
+  }catch(err){
+    setLeadEditStatus('Error: '+err.message,true);
+  }finally{
+    btn.disabled=false;
+  }
+}
 
 </script>
 </body>
