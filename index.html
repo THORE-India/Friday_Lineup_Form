@@ -400,6 +400,7 @@
       overflow: hidden;
     }
     .btn:focus-visible { outline: 3px solid rgba(37,99,235,.22); outline-offset: 2px; }
+    .btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
     .btn-primary {
       background: var(--primary-strong);
       color: #fff;
@@ -874,6 +875,7 @@
   // ── STATE ─────────────────────────────────────────────────────
   let masterData = {};
   let projectMap = {};
+  let isSubmitting = false; // guards against double-clicks / double submits
 
   // ── BOOT ──────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
@@ -1161,6 +1163,7 @@
     const phoneEl    = document.getElementById('phone');
     countryEl.addEventListener('change', () => {
       phoneEl.value = ''; // avoid stale digits that no longer fit the new rule
+      phoneEl.classList.remove('invalid');
       if (countryEl.value === '91') {
         phoneEl.setAttribute('maxlength', '10');
         phoneEl.placeholder = '10-digit mobile';
@@ -1169,6 +1172,8 @@
         phoneEl.placeholder = 'Mobile number';
       }
     });
+    // Clear the duplicate-highlight as soon as the user edits the number
+    phoneEl.addEventListener('input', () => phoneEl.classList.remove('invalid'));
   });
 
   // ── BUDGET & NOTE FORMATTING ─────────────────────────────────────
@@ -1210,8 +1215,24 @@
     return `${actionType} for project - ${project}, Configuration required - ${configurations}, Budget - ${budgetStr}, by ${employee}, on ${dateTimeStr}`;
   }
 
+  // ── DUPLICATE CHECK ─────────────────────────────────────────────
+  // Duplicate = same Sales Executive + same customer phone number.
+  // If a DIFFERENT executive adds the same customer, that is allowed.
+  // Returns true if a matching row already exists in friday_lineup_visits.
+  async function isDuplicateEntry(employee, phone) {
+    const { count, error } = await supabaseClient
+      .from('friday_lineup_visits')
+      .select('id', { count: 'exact', head: true })
+      .eq('employee_name', employee)
+      .eq('phone', phone);
+    if (error) throw error;
+    return (count || 0) > 0;
+  }
+
   // ── SUBMIT ────────────────────────────────────────────────────
   async function submitForm() {
+    if (isSubmitting) return; // ignore double-clicks while a submit is in flight
+
     const now    = new Date();
     const cutoff = new Date(); cutoff.setHours(21, 0, 0, 0);
     if (now > cutoff) { showToast('Form submission is closed after 9:00 PM', 'error'); return; }
@@ -1266,6 +1287,34 @@
     }
     if (!budgetDenomination) { showToast('Select a budget denomination (Lakhs / Cr)', 'error'); return; }
 
+    const btn = document.getElementById('form').querySelector('.btn-primary');
+    isSubmitting = true;
+    btn.textContent = 'Checking…';
+    btn.disabled    = true;
+
+    // ── Duplicate check: same SE + same phone number already in the system.
+    // Runs BEFORE the modal opens, so a duplicate triggers neither the
+    // Supabase insert nor the CRM update. If the check itself fails
+    // (network / permissions), submission is blocked rather than risking
+    // a duplicate slipping through.
+    try {
+      if (await isDuplicateEntry(employee, phone)) {
+        showToast('Duplicate entry: you have already added a customer with this phone number.', 'error');
+        document.getElementById('phone').classList.add('invalid');
+        btn.textContent = 'Submit Entry';
+        btn.disabled    = false;
+        isSubmitting    = false;
+        return;
+      }
+    } catch (err) {
+      showToast('Could not verify duplicate entry. Please try again.', 'error');
+      btn.textContent = 'Submit Entry';
+      btn.disabled    = false;
+      isSubmitting    = false;
+      return;
+    }
+    document.getElementById('phone').classList.remove('invalid');
+
     // ── Structured note — single source of truth for both the Supabase
     // `remark` column and the CRM `notes` field. The SE's Remarks text is
     // mandatory and is appended as the final segment of the note.
@@ -1275,9 +1324,7 @@
     });
     const finalNote = `${structuredNote}, Remarks - ${remark}`;
 
-    const btn = document.getElementById('form').querySelector('.btn-primary');
     btn.textContent = 'Submitting…';
-    btn.disabled    = true;
 
     showSubmissionModal();
 
@@ -1311,17 +1358,27 @@
       devEl.readOnly = false;
     } catch (err) {
       setDbStatus(false);
+      // 23505 = unique_violation — only fires if you add the optional
+      // unique index in Supabase (backstop for race conditions).
+      if (err && err.code === '23505') {
+        document.getElementById('db-status-value').textContent = 'Duplicate Entry — Not Saved';
+      }
     } finally {
       btn.textContent = 'Submit Entry';
       btn.disabled    = false;
+      isSubmitting    = false;
     }
 
     // ── 2. CRM lead status update — separate call, own status row in the
-    // same modal. Runs independently of the sheet write above; a failure
-    // here never blocks or rolls back the sheet entry, and vice versa.
-    updateLeadInCrm({
-      employee, cname, phone, phoneCountryCode, project, visitDate, visitTime, visitType, remark: finalNote
-    });
+    // same modal. Only runs if the lineup entry was actually saved, so a
+    // rejected duplicate never touches the CRM.
+    if (dbSucceeded) {
+      updateLeadInCrm({
+        employee, cname, phone, phoneCountryCode, project, visitDate, visitTime, visitType, remark: finalNote
+      });
+    } else {
+      setCrmStatus(false, 'Skipped because the lineup entry was not saved.');
+    }
   }
 
   function resetForm() {
@@ -1333,6 +1390,7 @@
     devEl.readOnly = false;
     document.getElementById('phone').setAttribute('maxlength', '10');
     document.getElementById('phone').placeholder = '10-digit mobile';
+    document.getElementById('phone').classList.remove('invalid');
   }
 
   // ── CRM (LEADRAT) UPDATE ─────────────────────────────────────────
