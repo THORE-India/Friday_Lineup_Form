@@ -728,8 +728,10 @@
             </div>
             <div class="form-grid row-2" style="margin-top:1.2rem">
               <div class="field">
-                <label for="visitDate">Visit Date <span class="req">*</span></label>
-                <input type="date" id="visitDate">
+                <label for="visitDate">Visit Day <span class="req">*</span></label>
+                <select id="visitDate" aria-label="Visit day">
+                  <option value="" disabled selected>Select Saturday or Sunday</option>
+                </select>
               </div>
               <div class="field">
                 <label for="visitTime">Visit Time <span class="req">*</span></label>
@@ -877,8 +879,45 @@
   let projectMap = {};
   let isSubmitting = false; // guards against double-clicks / double submits
 
+  // ── VISIT DAY (Saturday / Sunday only) ─────────────────────────
+  // The form opens only on Friday, so "this weekend" = the next Saturday
+  // and the Sunday after it. The SE picks a day; the actual calendar date
+  // is computed here and stored as YYYY-MM-DD (same format the rest of the
+  // code — notes, CRM scheduledDate — already expects).
+  function pad2_(n) { return String(n).padStart(2, '0'); }
+
+  function toYmdLocal_(d) {
+    // Local-time formatting (toISOString would shift the date via UTC).
+    return d.getFullYear() + '-' + pad2_(d.getMonth() + 1) + '-' + pad2_(d.getDate());
+  }
+
+  function getWeekendDates_() {
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const daysToSat = ((6 - today.getDay()) + 7) % 7 || 7; // Friday -> 1
+    const sat = new Date(today); sat.setDate(today.getDate() + daysToSat);
+    const sun = new Date(sat);   sun.setDate(sat.getDate() + 1);
+    const fmt = d => d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+    return [
+      { value: toYmdLocal_(sat), label: 'Saturday — ' + fmt(sat) },
+      { value: toYmdLocal_(sun), label: 'Sunday — '   + fmt(sun) }
+    ];
+  }
+
+  function populateVisitDayOptions() {
+    const sel = document.getElementById('visitDate');
+    getWeekendDates_().forEach(opt => {
+      const o = document.createElement('option');
+      o.value = opt.value;
+      o.textContent = opt.label;
+      sel.appendChild(o);
+    });
+  }
+
   // ── BOOT ──────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
+    populateVisitDayOptions();
     document.getElementById('currentYear').textContent = new Date().getFullYear();
     startCountdown();
     scheduleAutoClose();
@@ -1273,6 +1312,9 @@
     }
     if (!cname || !phone || !project || !developer || !visitDate || !visitTime || !closure || !visitType || !remark) {
       showToast('Please fill all required fields', 'error'); return;
+    }
+    if (!getWeekendDates_().some(o => o.value === visitDate)) {
+      showToast('Visit day must be this Saturday or Sunday', 'error'); return;
     }
     const isIndiaPhone = phoneCountryCode === '91';
     const phoneRegex   = isIndiaPhone ? /^\d{10}$/ : /^\d{6,15}$/;
