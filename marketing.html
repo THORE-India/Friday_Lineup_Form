@@ -10,7 +10,7 @@ h1{font-size:1.05rem;font-weight:800;color:var(--b)}.sp{flex:1}.meter{font-size:
 a.back{color:var(--b);font-weight:700;text-decoration:none;font-size:.8rem}
 nav{display:flex;gap:4px}nav button,.btn{border:1px solid #CBD5E1;background:#fff;border-radius:8px;padding:7px 12px;font:600 .78rem Inter;cursor:pointer}
 nav button.on,.btn.pri{background:var(--b);border-color:var(--b);color:#fff}.btn.bad{color:var(--r)}
-main{padding:14px 18px}.board{display:grid;grid-template-columns:repeat(8,minmax(170px,1fr));gap:8px;overflow-x:auto}
+main{padding:14px 18px}.board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(170px,1fr);gap:8px;overflow-x:auto}
 .col h3{font-size:.7rem;color:var(--d);margin-bottom:6px}.card{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:9px;margin-bottom:6px;cursor:pointer;font-size:.76rem}
 .card:hover{border-color:var(--b)}.card b{display:block}.m{color:var(--d);font-size:.68rem}
 .panel{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px;max-width:860px;margin-bottom:12px}
@@ -19,55 +19,56 @@ input,select,textarea{width:100%;padding:8px;border:1px solid #CBD5E1;border-rad
 .drawer{position:fixed;inset:0 0 0 auto;width:min(480px,100%);background:#fff;border-left:1px solid #CBD5E1;box-shadow:-18px 0 50px rgba(15,23,42,.15);padding:16px;overflow:auto;z-index:20;display:none}
 .drawer.on{display:block}.pill{display:inline-block;background:var(--bl);color:var(--b);border-radius:99px;padding:2px 9px;font-size:.68rem;font-weight:700}
 .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.log{font-size:.72rem;color:var(--d);border-top:1px solid var(--bd);padding:5px 0}
-.bar{height:6px;background:var(--bd);border-radius:9px;overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;background:var(--g)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px;margin-bottom:12px}.kpi{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:10px;font-size:.7rem;color:var(--d)}.kpi b{display:block;font-size:1.4rem;color:var(--t)}table{width:100%;border-collapse:collapse;font-size:.74rem;margin-top:6px}th,td{text-align:left;padding:6px;border-bottom:1px solid var(--bd)}.fn{display:flex;gap:8px;align-items:center;font-size:.74rem}.fn span{width:110px}.fn .bar{flex:1}.panel{overflow-x:auto}.bar{height:6px;background:var(--bd);border-radius:9px;overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;background:var(--g)}
 #toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--t);color:#fff;padding:9px 16px;border-radius:99px;font-size:.78rem;display:none;z-index:30}
 </style></head><body>
 <header><a class="back" href="dashboard.html">← Dashboard</a><h1>Marketing Workflow</h1>
-<nav id="nav"><button data-t="board">Board</button><button data-t="new">New request</button><button data-t="reqs">Requests</button></nav>
+<nav id="nav"><button data-t="dash">Dashboard</button><button data-t="board">Board</button><button data-t="new">New request</button><button data-t="reqs">Requests</button></nav>
 <div class="sp"></div><div class="meter" id="meter"></div><div class="meter" id="who"></div></header>
 <main id="app">Loading…</main><div class="drawer" id="dr"></div><div id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 const sb=supabase.createClient('https://ivetvywbdewkkqbazjxu.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2ZXR2eXdiZGV3a2txYmF6anh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NzQ2NzcsImV4cCI6MjEwNDE1MDY3N30.1lFi27ywZ1iVAU7NykMKY_Lie3krA58rBFXICXZstgo');
 const B='campaign-assets',$=i=>document.getElementById(i),E=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const ST=['brief','designing','exec_review','content','approval','approved','setup_review','verified'];
-const LB={brief:'Brief',designing:'Design',exec_review:'Your review',content:'Content',approval:'Approval',approved:'Approved',setup_review:'Setup check',verified:'Verified'};
-const NX={brief:[['designing','Send to designer']],designing:[['exec_review','Submit creative']],exec_review:[['content','Accept creative'],['designing','Request changes',1]],content:[['approval','Submit for approval']],approval:[['approved','Approve'],['content','Changes to content',1],['designing','Changes to creative',1]],approved:[['setup_review','Mark setup done']],setup_review:[['verified','Verify setup'],['approved','Return for fixes',1]]};
-const WHO={brief:'e',content:'e',approved:'e',exec_review:'e',designing:'d',approval:'m',setup_review:'m'};
-let me,role,R=[],I=[],P=[],tab='board';
+const ST=['brief','designing','exec_review','content','approval','final_approval','approved','setup_review','verified'],ALL=ST.concat(['on_hold','cancelled']);
+const LB={brief:'Brief',designing:'Design',exec_review:'Your review',content:'Content',approval:'Manager approval',final_approval:'Final approval',on_hold:'On hold',cancelled:'Cancelled',approved:'Approved',setup_review:'Setup check',verified:'Verified'};
+const NX={brief:[['designing','Send to designer']],designing:[['exec_review','Submit creative']],exec_review:[['content','Accept creative'],['designing','Request changes',1]],content:[['approval','Submit for approval']],approval:[['final_approval','Approve, send to zone approver'],['content','Changes to content',1],['designing','Changes to creative',1]],final_approval:[['approved','Final approve'],['content','Changes to content',1],['designing','Changes to creative',1]],approved:[['setup_review','Mark setup done']],setup_review:[['verified','Verify setup'],['approved','Return for fixes',1]]};
+const WHO={brief:'e',content:'e',approved:'e',exec_review:'e',designing:'d',approval:'m',final_approval:'z',setup_review:'m'};
+let me,role,R=[],I=[],P=[],Z=[],EDIT=null,tab='dash';
 const nm=id=>(P.find(p=>p.user_id===id)?.profiles?.full_name)||(id===me.id?me.name:'—');
-const mgr=()=>role==='manager'||role==='head';
+const mgr=()=>role==='marketing_manager'||role==='head';
 const toast=m=>{const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3200)};
 const run=async(p,ok)=>{const r=await p;if(r.error){toast(r.error.message);return false}if(ok)toast(ok);return r.data??true};
 (async()=>{const{data:{session}}=await sb.auth.getSession();if(!session){location.href='dashboard.html';return}
  const pr=await sb.from('profiles').select('full_name').eq('id',session.user.id).single();me={id:session.user.id,name:pr.data?.full_name||''};
  role=(await sb.rpc('campaign_role')).data;
  if(!role){$('app').innerHTML='<div class="panel"><b>No access yet.</b><p class="m">Ask the marketing head to add you to the marketing team.</p></div>';return}
- $('who').textContent=me.name+' · '+role;$('nav').onclick=e=>{if(e.target.dataset.t){tab=e.target.dataset.t;draw()}};await load()})();
-async function load(){const[r,i,p]=await Promise.all([sb.from('campaign_requests').select('*').order('created_at',{ascending:false}),sb.from('campaign_items').select('*,campaign_assets(*)').order('ref'),sb.from('campaign_roles').select('user_id,role,profiles(full_name)').eq('active',true)]);
- R=r.data||[];I=i.data||[];P=p.data||[];draw();meter()}
+ $('who').textContent=me.name+' · '+role;$('nav').onclick=e=>{if(e.target.dataset.t){tab=e.target.dataset.t;EDIT=null;draw()}};await load()})();
+async function load(){const[r,i,p,za]=await Promise.all([sb.from('campaign_requests').select('*').order('created_at',{ascending:false}),sb.from('campaign_items').select('*,campaign_assets(*)').order('ref'),sb.from('campaign_roles').select('user_id,role,profiles(full_name)').eq('active',true),sb.from('campaign_zone_approvers').select('*')]);
+ R=r.data||[];I=i.data||[];P=p.data||[];Z=za.data||[];draw();meter()}
 async function meter(){const u=(await sb.rpc('campaign_storage_usage')).data;if(u)$('meter').textContent=`Campaign files ${(u.files/1048576).toFixed(0)} MB · Database ${(u.db/1048576).toFixed(0)} of 500 MB`}
 function draw(){document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
- $('app').innerHTML=tab==='board'?board():tab==='new'?form():reqs();if(tab==='new')typeRow()}
+ $('app').innerHTML=tab==='dash'?dash():tab==='board'?board():tab==='new'?form():reqs();if(tab==='new')EDIT?fill():typeRow()}
 function board(){if(!I.length)return'<div class="panel">No campaigns yet. A manager can start one from <b>New request</b>.</div>';
- return'<div class="board">'+ST.map(s=>`<div class="col"><h3>${LB[s]} (${I.filter(x=>x.status===s).length})</h3>${I.filter(x=>x.status===s).map(x=>{const q=R.find(r=>r.id===x.request_id)||{};return`<div class="card" onclick="open_('${x.id}')"><b>${E(q.project_name)}</b>${E(x.ref)}<div class="m">${E(x.ctype)} · ${x.executive_id?E(nm(x.executive_id)):'Unassigned'}</div></div>`}).join('')}</div>`).join('')+'</div>'}
+ return'<div class="board">'+ALL.map(s=>`<div class="col"><h3>${LB[s]} (${I.filter(x=>x.status===s).length})</h3>${I.filter(x=>x.status===s).map(x=>{const q=R.find(r=>r.id===x.request_id)||{};return`<div class="card" onclick="open_('${x.id}')"><b>${E(q.project_name)}</b>${E(x.ref)}<div class="m">${E(x.ctype)} · ${x.executive_id?E(nm(x.executive_id)):'Unassigned'}</div></div>`}).join('')}</div>`).join('')+'</div>'}
 function form(){const z=['Pune','Mumbai','Hyderabad','Kolkata','Bangalore'];
  if(!mgr())return'<div class="panel">Only the manager or marketing head can create requests.</div>';
  const f=(i,l,t='text')=>`<div><label>${l}</label><input id="${i}" type="${t}"></div>`;
- return`<div class="panel"><b>New campaign request</b><div class="g"><div><label>Zone</label><select id="zone">${z.map(x=>`<option>${x}</option>`).join('')}</select></div>${f('cluster','Cluster')}${f('city','City')}${f('locality','Locality')}${f('project_name','Project name')}${f('developer','Developer')}${f('configurations','Configurations (e.g. 2, 3 BHK)')}${f('price_range','Price range')}${f('deadline','Deadline','date')}</div>
- <label>Key points</label><textarea id="key_points"></textarea><label>How many campaigns of each type?</label><div id="types"></div><div class="row"><button class="btn" onclick="typeRow()">Add another type</button></div>
- <div class="row"><button class="btn pri" onclick="submitReq()">Create request</button></div></div>`}
+ return`<div class="panel"><b>${EDIT?'Edit request':'New campaign request'}</b><div class="g"><div><label>Zone</label><select id="zone">${z.map(x=>`<option>${x}</option>`).join('')}</select></div>${f('cluster','Cluster')}${f('city','City')}${f('locality','Locality')}${f('project_name','Project name')}${f('developer','Developer')}${f('configurations','Configurations (e.g. 2, 3 BHK)')}${f('price_range','Price range')}${f('deadline','Deadline','date')}</div>
+ <label>Key points</label><textarea id="key_points"></textarea><div id="tw"><label>How many campaigns of each type?</label><div id="types"></div><div class="row"><button class="btn" onclick="typeRow()">Add another type</button></div></div>
+ <div class="row"><button class="btn pri" onclick="submitReq()">${EDIT?'Save changes':'Create request'}</button></div></div>`}
 function typeRow(){const d=$('types');if(!d)return;const pre=['NRI','Domestic','Outstation'][d.children.length]||'';const r=document.createElement('div');r.className='g';r.innerHTML=`<div><input class="tn" placeholder="Type" value="${pre}"></div><div><input class="tq" type="number" min="0" placeholder="Quantity" value="${pre?1:0}"></div>`;d.appendChild(r)}
 async function submitReq(){const q={};document.querySelectorAll('#types .g').forEach(r=>{const n=r.querySelector('.tn').value.trim(),c=+r.querySelector('.tq').value;if(n&&c>0)q[n]=(q[n]||0)+c});
  const p={quantities:q};['zone','cluster','city','locality','project_name','developer','configurations','price_range','deadline','key_points'].forEach(k=>p[k]=$(k).value);
+ if(EDIT){delete p.quantities;if(await run(sb.rpc('campaign_update_request',{p_req:EDIT,p}),'Request updated')){EDIT=null;tab='reqs';load()}return}
  if(await run(sb.rpc('campaign_create_request',{p}),'Request created')){tab='board';load()}}
 function reqs(){if(!R.length)return'<div class="panel">No open requests.</div>';
  return R.map(r=>{const it=I.filter(x=>x.request_id===r.id),v=it.filter(x=>x.status==='verified').length;
  return`<div class="panel"><b>${E(r.project_name)}</b> <span class="pill">${E(r.ref)}</span> <span class="m">${E(r.zone)} · ${E(r.city||'')} ${E(r.locality||'')}</span>
  <div class="m">${E(r.configurations||'')} ${E(r.price_range||'')} ${r.deadline?'· due '+E(r.deadline):''}</div><div class="m">${E(r.key_points||'')}</div>
  <div class="bar"><i style="width:${it.length?v/it.length*100:0}%"></i></div><div class="m">${v} of ${it.length} verified · ${Object.entries(r.quantities).map(([k,n])=>k+' '+n).join(', ')}</div>
- ${role==='head'?`<div class="row"><button class="btn bad" onclick="closeReq('${r.id}')">Export and close</button></div>`:''}</div>`}).join('')}
-function open_(id){const x=I.find(i=>i.id===id),q=R.find(r=>r.id===x.request_id),d=x.data||{},w=WHO[x.status],can=w==='e'?x.executive_id===me.id:w==='d'?x.designer_id===me.id:mgr();
+ <div class="row">${mgr()?`<button class="btn" onclick="editReq('${r.id}')">Edit</button><button class="btn" onclick="setState('request','${r.id}','${it.some(x=>x.status==='on_hold')?'resume':'hold'}')">${it.some(x=>x.status==='on_hold')?'Resume all':'Put on hold'}</button><button class="btn bad" onclick="setState('request','${r.id}','cancel')">Cancel request</button>`:''}${role==='head'?`<button class="btn bad" onclick="closeReq('${r.id}')">Export and close</button>`:''}</div></div>`}).join('')}
+function open_(id){const x=I.find(i=>i.id===id),q=R.find(r=>r.id===x.request_id),d=x.data||{},w=WHO[x.status],can=w==='e'?x.executive_id===me.id:w==='d'?x.designer_id===me.id:w==='z'?Z.some(a=>a.zone===q.zone&&a.approver_id===me.id):mgr();
  const opt=(r,v)=>`<option value="">Unassigned</option>`+P.filter(p=>p.role===r).map(p=>`<option value="${p.user_id}" ${p.user_id===v?'selected':''}>${E(p.profiles?.full_name)}</option>`).join('');
  const ed=(k,l,on)=>`<label>${l}</label>`+(on?`<textarea id="f_${k}">${E(d[k]||'')}</textarea>`:`<div>${E(d[k]||'—')}</div>`);
  const exe=x.executive_id===me.id,as=mgr()&&['brief','designing'].includes(x.status);
@@ -79,7 +80,7 @@ function open_(id){const x=I.find(i=>i.id===id),q=R.find(r=>r.id===x.request_id)
  <label>Creative files</label>${x.campaign_assets.sort((a,b)=>a.version-b.version).map(a=>`<div class="log"><a href="#" onclick="view('${a.path}');return false">v${a.version} ${E(a.filename)}</a> ${E(a.note||'')}</div>`).join('')||'<div class="m">None yet</div>'}
  ${(x.designer_id===me.id||exe)&&x.status==='designing'||(x.designer_id===me.id&&x.status==='designing')?`<input type="file" id="file" accept="image/*,video/mp4,application/pdf"><input id="note" placeholder="What changed?"><div class="row"><button class="btn" onclick="upload('${id}')">Upload new version</button></div>`:''}
  ${can&&NX[x.status]?`<label>Comment ${NX[x.status].some(n=>n[2])?'(required when sending back)':''}</label><textarea id="cm"></textarea><div class="row">${['brief','content','approved'].includes(x.status)&&exe?`<button class="btn" onclick="act('${id}','${x.status}')">Save draft</button>`:''}${NX[x.status].map(n=>`<button class="btn ${n[2]?'bad':'pri'}" onclick="act('${id}','${n[0]}')">${n[1]}</button>`).join('')}</div>`:''}
- <div id="lg"></div>`;$('dr').classList.add('on');
+ ${mgr()&&!['verified','cancelled'].includes(x.status)?`<div class="row"><button class="btn" onclick="setState('item','${id}','${x.status==='on_hold'?'resume':'hold'}')">${x.status==='on_hold'?'Resume':'Put on hold'}</button><button class="btn bad" onclick="setState('item','${id}','cancel')">Cancel campaign</button></div>`:''}${x.state_reason?`<p class="m">Reason: ${E(x.state_reason)}</p>`:''}<div id="lg"></div>`;$('dr').classList.add('on');
  sb.from('campaign_activity').select('*').eq('item_id',id).order('at').then(({data})=>$('lg').innerHTML='<label>History</label>'+(data||[]).map(a=>`<div class="log">${new Date(a.at).toLocaleString('en-IN')} · ${E(nm(a.actor))} · ${a.from_status?LB[a.from_status]+' → '+LB[a.to_status]:''} ${E(a.comment||'')}</div>`).join(''))}
 async function act(id,to){const d={};['brief','content','setup'].forEach(k=>{const e=$('f_'+k);if(e)d[k]=e.value});
  if(await run(sb.rpc('campaign_advance',{p_item:id,p_to:to,p_comment:$('cm')?.value||null,p_data:d}),'Saved')){await load();open_(id)}}
@@ -97,4 +98,24 @@ async function closeReq(id){const r=R.find(x=>x.id===id);
  const paths=await run(sb.rpc('campaign_prepare_close',{p_req:id}));if(!paths)return;
  for(let i=0;i<paths.length;i+=50){if(!await run(sb.storage.from(B).remove(paths.slice(i,i+50))))return}
  if(await run(sb.rpc('campaign_purge',{p_req:id}),'Closed. All campaign data deleted')){await load()}}
+const ZN=['Pune','Mumbai','Hyderabad','Kolkata','Bangalore'],rq=x=>R.find(r=>r.id===x.request_id)||{};
+function dash(){const t=new Date().toISOString().slice(0,10),n=s=>I.filter(x=>x.status===s).length,cnt=(a,...s)=>a.filter(x=>s.includes(x.status)).length,
+ open=x=>!['verified','cancelled','on_hold'].includes(x.status),od=x=>open(x)&&rq(x).deadline&&rq(x).deadline<t,
+ mine=I.filter(x=>{const w=WHO[x.status];return w==='e'?x.executive_id===me.id:w==='d'?x.designer_id===me.id:w==='m'?mgr():w==='z'?Z.some(a=>a.approver_id===me.id&&a.zone===rq(x).zone):false}).length,
+ K=[['Total campaigns',I.length],['In progress',I.filter(open).length],['Waiting on you',mine],['Manager approval',n('approval')],['Final approval',n('final_approval')],['Approved / setup',n('approved')+n('setup_review')],['Verified',n('verified')],['On hold',n('on_hold')],['Cancelled',n('cancelled')],['Overdue',I.filter(od).length]],
+ T=(h,rows)=>`<table><tr>${h.map(c=>`<th>${c}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')||'<tr><td colspan="9">Nothing yet</td></tr>'}</table>`,
+ mx=Math.max(1,...ALL.map(n));
+ if(!I.length)return'<div class="panel">No campaigns yet. The dashboard fills in once a request is created.</div>';
+ const zr=ZN.map(z=>{const a=I.filter(x=>rq(x).zone===z);return[z,a.length,a.filter(open).length,cnt(a,'approval'),cnt(a,'final_approval'),cnt(a,'verified'),cnt(a,'on_hold'),cnt(a,'cancelled'),a.filter(od).length]});
+ const ex=P.filter(p=>p.role==='executive').map(p=>{const a=I.filter(x=>x.executive_id===p.user_id);return[E(p.profiles?.full_name),a.length,cnt(a,'brief'),cnt(a,'designing','exec_review','content'),cnt(a,'approval','final_approval'),cnt(a,'approved','setup_review'),cnt(a,'verified'),a.filter(od).length]});
+ const pr=R.map(r=>{const a=I.filter(x=>x.request_id===r.id),v=cnt(a,'verified');return[E(r.project_name),E(r.zone),E(r.deadline||'—'),`<div class="bar"><i style="width:${a.length?v/a.length*100:0}%"></i></div>${v} of ${a.length-cnt(a,'cancelled')}`,cnt(a,'on_hold'),a.filter(od).length]});
+ return`<div class="kpis">${K.map(k=>`<div class="kpi"><b>${k[1]}</b>${k[0]}</div>`).join('')}</div>
+ <div class="panel"><b>Where campaigns are right now</b>${ALL.map(s=>`<div class="fn"><span>${LB[s]}</span><div class="bar"><i style="width:${n(s)/mx*100}%"></i></div><b>${n(s)}</b></div>`).join('')}</div>
+ <div class="panel"><b>By zone</b>${T(['Zone','Total','In progress','Manager approval','Final approval','Verified','On hold','Cancelled','Overdue'],zr)}</div>
+ <div class="panel"><b>By executive</b>${T(['Executive','Total','Brief','Design / content','Approvals','Setup','Verified','Overdue'],ex)}</div>
+ <div class="panel"><b>By project</b>${T(['Project','Zone','Deadline','Verified','On hold','Overdue'],pr)}</div>`}
+function editReq(id){EDIT=id;tab='new';draw()}
+function fill(){const r=R.find(x=>x.id===EDIT);['zone','cluster','city','locality','project_name','developer','configurations','price_range','deadline','key_points'].forEach(k=>$(k).value=r[k]||'');$('tw').style.display='none'}
+async function setState(k,id,a){const r=a==='resume'?null:prompt(a==='cancel'?'Reason for cancelling (required). This cannot be undone:':'Reason for putting on hold (required):');
+ if(a!=='resume'&&!(r||'').trim())return;if(await run(sb.rpc('campaign_set_state',{p_kind:k,p_id:id,p_action:a,p_reason:r}),'Updated')){await load();if(k==='item')open_(id)}}
 </script></body></html>
