@@ -732,6 +732,7 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
           <div class="pd-item username" id="pdUsername">—</div>
           <div class="pd-item" id="pdFormLink" onclick="window.open('index.html')">📋 Friday Lineup Form</div>
           <div class="pd-item" id="pdFNLink" onclick="window.open('https://thore-india.github.io/FN_Clients_Form/index.html')">🏆 FN Clients Form</div>
+          <div class="pd-item" id="pdMarketingLink" style="display:none" onclick="location.href='marketing.html'">📣 Marketing Workflow</div>
           <div class="pd-item logout" onclick="logout()">Sign Out</div>
         </div>
       </div>
@@ -1425,6 +1426,7 @@ async function handleLoginSuccess(role,user){
   document.getElementById('profileWrap').style.display='block';
   document.getElementById('profileAvatar').textContent=getInitials(user);document.getElementById('pdUsername').textContent=user;
   setLoginStatus('');
+  supabaseClient.rpc('campaign_role').then(({data})=>{document.getElementById('pdMarketingLink').style.display=data?'block':'none';});
   if(role.toLowerCase()==='loan department'){
     setupLoanDeptView();renderFNData(await sbFetchFN());document.getElementById('loanDeptBanner').style.display='flex';
     startAutoRefresh();
