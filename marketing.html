@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THORE Marketing Workflow</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--b:#1E40AF;--bl:#EFF6FF;--bd:#E2E8F0;--t:#0F172A;--d:#64748B;--r:#DC2626;--g:#059669}
+*{box-sizing:border-box;margin:0}body{font:14px Inter,sans-serif;background:#F8FAFC;color:var(--t)}
+header{background:#fff;border-bottom:1px solid var(--bd);padding:10px 18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;position:sticky;top:0;z-index:5}
+h1{font-size:1.05rem;font-weight:800;color:var(--b)}.sp{flex:1}.meter{font-size:.68rem;color:var(--d)}
+a.back{color:var(--b);font-weight:700;text-decoration:none;font-size:.8rem}
+nav{display:flex;gap:4px}nav button,.btn{border:1px solid #CBD5E1;background:#fff;border-radius:8px;padding:7px 12px;font:600 .78rem Inter;cursor:pointer}
+nav button.on,.btn.pri{background:var(--b);border-color:var(--b);color:#fff}.btn.bad{color:var(--r)}
+main{padding:14px 18px}.board{display:grid;grid-template-columns:repeat(8,minmax(170px,1fr));gap:8px;overflow-x:auto}
+.col h3{font-size:.7rem;color:var(--d);margin-bottom:6px}.card{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:9px;margin-bottom:6px;cursor:pointer;font-size:.76rem}
+.card:hover{border-color:var(--b)}.card b{display:block}.m{color:var(--d);font-size:.68rem}
+.panel{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px;max-width:860px;margin-bottom:12px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}label{font-size:.68rem;font-weight:700;color:var(--d);display:block;margin:8px 0 3px}
+input,select,textarea{width:100%;padding:8px;border:1px solid #CBD5E1;border-radius:8px;font:inherit}textarea{min-height:70px}
+.drawer{position:fixed;inset:0 0 0 auto;width:min(480px,100%);background:#fff;border-left:1px solid #CBD5E1;box-shadow:-18px 0 50px rgba(15,23,42,.15);padding:16px;overflow:auto;z-index:20;display:none}
+.drawer.on{display:block}.pill{display:inline-block;background:var(--bl);color:var(--b);border-radius:99px;padding:2px 9px;font-size:.68rem;font-weight:700}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.log{font-size:.72rem;color:var(--d);border-top:1px solid var(--bd);padding:5px 0}
+.bar{height:6px;background:var(--bd);border-radius:9px;overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;background:var(--g)}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--t);color:#fff;padding:9px 16px;border-radius:99px;font-size:.78rem;display:none;z-index:30}
+</style></head><body>
+<header><a class="back" href="dashboard.html">← Dashboard</a><h1>Marketing Workflow</h1>
+<nav id="nav"><button data-t="board">Board</button><button data-t="new">New request</button><button data-t="reqs">Requests</button></nav>
+<div class="sp"></div><div class="meter" id="meter"></div><div class="meter" id="who"></div></header>
+<main id="app">Loading…</main><div class="drawer" id="dr"></div><div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+const sb=supabase.createClient('https://ivetvywbdewkkqbazjxu.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2ZXR2eXdiZGV3a2txYmF6anh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NzQ2NzcsImV4cCI6MjEwNDE1MDY3N30.1lFi27ywZ1iVAU7NykMKY_Lie3krA58rBFXICXZstgo');
+const B='campaign-assets',$=i=>document.getElementById(i),E=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ST=['brief','designing','exec_review','content','approval','approved','setup_review','verified'];
+const LB={brief:'Brief',designing:'Design',exec_review:'Your review',content:'Content',approval:'Approval',approved:'Approved',setup_review:'Setup check',verified:'Verified'};
+const NX={brief:[['designing','Send to designer']],designing:[['exec_review','Submit creative']],exec_review:[['content','Accept creative'],['designing','Request changes',1]],content:[['approval','Submit for approval']],approval:[['approved','Approve'],['content','Changes to content',1],['designing','Changes to creative',1]],approved:[['setup_review','Mark setup done']],setup_review:[['verified','Verify setup'],['approved','Return for fixes',1]]};
+const WHO={brief:'e',content:'e',approved:'e',exec_review:'e',designing:'d',approval:'m',setup_review:'m'};
+let me,role,R=[],I=[],P=[],tab='board';
+const nm=id=>(P.find(p=>p.user_id===id)?.profiles?.full_name)||(id===me.id?me.name:'—');
+const mgr=()=>role==='manager'||role==='head';
+const toast=m=>{const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3200)};
+const run=async(p,ok)=>{const r=await p;if(r.error){toast(r.error.message);return false}if(ok)toast(ok);return r.data??true};
+(async()=>{const{data:{session}}=await sb.auth.getSession();if(!session){location.href='dashboard.html';return}
+ const pr=await sb.from('profiles').select('full_name').eq('id',session.user.id).single();me={id:session.user.id,name:pr.data?.full_name||''};
+ role=(await sb.rpc('campaign_role')).data;
+ if(!role){$('app').innerHTML='<div class="panel"><b>No access yet.</b><p class="m">Ask the marketing head to add you to the marketing team.</p></div>';return}
+ $('who').textContent=me.name+' · '+role;$('nav').onclick=e=>{if(e.target.dataset.t){tab=e.target.dataset.t;draw()}};await load()})();
+async function load(){const[r,i,p]=await Promise.all([sb.from('campaign_requests').select('*').order('created_at',{ascending:false}),sb.from('campaign_items').select('*,campaign_assets(*)').order('ref'),sb.from('campaign_roles').select('user_id,role,profiles(full_name)').eq('active',true)]);
+ R=r.data||[];I=i.data||[];P=p.data||[];draw();meter()}
+async function meter(){const u=(await sb.rpc('campaign_storage_usage')).data;if(u)$('meter').textContent=`Campaign files ${(u.files/1048576).toFixed(0)} MB · Database ${(u.db/1048576).toFixed(0)} of 500 MB`}
+function draw(){document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
+ $('app').innerHTML=tab==='board'?board():tab==='new'?form():reqs();if(tab==='new')typeRow()}
+function board(){if(!I.length)return'<div class="panel">No campaigns yet. A manager can start one from <b>New request</b>.</div>';
+ return'<div class="board">'+ST.map(s=>`<div class="col"><h3>${LB[s]} (${I.filter(x=>x.status===s).length})</h3>${I.filter(x=>x.status===s).map(x=>{const q=R.find(r=>r.id===x.request_id)||{};return`<div class="card" onclick="open_('${x.id}')"><b>${E(q.project_name)}</b>${E(x.ref)}<div class="m">${E(x.ctype)} · ${x.executive_id?E(nm(x.executive_id)):'Unassigned'}</div></div>`}).join('')}</div>`).join('')+'</div>'}
+function form(){const z=['Pune','Mumbai','Hyderabad','Kolkata','Bangalore'];
+ if(!mgr())return'<div class="panel">Only the manager or marketing head can create requests.</div>';
+ const f=(i,l,t='text')=>`<div><label>${l}</label><input id="${i}" type="${t}"></div>`;
+ return`<div class="panel"><b>New campaign request</b><div class="g"><div><label>Zone</label><select id="zone">${z.map(x=>`<option>${x}</option>`).join('')}</select></div>${f('cluster','Cluster')}${f('city','City')}${f('locality','Locality')}${f('project_name','Project name')}${f('developer','Developer')}${f('configurations','Configurations (e.g. 2, 3 BHK)')}${f('price_range','Price range')}${f('deadline','Deadline','date')}</div>
+ <label>Key points</label><textarea id="key_points"></textarea><label>How many campaigns of each type?</label><div id="types"></div><div class="row"><button class="btn" onclick="typeRow()">Add another type</button></div>
+ <div class="row"><button class="btn pri" onclick="submitReq()">Create request</button></div></div>`}
+function typeRow(){const d=$('types');if(!d)return;const pre=['NRI','Domestic','Outstation'][d.children.length]||'';const r=document.createElement('div');r.className='g';r.innerHTML=`<div><input class="tn" placeholder="Type" value="${pre}"></div><div><input class="tq" type="number" min="0" placeholder="Quantity" value="${pre?1:0}"></div>`;d.appendChild(r)}
+async function submitReq(){const q={};document.querySelectorAll('#types .g').forEach(r=>{const n=r.querySelector('.tn').value.trim(),c=+r.querySelector('.tq').value;if(n&&c>0)q[n]=(q[n]||0)+c});
+ const p={quantities:q};['zone','cluster','city','locality','project_name','developer','configurations','price_range','deadline','key_points'].forEach(k=>p[k]=$(k).value);
+ if(await run(sb.rpc('campaign_create_request',{p}),'Request created')){tab='board';load()}}
+function reqs(){if(!R.length)return'<div class="panel">No open requests.</div>';
+ return R.map(r=>{const it=I.filter(x=>x.request_id===r.id),v=it.filter(x=>x.status==='verified').length;
+ return`<div class="panel"><b>${E(r.project_name)}</b> <span class="pill">${E(r.ref)}</span> <span class="m">${E(r.zone)} · ${E(r.city||'')} ${E(r.locality||'')}</span>
+ <div class="m">${E(r.configurations||'')} ${E(r.price_range||'')} ${r.deadline?'· due '+E(r.deadline):''}</div><div class="m">${E(r.key_points||'')}</div>
+ <div class="bar"><i style="width:${it.length?v/it.length*100:0}%"></i></div><div class="m">${v} of ${it.length} verified · ${Object.entries(r.quantities).map(([k,n])=>k+' '+n).join(', ')}</div>
+ ${role==='head'?`<div class="row"><button class="btn bad" onclick="closeReq('${r.id}')">Export and close</button></div>`:''}</div>`}).join('')}
+function open_(id){const x=I.find(i=>i.id===id),q=R.find(r=>r.id===x.request_id),d=x.data||{},w=WHO[x.status],can=w==='e'?x.executive_id===me.id:w==='d'?x.designer_id===me.id:mgr();
+ const opt=(r,v)=>`<option value="">Unassigned</option>`+P.filter(p=>p.role===r).map(p=>`<option value="${p.user_id}" ${p.user_id===v?'selected':''}>${E(p.profiles?.full_name)}</option>`).join('');
+ const ed=(k,l,on)=>`<label>${l}</label>`+(on?`<textarea id="f_${k}">${E(d[k]||'')}</textarea>`:`<div>${E(d[k]||'—')}</div>`);
+ const exe=x.executive_id===me.id,as=mgr()&&['brief','designing'].includes(x.status);
+ $('dr').innerHTML=`<div class="row"><b>${E(q.project_name)}</b><span class="pill">${E(x.ref)}</span><span class="pill">${E(x.ctype)}</span><span class="sp"></span><button class="btn" onclick="$('dr').classList.remove('on')">Close</button></div>
+ <p class="m">${E(q.zone)} · ${E(q.city||'')} ${E(q.locality||'')} · ${E(q.configurations||'')} · ${E(q.price_range||'')}<br>${E(q.key_points||'')}</p><p><span class="pill">${LB[x.status]}</span></p>
+ <label>Executive</label>${as?`<select id="ae">${opt('executive',x.executive_id)}</select>`:`<div>${x.executive_id?E(nm(x.executive_id)):'Unassigned'}</div>`}
+ <label>Designer</label>${as?`<select id="ad">${opt('designer',x.designer_id)}</select><div class="row"><button class="btn" onclick="assign('${id}')">Save assignment</button></div>`:`<div>${x.designer_id?E(nm(x.designer_id)):'Unassigned'}</div>`}
+ ${ed('brief','Brief (objective, audience, offer, format)',exe&&x.status==='brief')}${ed('content','Campaign content (texts, headlines, CTA, link)',exe&&x.status==='content')}${ed('setup','Setup confirmation (platform, campaign link)',exe&&x.status==='approved')}
+ <label>Creative files</label>${x.campaign_assets.sort((a,b)=>a.version-b.version).map(a=>`<div class="log"><a href="#" onclick="view('${a.path}');return false">v${a.version} ${E(a.filename)}</a> ${E(a.note||'')}</div>`).join('')||'<div class="m">None yet</div>'}
+ ${(x.designer_id===me.id||exe)&&x.status==='designing'||(x.designer_id===me.id&&x.status==='designing')?`<input type="file" id="file" accept="image/*,video/mp4,application/pdf"><input id="note" placeholder="What changed?"><div class="row"><button class="btn" onclick="upload('${id}')">Upload new version</button></div>`:''}
+ ${can&&NX[x.status]?`<label>Comment ${NX[x.status].some(n=>n[2])?'(required when sending back)':''}</label><textarea id="cm"></textarea><div class="row">${['brief','content','approved'].includes(x.status)&&exe?`<button class="btn" onclick="act('${id}','${x.status}')">Save draft</button>`:''}${NX[x.status].map(n=>`<button class="btn ${n[2]?'bad':'pri'}" onclick="act('${id}','${n[0]}')">${n[1]}</button>`).join('')}</div>`:''}
+ <div id="lg"></div>`;$('dr').classList.add('on');
+ sb.from('campaign_activity').select('*').eq('item_id',id).order('at').then(({data})=>$('lg').innerHTML='<label>History</label>'+(data||[]).map(a=>`<div class="log">${new Date(a.at).toLocaleString('en-IN')} · ${E(nm(a.actor))} · ${a.from_status?LB[a.from_status]+' → '+LB[a.to_status]:''} ${E(a.comment||'')}</div>`).join(''))}
+async function act(id,to){const d={};['brief','content','setup'].forEach(k=>{const e=$('f_'+k);if(e)d[k]=e.value});
+ if(await run(sb.rpc('campaign_advance',{p_item:id,p_to:to,p_comment:$('cm')?.value||null,p_data:d}),'Saved')){await load();open_(id)}}
+async function assign(id){if(await run(sb.rpc('campaign_assign',{p_item:id,p_exec:$('ae').value||null,p_designer:$('ad').value||null}),'Assignment saved')){await load();open_(id)}}
+async function upload(id){const f=$('file').files[0];if(!f)return toast('Choose a file first');if(f.size>20*1048576)return toast('Files can be 20 MB at most');
+ const x=I.find(i=>i.id===id),v=x.campaign_assets.length+1,path=`${id}/v${v}/${f.name.replace(/[^\w.\-]/g,'_')}`;
+ if(!await run(sb.storage.from(B).upload(path,f,{contentType:f.type})))return;
+ if(await run(sb.from('campaign_assets').insert({item_id:id,version:v,path,filename:f.name,mime:f.type,size_bytes:f.size,note:$('note').value}),'Uploaded')){await load();open_(id);meter()}}
+async function view(p){const r=await sb.storage.from(B).createSignedUrl(p,300);if(r.data)window.open(r.data.signedUrl);else toast(r.error.message)}
+async function closeReq(id){const r=R.find(x=>x.id===id);
+ if(prompt(`This permanently deletes all campaign data and files for "${r.project_name}". A JSON backup downloads first.\nType the project name to confirm:`)!==r.project_name)return toast('Close cancelled');
+ const ids=I.filter(x=>x.request_id===id).map(x=>x.id),a=(await sb.from('campaign_activity').select('*').in('item_id',ids)).data||[];
+ const url=URL.createObjectURL(new Blob([JSON.stringify({request:r,items:I.filter(x=>x.request_id===id),activity:a},null,1)],{type:'application/json'}));
+ Object.assign(document.createElement('a'),{href:url,download:r.ref+'.json'}).click();
+ const paths=await run(sb.rpc('campaign_prepare_close',{p_req:id}));if(!paths)return;
+ for(let i=0;i<paths.length;i+=50){if(!await run(sb.storage.from(B).remove(paths.slice(i,i+50))))return}
+ if(await run(sb.rpc('campaign_purge',{p_req:id}),'Closed. All campaign data deleted')){await load()}}
+</script></body></html>
