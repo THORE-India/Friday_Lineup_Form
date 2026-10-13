@@ -2371,12 +2371,16 @@ function sp2AddRow(t,r){
   const p4=sp2Pct(r.svToBookingRatio); if(p4!==null) t._svToBooking.push(p4);
   const p5=sp2Pct(r.meetingsToBookingRatio); if(p5!==null) t._meetingsToBooking.push(p5);
 }
+// IFERROR(num/den, null) → percentage (e.g. 10 = 10%); null renders as "—"
+function sp2Ratio(num,den){ return den>0 ? (num/den*100) : null; }
+
+// Ratios are computed from SUMMED counts, never averaged from weekly ratios.
 function sp2Finalize(t){
-  t.avgLeadsToSv = sp2Avg(t._leadsToSv);
-  t.avgLeadsToMeeting = sp2Avg(t._leadsToMeeting);
-  t.avgLeadsToBooking = sp2Avg(t._leadsToBooking);
-  t.avgSvToBooking = sp2Avg(t._svToBooking);
-  t.avgMeetingsToBooking = sp2Avg(t._meetingsToBooking);
+  t.avgLeadsToSv        = sp2Ratio(t.sv, t.uniqueLeads);              // SV / Unique Leads
+  t.avgLeadsToMeeting   = sp2Ratio(t.vc + t.f2f, t.uniqueLeads);      // (VC + F2F) / Unique Leads
+  t.avgLeadsToBooking   = sp2Ratio(t.booking, t.uniqueLeads);         // Bookings / Unique Leads
+  t.avgSvToBooking      = sp2Ratio(t.svBookings, t.sv);               // SV Bookings / SV
+  t.avgMeetingsToBooking= sp2Ratio(t.vcBookings, t.vc + t.f2f);               // VC Bookings / VC + f2f
 }
 
 // Roll already-aggregated totals (an employee, or a manager/PNL/cluster
@@ -2632,7 +2636,7 @@ function openSP2EmpDetail(e){
   }else{
     tbody.innerHTML = rowsSorted.map(r=>{
       const rev = (r.svBookingsRevenue||0)+(r.vcBookingsRevenue||0);
-      const svp = sp2Pct(r.leadsToSvRatio), bp = sp2Pct(r.svToBookingRatio);
+      const svp = sp2Ratio(r.sv, r.uniqueLeads), bp = sp2Ratio(r.svBookings, r.sv);
       return `<tr>
         <td>${esc(fmtDate(r.reportStart))} – ${esc(fmtDate(r.reportEnd))}</td>
         <td>${r.leads}</td><td>${r.sv}</td><td>${r.vc}</td><td>${r.token}</td><td>${r.booking}</td>
