@@ -1,11 +1,11 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>THORE Marketing Workflow</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>THORE PULSE — Marketing Workflow</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#0F172A;--mut:#64748B;--ln:#E2E8F0;--bg:#EEF2F7;--pri:#4F46E5;--bad:#DC2626}
-*{box-sizing:border-box;margin:0}body{font:14px Inter,sans-serif;background:var(--bg);color:var(--ink)}
-.top{background:linear-gradient(120deg,#0F172A,#312E81);color:#fff;padding:12px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.top h1{font-size:1.05rem;font-weight:800}.top a{color:#C7D2FE;text-decoration:none;font-size:.78rem;font-weight:600}.sp{flex:1}.mt{font-size:.68rem;color:#A5B4FC}
+*{box-sizing:border-box;margin:0}html{font-size:clamp(18px,1.25vw,24px)}body{font:1rem Inter,sans-serif;background:var(--bg);color:var(--ink)}
+.top{background:#fff;padding:12px 2vw;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:relative;border-bottom:1px solid var(--ln);box-shadow:0 2px 10px rgba(15,23,42,.06)}
+.logo{line-height:1}.lw{font-family:'DM Serif Display',serif;font-size:1.5rem;letter-spacing:.1em;color:#1E3A8A}.pw{background:linear-gradient(90deg,#1E3A8A,#D4A853 55%,#DC2626);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}.ls{font-size:.58rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);margin-top:4px}.top a{color:var(--pri);text-decoration:none;font-size:.78rem;font-weight:600}.sp{flex:1}.mt{font-size:.68rem;color:var(--mut)}
 .rb{padding:3px 10px;border-radius:99px;font-size:.68rem;font-weight:800;background:var(--c);color:#fff}
 .tabs{background:#fff;border-bottom:1px solid var(--ln);padding:0 22px;display:flex;gap:2px;align-items:center;flex-wrap:wrap}
 .tabs .t{border:0;background:none;padding:13px 14px;font:600 .82rem Inter;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent}
@@ -13,31 +13,33 @@
 .btn{border:1px solid #CBD5E1;background:#fff;border-radius:9px;padding:8px 13px;font:600 .78rem Inter;cursor:pointer;color:var(--ink)}
 .btn:hover{border-color:var(--pri);color:var(--pri)}.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}.btn.bad{color:var(--bad)}.btn.sm{padding:5px 9px;font-size:.7rem}
 .fb{background:#fff;border-bottom:1px solid var(--ln);padding:10px 22px;display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;position:sticky;top:0;z-index:4}
-.fb div{min-width:116px;flex:1}.fb label{font-size:.58rem;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
-main{padding:18px 22px;max-width:1320px;margin:auto}
+.fb div{min-width:8rem;flex:1}.fb label{font-size:.58rem;font-weight:800;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+main{padding:20px 2vw;width:100%}
 label{font-size:.68rem;font-weight:700;color:var(--mut);display:block;margin:8px 0 3px}
 input,select,textarea{width:100%;padding:8px 9px;border:1px solid #CBD5E1;border-radius:9px;font:inherit;background:#fff}input:focus,select:focus,textarea:focus{outline:2px solid #C7D2FE;border-color:var(--pri)}
 textarea{min-height:70px}input[readonly]{background:#F1F5F9}
 .sec{background:#fff;border:1px solid var(--ln);border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 1px 3px rgba(15,23,42,.05)}
 .sec h2{font-size:.9rem;display:flex;align-items:center;gap:8px;margin-bottom:10px}.sec h2 i{font-style:normal;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:#E0E7FF;font-size:.8rem}
-.kps{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:14px}
+.kps{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:10px;margin-bottom:14px}
 .kp{background:#fff;border:1px solid var(--ln);border-top:4px solid var(--c);border-radius:12px;padding:12px;font-size:.72rem;color:var(--mut);font-weight:600}.kp b{display:block;font-size:1.7rem;color:var(--ink);line-height:1.2}
 .st{background:color-mix(in srgb,var(--c) 14%,#fff);color:var(--c);padding:2px 9px;border-radius:99px;font-size:.66rem;font-weight:700;white-space:nowrap}
 .pl{display:inline-block;background:#F1F5F9;border-radius:6px;padding:2px 8px;font-size:.68rem;font-weight:600;margin:2px 3px 2px 0}.m{color:var(--mut);font-size:.72rem}
-.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:14px}.sec{overflow-x:auto}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(26rem,1fr));gap:14px}.sec{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:.76rem}th{background:#F8FAFC;color:var(--mut);font-size:.64rem;text-transform:uppercase}th,td{text-align:left;padding:7px;border-bottom:1px solid var(--ln)}tr:nth-child(even) td{background:#FAFBFD}
 .sg{display:flex;height:12px;border-radius:99px;overflow:hidden;background:var(--ln);gap:2px}.sg i{display:block}.lg{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}.lg span{font-size:.7rem;display:flex;gap:5px;align-items:center}.lg s{width:10px;height:10px;border-radius:3px;background:var(--c)}
 .ar{display:flex;gap:10px;align-items:center;padding:8px;border-radius:9px;cursor:pointer;border:1px solid var(--ln);margin-bottom:6px}.ar:hover{border-color:var(--pri);background:#F5F3FF}.ar .m{margin-left:auto}
-.bd{display:grid;grid-auto-flow:column;grid-auto-columns:250px;gap:10px;overflow-x:auto;padding-bottom:10px}.cl{background:#E2E8F0;border-radius:12px;padding:8px}
+.bd{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(16rem,1fr);gap:10px;overflow-x:auto;padding-bottom:10px}.cl{background:#E2E8F0;border-radius:12px;padding:8px}
 .cl h3{font-size:.72rem;padding:6px;color:var(--c);display:flex;justify-content:space-between}.cd{background:#fff;border-left:5px solid var(--c);border-radius:10px;padding:10px;margin-bottom:8px;cursor:pointer;font-size:.76rem;box-shadow:0 1px 2px rgba(15,23,42,.08)}.cd:hover{box-shadow:0 4px 12px rgba(15,23,42,.15)}
 .cd b{display:block;margin-bottom:4px}.av{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#4F46E5;color:#fff;font-size:.6rem;font-weight:700;margin-right:5px}.late{color:var(--bad);font-weight:700}
 .g{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.g3{display:grid;grid-template-columns:2fr 1fr 1.4fr auto;gap:8px;margin-bottom:6px}.row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:flex-end}
 .chips{display:flex;flex-wrap:wrap;gap:6px}.ch{padding:6px 12px;border:1px solid #CBD5E1;border-radius:99px;font-size:.76rem;font-weight:600;cursor:pointer;background:#fff}.ch.on{background:var(--pri);border-color:var(--pri);color:#fff}.cu{display:flex;gap:6px;margin-top:6px;max-width:300px}
-.dr{position:fixed;inset:0 0 0 auto;width:min(500px,100%);background:#fff;box-shadow:-18px 0 50px rgba(15,23,42,.2);padding:18px;overflow:auto;z-index:20;display:none}.dr.on{display:block}.rd{background:#F8FAFC;border-radius:8px;padding:8px;white-space:pre-wrap}.log{font-size:.72rem;color:var(--mut);border-top:1px solid var(--ln);padding:5px 0}
+.dr{position:fixed;inset:0 0 0 auto;width:min(32rem,100%);background:#fff;box-shadow:-18px 0 50px rgba(15,23,42,.2);padding:18px;overflow:auto;z-index:20;display:none}.dr.on{display:block}.rd{background:#F8FAFC;border-radius:8px;padding:8px;white-space:pre-wrap}.log{font-size:.72rem;color:var(--mut);border-top:1px solid var(--ln);padding:5px 0}
+.tag{background:#EA580C;color:#fff;padding:2px 9px;border-radius:99px;font-size:.62rem;font-weight:800;white-space:nowrap;animation:pp 1.6s infinite}@keyframes pp{50%{opacity:.6}}.hl{box-shadow:0 0 0 2px #EA580C,0 4px 14px rgba(234,88,12,.3)!important;background:#FFF7ED!important}.cd .tag{display:inline-block;margin-bottom:5px}
+.pls{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:14px;pointer-events:none}.pp2{fill:none;stroke:#1E3A8A;stroke-width:1.6;stroke-linecap:round;opacity:.55;stroke-dasharray:70 540;animation:pt 3.6s linear infinite}@keyframes pt{0%{stroke-dashoffset:610;stroke:#1E3A8A}50%{stroke:#D4A853}100%{stroke-dashoffset:-610;stroke:#DC2626}}.lc{max-width:26rem;margin:6vh auto;background:#fff;border:1px solid var(--ln);border-radius:16px;padding:24px;box-shadow:0 12px 40px rgba(15,23,42,.1)}
 #toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 16px;border-radius:99px;font-size:.78rem;display:none;z-index:30}
 @media(max-width:700px){.g3{grid-template-columns:1fr 1fr}main,.top,.tabs,.fb{padding-left:12px;padding-right:12px}}
 </style></head><body>
-<div class="top"><a href="dashboard.html">← Dashboard</a><h1>Marketing Workflow</h1><span class="sp"></span><span class="mt" id="mt"></span><span class="mt" id="who"></span><span class="rb" id="rb"></span></div>
+<div class="top"><div class="logo"><div class="lw">THORE <span class="pw">PULSE</span></div><div class="ls">Marketing Workflow</div></div><a href="dashboard.html">← Pulse Dashboard</a><span class="sp"></span><span class="mt" id="mt"></span><span class="mt" id="who"></span><span class="rb" id="rb"></span><button class="btn sm" id="lo" style="display:none" onclick="logout()">Sign out</button><svg class="pls" viewBox="0 0 600 24" preserveAspectRatio="none" aria-hidden="true"><path class="pp2" d="M0,12 L140,12 L158,12 L168,-4 L180,28 L192,2 L204,12 L222,12 L600,12"/></svg></div>
 <div class="tabs" id="tabs"><button class="t" data-t="dash">📊 Dashboard</button><button class="t" data-t="board">🗂️ Board</button><button class="t" data-t="reqs">📁 Requests</button><span class="sp"></span><button class="btn pri" onclick="newReq()">+ New request</button></div>
 <div class="fb" id="fb"></div><main id="app">Loading…</main><div class="dr" id="dr"></div><div id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -59,17 +61,24 @@ const rq=x=>R.find(r=>r.id===x.request_id)||{},cnt=(a,...s)=>a.filter(x=>s.inclu
 const toast=m=>{const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3500)};
 const run=async(p,ok)=>{const r=await p;if(r.error){toast(r.error.message);return false}if(ok)toast(ok);return r.data??true};
 const dl=d=>{if(!d)return'';const n=Math.ceil((new Date(d)-new Date(new Date().toDateString()))/864e5);return n<0?`<span class="late">${-n}d overdue</span>`:n===0?'due today':n+'d left'};
-const key=(o,re)=>Object.keys(o||{}).find(k=>re.test(k));
-(async()=>{const{data:{session}}=await sb.auth.getSession();if(!session){location.href='dashboard.html';return}
- const pr=await sb.from('profiles').select('full_name').eq('id',session.user.id).single();me={id:session.user.id,name:pr.data?.full_name||''};
- role=(await sb.rpc('campaign_role')).data;
- if(!role){$('app').innerHTML='<div class="sec"><b>No access yet.</b><p class="m">Ask the marketing head to add you to the marketing team.</p></div>';return}
+const vis=x=>role==='executive'?x.executive_id===me.id:role==='designer'?(x.designer_id===me.id&&x.status==='designing'):role==='approver'?Z.some(z=>z.approver_id===me.id&&z.zone===rq(x).zone):true;
+const pend=x=>(role==='head'&&['approval','final_approval'].includes(x.status))||(x.status==='final_approval'&&Z.some(z=>z.approver_id===me.id&&z.zone===rq(x).zone));
+const OPENR=new Set(),TAG='<span class="tag">⏳ Approval Pending</span>';
+async function start(session){const pr=await sb.from('profiles').select('full_name,active').eq('id',session.user.id).single();
+ if(pr.data&&pr.data.active===false){await sb.auth.signOut();return loginUI('This account has been deactivated.')}
+ me={id:session.user.id,name:pr.data?.full_name||''};role=(await sb.rpc('campaign_role')).data;$('tabs').style.display='flex';$('lo').style.display='inline-block';
+ if(!role){$('tabs').style.display='none';$('fb').style.display='none';$('app').innerHTML='<div class="lc"><b>No access yet.</b><p class="m">Ask the marketing head to add you to the marketing team.</p></div>';return}
  $('who').textContent=me.name;$('rb').textContent=role.replace('_',' ');$('rb').style.setProperty('--c',RC[role]||'#475569');
- const pm=(await sb.from('project_master').select('project_name,developer_name').order('project_name').limit(5000)).data||[],pk='project_name',dk='developer_name';
- pm.forEach(r=>{const n=String(r[pk]||'').trim();if(n&&!(n in pmMap)){pmMap[n]=dk?String(r[dk]||'').trim():'';PM.push(n)}});PM.sort();
- $('tabs').onclick=e=>{if(e.target.dataset.t){tab=e.target.dataset.t;EDIT=null;draw()}};await load()})();
+ const pm=(await sb.from('project_master').select('project_name,developer_name').order('project_name').limit(5000)).data||[];
+ pm.forEach(r=>{const n=String(r.project_name||'').trim();if(n&&!(n in pmMap)){pmMap[n]=String(r.developer_name||'').trim();PM.push(n)}});PM.sort();
+ $('tabs').onclick=e=>{if(e.target.dataset.t){tab=e.target.dataset.t;EDIT=null;draw()}};await load()}
+function loginUI(msg){['tabs','fb','lo'].forEach(i=>$(i).style.display='none');$('who').textContent='';$('rb').textContent='';
+ $('app').innerHTML=`<div class="lc"><h2>Sign in</h2><p class="m">Use your THORE Pulse login. If you are already signed in to THORE Pulse, you will not see this screen.</p><label>Email</label><input id="em" type="email" autocomplete="username"><label>Password</label><input id="pw" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"><button class="btn pri" style="width:100%;margin-top:14px" onclick="doLogin()">Sign in</button><p class="m" id="le" style="color:#DC2626;margin-top:8px">${E(msg||'')}</p></div>`}
+async function doLogin(){const{data,error}=await sb.auth.signInWithPassword({email:$('em').value.trim(),password:$('pw').value});if(error)return $('le').textContent=error.message;start(data.session)}
+async function logout(){await sb.auth.signOut();location.reload()}
+(async()=>{const{data:{session}}=await sb.auth.getSession();session?start(session):loginUI()})();
 async function load(){const[r,i,p,za]=await Promise.all([sb.from('campaign_requests').select('*').order('created_at',{ascending:false}),sb.from('campaign_items').select('*,campaign_assets(*)').order('ref'),sb.from('campaign_roles').select('user_id,role,profiles(full_name)').eq('active',true),sb.from('campaign_zone_approvers').select('*')]);
- R=r.data||[];I=i.data||[];P=p.data||[];Z=za.data||[];filters();draw();const u=(await sb.rpc('campaign_storage_usage')).data;if(u)$('mt').textContent=`Files ${(u.files/1048576).toFixed(0)} MB · Database ${(u.db/1048576).toFixed(0)} of 500 MB`}
+ R=r.data||[];P=p.data||[];Z=za.data||[];I=(i.data||[]).filter(vis);if(role==='executive'||role==='designer')R=R.filter(q=>I.some(x=>x.request_id===q.id));filters();draw();const u=(await sb.rpc('campaign_storage_usage')).data;if(u)$('mt').textContent=`Files ${(u.files/1048576).toFixed(0)} MB · Database ${(u.db/1048576).toFixed(0)} of 500 MB`}
 /* ---------- filters ---------- */
 const FL=[['zone','Zone',()=>ZONES],['cluster','Cluster',()=>uq(R,'cluster')],['city','City',()=>uq(R,'city')],['project','Project',()=>uq(R,'project_name')],['developer','Developer',()=>uq(R,'developer')],['cname','Campaign',()=>uq(I,'name')],['ctype','Campaign type',()=>uq(I,'ctype')],['targeting','Targeting',()=>uq(I,'targeting')]];
 function filters(){$('fb').innerHTML=FL.map(([k,l,o])=>`<div><label>${l}</label><select onchange="F['${k}']=this.value;draw()"><option value="">All</option>${o().map(v=>`<option value="${E(v)}" ${F[k]===v?'selected':''}>${E(v)}</option>`).join('')}</select></div>`).join('')+'<button class="btn sm" onclick="F={};filters();draw()">Clear</button>'}
@@ -85,9 +94,9 @@ const T=(h,rows)=>`<table><tr>${h.map(c=>`<th>${c}</th>`).join('')}</tr>${rows.m
 function dash(){if(!I.length)return'<div class="sec">No campaigns yet. Use <b>+ New request</b> to start.</div>';
  const a=FI(),t=new Date().toISOString().slice(0,10),n=s=>cnt(a,s),open=x=>!['verified','cancelled','on_hold'].includes(x.status),od=x=>open(x)&&rq(x).deadline&&rq(x).deadline<t,
  mine=a.filter(x=>{const w=WHO[x.status];return w==='e'?x.executive_id===me.id:w==='d'?x.designer_id===me.id:w==='m'?mgr():w==='z'?Z.some(z=>z.approver_id===me.id&&z.zone===rq(x).zone):false}),ovd=a.filter(od),
- K=[['Total','#4F46E5',a.length],['In progress','#2563EB',a.filter(open).length],['Waiting on you','#DB2777',mine.length],['Manager approval','#D97706',n('approval')],['Final approval','#EA580C',n('final_approval')],['Setup stage','#0D9488',n('approved')+n('setup_review')],['Verified','#15803D',n('verified')],['On hold','#A16207',n('on_hold')],['Cancelled','#DC2626',n('cancelled')],['Overdue','#B91C1C',ovd.length]],
- row=x=>`<div class="ar" onclick="open_('${x.id}')"><span class="st" style="--c:${COL[x.status]}">${LB[x.status]}</span><b>${E(x.name||x.ref)}</b><span class="m">${E(rq(x).project_name)} · ${dl(rq(x).deadline)}</span></div>`,
- att=[...new Set([...mine,...ovd])].slice(0,8);
+ K=[['Total','#4F46E5',a.length],['In progress','#2563EB',a.filter(open).length],['Waiting on you','#DB2777',mine.length],...(role==='head'||role==='approver'?[['Approval pending','#EA580C',a.filter(pend).length]]:[]),['Manager approval','#D97706',n('approval')],['Final approval','#EA580C',n('final_approval')],['Setup stage','#0D9488',n('approved')+n('setup_review')],['Verified','#15803D',n('verified')],['On hold','#A16207',n('on_hold')],['Cancelled','#DC2626',n('cancelled')],['Overdue','#B91C1C',ovd.length]],
+ row=x=>`<div class="ar ${pend(x)?'hl':''}" onclick="open_('${x.id}')"><span class="st" style="--c:${COL[x.status]}">${LB[x.status]}</span>${pend(x)?TAG:''}<b>${E(x.name||x.ref)}</b><span class="m">${E(rq(x).project_name)} · ${dl(rq(x).deadline)}</span></div>`,
+ att=[...new Set([...a.filter(pend),...mine,...ovd])].slice(0,12);
  const zr=ZONES.map(z=>{const b=a.filter(x=>rq(x).zone===z);return[`<b>${z}</b>`,b.length,b.filter(open).length,cnt(b,'approval','final_approval'),cnt(b,'verified'),cnt(b,'on_hold'),b.filter(od).length]});
  const ex=P.filter(p=>p.role==='executive').map(p=>{const b=a.filter(x=>x.executive_id===p.user_id);return[`<span class="av">${ini(p.user_id)}</span>${E(p.profiles?.full_name)}`,b.length,cnt(b,'brief'),cnt(b,'designing','exec_review','content'),cnt(b,'approval','final_approval'),cnt(b,'approved','setup_review'),cnt(b,'verified')]});
  const pr=FR().map(r=>{const b=a.filter(x=>x.request_id===r.id);return[`<b>${E(r.project_name)}</b><div class="m">${E(r.city||'')}</div>`,E(r.zone),`${E(r.deadline||'—')}<div class="m">${dl(r.deadline)}</div>`,seg(b)+`<div class="m">${cnt(b,'verified')} of ${b.length-cnt(b,'cancelled')} verified</div>`,cnt(b,'on_hold'),b.filter(od).length]});
@@ -95,19 +104,19 @@ function dash(){if(!I.length)return'<div class="sec">No campaigns yet. Use <b>+ 
  <div class="sec"><h2><i>⚡</i>Needs attention</h2>${att.map(row).join('')||'<p class="m">Nothing is waiting on you and nothing is overdue.</p>'}</div>
  <div class="sec"><h2><i>📈</i>Pipeline right now</h2>${seg(a)}<div class="lg">${ALL.map(s=>`<span style="--c:${COL[s]}"><s></s>${LB[s]} <b>${n(s)}</b></span>`).join('')}</div></div>
  <div class="two"><div class="sec"><h2><i>🗺️</i>By zone</h2>${T(['Zone','Total','Active','Approvals','Verified','Hold','Overdue'],zr)}</div>
- <div class="sec"><h2><i>👥</i>By executive</h2>${T(['Executive','Total','Brief','Design/content','Approvals','Setup','Verified'],ex)}</div></div>
+ ${['head','marketing_manager','approver'].includes(role)?`<div class="sec"><h2><i>👥</i>By executive</h2>${T(['Executive','Total','Brief','Design/content','Approvals','Setup','Verified'],ex)}</div>`:''}</div>
  <div class="sec"><h2><i>🏗️</i>By project</h2>${T(['Project','Zone','Deadline','Progress','Hold','Overdue'],pr)}</div>`}
 /* ---------- board ---------- */
 function board(){const a=FI();if(!a.length)return'<div class="sec">No campaigns match these filters.</div>';const t=new Date().toISOString().slice(0,10);
- return'<div class="bd">'+ALL.map(s=>`<div class="cl" style="--c:${COL[s]}"><h3>${LB[s]}<span>${cnt(a,s)}</span></h3>${a.filter(x=>x.status===s).map(x=>{const q=rq(x);return`<div class="cd" style="--c:${COL[s]}" onclick="open_('${x.id}')"><b>${E(x.name||x.ref)}</b><span class="pl">${E(x.targeting||x.ctype)}</span><span class="pl">${E(x.region||'')}</span><div class="m" style="margin-top:5px">${x.executive_id?`<span class="av">${ini(x.executive_id)}</span>`:'Unassigned'} ${q.deadline&&q.deadline<t&&!['verified','cancelled'].includes(s)?'<span class="late">overdue</span>':E(q.zone||'')}</div></div>`}).join('')}</div>`).join('')+'</div>'}
+ return'<div class="bd">'+ALL.filter(s=>cnt(a,s)||(role!=='executive'&&role!=='designer'&&ST.includes(s))).map(s=>`<div class="cl" style="--c:${COL[s]}"><h3>${LB[s]}<span>${cnt(a,s)}</span></h3>${a.filter(x=>x.status===s).map(x=>{const q=rq(x);return`<div class="cd ${pend(x)?'hl':''}" style="--c:${COL[s]}" onclick="open_('${x.id}')">${pend(x)?TAG:''}<b>${E(x.name||x.ref)}</b><span class="pl">${E(x.targeting||x.ctype)}</span><span class="pl">${E(x.region||'')}</span><div class="m" style="margin-top:5px">${x.executive_id?`<span class="av">${ini(x.executive_id)}</span>`:'Unassigned'} ${q.deadline&&q.deadline<t&&!['verified','cancelled'].includes(s)?'<span class="late">overdue</span>':E(q.zone||'')}</div></div>`}).join('')}</div>`).join('')+'</div>'}
 /* ---------- requests ---------- */
 function reqs(){const L=FR();if(!L.length)return'<div class="sec">No requests match these filters.</div>';
  return L.map(r=>{const it=I.filter(x=>x.request_id===r.id),h=it.some(x=>x.status==='on_hold'),ls=Array.isArray(r.quantities)?r.quantities.map(l=>`${l.ctype} · ${l.targeting} · ${l.region} ×${l.n}`):Object.entries(r.quantities||{}).map(([k,v])=>k+' ×'+v);
- return`<div class="sec"><div class="row" style="margin:0"><b style="font-size:1rem">${E(r.project_name)}</b><span class="pl">${E(r.ref)}</span><span class="sp"></span><span class="m">Deadline ${E(r.deadline||'—')} · ${dl(r.deadline)}</span></div>
+ return`<div class="sec"><div class="row" style="margin:0"><b style="font-size:1.15rem;cursor:pointer" onclick="tgl('${r.id}')">${E(r.project_name)} ${OPENR.has(r.id)?'▾':'▸'}</b><span class="pl">${E(r.ref)}</span><span class="sp"></span><span class="m">Deadline ${E(r.deadline||'—')} · ${dl(r.deadline)}</span></div>
  <div class="m" style="margin:4px 0 8px">${E(r.developer||'')}</div><span class="st" style="--c:#4F46E5">${E(r.zone)}</span> <span class="pl">${E(r.cluster||'')}</span><span class="pl">${E(r.city||'')}</span>
  <div style="margin:8px 0">${(r.config_list||[]).map(c=>`<span class="pl">${E(c.config)} · ${E(c.area)} sqft · ${E(c.price)}</span>`).join('')}</div>
- <div class="m">${E(r.key_points||'')}</div><div style="margin:10px 0 4px">${seg(it)}</div><div class="m">${cnt(it,'verified')} of ${it.length-cnt(it,'cancelled')} verified · ${ls.map(E).join(' | ')}</div>
- <div class="row">${mgr()?`<button class="btn" onclick="editReq('${r.id}')">Edit</button><button class="btn" onclick="setState('request','${r.id}','${h?'resume':'hold'}')">${h?'Resume all':'Put on hold'}</button><button class="btn bad" onclick="setState('request','${r.id}','cancel')">Cancel request</button>`:''}${role==='head'?`<button class="btn bad" onclick="closeReq('${r.id}')">Export and close</button>`:''}</div></div>`}).join('')}
+ <div class="m">${E(r.key_points||'')}</div><div style="margin:10px 0 4px">${seg(it)}</div><div class="m">${cnt(it,'verified')} of ${it.length-cnt(it,'cancelled')} verified · ${ls.map(E).join(' | ')}</div>${OPENR.has(r.id)?cTable(it.filter(itm)):''}
+ <div class="row"><button class="btn pri" onclick="tgl('${r.id}')">${OPENR.has(r.id)?'Hide':'View'} campaigns (${it.length})</button>${mgr()?`<button class="btn" onclick="editReq('${r.id}')">Edit</button><button class="btn" onclick="setState('request','${r.id}','${h?'resume':'hold'}')">${h?'Resume all':'Put on hold'}</button><button class="btn bad" onclick="setState('request','${r.id}','cancel')">Cancel request</button>`:''}${role==='head'?`<button class="btn bad" onclick="closeReq('${r.id}')">Export and close</button>`:''}</div></div>`}).join('')}
 /* ---------- new request form ---------- */
 function newReq(){EDIT=null;tab='new';draw()}function editReq(id){EDIT=id;tab='new';draw()}
 function form(){if(!mgr())return'<div class="sec">Only the marketing manager or head can create requests.</div>';
@@ -140,6 +149,8 @@ async function submitReq(){const p={zone:$('zone').value,cluster:$('cluster').va
  if(EDIT){if(await run(sb.rpc('campaign_update_request',{p_req:EDIT,p}),'Request updated')){EDIT=null;tab='reqs';load()}return}
  if(!LINES.length)return toast('Add at least one campaign');p.lines=LINES;
  if(await run(sb.rpc('campaign_create_request',{p}),'Request created')){tab='board';load()}}
+function tgl(id){OPENR.has(id)?OPENR.delete(id):OPENR.add(id);draw()}
+const cTable=it=>`<div style="margin-top:10px">${T(['Campaign','Type','Targeting','Region','Status','Executive','Designer'],it.map(x=>[`<a href="#" onclick="open_('${x.id}');return false">${E(x.name||x.ref)}</a>`,E(x.ctype),E(x.targeting||''),E(x.region||''),`<span class="st" style="--c:${COL[x.status]}">${LB[x.status]}</span>${pend(x)?' '+TAG:''}`,x.executive_id?`<span class="av">${ini(x.executive_id)}</span>${E(nm(x.executive_id))}`:'Unassigned',x.designer_id?E(nm(x.designer_id)):'—']))}</div>`;
 /* ---------- campaign drawer ---------- */
 function open_(id){const x=I.find(i=>i.id===id),q=rq(x),d=x.data||{},w=WHO[x.status],exe=x.executive_id===me.id,
  can=w==='e'?exe:w==='d'?x.designer_id===me.id:w==='z'?Z.some(a=>a.zone===q.zone&&a.approver_id===me.id):mgr(),as=mgr()&&['brief','designing'].includes(x.status),
