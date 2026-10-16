@@ -73,18 +73,25 @@ td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text);vert
 .login-btn{width:100%;padding:12px;background:var(--gold);border:0;border-radius:var(--radius-sm);color:#fff;font:800 .88rem 'Inter',sans-serif;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;margin-top:6px;box-shadow:0 4px 14px rgba(30,64,175,.22)}.login-btn:hover{background:var(--gold-bright);transform:translateY(-1px)}.login-status{text-align:center;font-size:.8rem;color:var(--red);margin-top:14px;min-height:20px}
 .quick-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--text);color:#F8FAFC;padding:9px 18px;border-radius:9999px;font-size:.78rem;font-weight:600;box-shadow:0 12px 30px rgba(15,23,42,.28);z-index:900;display:none}
 footer{background:#fff;border-top:1px solid var(--border);padding:12px 20px;text-align:center;font-size:.7rem;color:var(--text-dim)}footer a{color:var(--gold);text-decoration:none}
+#bell{position:relative;font-size:.9rem}.bdg{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:99px;background:var(--red);color:#fff;font-size:.55rem;font-weight:800;display:none;align-items:center;justify-content:center;border:2px solid #fff}
+.bell-wrap{position:relative}.bell-panel{position:absolute;top:calc(100% + 10px);right:0;width:22rem;max-width:92vw;background:#fff;border:1px solid var(--border-mid);border-radius:var(--radius);box-shadow:var(--shadow-lg);display:none;z-index:999;overflow:hidden}.bell-panel.show{display:block}
+.bp-head{padding:11px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:baseline;font-size:.82rem}.bp-list{max-height:24rem;overflow:auto}
+.bp-item{padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer}.bp-item:hover{background:var(--surface2)}.bp-item.nw{background:#EFF6FF;border-left:3px solid #2563EB}
+.bp-t{display:flex;gap:8px;align-items:center;font-size:.8rem}.bp-m{font-size:.74rem;color:var(--text-sub);margin-top:2px}.bp-a{font-size:.64rem;color:var(--text-dim);margin-top:2px}
+.newtag{background:#2563EB;color:#fff;border-radius:99px;padding:1px 7px;font-size:.56rem;font-weight:800;letter-spacing:.05em}
+#pops{position:fixed;top:70px;right:16px;z-index:950;display:flex;flex-direction:column;gap:8px;width:20rem;max-width:92vw}.pop{background:#fff;border:1px solid var(--border);border-left:4px solid #2563EB;border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);padding:10px 12px;cursor:pointer;animation:popIn .25s ease}.pop-t{font-size:.78rem;font-weight:700}.pop-m{font-size:.72rem;color:var(--text-sub);margin-top:2px}@keyframes popIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
 @media(max-width:900px){.chart-grid{grid-template-columns:1fr}.header-context{display:none}}
 @media(max-width:768px){.header-top{padding:8px 12px;gap:8px;flex-wrap:wrap}.header-nav{padding:0 10px 6px}.section-head{padding:14px 12px 2px}.section-head p{display:none}.filters-grid{flex-wrap:wrap}.filter-item{flex:1 1 calc(50% - 6px);min-width:120px}.chart-grid,.filters-bar,.rq-list,.bd,.active-filter-chips,.rc{margin-left:12px;margin-right:12px}.g3{grid-template-columns:1fr 1fr}.mt{display:none}}
 </style></head><body>
 <div class="header"><div class="header-top"><div class="header-left"><div class="logo-text"><div class="logo-word">THORE <span class="logo-pulse-word">PULSE</span></div><div class="logo-sub">Marketing Workflow</div></div><div class="header-context"><div class="header-context-eyebrow">Marketing Control Centre</div><div class="header-context-title">Campaign Workflow</div></div></div>
-<div class="header-right"><span class="mt" id="mt"></span><span class="rb" id="rb"></span><a href="dashboard.html" class="icon-btn" title="Back to THORE Pulse dashboard">←</a>
+<div class="header-right"><span class="mt" id="mt"></span><span class="mt" id="upd"></span><span class="rb" id="rb"></span><div class="bell-wrap" id="bellWrap" style="display:none"><div class="icon-btn" id="bell" onclick="toggleBell(event)" title="Updates">🔔<span class="bdg" id="bdg"></span></div><div class="bell-panel" id="bp"></div></div><a href="dashboard.html" class="icon-btn" title="Back to THORE Pulse dashboard">←</a>
 <div class="profile-wrap" id="profileWrap" style="display:none"><div class="profile-avatar" id="av" onclick="toggleProfile()">?</div><div class="profile-dropdown" id="pd"><div class="pd-item username" id="pdu">—</div><div class="pd-item" onclick="location.href='dashboard.html'">📊 THORE Pulse Dashboard</div><div class="pd-item logout" onclick="logout()">Sign Out</div></div></div></div>
 <svg class="pulse-line-svg" viewBox="0 0 600 24" preserveAspectRatio="none" aria-hidden="true"><path class="pulse-line-path" d="M0,12 L140,12 L158,12 L168,-4 L180,28 L192,2 L204,12 L222,12 L600,12"/></svg></div>
 <div class="header-nav"><div class="dash-tabs" id="tabs" style="display:none"><button class="dash-tab" data-t="dash">📊 Overview</button><button class="dash-tab" data-t="board">🗂️ Board <span class="tab-badge" id="tb-board">0</span></button><button class="dash-tab" data-t="reqs">📁 Requests <span class="tab-badge" id="tb-reqs">0</span></button><button class="dash-tab" data-t="new">➕ New Request</button></div></div></div>
 <div class="content"><div id="fb"></div><div id="app"></div></div>
 <footer>Engineered for excellence by <a href="https://narendraspatil.github.io/NarenP-website/" target="_blank">Operations Department, THORE</a> &nbsp;|&nbsp; Copyright © <span id="yr"></span> All rights reserved.</footer>
 <div class="modal-overlay" id="dr" onclick="if(event.target===this)closeDr()"><div class="modal-box"><div class="modal-header"><div class="modal-title" id="drt">Campaign</div><div class="modal-close" onclick="closeDr()">✕</div></div><div class="modal-body" id="drb"></div></div></div>
-<div class="quick-toast" id="toast"></div>
+<div id="pops"></div><div class="quick-toast" id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 const sb=supabase.createClient('https://ivetvywbdewkkqbazjxu.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2ZXR2eXdiZGV3a2txYmF6anh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NzQ2NzcsImV4cCI6MjEwNDE1MDY3N30.1lFi27ywZ1iVAU7NykMKY_Lie3krA58rBFXICXZstgo');
@@ -99,7 +106,7 @@ const ZONES=['Pune','Mumbai','South'],CLUSTERS=['Pune East','Pune West','Mumbai'
 const CITIES=['Pune East','Pune West','Mumbai','Navi Mumbai','Thane','Bangalore','Hyderabad','Kolkata','Chennai','Coimbatore','Kochi','Visakhapatnam','Mysuru','Nagpur','Nashik','Indore','Bhopal','Ahmedabad','Surat','Vadodara','Delhi','Noida','Gurgaon','Jaipur','Lucknow','Chandigarh','Goa','Raipur'];
 const CTYPES=['Reel','SV','Interior','Elevation','Floor Plan','AI video'],TARGET=['NRI','Outstation','Domestic'],REGIONS=['APAC','GCC','USA','Africa','UK','Singapore','Delhi','Noida','Mumbai','Bangalore','Hyderabad','Pune East','Pune West','Kolkata','Chennai'];
 let me,role,R=[],I=[],P=[],Z=[],PM=[],pmMap={},EDIT=null,tab='dash',F={},CFG=[],LINES=[],OPT,SEL;
-const nm=id=>(P.find(p=>p.user_id===id)?.profiles?.full_name)||(id===me?.id?me.name:'—'),ini=id=>nm(id).split(' ').map(w=>w[0]).join('').slice(0,2),mgr=()=>role==='marketing_manager'||role==='head';
+const nm=id=>(P.find(p=>p.user_id===id)?.profiles?.full_name)||(id===me?.id?me.name:PN[id]||'Team member'),ini=id=>nm(id).split(' ').map(w=>w[0]).join('').slice(0,2),mgr=()=>role==='marketing_manager'||role==='head';
 const rq=x=>R.find(r=>r.id===x.request_id)||{},cnt=(a,...s)=>a.filter(x=>s.includes(x.status)).length,uq=(a,k)=>[...new Set(a.map(x=>x[k]).filter(Boolean))].sort();
 const vis=x=>role==='executive'?x.executive_id===me.id:role==='designer'?(x.designer_id===me.id&&x.status==='designing'):role==='approver'?Z.some(z=>z.approver_id===me.id&&z.zone===rq(x).zone):true;
 const pend=x=>(role==='head'&&['approval','final_approval'].includes(x.status))||(x.status==='final_approval'&&Z.some(z=>z.approver_id===me.id&&z.zone===rq(x).zone));
@@ -117,18 +124,48 @@ async function start(session){const pr=await sb.from('profiles').select('full_na
  me={id:session.user.id,name:pr.data?.full_name||''};role=(await sb.rpc('campaign_role')).data;$('tabs').style.display='flex';$('profileWrap').style.display='block';
  $('av').textContent=me.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'?';$('pdu').textContent=me.name;
  if(!role){$('tabs').style.display='none';$('app').innerHTML='<div class="login-wrap"><div class="login-card"><div class="login-title" style="font-size:1.4rem">No access yet</div><p class="login-sub" style="margin:8px 0 0">Ask the marketing head to add you to the marketing team.</p></div></div>';return}
- $('rb').textContent=role.replace('_',' ');$('rb').style.setProperty('--c',RC[role]||'#475569');
+ $('bellWrap').style.display='block';$('rb').textContent=role.replace('_',' ');$('rb').style.setProperty('--c',RC[role]||'#475569');
  const pm=(await sb.from('project_master').select('project_name,developer_name').order('project_name').limit(5000)).data||[];
  pm.forEach(r=>{const n=String(r.project_name||'').trim();if(n&&!(n in pmMap)){pmMap[n]=String(r.developer_name||'').trim();PM.push(n)}});PM.sort();
- $('tabs').onclick=e=>{const b=e.target.closest('.dash-tab');if(b){tab=b.dataset.t;EDIT=null;draw()}};await load()}
-function loginUI(msg){['tabs','profileWrap'].forEach(i=>$(i).style.display='none');$('fb').innerHTML='';$('rb').textContent='';$('mt').textContent='';
+ $('tabs').onclick=e=>{const b=e.target.closest('.dash-tab');if(b){tab=b.dataset.t;EDIT=null;draw()}};await load();poll()}
+function loginUI(msg){['tabs','profileWrap','bellWrap'].forEach(i=>$(i).style.display='none');$('fb').innerHTML='';$('rb').textContent='';$('mt').textContent='';
  $('app').innerHTML=`<div class="login-wrap"><div class="login-card"><div class="login-eyebrow">THORE India</div><div class="login-title">Welcome Back</div><div class="login-sub">Sign in to Marketing Workflow. If you are already signed in to THORE Pulse, you will not see this screen.</div><div class="form-field"><label>Email</label><input id="em" type="email" autocomplete="username"></div><div class="form-field"><label>Password</label><input id="pw" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div><button class="login-btn" onclick="doLogin()">Sign In</button><div class="login-status" id="le">${E(msg||'')}</div></div></div>`}
 async function doLogin(){$('le').textContent='Checking credentials…';const{data,error}=await sb.auth.signInWithPassword({email:$('em').value.trim(),password:$('pw').value});if(error)return $('le').textContent=error.message;start(data.session)}
 async function logout(){await sb.auth.signOut();location.reload()}
 (async()=>{const{data:{session}}=await sb.auth.getSession();session?start(session):loginUI()})();
-async function load(){const[r,i,p,za]=await Promise.all([sb.from('campaign_requests').select('*').order('created_at',{ascending:false}),sb.from('campaign_items').select('*,campaign_assets(*)').order('ref'),sb.from('campaign_roles').select('user_id,role,profiles(full_name)').eq('active',true),sb.from('campaign_zone_approvers').select('*')]);
- R=r.data||[];P=p.data||[];Z=za.data||[];I=(i.data||[]).filter(vis);if(role==='executive'||role==='designer')R=R.filter(q=>I.some(x=>x.request_id===q.id));filters();draw();
- const u=(await sb.rpc('campaign_storage_usage')).data;if(u)$('mt').textContent=`Files ${(u.files/1048576).toFixed(0)} MB · Database ${(u.db/1048576).toFixed(0)} of 500 MB`}
+let ACT=[],PN={},actInit=false,seenAt='',NEWSET=new Set(),curItem=null,lastSig='',timer=null,LP=Promise.resolve();
+const SK=()=>'mw_seen_'+me.id,isNew=a=>a.actor!==me.id&&a.at>seenAt;
+const dirty=()=>[...document.querySelectorAll('#dr textarea,#dr input')].some(t=>t.value!==t.defaultValue)||(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#dr')&&['TEXTAREA','INPUT','SELECT'].includes(document.activeElement.tagName));
+const ago=t=>{const m=Math.round((Date.now()-new Date(t))/6e4);return m<1?'just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':new Date(t).toLocaleDateString('en-IN',{day:'2-digit',month:'short'})};
+const msg=a=>a.to_status?`${E(nm(a.actor))}: ${LB[a.from_status]||'—'} → ${LB[a.to_status]}${a.comment?' · “'+E(a.comment)+'”':''}`:E(a.comment||'Updated');
+const load=s=>LP=LP.then(()=>doLoad(s)).catch(e=>console.error(e));
+async function doLoad(silent){const[r,i,p,za,ac]=await Promise.all([sb.from('campaign_requests').select('*').order('created_at',{ascending:false}),sb.from('campaign_items').select('*,campaign_assets(*)').order('ref'),sb.from('campaign_roles').select('user_id,role,profiles(full_name)').eq('active',true),sb.from('campaign_zone_approvers').select('*'),sb.from('campaign_activity').select('*').order('at',{ascending:false}).limit(40)]);
+ if(r.error||i.error||p.error){if(!silent)toast('Could not refresh: '+(r.error||i.error||p.error).message);return}
+ R=r.data||[];P=p.data||[];Z=za.data||[];I=(i.data||[]).filter(vis);if(role==='executive'||role==='designer')R=R.filter(q=>I.some(x=>x.request_id===q.id));
+ if(!ac.error)await acts(ac.data||[]);
+ $('upd').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+ const sig=JSON.stringify([R.map(x=>[x.id,x.updated_at,x.deadline,x.zone]),I.map(x=>[x.id,x.status,x.updated_at,x.campaign_assets.length,x.executive_id,x.designer_id])]);
+ if(silent&&sig===lastSig)return;lastSig=sig;
+ filters();if(tab!=='new')draw();
+ if($('dr').classList.contains('open')&&curItem){if(!I.find(x=>x.id===curItem))closeDr();else if(!dirty())open_(curItem)}
+ if(!silent){const u=(await sb.rpc('campaign_storage_usage')).data;if(u)$('mt').textContent=`Files ${(u.files/1048576).toFixed(0)} MB · Database ${(u.db/1048576).toFixed(0)} of 500 MB`}}
+async function acts(rows){const miss=[...new Set(rows.map(a=>a.actor).filter(id=>id&&id!==me.id&&!PN[id]&&!P.some(p=>p.user_id===id)))];
+ if(miss.length){const{data}=await sb.from('profiles').select('id,full_name').in('id',miss);(data||[]).forEach(q=>PN[q.id]=q.full_name)}
+ const prev=new Set(ACT.map(a=>a.id));ACT=rows;
+ if(!seenAt){seenAt=localStorage.getItem(SK())||(rows[0]?.at||new Date().toISOString());localStorage.setItem(SK(),seenAt)}
+ if(actInit){const f=ACT.filter(a=>!prev.has(a.id)&&a.actor!==me.id);if(f.length){popups(f);if($('bp').classList.contains('show')){f.forEach(a=>NEWSET.add(a.id));renderBell();markSeen()}}}
+ actInit=true;badge()}
+function badge(){const n=ACT.filter(isNew).length,b=$('bdg');b.textContent=n>9?'9+':n;b.style.display=n?'flex':'none'}
+function renderBell(){const rows=ACT.slice(0,30);$('bp').innerHTML=`<div class="bp-head"><b>Updates</b><span class="m">Latest activity on your campaigns</span></div><div class="bp-list">${rows.map(a=>{const it=I.find(x=>x.id===a.item_id);return`<div class="bp-item ${NEWSET.has(a.id)?'nw':''}" ${it?`onclick="goUpd('${a.item_id}')"`:''}><div class="bp-t"><b>${E(it?.name||'Campaign')}</b>${NEWSET.has(a.id)?'<span class="newtag">NEW</span>':''}</div><div class="bp-m">${msg(a)}</div><div class="bp-a">${ago(a.at)}</div></div>`}).join('')||'<div class="no-data">No updates yet.</div>'}</div>`}
+function markSeen(){seenAt=ACT[0]?.at||seenAt;localStorage.setItem(SK(),seenAt);badge()}
+function toggleBell(e){e.stopPropagation();const p=$('bp');if(p.classList.contains('show')){p.classList.remove('show');NEWSET=new Set();return}
+ NEWSET=new Set(ACT.filter(isNew).map(a=>a.id));renderBell();p.classList.add('show');markSeen()}
+function goUpd(id){$('bp').classList.remove('show');NEWSET=new Set();open_(id)}
+function popups(f){const box=$('pops'),add=(t,m,fn)=>{const d=document.createElement('div');d.className='pop';d.innerHTML=`<div class="pop-t">🔔 ${t}</div><div class="pop-m">${m}</div>`;d.onclick=()=>{d.remove();fn&&fn()};box.appendChild(d);setTimeout(()=>d.remove(),7000)};
+ f.slice(0,3).forEach(a=>{const it=I.find(x=>x.id===a.item_id);add(E(it?.name||'Campaign update'),msg(a),it&&(()=>open_(it.id)))});if(f.length>3)add(`${f.length-3} more update(s)`,'Open the bell to see all.')}
+function poll(){clearInterval(timer);timer=setInterval(()=>{if(!document.hidden&&me&&role)load(true)},20000)}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&me&&role)load(true)});window.addEventListener('focus',()=>{if(me&&role)load(true)});
+document.addEventListener('click',e=>{if(!e.target.closest('#bellWrap')){$('bp').classList.remove('show');NEWSET=new Set()}});
 /* ---------- filters ---------- */
 const FL=[['zone','Zone',()=>ZONES],['cluster','Cluster',()=>uq(R,'cluster')],['city','City',()=>uq(R,'city')],['project','Project',()=>uq(R,'project_name')],['developer','Developer',()=>uq(R,'developer')],['cname','Campaign',()=>uq(I,'name')],['ctype','Campaign Type',()=>uq(I,'ctype')],['targeting','Targeting',()=>uq(I,'targeting')]];
 function filters(){$('fb').innerHTML=`<div class="filters-bar"><div class="filters-grid">${FL.map(([k,l,o])=>`<div class="filter-item"><label>${l}</label><select onchange="F['${k}']=this.value;draw()"><option value="">All</option>${o().map(v=>`<option value="${E(v)}" ${F[k]===v?'selected':''}>${E(v)}</option>`).join('')}</select></div>`).join('')}<div class="filter-item" style="flex:0 0 auto"><label>&nbsp;</label><button class="clear-btn" onclick="F={};filters();draw()">Clear</button></div></div></div><div class="active-filter-chips" id="chips"></div>`}
@@ -204,8 +241,8 @@ async function submitReq(){const p={zone:$('zone').value,cluster:$('cluster').va
  if(!LINES.length)return toast('Add at least one campaign');p.lines=LINES;
  if(await run(sb.rpc('campaign_create_request',{p}),'Request created')){tab='board';load()}}
 /* ---------- campaign slide-over ---------- */
-function closeDr(){$('dr').classList.remove('open')}
-function open_(id){const x=I.find(i=>i.id===id),q=rq(x),d=x.data||{},w=WHO[x.status],exe=x.executive_id===me.id,
+function closeDr(){$('dr').classList.remove('open');curItem=null}
+function open_(id){curItem=id;if(!I.find(i=>i.id===id))return toast('That campaign is no longer available to you');const x=I.find(i=>i.id===id),q=rq(x),d=x.data||{},w=WHO[x.status],exe=x.executive_id===me.id,
  can=w==='e'?exe:w==='d'?x.designer_id===me.id:w==='z'?Z.some(a=>a.zone===q.zone&&a.approver_id===me.id):mgr(),as=mgr()&&['brief','designing'].includes(x.status),
  opt=(r,v)=>`<option value="">Unassigned</option>`+P.filter(p=>p.role===r).map(p=>`<option value="${p.user_id}" ${p.user_id===v?'selected':''}>${E(p.profiles?.full_name)}</option>`).join(''),
  ed=(k,l,on)=>on?`<div class="admin-edit-label" style="margin-top:10px">${l}</div><textarea class="admin-edit-textarea" id="f_${k}">${E(d[k]||'')}</textarea>`:di(l,d[k],1),
