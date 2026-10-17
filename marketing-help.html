@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>THORE PULSE — Marketing Workflow Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F8FAFC;--surface:#fff;--s2:#F8FAFC;--border:#E2E8F0;--bm:#CBD5E1;--gold:#1E40AF;--gd:#EFF6FF;--red:#DC2626;--green:#059669;--gbg:#ECFDF5;--orange:#D97706;--text:#0F172A;--sub:#334155;--dim:#64748B;--hdr:rgba(255,255,255,.96);--code:#0F172A;--sh:0 4px 12px rgba(15,23,42,.08);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0B1220;--surface:#111A2E;--s2:#0F172A;--border:#22304A;--bm:#334155;--gold:#93B4FF;--gd:#16264A;--gbg:#06281F;--text:#E5EAF3;--sub:#B6C2D6;--dim:#8A9AB4;--hdr:rgba(11,18,32,.96)}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0B1220;--surface:#111A2E;--s2:#0F172A;--border:#22304A;--bm:#334155;--gold:#93B4FF;--gd:#16264A;--gbg:#06281F;--text:#E5EAF3;--sub:#B6C2D6;--dim:#8A9AB4;--hdr:rgba(11,18,32,.96)}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{font:14px/1.55 'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.hdr{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--hdr);border-bottom:1px solid var(--border);box-shadow:0 2px 16px rgba(15,23,42,.08)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--hdr);z-index:60}
+.top{display:flex;align-items:center;gap:18px;padding:9px 20px;min-height:58px;position:relative}
+.logo{font:1.35rem/1 'DM Serif Display',serif;color:var(--gold);letter-spacing:.12em}
+.logo b{font-weight:700;background:linear-gradient(90deg,#1E3A8A,#D4A853 55%,#DC2626);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.08em}
+.sub{font-size:.6rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.ctx{border-left:1px solid var(--border);padding-left:18px;line-height:1.15}.ctx i{display:block;font-style:normal;font-size:.58rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}.ctx span{font-size:.82rem;font-weight:700}
+.ib{margin-left:auto;width:34px;height:34px;border-radius:50%;border:1px solid var(--bm);background:var(--surface);color:var(--sub);cursor:pointer;font-size:.8rem}.ib:hover{border-color:var(--gold);color:var(--gold)}
+.pl{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:14px;pointer-events:none}.pl path{fill:none;stroke:#1E3A8A;stroke-width:1.6;opacity:.55;stroke-dasharray:70 540;animation:pt 3.6s linear infinite}
+@keyframes pt{0%{stroke-dashoffset:610;stroke:#1E3A8A}50%{stroke:#D4A853}100%{stroke-dashoffset:-610;stroke:#DC2626}}
+.tabs{display:flex;gap:4px;overflow-x:auto;padding:0 20px 8px;border-top:1px solid var(--border);scrollbar-width:none}
+.tab{position:relative;padding:9px 13px 10px;border:0;background:none;color:var(--sub);font:600 .74rem 'Inter',sans-serif;border-radius:8px;cursor:pointer;white-space:nowrap}
+.tab:hover{background:var(--gd)}.tab.on{background:var(--gd);color:var(--gold)}.tab.on::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:2px;background:#2563EB;border-radius:2px}
+main{max-width:1040px;margin:0 auto;padding:18px 20px 60px}
+.pane{display:none}.pane.on{display:block}
+.kick{font-size:.6rem;letter-spacing:.13em;font-weight:800;color:#2563EB}h1{font-size:1.4rem;letter-spacing:-.025em;margin:3px 0 4px;font-weight:800}.lead{color:var(--dim);font-size:.85rem;max-width:680px;margin-bottom:16px}
+h2{font-size:1rem;margin:22px 0 10px;font-weight:800}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--sh)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.card h3{font-size:.88rem;margin-bottom:4px}.card p,.card li{font-size:.8rem;color:var(--sub)}.card ul{padding-left:18px}
+.callout{border-left:4px solid var(--gold);background:var(--gd);border-radius:10px;padding:12px 14px;font-size:.82rem;margin:14px 0}
+.warn{border-color:var(--orange)}
+.pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.66rem;font-weight:700;color:#fff;background:var(--c,#475569)}
+.flow{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.flow button{border:1px solid var(--bm);background:var(--surface);color:var(--sub);border-radius:20px;padding:6px 12px;font:600 .72rem 'Inter',sans-serif;cursor:pointer;border-left:5px solid var(--c)}
+.flow button.on{background:var(--gd);color:var(--gold);border-color:var(--gold);border-left-color:var(--c)}
+.det{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:720px){.det{grid-template-columns:1fr}.ctx{display:none}}
+.det h4{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:10px 0 4px}.det h4:first-child{margin-top:0}
+.btn{display:inline-block;background:var(--gold);color:#fff;border-radius:8px;padding:5px 11px;font-size:.72rem;font-weight:700;margin:2px 4px 2px 0}[data-theme="dark"] .btn{color:#0B1220}
+.btn.bad{background:var(--red);color:#fff}
+.nav2{display:flex;justify-content:space-between;margin-top:14px;gap:8px}.nav2 button{border:1px solid var(--bm);background:var(--surface);color:var(--text);border-radius:8px;padding:7px 14px;font:600 .75rem 'Inter',sans-serif;cursor:pointer}.nav2 button:hover{border-color:var(--gold);color:var(--gold)}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.8rem}th{background:var(--gd);color:var(--gold);text-align:left;padding:9px 12px;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase}td{padding:9px 12px;border-top:1px solid var(--border);color:var(--sub)}
+details{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px}summary{padding:12px 14px;font-weight:700;font-size:.82rem;cursor:pointer}details p{padding:0 14px 12px;font-size:.8rem;color:var(--sub)}
+pre{background:var(--code);color:#E2E8F0;border-radius:12px;padding:14px;font:12px/1.5 ui-monospace,Menlo,monospace;overflow-x:auto;margin:8px 0;white-space:pre}
+.cp{float:right;margin:-4px 0 6px 8px;border:1px solid var(--bm);background:var(--surface);color:var(--text);border-radius:8px;padding:4px 10px;font:600 .68rem 'Inter',sans-serif;cursor:pointer}
+.chk li{list-style:none;margin:6px 0}.chk label{display:flex;gap:8px;cursor:pointer}
+footer{text-align:center;color:var(--dim);font-size:.7rem;padding:20px}
+</style></head><body>
+<header class="hdr"><div class="top"><div><div class="logo">THORE <b>PULSE</b></div><div class="sub">Marketing Workflow Guide</div></div>
+<div class="ctx"><i>Help Centre</i><span>How to use the Campaign Workflow</span></div>
+<button class="ib" id="th" title="Toggle light/dark" aria-label="Toggle theme">◐</button>
+<svg class="pl" viewBox="0 0 600 24" preserveAspectRatio="none" aria-hidden="true"><path d="M0,12 L140,12 L158,12 L168,-4 L180,28 L192,2 L204,12 L222,12 L600,12"/></svg></div>
+<nav class="tabs" id="tabs">
+<button class="tab on" data-t="home">🏠 Start here</button><button class="tab" data-t="flow">🧭 Workflow</button><button class="tab" data-t="role">👤 My role</button><button class="tab" data-t="stat">🗂️ Status guide</button><button class="tab" data-t="use">🖱️ Using the tool</button><button class="tab" data-t="rules">✅ Rules &amp; FAQ</button><button class="tab" data-t="add">🔧 Add Help button</button></nav></header>
+<main>
+
+<section class="pane on" id="home">
+<div class="kick">GETTING STARTED</div><h1>Every campaign follows the same path</h1>
+<p class="lead">The Marketing Workflow tool is the official record for every campaign: who owns it, what creative was approved, and when setup was done. This guide explains each step in plain language.</p>
+<div class="callout"><b>Core principle:</b> a campaign must move through the stages in the system. Chats, calls or forwarded files don’t replace the buttons in the tool.</div>
+<div class="grid">
+<div class="card"><h3>🧭 See the full journey</h3><p>Nine statuses from Brief to Completed, with what to do and what to check at each.</p><p style="margin-top:8px"><a href="#" data-go="flow">Open Workflow →</a></p></div>
+<div class="card"><h3>👤 Find what’s mine</h3><p>Pick your role (Executive, Designer, Manager, Zone Approver, Head) and see only your tasks.</p><p style="margin-top:8px"><a href="#" data-go="role">Open My role →</a></p></div>
+<div class="card"><h3>🗂️ Decode a status</h3><p>Not sure why a card is stuck? Check who it is waiting on.</p><p style="margin-top:8px"><a href="#" data-go="stat">Open Status guide →</a></p></div>
+<div class="card"><h3>✅ Avoid common mistakes</h3><p>Rules everyone follows, plus answers to frequent questions.</p><p style="margin-top:8px"><a href="#" data-go="rules">Open Rules &amp; FAQ →</a></p></div></div>
+<h2>The journey at a glance</h2><div class="flow" id="glance"></div>
+</section>
+
+<section class="pane" id="flow">
+<div class="kick">STEP BY STEP</div><h1>Complete campaign workflow</h1><p class="lead">Select a stage to see who acts, what to do, and which button moves the campaign forward.</p>
+<div class="flow" id="stages"></div><div class="card" id="sd"></div>
+<div class="nav2"><button id="pv">← Previous</button><button id="nx">Next →</button></div>
+</section>
+
+<section class="pane" id="role">
+<div class="kick">PERSONALISED</div><h1>What do I need to do?</h1><p class="lead">Choose your role to see your responsibilities in the order they happen.</p>
+<div class="flow" id="roles"></div><div class="card" id="rd"></div>
+<h2>Zone approvers</h2><div class="card tw"><table><tr><th>Zone</th><th>Approver</th></tr><tr><td>Pune</td><td>Sandeep Sonawane Sir</td></tr><tr><td>South</td><td>Sandeep Sonawane Sir</td></tr><tr><td>Mumbai</td><td>Onkar Patil Sir</td></tr></table></div>
+</section>
+
+<section class="pane" id="stat">
+<div class="kick">REFERENCE</div><h1>Status guide</h1><p class="lead">The coloured status on every campaign card tells you who is expected to act next.</p>
+<div class="card tw"><table id="st"><tr><th>Status</th><th>Meaning</th><th>Waiting on</th></tr></table></div>
+<div class="callout warn"><b>Mark setup done ≠ closed.</b> The campaign is complete only after Onkar Kulkarni Sir marks it completed.</div>
+</section>
+
+<section class="pane" id="use">
+<div class="kick">NAVIGATION</div><h1>Using the tool</h1><p class="lead">Seven quick steps to find your work and act on it.</p>
+<div class="grid">
+<div class="card"><h3>1 · Sign in</h3><p>Open the Marketing Workflow page and sign in with your authorised account. An active THORE PULSE session may log you in automatically.</p></div>
+<div class="card"><h3>2 · 📊 Overview</h3><p>Check campaign counts, current stages, pending actions and overdue work.</p></div>
+<div class="card"><h3>3 · 🗂️ Board</h3><p>Campaigns grouped by status. Open a card to see details and your available actions.</p></div>
+<div class="card"><h3>4 · 📁 Requests</h3><p>Review project requests and the campaigns created under each.</p></div>
+<div class="card"><h3>5 · Campaign panel</h3><p>Brief, content, creative files, comments and activity history all live here.</p></div>
+<div class="card"><h3>6 · Take action</h3><p>Use the buttons shown: submit, accept, request changes, approve, mark setup done or complete. You only see buttons for your role and status.</p></div>
+<div class="card"><h3>7 · 🔔 Stay updated</h3><p>Check the bell and refresh the page regularly for new activity.</p></div>
+<div class="card"><h3>➕ New Request (Head/Manager)</h3><p>Pick zone, cluster, city, project and developer; add deadline, selling points, configurations and prices; choose campaign types (Reel, SV, Interior, Elevation, Floor Plan, AI video), targeting (NRI, Outstation, Domestic) and regions; assign executive and designer.</p></div></div>
+<h2>On hold or cancelled?</h2><div class="card"><p>Managers and Heads can <span class="btn">Put on hold</span> (then <span class="btn">Resume</span>) or <span class="btn bad">Cancel campaign</span>. A reason is recorded, so use these only through the authorised process.</p></div>
+</section>
+
+<section class="pane" id="rules">
+<div class="kick">BEST PRACTICE</div><h1>Rules &amp; FAQ</h1><p class="lead">Tick through this before you press any submit button.</p>
+<div class="card"><h3>Before you submit</h3><ul class="chk">
+<li><label><input type="checkbox"> Project name, zone, prices and configurations are correct</label></li>
+<li><label><input type="checkbox"> Spelling, offer, CTA and disclaimer checked</label></li>
+<li><label><input type="checkbox"> Creative matches the brief and the final copy</label></li>
+<li><label><input type="checkbox"> Files are uploaded to the campaign, not sent separately</label></li></ul></div>
+<h2>Rules everyone must follow</h2><div class="grid">
+<div class="card"><h3>Use the system as the record</h3><p>Briefs, content, creatives and setup details stay attached to the campaign.</p></div>
+<div class="card"><h3>Follow the sequence</h3><p>Never start setup before zone approval is complete.</p></div>
+<div class="card"><h3>Keep revisions traceable</h3><p>Upload revised creatives to the campaign instead of sharing files privately.</p></div>
+<div class="card"><h3>Explain every return</h3><p>Write a clear, actionable comment whenever you request changes.</p></div>
+<div class="card"><h3>Protect deadlines</h3><p>Review Overview and Board regularly; handle overdue campaigns first.</p></div>
+<div class="card"><h3>Confirm completion properly</h3><p>Only the final reviewer’s “Mark completed” closes a campaign.</p></div></div>
+<h2>FAQ</h2>
+<details><summary>I can’t see any action button.</summary><p>Buttons appear only when the campaign is at your stage and you are the person responsible. Check the Status guide to see who it is waiting on.</p></details>
+<details><summary>The approver sent my campaign back. What now?</summary><p>Read the comment on the campaign. Creative problems return to the Designer (Design status); copy or pricing problems return to the Executive (Content status). Fix, then resubmit through the same approval path.</p></details>
+<details><summary>Can I start the ad setup once the manager approves?</summary><p>No. Wait for zone approval; the campaign must reach <b>Approved</b>.</p></details>
+<details><summary>What file types can the designer upload?</summary><p>Images, MP4 videos and PDFs, subject to the tool’s upload size limits.</p></details>
+<details><summary>Who approves my zone?</summary><p>Pune and South: Sandeep Sonawane Sir. Mumbai: Onkar Patil Sir. The system routes this from the zone on the request.</p></details>
+<details><summary>I marked setup done but it isn’t Completed.</summary><p>That is expected. It is now in <b>Setup Done Check</b> for Onkar Kulkarni Sir. If he returns it for fixes, correct the setup and mark it done again.</p></details>
+</section>
+</main>
+<footer>THORE PULSE · Marketing Control Centre · Workflow guide</footer>
+<script>
+const S=[
+{k:'Brief',c:'#64748B',who:'Marketing Head / Manager creates the request; assigned Executive writes the brief',btn:[['Send to designer']],todo:['Head/Manager: choose zone, cluster, city, project and developer; add deadline, selling points, configurations, areas, prices; pick campaign types, targeting and regions; assign executive and designer.','Executive: write the brief: objective and audience, highlights, offer and pricing, format and dimensions, message, visual direction, CTA, references.'],out:'Campaign moves to Design and appears for the designer.'},
+{k:'Design',c:'#7C3AED',who:'Assigned Designer',btn:[['Submit creative']],todo:['Read the brief and project information.','Create the image, video or other asset.','Check it matches the brief.','Upload the file to the campaign and add a short note.'],out:'Executive receives the creative for review (Your review).'},
+{k:'Your review',c:'#0891B2',who:'Assigned Executive',btn:[['Accept creative'],['Request changes',1]],todo:['Check details, pricing and configurations.','Check messaging accuracy and spelling.','Check visual quality, format and brand fit.','Check CTA, offer and brief requirements.','If changes are needed, write specific feedback. The designer uploads a revision and you review again.'],out:'Accepted creative moves to Content; changes go back to Design.'},
+{k:'Content',c:'#2563EB',who:'Assigned Executive',btn:[['Submit for approval']],todo:['Enter primary text or ad copy, headline and supporting text.','Add CTA and the destination URL or lead form link.','Add offer, disclaimer and targeting details.','Make sure it matches the accepted creative.'],out:'Campaign goes to Onkar Kulkarni Sir (Manager approval).'},
+{k:'Manager approval',c:'#D97706',who:'Onkar Kulkarni Sir',btn:[['Approve, send to zone approver'],['Changes to content',1],['Changes to creative',1]],todo:['Confirm creative and content are complete.','Confirm project info, pricing and offers.','Confirm alignment with the brief.','When returning, give clear comments on what to correct.'],out:'Approved campaigns move to the zone approver (Final approval).'},
+{k:'Final approval',c:'#EA580C',who:'Zone approver: Sandeep Sonawane Sir (Pune, South) or Onkar Patil Sir (Mumbai)',btn:[['Final approve'],['Changes to content',1],['Changes to creative',1]],todo:['The system routes by the zone on the request.','Review and approve, or return with specific feedback.','Corrections go back to Content or Design and re-enter the approval path.'],out:'After approval the campaign returns to the Executive (Approved).'},
+{k:'Approved',c:'#059669',who:'Assigned Executive',btn:[['Mark setup done']],todo:['Set up the campaign on the advertising platform.','Verify objective, budget, audience and targeting.','Check creative, copy, CTA and destination.','Confirm project, zone and campaign settings.','Record the platform and campaign link in the system.'],out:'Campaign goes for final verification (Setup Done Check). It is NOT closed yet.'},
+{k:'Setup Done Check',c:'#0D9488',who:'Onkar Kulkarni Sir',btn:[['Mark completed'],['Return for fixes',1]],todo:['Confirm setup details and link are present.','Confirm the campaign matches approved creative and content.','Confirm setup checks are done and earlier corrections resolved.'],out:'Completed, or back to the Executive for setup corrections.'},
+{k:'Completed',c:'#15803D',who:'Final reviewer',btn:[],todo:['Nothing further to do. The workflow is closed and the full history stays on the campaign.'],out:'Campaign workflow closed successfully.'}];
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];let cur=0;
+function tab(t){$$('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t===t));$$('.pane').forEach(p=>p.classList.toggle('on',p.id===t));scrollTo(0,0)}
+$('#tabs').onclick=e=>{const b=e.target.closest('.tab');if(b)tab(b.dataset.t)};
+$$('[data-go]').forEach(a=>a.onclick=e=>{e.preventDefault();tab(a.dataset.go)});
+function chips(el,cb){el.innerHTML=S.map((s,i)=>`<button style="--c:${s.c}" data-i="${i}">${i+1}. ${s.k}</button>`).join('');el.onclick=e=>{const b=e.target.closest('button');if(b)cb(+b.dataset.i)}}
+function show(i){cur=i;$$('#stages button').forEach((b,j)=>b.classList.toggle('on',j===i));const s=S[i];
+$('#sd').innerHTML=`<span class="pill" style="--c:${s.c}">${s.k}</span><h2 style="margin-top:8px">Step ${i+1} of ${S.length}</h2><div class="det"><div><h4>Who acts</h4><p>${s.who}</p><h4>Buttons</h4>${s.btn.length?s.btn.map(b=>`<span class="btn${b[1]?' bad':''}">${b[0]}</span>`).join(''):'<p>None</p>'}<h4>What happens next</h4><p>${s.out}</p></div><div><h4>What to do</h4><ul>${s.todo.map(t=>`<li>${t}</li>`).join('')}</ul></div></div>`;
+$('#pv').style.visibility=i?'visible':'hidden';$('#nx').style.visibility=i<S.length-1?'visible':'hidden';if(history.replaceState)history.replaceState(null,'','#stage-'+(i+1))}
+chips($('#stages'),show);chips($('#glance'),i=>{tab('flow');show(i)});
+$('#pv').onclick=()=>show(cur-1);$('#nx').onclick=()=>show(cur+1);
+$('#st').insertAdjacentHTML('beforeend',[['Brief','Awaiting brief or dispatch to design','Executive / Head'],['Design','Designer is creating the creative','Designer'],['Your review','Creative awaits executive review','Executive'],['Content','Final content to be entered or updated','Executive'],['Manager approval','Awaiting manager review','Onkar Kulkarni Sir'],['Final approval','Awaiting zone-level approval','Zone approver'],['Approved','Zone approval complete; setup can begin','Executive'],['Setup Done Check','Setup submitted for verification','Onkar Kulkarni Sir'],['Completed','Workflow closed successfully','Final reviewer'],['On hold','Temporarily paused','Manager / Head'],['Cancelled','Campaign cancelled','Manager / Head']].map((r,i)=>`<tr><td><span class="pill" style="--c:${(S[i]||{c:i==9?'#A16207':'#DC2626'}).c}">${r[0]}</span></td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join(''));
+const R={Executive:[1,3,4,5,7,8],Designer:[2],Manager:[5,8,9],'Zone Approver':[6],Head:[1]};
+const RN={Executive:'You own a campaign end to end: brief, review the creative, final content, then setup.',Designer:'You create and revise the creative based on the executive’s brief and feedback.',Manager:'Onkar Kulkarni Sir approves content first and gives the final verification that closes the campaign.','Zone Approver':'You give the final zone-level approval or return the campaign with specific feedback.',Head:'You raise the request and assign the executive and designer. You can also put campaigns on hold or cancel them.'};
+$('#roles').innerHTML=Object.keys(R).map((r,i)=>`<button data-r="${r}" style="--c:#2563EB">${r}</button>`).join('');
+function role(r){$$('#roles button').forEach(b=>b.classList.toggle('on',b.dataset.r===r));$('#rd').innerHTML=`<h3>${r}</h3><p style="margin:4px 0 10px">${RN[r]}</p><ul>${R[r].map(n=>`<li><b>${S[n-1].k}:</b> ${S[n-1].btn.length?S[n-1].btn.map(b=>b[0]).join(' / '):'view only'} <a href="#stage-${n}" data-s="${n-1}">see steps</a></li>`).join('')}</ul>`}
+$('#roles').onclick=e=>{const b=e.target.closest('button');if(b)role(b.dataset.r)};
+$('#rd').onclick=e=>{const a=e.target.closest('[data-s]');if(a){e.preventDefault();tab('flow');show(+a.dataset.s)}};role('Executive');
+$$('.cp').forEach(b=>b.onclick=()=>{const t=document.getElementById(b.dataset.c).textContent;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>{b.textContent='Copied ✓'},()=>{b.textContent='Select & copy'});setTimeout(()=>b.textContent='Copy',1800)});
+$('#th').onclick=()=>{const r=document.documentElement;r.dataset.theme=(r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches))?'light':'dark'};
+const m=location.hash.match(/stage-(\d)/);if(m&&S[m[1]-1]){tab('flow');show(m[1]-1)}else show(0);
+</script></body></html>
