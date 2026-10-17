@@ -85,7 +85,7 @@ footer{background:#fff;border-top:1px solid var(--border);padding:12px 20px;text
 </style></head><body>
 <div class="header"><div class="header-top"><div class="header-left"><div class="logo-text"><div class="logo-word">THORE <span class="logo-pulse-word">PULSE</span></div><div class="logo-sub">Marketing Workflow</div></div><div class="header-context"><div class="header-context-eyebrow">Marketing Control Centre</div><div class="header-context-title">Campaign Workflow</div></div></div>
 <div class="header-right"><span class="mt" id="mt"></span><span class="mt" id="upd"></span><span class="rb" id="rb"></span><div class="bell-wrap" id="bellWrap" style="display:none"><div class="icon-btn" id="bell" onclick="toggleBell(event)" title="Updates">🔔<span class="bdg" id="bdg"></span></div><div class="bell-panel" id="bp"></div></div><a href="dashboard.html" class="icon-btn" title="Back to THORE Pulse dashboard">←</a>
-<div class="profile-wrap" id="profileWrap" style="display:none"><div class="profile-avatar" id="av" onclick="toggleProfile()">?</div><div class="profile-dropdown" id="pd"><div class="pd-item username" id="pdu">—</div><div class="pd-item" onclick="location.href='dashboard.html'">📊 THORE Pulse Dashboard</div><div class="pd-item logout" onclick="logout()">Sign Out</div></div></div></div>
+<div class="profile-wrap" id="profileWrap" style="display:none"><div class="profile-avatar" id="av" onclick="toggleProfile()">?</div><div class="profile-dropdown" id="pd"><div class="pd-item username" id="pdu">—</div><div class="pd-item" onclick="location.href='dashboard.html'">📊 THORE Pulse Dashboard</div><div class="pd-item" onclick="window.open('marketing-help.html','_blank')">❓ Help & Guide</div><div class="pd-item logout" onclick="logout()">Sign Out</div></div></div></div>
 <svg class="pulse-line-svg" viewBox="0 0 600 24" preserveAspectRatio="none" aria-hidden="true"><path class="pulse-line-path" d="M0,12 L140,12 L158,12 L168,-4 L180,28 L192,2 L204,12 L222,12 L600,12"/></svg></div>
 <div class="header-nav"><div class="dash-tabs" id="tabs" style="display:none"><button class="dash-tab" data-t="dash">📊 Overview</button><button class="dash-tab" data-t="board">🗂️ Board <span class="tab-badge" id="tb-board">0</span></button><button class="dash-tab" data-t="reqs">📁 Requests <span class="tab-badge" id="tb-reqs">0</span></button><button class="dash-tab" data-t="new">➕ New Request</button></div></div></div>
 <div class="content"><div id="fb"></div><div id="app"></div></div>
@@ -118,7 +118,10 @@ const sh=(k,t,p)=>`<div class="section-head"><div><div class="section-kicker">${
 const di=(l,v,full,raw)=>`<div class="detail-item ${full?'full':''}"><div class="detail-label">${l}</div><div class="detail-value">${(raw?v:E(v))||'<span class="muted">—</span>'}</div></div>`;
 $('yr').textContent=new Date().getFullYear();
 function toggleProfile(){$('pd').classList.toggle('show')}document.addEventListener('click',e=>{if(!e.target.closest('#profileWrap'))$('pd').classList.remove('show')});
-/* ---------- session ---------- */
+const HELP_URL='marketing-help.html';
+const HELP_STAGE={brief:1,designing:2,exec_review:3,content:4,approval:5,final_approval:6,approved:7,setup_review:8,verified:9};
+function openHelp(status){window.open(HELP_URL+(HELP_STAGE[status]?'#stage-'+HELP_STAGE[status]:''),'_blank')}
+ /* ---------- session ---------- */
 async function start(session){const pr=await sb.from('profiles').select('full_name,active').eq('id',session.user.id).single();
  if(pr.data&&pr.data.active===false){await sb.auth.signOut();return loginUI('This account has been deactivated.')}
  me={id:session.user.id,name:pr.data?.full_name||''};role=(await sb.rpc('campaign_role')).data;$('tabs').style.display='flex';$('profileWrap').style.display='block';
@@ -248,7 +251,7 @@ function open_(id){curItem=id;if(!I.find(i=>i.id===id))return toast('That campai
  ed=(k,l,on)=>on?`<div class="admin-edit-label" style="margin-top:10px">${l}</div><textarea class="admin-edit-textarea" id="f_${k}">${E(d[k]||'')}</textarea>`:di(l,d[k],1),
  files=[...x.campaign_assets].sort((a,b)=>a.version-b.version);
  $('drt').textContent=x.name||x.ref;
- $('drb').innerHTML=`<div class="row" style="margin:0 0 12px">${chip(x.status)}${pend(x)?TAG:''}<span class="pl">${E(x.ref)}</span><span class="pl">${E(x.targeting||'')}</span><span class="pl">${E(x.region||'')}</span></div>
+ $('drb').innerHTML=`<div class="row" style="margin:0 0 12px">${chip(x.status)}${pend(x)?TAG:''}<span class="pl">${E(x.ref)}</span><span class="pl">${E(x.targeting||'')}</span><span class="pl">${E(x.region||'')}</span></div><span class="sp"></span><button class="clear-btn" onclick="openHelp('${x.status}')">❓ Help for this stage</button>
  <div class="detail-grid">${di('Project',q.project_name)}${di('Developer',q.developer)}${di('Zone',q.zone)}${di('Cluster',q.cluster)}${di('City',q.city)}${di('Deadline',E(q.deadline||'—')+' · '+dl(q.deadline),0,1)}${di('Configurations',(q.config_list||[]).map(c=>`${E(c.config)} · ${E(c.area)} sqft · ${E(c.price)}`).join('<br>'),1,1)}${di('Key points',q.key_points,1)}
  ${di('Executive',x.executive_id?nm(x.executive_id):'Unassigned')}${di('Designer',x.designer_id?nm(x.designer_id):'Unassigned')}</div>
  ${as?`<div class="admin-edit-panel"><div class="admin-edit-title">👥 Assignment</div><div class="admin-edit-label">Executive</div><select class="admin-edit-select" id="ae">${opt('executive',x.executive_id)}</select><div class="admin-edit-label" style="margin-top:10px">Designer</div><select class="admin-edit-select" id="ad">${opt('designer',x.designer_id)}</select><div class="row"><button class="btn-p" onclick="assign('${id}')">Save assignment</button></div></div>`:''}
