@@ -149,9 +149,3 @@ If you want to contribute improvements:
 ## License
 
 This repository includes an MIT License (see LICENSE).
-
----
-
-If you want, I can:
-- Produce a minimal config.js and a short patch to the HTML pages to read configuration from it (I will not commit secrets); or
-- Draft guidance for the Supabase schema and RLS policies the dashboard expects (I will only propose a minimal, safe schema and will avoid sensitive production details).
