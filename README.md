@@ -1,151 +1,232 @@
-# THORE PULSE — Friday Lineup Form
+# THORE PULSE — Friday Lineup
 
-A compact client-side application used by The House of Real Estate (THORE) Operations team to collect and manage weekly "Friday Lineup" sales visit entries and to present an administrative dashboard for campaign/marketing workflows.
+**A Sales Operations & Performance Management Application**
 
-This repository contains a static front-end (HTML/CSS/JavaScript) that acts as a thin client for two backend services: a Supabase project (used as the primary data store/auth backend) and a Google Apps Script endpoint used to update a CRM (called "Leadrat" in the code). The project is intended for internal operational use by THORE's sales and marketing teams.
+THORE PULSE — Friday Lineup is a lightweight web application developed for **The House of Real Estate (THORE)** to streamline weekly sales visit planning, capture customer engagement information, and support operational reporting through a centralized web interface.
 
-## Overview and objectives
+The application combines a browser-based frontend with cloud-based services to support sales operations and related marketing activities.
 
-- Provide a simple, mobile-friendly form (index.html) for sales executives to schedule weekend customer visits and record lead/visit metadata.
-- Surface an administrative dashboard (dashboard.html) for marketing/campaign workflows and campaign approval pipelines.
-- Keep the client-side app lightweight so it can be hosted on any static hosting platform and connect to Supabase + an optional CRM webhook (Google Apps Script) for cross-system updates.
+## Overview
 
-## Key features
+The application is designed to simplify the collection and management of sales visit information while providing an administrative interface for operational monitoring and reporting.
 
-- Responsive, accessible HTML/CSS form for submitting visit/lead entries.
-- Client-side validation, date/time pickers (flatpickr), and autocomplete patterns for project/developer fields.
-- Dual submission flow visible to users: the app attempts to write to Supabase and also make a CRM update; the UI reports status for both operations.
-- Administrative dashboard with charts and tables (uses Chart.js) that reads from Supabase tables and supports role-based views inside the dashboard code.
-- Simple gating logic: the form is only available during a configurable weekly window (the code enforces Friday 10:00–21:00 and additionally checks an external access.json file).
+Built using standard web technologies, the frontend can be hosted on a static web hosting platform and integrated with the required backend services.
 
-## Technology stack
+## Key Features
 
-- Language(s): HTML, CSS, JavaScript (ES6)
-- Framework / runtime: Static client-side web app (no server-side runtime included)
-- Notable libraries and services:
-  - Supabase JS client (@supabase/supabase-js) — used as the primary BaaS platform
-  - flatpickr — date/time picker in the form
-  - Chart.js — charts used on the dashboard
-  - Google Apps Script (external) — optional CRM update endpoint
+### Sales Visit Management
+- Digital form for recording customer visit information.
+- Structured collection of relevant sales and project details.
+- Client-side input validation and user-friendly form controls.
+- Responsive interface for desktop and mobile browsers.
 
-## High-level architecture
+### Operational Dashboard
+- Dashboard interface for operational reporting and monitoring.
+- Data visualization through charts and tabular views.
+- Access to relevant information based on the application's configured authorization mechanisms.
 
-- index.html — public user-facing form for Sales Executives. Collects input and performs two actions:
-  1) Inserts/updates lead entry in Supabase.
-  2) Calls a Google Apps Script endpoint (Leadrat) to update CRM lead status.
-- dashboard.html — administrative view, authenticates via Supabase session, reads multiple Supabase tables and renders metrics, boards, and campaign details (marketing workflow UI).
-- marketing.html, closed.html, no_authorization.html — supporting pages shown in specific conditions (marketing workflows, closed/gated access, and access-denied views).
+### Marketing Workflow Support
+- Supporting interfaces for marketing-related operational activities.
+- Integration with external services for selected data operations.
+- Centralized browser-based access to relevant application functions.
 
-How it fits together: the static pages are intended to be hosted as static assets. The pages use Supabase client credentials included in the files to read and write data; the dashboard enforces role-specific UI in JavaScript and relies on Supabase RPCs and tables for access control and data. A Google Apps Script URL is used to call an external CRM updater.
+### User Experience
+- Lightweight frontend with no mandatory application build process.
+- Browser-based interface using standard HTML, CSS, and JavaScript.
+- Integration with cloud services for data storage and application functionality.
 
-## Repository structure
+## Technology Stack
 
+| Technology | Purpose |
+|---|---|
+| HTML5 | Application structure |
+| CSS3 | Styling and responsive layouts |
+| JavaScript (ES6+) | Client-side application logic |
+| Supabase | Backend services, authentication, and data operations |
+| Chart.js | Data visualization |
+| Flatpickr | Date and time selection |
+| Google Apps Script | Integration with selected external workflows |
+
+The actual functionality available depends on the configured backend services, permissions, and deployment environment.
+
+## High-Level Architecture
+
+The application follows a lightweight frontend architecture.
+
+```text
+                 THORE PULSE
+                      |
+          Browser-Based Frontend
+                      |
+          +-----------+-----------+
+          |           |           |
+       Forms      Dashboard   Supporting
+                              Interfaces
+          |
+     Cloud Services
+          |
+     +----+----------------+
+     |                     |
+  Supabase          External Services
 ```
-LICENSE                 # MIT license
-README.md               # (this file)
-index.html              # Main Friday Lineup form (entry point for Sales Executives)
-dashboard.html          # Administrative dashboard (Marketing / Operations)
-marketing.html          # Marketing workflow UI (related to campaigns)
-closed.html             # User-facing "form closed" page used when outside open window
-no_authorization.html   # Access-denied page
-```
 
-Files of interest inside HTML pages (searchable):
-- index.html: constants SUPABASE_URL and SUPABASE_ANON_KEY, LEADRAT_GAS_URL, LEADRAT_APP_SECRET, ACCESS_JSON_URL, and the main form submission logic (submitForm), weekend date calculations, and UI helpers.
-- dashboard.html / marketing.html: substantial client-side logic that queries Supabase tables, uses Chart.js, and implements a multi-role marketing/campaign workflow.
+The frontend communicates with configured backend services to support data operations and application functionality. Authentication, data access permissions, and backend integrations must be configured appropriately for the deployment environment.
+
+This diagram provides a conceptual overview and does not represent every internal component or integration.
+
+## Repository Structure
+
+The repository contains the frontend pages and supporting resources required by the application.
+
+| File | Description |
+|---|---|
+| `index.html` | Main sales visit entry interface |
+| `dashboard.html` | Administrative and operational dashboard |
+| `marketing.html` | Supporting marketing interface |
+| `closed.html` | Access-window status page |
+| `no_authorization.html` | Authorization-related page |
+| `LICENSE` | Repository license information |
+
+The exact behaviour of each component depends on the current application implementation and its configured services.
 
 ## Prerequisites
 
-- Modern web browser (Chrome, Edge, Firefox, Safari) with JavaScript enabled.
-- Internet access for the CDN-hosted libraries (flatpickr, Chart.js, Supabase JS) and the remote services the pages expect (Supabase, the Google Apps Script CRM URL, external access.json).
-- Optional: a Supabase project (to host data) and a deployed Google Apps Script (if you want the CRM update behavior).
+To preview or work with the frontend, you will generally need:
 
-## Safe local development and preview
+- A modern web browser with JavaScript enabled.
+- Python 3 or another lightweight local HTTP server.
+- Internet connectivity for externally hosted libraries and configured backend services.
+- Appropriate backend configuration and permissions for features requiring live data.
 
-These are static pages — no build step is required. For best results, serve files over a local HTTP server (some browsers block certain fetch operations when loading files via file://).
+Some application features will not operate fully without the required backend services.
 
-Example (from repository root):
+## Local Development and Preview
 
-- Using Python 3's simple server:
+The application uses standard web technologies and does not require a frontend compilation step for basic local preview.
 
-  python -m http.server 8000
+### 1. Obtain the repository
 
-  Then open: http://localhost:8000/index.html
+Clone the repository or download its source files from GitHub.
 
-- Using a lightweight live server (npm package) for auto-reload during edits:
-
-  npx live-server --port=8000
-
-Notes:
-- The dashboard page performs Supabase authentication (sign-in with email/password) and will try to call Supabase endpoints. To use the dashboard you will need a Supabase project and credentials (see configuration section).
-
-## Configuration (safe example)
-
-This repository includes configuration values inline in the HTML files (for example, SUPABASE_URL and SUPABASE_ANON_KEY). Do not commit secrets to the repo. Instead, for local testing create a small config file and include it before the application script.
-
-Example safe file: config.example.js
-
-```js
-// Copy to config.js and fill with your project's values. NEVER commit real secrets to public repos.
-window.APP_CONFIG = {
-  SUPABASE_URL: 'https://your-project.supabase.co',
-  SUPABASE_ANON_KEY: 'public-anon-key-placeholder',
-  LEADRAT_GAS_URL: 'https://script.google.com/macros/s/your-script-id/exec',
-  LEADRAT_APP_SECRET: 'replace-with-secret',
-  ACCESS_JSON_URL: 'https://raw.githubusercontent.com/your-org/your-repo/main/access.json'
-};
+```bash
+git clone <YOUR_REPOSITORY_URL>
+cd <YOUR_REPOSITORY_DIRECTORY>
 ```
 
-To use this approach, edit the HTML files to load config.js before the main inline script and update the code to read values from window.APP_CONFIG instead of hard-coded constants. (Search for SUPABASE_URL and SUPABASE_ANON_KEY in index.html and dashboard.html.)
+Replace the placeholders with your repository URL and local directory name.
 
-Assumption: the repository's current code stores configuration directly in the HTML files. I recommend extracting configuration to a separate file (as above) before deploying or sharing the site.
+### 2. Start a local HTTP server
 
-## How to run (summary)
+If Python 3 is installed, run the following command from the repository root:
 
-- Quick preview (no configuration):
-  - Serve the repository root with a local HTTP server and open index.html. The form will operate in a limited client-only mode (it attempts to fetch an external access.json and may redirect to closed.html if not open).
+```bash
+python -m http.server 8000
+```
 
-- Dashboard usage (requires Supabase):
-  - Create a Supabase project and the necessary tables (the dashboard code references tables such as `profiles`, `campaign_requests`, `campaign_items`, `project_master`; the exact schema and RLS policies are not included in this repo).
-  - Provide a Supabase URL and anon key by editing a config file or replacing the inline constants in the HTML.
-  - Open dashboard.html and sign in using Supabase-authenticated credentials.
+### 3. Open the application
 
-## Deployment overview
+Visit the following address in your browser:
 
-This is a static site and can be hosted on any static hosting provider (GitHub Pages, Netlify, Vercel, S3+CloudFront). For public hosting:
+```text
+http://localhost:8000/
+```
 
-- Remove or rotate any embedded secrets.
-- Prefer hosting the front-end and exposing only a secured backend for any CRM or privileged operations.
-- If you use Supabase, configure RLS and row-level permissions to avoid exposing or allowing unsafe writes from client-side anon keys.
+To open a particular page directly, append its filename to the address.
 
-## Security & privacy considerations (important)
+**Note:** Local preview does not automatically configure authentication, backend connectivity, permissions, or external integrations. Features that depend on these services require a valid development environment.
 
-During analysis of the repository I found values embedded in the client-side HTML that are sensitive and should be addressed immediately:
+## Configuration
 
-- Supabase URL and anon key are present inline in index.html and other pages. Publicly publishing an anon key can expose your Supabase project to misuse if RLS/permissions are not correctly configured.
-- A Google Apps Script endpoint URL and an associated app secret (LEADRAT_APP_SECRET) are present inline. Exposed webhook URLs and shared secrets allow unauthorized third parties to call or impersonate your CRM update endpoint.
+The application depends on its configured cloud services and external integrations.
 
-Recommendations:
-- Rotate the exposed Supabase key(s) and the Google Apps Script secret immediately.
-- Move any privileged operations (CRM updates, secrets handling) to a server-side function where secrets are stored securely and requests are validated.
-- Ensure Supabase RLS (Row Level Security) policies are applied and limit anonymous write operations.
-- Do not commit secrets; use environment/configuration management supported by your hosting platform.
+Before running the application in a development or production environment:
 
-## Known limitations (verified)
+1. Verify that the required backend services are available.
+2. Confirm that authentication and authorization are configured appropriately.
+3. Ensure that data access permissions follow the principle of least privilege.
+4. Verify that external integrations accept only authorized requests.
+5. Keep privileged credentials and application secrets outside browser-delivered code.
+6. Test all required functionality in a non-production environment before deployment.
 
-- The app is purely client-side; sensitive operations performed entirely on the client (using embedded keys) are a security risk unless Supabase policies mitigate them.
-- The repository does not include server-side code or a deployment pipeline. The exact Supabase database schema and required RPCs/policies are not provided.
-- The dashboard enforces role-based UI in JavaScript and depends on Supabase RLS / RPCs whose behavior must be provisioned separately.
-- The form gating depends on an external access.json hosted on another GitHub repository; if that file is unavailable the form may be closed or show an error.
+Configuration procedures may differ between environments. Refer to the relevant service documentation and approved internal deployment instructions when setting up a new instance.
 
-## Contribution
+## Deployment
 
-If you want to contribute improvements:
+The frontend can be deployed to a static hosting provider compatible with HTML, CSS, and JavaScript.
 
-- Open an issue describing the change you'd like to make.
-- Fork the repository and submit a pull request with a concise description and screenshots where applicable.
-- Keep secrets out of commits. Use the config.example.js pattern shown above.
+Potential hosting options include:
+
+- GitHub Pages
+- Netlify
+- Vercel
+- Other compatible static web hosting platforms
+
+Deployment requires the appropriate backend configuration and access policies.
+
+Before publishing or deploying:
+
+- Review the repository for accidentally committed credentials.
+- Confirm that database access policies are correctly configured.
+- Ensure that privileged operations are handled by appropriately secured backend services.
+- Validate authentication and authorization behaviour.
+- Test the application using the intended deployment URL.
+- Confirm that external integrations function correctly in the target environment.
+
+Static hosting alone does not provide server-side protection for secrets or privileged operations.
+
+## Security and Privacy
+
+Security depends on the application code, backend configuration, access policies, and external services.
+
+The following practices are recommended:
+
+- **Credential protection:** Never expose passwords, service-role keys, private tokens, or application secrets in client-side files.
+- **Data access:** Apply appropriate backend access controls and validate permissions for all sensitive operations.
+- **Authentication:** Ensure that protected functionality requires the appropriate authentication.
+- **External integrations:** Validate incoming requests and protect privileged operations using server-side authorization.
+- **Data privacy:** Avoid exposing customer information, employee information, or confidential business data through public interfaces or repositories.
+- **Repository hygiene:** Review code, configuration files, commit history, and deployment settings before making the repository public.
+
+Supabase publishable or legacy anonymous keys may be used in browser applications when designed for that purpose, but they must be supported by correctly configured authorization policies. Such keys should not be treated as a substitute for access control.
+
+If a credential or application secret has already been exposed, assess its validity and impact, revoke or rotate it where necessary, and investigate possible unauthorized use.
+
+## Limitations
+
+The application's available capabilities depend on its current implementation and the services configured for the deployment.
+
+General considerations include:
+
+- Backend-dependent features require network connectivity and available services.
+- Authentication and data access depend on the configured authorization mechanisms.
+- External integrations may have independent availability and configuration requirements.
+- Local preview does not reproduce every aspect of the production environment.
+- Database provisioning, access policies, and backend service configuration may require separate setup.
+
+These considerations should be evaluated when creating a new development or deployment environment.
+
+## Contributing
+
+Changes should preserve the application's existing behaviour unless a change is explicitly intended.
+
+For proposed improvements:
+
+1. Review the existing implementation before making modifications.
+2. Test affected functionality in a development environment.
+3. Avoid committing credentials, customer information, or confidential configuration.
+4. Document relevant changes clearly.
+5. Review the final changes before merging them into the main branch.
+
+Repository contribution permissions and review requirements should follow the project's applicable access policies.
 
 ## License
 
-This repository includes an MIT License (see LICENSE).
+Refer to the [`LICENSE`](LICENSE) file included in this repository for the applicable license terms.
+
+## Project Information
+
+**Organization:** The House of Real Estate (THORE)
+
+**Project:** THORE PULSE — Friday Lineup
+
+This repository contains frontend components for an internal sales operations application. Access to associated data and services is subject to the relevant authorization and deployment configuration.
