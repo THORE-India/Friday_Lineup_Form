@@ -1,1334 +1,1578 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>THORE PULSE — FN Clients Form</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>THORE PULSE — Friday Lineup Form</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-<style>
-  :root {
-    --bg:         #F8FAFC;
-    --surface:    #FFFFFF;
-    --surface2:   #F8FAFC;
-    --surface3:   #FFFFFF;
-    --th-bg:      #EFF6FF;
-    --border:     #E2E8F0;
-    --border-mid: #CBD5E1;
-    --border-gold:#BFDBFE;
-    --gold:       #1E40AF;
-    --gold-light: #1D4ED8;
-    --gold-dim:   #EFF6FF;
-    --blue:       #2563EB;
-    --red:        #DC2626;
-    --red-bg:     #FEF2F2;
-    --orange:     #D97706;
-    --orange-bg:  #FFFBEB;
-    --green:      #059669;
-    --green-bg:   #ECFDF5;
-    --text:       #0F172A;
-    --text-sub:   #334155;
-    --text-muted: #64748B;
-    --text-dim:   #64748B;
-    --radius-xs:  7px;
-    --radius-sm:  10px;
-    --radius:     14px;
-    --radius-lg:  18px;
-    --shadow-sm:  0 1px 2px rgba(15,23,42,.05), 0 1px 3px rgba(15,23,42,.04);
-    --shadow-md:  0 4px 12px rgba(15,23,42,.08), 0 1px 3px rgba(15,23,42,.05);
-    --shadow-lg:  0 14px 32px rgba(15,23,42,.12), 0 4px 10px rgba(15,23,42,.06);
-    --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
-  }
+  <style>
+    /* ── CSS Variables — THORE PULSE white / royal-blue palette ──── */
+    :root {
+      --bg:          #F8FAFC;
+      --surface:     #FFFFFF;
+      --surface2:    #F8FAFC;
+      --surface3:    #FFFFFF;
+      --border:      #E2E8F0;
+      --border-mid:  #CBD5E1;
+      --primary:        #1E40AF;
+      --primary-strong: #1D4ED8;
+      --primary-soft:   #DBEAFE;
+      --red:         #DC2626;
+      --red-bg:      #FEF2F2;
+      --orange:      #D97706;
+      --orange-bg:   #FFFBEB;
+      --green:       #059669;
+      --green-bg:    #ECFDF5;
+      --gold:        #A9793B;
+      --text:        #0F172A;
+      --text-muted:  #64748B;
+      --text-dim:    #475569;
+      --radius:      16px;
+      --radius-sm:   9px;
+      --shadow:      0 20px 50px rgba(15,23,42,.14), 0 8px 24px rgba(15,23,42,.06);
+      --transition:  0.2s ease;
+    }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; background: var(--bg); }
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding-bottom: 60px;
-  }
+    body {
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
 
-  /* ── Sticky Header ──────────────────────────────────────────── */
-  .app-header {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(255,255,255,0.97);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border);
-    box-shadow: 0 2px 12px rgba(15,23,42,0.06);
-    padding: 0;
-    overflow: hidden;
-  }
-  .header-top {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 20px; gap: 14px; position: relative;
-  }
-  .logo-block { display: flex; align-items: center; gap: 10px; }
-  .logo-word {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.15rem; letter-spacing: 0.1em; line-height: 1;
-    color: var(--gold);
-  }
-  .logo-pulse-word {
-    font-weight: 700;
-    background: linear-gradient(90deg,#1E3A8A,#D4A853 55%,#DC2626);
-    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-    letter-spacing: 0.08em;
-  }
-  .logo-sub { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); margin-top: 1px; }
-  .status-pill {
-    display: flex; align-items: center; gap: 5px;
-    padding: 5px 11px; border-radius: 20px;
-    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.03em;
-    background: var(--green-bg); color: var(--green);
-    border: 1px solid #A7F3D0;
-    flex-shrink: 0;
-  }
-  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: statusPulse 2s infinite; }
-  @keyframes statusPulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
-  .pulse-line-svg { position: absolute; left: 0; right: 0; bottom: -1px; width: 100%; height: 12px; overflow: visible; pointer-events: none; }
-  .pulse-line-path { fill: none; stroke: #1E3A8A; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; opacity: 0.5; stroke-dasharray: 70 540; animation: pulseTravel 3.6s linear infinite; }
-  @keyframes pulseTravel { to { stroke-dashoffset: -610; } }
-  @media (prefers-reduced-motion: reduce) { .pulse-line-path, .status-dot { animation: none; } }
+    /* ── Loading Screen ──────────────────────────────────────── */
+    #loading-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      gap: 24px;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    #loading-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-  .header-badge {
-    background: var(--gold-dim);
-    border: 1px solid var(--border-gold);
-    color: var(--gold);
-    font-size: 0.68rem;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 20px;
-    letter-spacing: 0.04em;
-    flex-shrink: 0;
-  }
-  .header-right { display: flex; align-items: center; gap: 8px; }
+    .loading-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.1em;
+    }
+    .loading-logo .pulse-accent {
+      background: linear-gradient(90deg, #1E3A8A, #D4A853 55%, #DC2626);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .loading-bar {
+      width: 180px;
+      height: 2px;
+      background: var(--border-mid);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .loading-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--primary-strong));
+      animation: loadFill 1.8s ease forwards;
+    }
+    @keyframes loadFill { from { width: 0; } to { width: 100%; } }
+    .loading-sub { font-size: 0.8rem; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
 
-  /* ── Module Section Header ──────────────────────────────────── */
-  .module-head {
-    padding: 16px 20px 10px;
-    display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-  }
-  .module-kicker { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.14em; color: var(--blue); text-transform: uppercase; }
-  .module-head h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.3rem; color: var(--text); margin-top: 3px; font-weight: 400;
-  }
-  .module-sub { font-size: 0.74rem; color: var(--text-muted); margin-top: 3px; }
-  .module-status { font-size: 0.65rem; font-weight: 700; color: var(--green); display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-  .module-status span { width: 7px; height: 7px; border-radius: 50%; background: #10B981; box-shadow: 0 0 0 4px var(--green-bg); }
+    /* ── Page Layout ──────────────────────────────────────────── */
+    .page-wrapper { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
 
-  /* ── Prefill Banner ──────────────────────────────────────────── */
-  .prefill-banner {
-    display: none;
-    background: var(--th-bg);
-    border: 1px solid var(--border-gold);
-    border-left: 3px solid var(--gold);
-    color: var(--gold);
-    padding: 10px 16px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    margin: 16px 20px;
-    border-radius: var(--radius-sm);
-  }
-  .prefill-banner.show { display: block; }
+    /* ── Header ──────────────────────────────────────────────── */
+    .main-header {
+      position: relative;
+      top: 0;
+      position: sticky;
+      z-index: 100;
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 10px rgba(15,23,42,.06);
+    }
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0.9rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .header-brand img { height: 42px; width: auto; border-radius: 6px; }
+    .brand-text h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.28rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.1;
+      letter-spacing: 0.04em;
+    }
+    .brand-text h1 .pulse-accent {
+      background: linear-gradient(90deg, #1E3A8A, #D4A853 55%, #DC2626);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .brand-text p { font-size: 0.68rem; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
 
-  /* ── Container ───────────────────────────────────────────────── */
-  .container { max-width: 640px; margin: 0 auto; padding: 20px 16px; position: relative; z-index: 1; }
+    .header-right { display: flex; align-items: center; gap: 1.2rem; }
 
-  /* ── Section Card ────────────────────────────────────────────── */
-  .section-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px 18px;
-    margin-bottom: 14px;
-    box-shadow: var(--shadow-md);
-    animation: slideUp 0.35s ease both;
-  }
-  @keyframes slideUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    .countdown-box { text-align: right; }
+    .countdown-label { font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.07em; text-transform: uppercase; }
+    #timer { font-size: 0.85rem; font-weight: 700; color: var(--primary-strong); font-variant-numeric: tabular-nums; }
 
-  .section-label {
-    font-size: 0.65rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .dash-btn {
+      background: #FFFFFF;
+      border: 1px solid var(--border-mid);
+      color: var(--text-dim);
+      padding: 0.5rem 1.1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .dash-btn:hover { border-color: var(--primary-strong); color: var(--primary-strong); transform: translateY(-1px); }
 
-  /* ── Fields ──────────────────────────────────────────────────── */
-  .field { margin-bottom: 14px; }
-  .field label { display: block; font-size: 0.63rem; font-weight: 800; color: var(--text-muted); letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 6px; }
-  label .req { color: var(--gold); margin-left: 2px; }
+    /* Pulse-line animation — matches the THORE PULSE dashboard header */
+    .pulse-line-svg{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:12px;overflow:visible;pointer-events:none;z-index:1;}
+    .pulse-line-path{fill:none;stroke:#1E3A8A;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:0.5;stroke-dasharray:60 480;stroke-dashoffset:0;animation:pulseTravel 3.6s linear infinite;filter:drop-shadow(0 0 3px rgba(212,168,83,0.5));}
+    @keyframes pulseTravel{0%{stroke-dashoffset:540;stroke:#1E3A8A;}50%{stroke:#D4A853;}100%{stroke-dashoffset:-540;stroke:#DC2626;}}
+    @media(prefers-reduced-motion: reduce){.pulse-line-path{animation:none;}}
 
-  /* ── Mobile-first: inputs always 16px to prevent iOS zoom ── */
-  input[type="text"], input[type="tel"], input[type="date"], input[type="number"],
-  select, textarea {
-    width: 100%;
-    height: 38px;
-    padding: 0.5rem 1rem;
-    background: #FFFFFF;
-    border: 1.5px solid var(--border-mid);
-    border-radius: var(--radius-xs);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 16px;           /* CRITICAL: prevents iOS auto-zoom */
-    outline: none;
-    transition: var(--transition);
-    -webkit-appearance: none; appearance: none;
-  }
-  textarea { height: auto; }
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--blue);
-    background: #FFFFFF;
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.14);
-  }
-  input:hover, select:hover, textarea:hover { border-color: #93C5FD; }
-  input::placeholder, textarea::placeholder { color: #94A3B8; font-size: 0.85rem; }
-  input[readonly] { background: var(--surface2); color: var(--text-muted); cursor: default; border-color: var(--border); }
-  select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    padding-right: 32px;
-  }
-  select option { background: #FFFFFF; }
-  textarea { resize: vertical; min-height: 80px; padding: 0.7rem 1rem; }
+    /* ── Main Content ─────────────────────────────────────────── */
+    main { flex: 1; max-width: 900px; margin: 0 auto; width: 100%; padding: 2rem 1.5rem 4rem; }
 
-  /* Status colour coding — pill-style badge look on the select itself */
-  select.s-hot  { border-color: #FECACA; background-color: #FEF2F2; color: #DC2626; font-weight: 700; }
-  select.s-warm { border-color: #FDE68A; background-color: #FFFBEB; color: #D97706; font-weight: 700; }
-  select.s-cold { border-color: #BFDBFE; background-color: #EFF6FF; color: #2563EB; font-weight: 700; }
+    /* ── Form Container ───────────────────────────────────────── */
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
 
-  /* Phone validation */
-  input.phone-ok  { border-color: #A7F3D0 !important; background: #ECFDF5 !important; }
-  input.phone-bad { border-color: #FECACA !important; background: #FEF2F2 !important; }
+    .form-head {
+      background: linear-gradient(135deg, rgba(30,64,175,0.08) 0%, rgba(212,168,83,0.10) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .form-head::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% -20%, rgba(255,255,255,0.6) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .form-head-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.04em;
+      position: relative;
+    }
+    .form-head-sub {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      position: relative;
+    }
 
-  /* Grid helpers */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-body { padding: 2rem; }
 
-  .budget-row { display: flex; gap: 8px; align-items: flex-start; }
-  .budget-row input { flex: 1; min-width: 0; }
-  .budget-row select { width: 110px; flex-shrink: 0; }
+    /* ── Section Dividers ──────────────────────────────────────── */
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 1.8rem 0 1.2rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--primary-strong);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .section-title::before, .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-mid);
+    }
+    .section-title:first-child { margin-top: 0; }
 
-  /* ── Client Block ────────────────────────────────────────────── */
-  .client-block {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px 16px;
-    margin-bottom: 12px;
-    box-shadow: var(--shadow-sm);
-    animation: slideUp 0.28s ease both;
-  }
-  .client-head {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 14px;
-  }
-  .client-num {
-    display: flex; align-items: center; gap: 8px;
-    font-family: 'DM Serif Display', serif;
-    font-size: 0.9rem; font-weight: 400;
-    color: var(--gold);
-  }
-  .client-badge {
-    width: 24px; height: 24px;
-    background: var(--gold-dim);
-    border: 1px solid var(--border-gold);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.72rem; font-weight: 800; color: var(--gold);
-  }
-  .remove-btn {
-    background: #FFFFFF;
-    border: 1px solid #FECACA;
-    color: var(--red);
-    border-radius: var(--radius-xs);
-    padding: 4px 12px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: var(--transition);
-  }
-  .remove-btn:hover { background: var(--red-bg); border-color: var(--red); }
+    /* ── Grid Layouts ──────────────────────────────────────────── */
+    .form-grid { display: grid; gap: 1.2rem; }
+    .row-2 { grid-template-columns: 1fr 1fr; }
+    .row-3 { grid-template-columns: 1fr 1fr 1fr; }
+    @media (max-width: 600px) { .row-2, .row-3 { grid-template-columns: 1fr; } }
 
-  .sub-label {
-    font-size: 0.63rem;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin: 14px 0 8px;
-  }
+    /* ── Field Styles ──────────────────────────────────────────── */
+    .field { display: flex; flex-direction: column; gap: 0.45rem; }
+    .field label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+    .req { color: var(--primary-strong); margin-left: 2px; }
 
-  /* ── Add Client Button ──────────────────────────────────────── */
-  .add-client-btn {
-    width: 100%;
-    padding: 14px;
-    background: #FFFFFF;
-    border: 2px dashed var(--border-gold);
-    border-radius: var(--radius);
-    color: var(--gold);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    transition: var(--transition);
-    margin-bottom: 20px;
-    letter-spacing: 0.02em;
-  }
-  .add-client-btn:hover { background: var(--gold-dim); border-color: var(--gold); }
+    .input-wrap { position: relative; }
 
-  /* ── Review Panel ────────────────────────────────────────────── */
-  #reviewSection {
-    display: none;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px;
-    margin-bottom: 14px;
-    box-shadow: var(--shadow-sm);
-  }
-  #reviewSection.show { display: block; }
-  .review-title {
-    font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
-    letter-spacing: 0.08em; color: var(--text-dim);
-    margin-bottom: 12px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .review-card {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-xs);
-    padding: 10px 12px;
-    margin-bottom: 8px;
-  }
-  .review-card-name { font-weight: 700; font-size: 0.88rem; color: var(--gold); margin-bottom: 4px; }
-  .review-card-row { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; }
+    input[type="text"], input[type="tel"], input[type="date"],
+    input[type="time"], input[type="number"], select, textarea {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      background: #FFFFFF;
+      border: 1.5px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      -webkit-appearance: none;
+      appearance: none;
+      box-shadow: 0 1px 2px rgba(15,23,42,.05);
+    }
+    input:hover, select:hover, textarea:hover { border-color: #94A3B8; }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary-strong);
+      background: #FFFFFF;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.14);
+    }
+    input::placeholder, textarea::placeholder { color: #94A3B8; font-size: 0.88rem; }
+    input[readonly] {
+      background: var(--surface2);
+      color: var(--text-muted);
+      cursor: default;
+      border-color: var(--border);
+    }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+    select option { background: #FFFFFF; }
+    textarea { resize: vertical; min-height: 110px; }
 
-  /* ── Submit ──────────────────────────────────────────────────── */
-  .submit-btn {
-    width: 100%;
-    padding: 15px;
-    background: var(--gold);
-    border: none;
-    border-radius: var(--radius-sm);
-    color: #FFFFFF;
-    font-family: 'Inter', sans-serif;
-    font-weight: 800;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    box-shadow: 0 4px 14px rgba(30,64,175,0.22);
-  }
-  .submit-btn:hover:not(:disabled) { background: var(--gold-light); transform: translateY(-1px); box-shadow: 0 7px 18px rgba(30,64,175,0.25); }
-  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-  .spinner { width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+    /* ── Phone row (country code + number) ─────────────────────── */
+    .phone-row { display: flex; gap: 0.5rem; }
+    .phone-row select { flex: 0 0 110px; padding-left: 0.7rem; padding-right: 28px; }
+    .phone-row input { flex: 1; }
 
-  /* ── Success Banner ──────────────────────────────────────────── */
-  #successBanner {
-    display: none;
-    background: var(--surface);
-    border: 1px solid #A7F3D0;
-    border-radius: var(--radius);
-    padding: 2rem;
-    text-align: center;
-    margin-bottom: 14px;
-    box-shadow: var(--shadow-md);
-  }
-  #successBanner.show { display: block; animation: slideUp 0.4s ease; }
-  .success-icon { font-size: 3rem; margin-bottom: 12px; }
-  .success-title { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--green); margin-bottom: 8px; font-weight: 400; }
-  .success-sub { font-size: 0.88rem; color: var(--text-muted); }
-  .reset-btn {
-    margin-top: 16px;
-    padding: 10px 24px;
-    background: var(--green);
-    color: #FFFFFF;
-    border: none;
-    border-radius: var(--radius-sm);
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: 0.88rem;
-    cursor: pointer;
-    transition: var(--transition);
-  }
-  .reset-btn:hover { background: #047857; }
+    /* ── Budget row (amount + denomination) ─────────────────────── */
+    .budget-row { display: flex; gap: 0.5rem; }
+    .budget-row input { flex: 1; }
+    .budget-row select { flex: 0 0 110px; padding-left: 0.7rem; padding-right: 28px; }
 
-  /* ── Toast (Thore Pulse quick-toast pattern) ────────────────── */
-  #toast {
-    position: fixed; left: 50%; bottom: 28px;
-    transform: translateX(-50%) translateY(12px);
-    background: #0F172A;
-    color: #F8FAFC;
-    padding: 10px 22px;
-    border-radius: 9999px;
-    font-size: 0.85rem; font-weight: 600;
-    box-shadow: 0 12px 30px rgba(15,23,42,0.28);
-    transition: opacity 0.22s ease, transform 0.22s ease;
-    white-space: nowrap; max-width: 90vw; text-align: center;
-    pointer-events: none; z-index: 999;
-    opacity: 0;
-  }
-  #toast.show   { opacity: 1; transform: translateX(-50%) translateY(0); }
-  #toast.error  { background: var(--red); }
-  #toast.success{ background: var(--green); }
+    /* ── Autocomplete ───────────────────────────────────────────── */
+    .autocomplete-items {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0; right: 0;
+      z-index: 999;
+      max-height: 210px;
+      overflow-y: auto;
+      background: #FFFFFF;
+      border: 1.5px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow);
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-mid) transparent;
+    }
+    .autocomplete-items div {
+      padding: 0.7rem 1rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .autocomplete-items div:last-child { border-bottom: none; }
+    .autocomplete-items div:hover, .autocomplete-active {
+      background: var(--primary-soft);
+      color: var(--primary-strong);
+    }
+    .autocomplete-items strong { color: var(--primary-strong); }
 
-  /* Validation */
-  input.invalid, select.invalid, textarea.invalid { border-color: var(--red) !important; box-shadow: 0 0 0 3px var(--red-bg) !important; }
-  .field-err { font-size: 0.72rem; color: var(--red); margin-top: 4px; display: none; }
-  .field-err.show { display: block; }
+    /* ── Checkboxes ─────────────────────────────────────────────── */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+      gap: 0.7rem;
+    }
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.7rem 0.9rem;
+      background: #FFFFFF;
+      border: 1.5px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      user-select: none;
+    }
+    .checkbox-item:hover { border-color: var(--primary-strong); background: var(--surface2); }
+    .checkbox-item input[type="checkbox"] {
+      width: 18px; height: 18px;
+      appearance: none;
+      border: 2px solid var(--border-mid);
+      border-radius: 4px;
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: var(--transition);
+    }
+    .checkbox-item input[type="checkbox"]:checked {
+      background: var(--primary-strong);
+      border-color: var(--primary-strong);
+    }
+    .checkbox-item input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .checkbox-item label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: none;
+      letter-spacing: normal;
+      cursor: pointer;
+      color: var(--text-dim);
+    }
+    .checkbox-item:has(input:checked) { border-color: var(--primary-strong); background: var(--primary-soft); }
+    .checkbox-item:has(input:checked) label { color: var(--primary-strong); }
 
-  /* ── Responsive ───────────────────────────────────────────── */
-  @media (max-width: 640px) {
-    .header-top { padding: 8px 14px; }
-    .logo-word { font-size: 1rem; }
-    .logo-sub { display: none; }
-    .header-badge { font-size: 0.6rem; padding: 3px 9px; }
-    .module-head { padding: 12px 14px 8px; }
-    .module-head h1 { font-size: 1.1rem; }
+    /* ── Buttons ────────────────────────────────────────────────── */
+    .btn-group { display: flex; gap: 0.9rem; margin-top: 1.8rem; }
+    .btn {
+      flex: 1;
+      padding: 0.95rem 1.5rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn:focus-visible { outline: 3px solid rgba(37,99,235,.22); outline-offset: 2px; }
+    .btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+    .btn-primary {
+      background: var(--primary-strong);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(30,64,175,.2);
+    }
+    .btn-primary:hover { background: var(--primary); transform: translateY(-2px); box-shadow: 0 7px 20px rgba(30,64,175,.28); }
+    .btn-secondary {
+      background: #FFFFFF;
+      border: 1.5px solid var(--border-mid);
+      color: var(--text-muted);
+    }
+    .btn-secondary:hover { border-color: var(--text-muted); color: var(--text); }
 
-    .container { padding: 14px 12px; }
+    /* ── Validation Error ───────────────────────────────────────── */
+    input.invalid, select.invalid, textarea.invalid {
+      border-color: var(--red) !important;
+      box-shadow: 0 0 0 3px rgba(220,38,38,0.12) !important;
+    }
 
-    .section-card { padding: 16px 14px; margin-bottom: 10px; border-radius: 12px; }
-    .section-label { font-size: 0.6rem; margin-bottom: 12px; }
+    /* ── Toast / Popup ──────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      z-index: 9999;
+      background: #0F172A;
+      border: 1px solid var(--border-mid);
+      color: #F8FAFC;
+      padding: 0.85rem 1.5rem;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 12px 32px rgba(15,23,42,.24);
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      white-space: nowrap;
+      max-width: 90vw;
+      text-align: center;
+      pointer-events: none;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+    #toast.success { background: var(--green-bg); border-color: #A7F3D0; color: var(--green); }
+    #toast.error   { background: var(--red-bg); border-color: #FECACA; color: var(--red); }
 
-    .field { margin-bottom: 11px; }
-    .field label { font-size: 0.6rem; margin-bottom: 5px; }
+    /* ── CRM update modal ─────────────────────────────────────────── */
+    #crm-modal-backdrop {
+      display: none;
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(15,23,42,.48);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+      padding: 1.2rem;
+    }
+    #crm-modal-backdrop.show { display: flex; }
+    .crm-modal {
+      background: #FFFFFF;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      max-width: 420px;
+      width: 100%;
+      padding: 2rem 1.8rem 1.6rem;
+      text-align: center;
+    }
+    .crm-modal-icon { font-size: 2.4rem; margin-bottom: 0.6rem; }
+    .crm-modal-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.22rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    .crm-modal.is-error .crm-modal-title { color: var(--red); }
+    .crm-modal-msg { font-size: 0.92rem; color: var(--text-dim); line-height: 1.55; margin-bottom: 1.4rem; }
+    .crm-modal-detail { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin: -0.9rem 0 1.2rem; }
 
-    .grid-2 { grid-template-columns: 1fr; gap: 11px; }
+    /* ── Dual submission status rows ──────────────────────────────── */
+    .status-dashboard { display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 1.2rem; }
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.8rem 0.9rem;
+      background: var(--surface2);
+      border: 1.5px solid var(--border-mid);
+      border-radius: var(--radius-sm);
+      text-align: left;
+    }
+    .status-row-icon { font-size: 1.4rem; flex-shrink: 0; width: 1.6rem; text-align: center; }
+    .status-row-text { flex: 1; }
+    .status-row-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      margin-bottom: 0.15rem;
+    }
+    .status-row-value { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+    .status-row.is-success .status-row-value { color: var(--green); }
+    .status-row.is-error .status-row-value { color: var(--red); }
+    .status-row.is-warning .status-row-value { color: var(--orange); }
+    .crm-modal-btn {
+      width: 100%;
+      padding: 0.8rem 1.2rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: var(--primary-strong);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .crm-modal-btn:hover { background: var(--primary); }
+    .crm-modal.is-error .crm-modal-btn { background: var(--red); }
 
-    .budget-row { gap: 6px; }
-    .budget-row select { width: 95px; }
+    /* ── Status Gate ────────────────────────────────────────────── */
+    #status-gate {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      gap: 1.5rem;
+      text-align: center;
+      padding: 2rem;
+    }
+    #status-gate.visible { display: flex; }
+    .gate-icon { font-size: 3.5rem; }
+    .gate-title { font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: var(--primary); }
+    .gate-msg { color: var(--text-muted); max-width: 420px; font-size: 0.95rem; }
+    .gate-timer { font-size: 1.2rem; font-weight: 700; color: var(--red); font-variant-numeric: tabular-nums; }
 
-    .client-block { padding: 14px 12px; margin-bottom: 10px; border-radius: 12px; }
-    .client-num { font-size: 0.82rem; }
-    .client-badge { width: 20px; height: 20px; font-size: 0.65rem; }
-    .remove-btn { padding: 3px 10px; font-size: 0.7rem; }
-    .sub-label { font-size: 0.6rem; margin: 11px 0 7px; }
+    /* ── Footer ──────────────────────────────────────────────────── */
+    footer {
+      background: #FFFFFF;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 1.5rem 2rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    footer a { color: var(--primary-strong); text-decoration: none; }
+    footer a:hover { color: var(--primary); }
 
-    .add-client-btn { padding: 12px; font-size: 0.82rem; border-radius: 10px; margin-bottom: 14px; }
+    /* ── Flatpickr override ────────────────────────────────────── */
+    .flatpickr-calendar {
+      background: #FFFFFF !important;
+      border: 1px solid var(--border) !important;
+      color: var(--text) !important;
+      box-shadow: var(--shadow) !important;
+    }
+    .flatpickr-calendar .flatpickr-months,
+    .flatpickr-calendar .flatpickr-weekdays { background: #FFFFFF !important; }
+    .flatpickr-calendar .flatpickr-weekday,
+    .flatpickr-calendar .flatpickr-current-month,
+    .flatpickr-calendar .flatpickr-month { color: var(--text) !important; }
+    .flatpickr-day { color: var(--text) !important; border-radius: 8px !important; }
+    .flatpickr-day:hover { background: var(--primary-soft) !important; border-color: var(--primary-soft) !important; }
+    .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
+      background: var(--primary-strong) !important;
+      border-color: var(--primary-strong) !important;
+      color: #fff !important;
+    }
+    .flatpickr-time input { background: transparent !important; color: var(--text) !important; }
+    .flatpickr-time .flatpickr-am-pm { color: var(--text-dim) !important; }
+    .numInputWrapper { background: transparent !important; }
+    .numInputWrapper span.arrowUp:after { border-bottom-color: var(--text-muted) !important; }
+    .numInputWrapper span.arrowDown:after { border-top-color: var(--text-muted) !important; }
 
-    #reviewSection { padding: 14px; }
-    .review-title { font-size: 0.68rem; }
-    .review-card { padding: 9px 11px; }
-    .review-card-name { font-size: 0.82rem; }
-    .review-card-row { font-size: 0.7rem; }
+    /* ── Responsive ─────────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .header-inner { padding: 0.75rem 1rem; }
+      .brand-text h1 { font-size: 1.05rem; }
+      main { padding: 1.2rem 0.75rem 3rem; }
+      .form-body { padding: 1.4rem 1rem; }
+      .form-head { padding: 2rem 1rem; }
+      .form-head-title { font-size: 1.4rem; }
+      .btn-group { flex-direction: column; }
+      input, select, textarea, button, .btn { min-height: 44px; }
+    }
 
-    .submit-btn { padding: 14px; font-size: 0.9rem; letter-spacing: 0.02em; }
-
-    #successBanner { padding: 1.5rem 1rem; }
-  }
-
-  /* ── Searchable Project Combobox ─────────────────────────────── */
-  .combo-wrap { position: relative; }
-  .combo-input {
-    width: 100%; height: 38px; padding: 0.5rem 1rem;
-    background: #FFFFFF; border: 1.5px solid var(--border-mid);
-    border-radius: var(--radius-xs); color: var(--text);
-    font-family: 'Inter', sans-serif; font-size: 16px; outline: none;
-    transition: var(--transition);
-  }
-  .combo-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.14); }
-  .combo-input:hover { border-color: #93C5FD; }
-  .combo-list {
-    display: none;
-    position: absolute; left: 0; right: 0; top: calc(100% + 4px);
-    background: #FFFFFF; border: 1.5px solid var(--border-mid);
-    border-radius: var(--radius-sm); max-height: 220px; overflow-y: auto;
-    z-index: 50; box-shadow: var(--shadow-lg);
-  }
-  .combo-list.show { display: block; }
-  .combo-opt {
-    padding: 10px 14px; font-size: 0.88rem; cursor: pointer;
-    border-bottom: 1px solid var(--border); color: var(--text-sub);
-  }
-  .combo-opt:last-child { border-bottom: none; }
-  .combo-opt:hover, .combo-opt.active { background: var(--th-bg); color: var(--gold); }
-  .combo-opt.other { color: var(--gold); font-weight: 700; }
-  .combo-empty { padding: 10px 14px; font-size: 0.82rem; color: var(--text-muted); }
-
-</style>
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    }
+  </style>
 </head>
 <body>
 
-<header class="app-header">
-  <div class="header-top">
-    <div class="logo-block">
-      <div>
-        <div class="logo-word">THORE <span class="logo-pulse-word">PULSE</span></div>
-        <div class="logo-sub" id="logoSub">FN Clients · Final Stage Submission</div>
-      </div>
-    </div>
-    <div class="header-right">
-      <div class="status-pill"><div class="status-dot"></div> Online</div>
-      <div class="header-badge">Clients Form</div>
-    </div>
-  </div>
-  <svg class="pulse-line-svg" viewBox="0 0 600 24" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-    <path class="pulse-line-path" d="M0,12 L140,12 L158,12 L168,-4 L180,28 L192,2 L204,12 L222,12 L600,12" />
-  </svg>
-</header>
-
-<div class="module-head">
-  <div>
-    <div class="module-kicker">Client Onboarding</div>
-    <h1 id="moduleTitle">FN Clients Management</h1>
-    <div class="module-sub">Final-stage client submission for the sales team</div>
-  </div>
-  <div class="module-status"><span></span> Live Form</div>
+<!-- Loading Screen -->
+<div id="loading-screen">
+  <div class="loading-logo">THORE <span class="pulse-accent">PULSE</span></div>
+  <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+  <div class="loading-sub">Loading Friday Lineup Form…</div>
 </div>
 
-<div class="prefill-banner" id="prefillBanner">
-  ⚡ Pre-filled from Visit Dashboard — please review and complete the form before submitting.
-</div>
+<div class="page-wrapper">
 
-<div class="container">
-  <!-- Success Banner -->
-  <div id="successBanner">
-    <div class="success-icon">✅</div>
-    <div class="success-title">Submitted Successfully!</div>
-    <div class="success-sub" id="successSub">Your entries have been recorded.</div>
-    <button class="reset-btn" onclick="resetForm()">Submit Another Batch</button>
-  </div>
-
-  <!-- Client Type (NEW) -->
-  <div class="section-card" id="typeSection">
-    <div class="section-label">Client Type</div>
-    <div class="field">
-      <label>Choose Client Type <span class="req">*</span></label>
-      <select id="clientType" onchange="onClientTypeChange(this.value)">
-        <option value="">— Choose Client Type —</option>
-        <option value="fn">Update FN Clients</option>
-        <option value="token">Update Token FN Clients</option>
-      </select>
-      <div class="field-err" id="err-clientType">Please choose a client type</div>
-    </div>
-  </div>
-
-  <!-- Salesperson Section -->
-  <div class="section-card" id="spSection" style="display:none;">
-    <div class="section-label">Sales Person Info</div>
-    <div class="field">
-      <label>Team Leader Name <span class="req">*</span></label>
-      <select id="tlSelect" onchange="onTLChange(this.value)">
-        <option value="">⏳ Loading…</option>
-      </select>
-      <div class="field-err" id="err-tl">Please select a Team Leader</div>
-    </div>
-    <div class="grid-2">
-      <div class="field">
-        <label>Cluster</label>
-        <input type="text" id="cluster" readonly placeholder="Auto-filled">
+  <!-- Header -->
+  <header class="main-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <img src="https://i.postimg.cc/g25bQs8t/image.png" alt="THORE Logo">
+        <div class="brand-text">
+          <h1>THORE <span class="pulse-accent">PULSE</span></h1>
+          <p>Business Performance &amp; Intelligence System</p>
+        </div>
       </div>
-      <div class="field">
-        <label>PNL Head</label>
-        <input type="text" id="pnlHead" readonly placeholder="Auto-filled">
+      <div class="header-right">
+        <div class="countdown-box">
+          <div class="countdown-label">Closes at 9:00 PM</div>
+          <div id="timer">⏳ --</div>
+        </div>
+        <button class="dash-btn" onclick="openDashboard()">Dashboard ↗</button>
       </div>
     </div>
-  </div>
+    <svg class="pulse-line-svg" viewBox="0 0 600 20" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path class="pulse-line-path" d="M0,10 L140,10 L158,10 L168,-4 L180,24 L192,0 L204,10 L222,10 L600,10" />
+    </svg>
+  </header>
 
-  <!-- Client Entries -->
-  <div class="section-card" id="clientsSection" style="display:none;">
-    <div class="section-label">Client Entries</div>
-    <div id="clientsContainer"></div>
-    <button class="add-client-btn" onclick="addClient()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Add Another Client
-    </button>
-  </div>
+  <!-- Main -->
+  <main>
 
-  <!-- Review Panel -->
-  <div id="reviewSection">
-    <div class="review-title">Review Before Submit (<span id="reviewCount">0</span> clients)<span id="reviewDest" style="margin-left:8px;font-weight:600;opacity:.75"></span></div>
-    <div id="reviewCards"></div>
-  </div>
+    <!-- Status Gate (closed / error state) -->
+    <div id="status-gate">
+      <div class="gate-icon" id="gate-icon">🔒</div>
+      <div class="gate-title" id="gate-title">Form Closed</div>
+      <div class="gate-msg"  id="gate-msg">The Friday Lineup Form is currently closed.</div>
+      <div class="gate-timer" id="gate-timer"></div>
+    </div>
 
-  <!-- Submit Button -->
-  <button class="submit-btn" id="submitBtn" style="display:none;" onclick="submitAll()">
-    <div class="spinner" id="spinner"></div>
-    <span id="submitLabel">Submit All Entries</span>
-  </button>
+    <!-- The actual form -->
+    <div id="form-wrapper">
+      <div class="form-card">
+        <div class="form-head">
+          <div class="form-head-title">Friday Lineup Entry</div>
+          <div class="form-head-sub">Complete your weekly sales visit planning</div>
+        </div>
 
-</div><!-- .container -->
+        <div class="form-body">
+          <form id="form" autocomplete="off" novalidate onsubmit="event.preventDefault(); submitForm();">
+
+            <div class="section-title">Sales Executive</div>
+            <div class="form-grid row-2">
+              <div class="field">
+                <label for="employee">SE Name <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <input type="text" id="employee" placeholder="Start typing name…" autocomplete="off">
+                </div>
+              </div>
+              <div class="field">
+                <label for="cluster">Cluster</label>
+                <input type="text" id="cluster" placeholder="Auto-filled" readonly>
+              </div>
+            </div>
+            <div class="form-grid" style="margin-top:1.2rem">
+              <div class="field">
+                <label for="teamLead">Team Leader Name</label>
+                <input type="text" id="teamLead" placeholder="Auto-filled based on SE" readonly>
+              </div>
+            </div>
+
+            <div class="section-title">Customer Details</div>
+            <div class="form-grid row-2">
+              <div class="field">
+                <label for="cname">Customer Name <span class="req">*</span></label>
+                <input type="text" id="cname" placeholder="Full customer name" autocomplete="off">
+              </div>
+              <div class="field">
+                <label for="phone">Phone Number <span class="req">*</span></label>
+                <div class="phone-row">
+                  <select id="phoneCountryCode" aria-label="Country code">
+                    <option value="91" selected>🇮🇳 +91</option>
+                    <optgroup label="Middle East / Gulf">
+                      <option value="971">🇦🇪 +971</option>
+                      <option value="966">🇸🇦 +966</option>
+                      <option value="974">🇶🇦 +974</option>
+                      <option value="965">🇰🇼 +965</option>
+                      <option value="968">🇴🇲 +968</option>
+                      <option value="973">🇧🇭 +973</option>
+                    </optgroup>
+                    <optgroup label="Americas">
+                      <option value="1">🇺🇸 +1</option>
+                    </optgroup>
+                    <optgroup label="Europe & UK">
+                      <option value="44">🇬🇧 +44</option>
+                      <option value="49">🇩🇪 +49</option>
+                      <option value="33">🇫🇷 +33</option>
+                      <option value="39">🇮🇹 +39</option>
+                      <option value="34">🇪🇸 +34</option>
+                      <option value="31">🇳🇱 +31</option>
+                    </optgroup>
+                    <optgroup label="Asia-Pacific">
+                      <option value="65">🇸🇬 +65</option>
+                      <option value="81">🇯🇵 +81</option>
+                      <option value="86">🇨🇳 +86</option>
+                      <option value="852">🇭🇰 +852</option>
+                      <option value="61">🇦🇺 +61</option>
+                    </optgroup>
+                  </select>
+                  <input type="text" id="phone" placeholder="10-digit mobile" inputmode="numeric" maxlength="10">
+                </div>
+              </div>
+            </div>
+
+            <div class="section-title">Visit Details</div>
+            <div class="form-grid row-2">
+              <div class="field">
+                <label for="project">Project Name <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <input type="text" id="project" placeholder="Type to search projects…" autocomplete="off">
+                </div>
+              </div>
+              <div class="field">
+                <label for="developer">Developer Name <span class="req">*</span></label>
+                <div class="input-wrap">
+                  <input type="text" id="developer" placeholder="Auto-fills for known projects…" autocomplete="off">
+                </div>
+              </div>
+            </div>
+            <div class="form-grid row-2" style="margin-top:1.2rem">
+              <div class="field">
+                <label for="visitDate">Visit Day <span class="req">*</span></label>
+                <select id="visitDate" aria-label="Visit day">
+                  <option value="" disabled selected>Select Saturday or Sunday</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="visitTime">Visit Time <span class="req">*</span></label>
+                <input type="text" id="visitTime" placeholder="Click to pick time">
+              </div>
+            </div>
+
+            <div class="section-title">Property Requirements</div>
+            <div class="checkbox-grid">
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="1 BHK"><label>1 BHK</label></label>
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="2 BHK"><label>2 BHK</label></label>
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="3 BHK"><label>3 BHK</label></label>
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="4 BHK"><label>4 BHK</label></label>
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="Simplex"><label>Simplex</label></label>
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="Duplex"><label>Duplex</label></label>
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="Commercial Property"><label>Commercial</label></label>
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="Plot"><label>Plot</label></label>
+              <label class="checkbox-item"><input type="checkbox" name="requirement" value="Villa"><label>Villa</label></label>
+            </div>
+
+            <div class="section-title">Budget</div>
+            <div class="form-grid row-2">
+              <div class="field">
+                <label for="budgetValue">Budget Amount <span class="req">*</span></label>
+                <div class="budget-row">
+                  <input type="number" id="budgetValue" placeholder="e.g. 80" min="1" max="99.99" step="0.01" inputmode="decimal">
+                  <select id="budgetDenomination" aria-label="Budget denomination">
+                    <option value="" disabled selected>Unit</option>
+                    <option value="Lakhs">Lakhs</option>
+                    <option value="Cr">Crore</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-title">Assessment</div>
+            <div class="form-grid row-2">
+              <div class="field">
+                <label for="closure">Closure Chances <span class="req">*</span></label>
+                <select id="closure">
+                  <option value="" disabled selected>Select rating</option>
+                  <option>Excellent</option>
+                  <option>Very good</option>
+                  <option>Good</option>
+                  <option>Fair</option>
+                  <option>Poor</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="visitType">Type <span class="req">*</span></label>
+                <select id="visitType">
+                  <option value="" disabled selected>Select type</option>
+                  <option>Visit</option>
+                  <option>VC</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="section-title">Remarks</div>
+            <div class="field">
+              <label for="remark">Remarks <span class="req">*</span></label>
+              <textarea id="remark" placeholder="Preferred locality, specific requirements, timeline…"></textarea>
+            </div>
+
+            <div class="btn-group">
+              <button type="submit" class="btn btn-primary">Submit Entry</button>
+              <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
+            </div>
+
+          </form>
+        </div><!-- .form-body -->
+      </div><!-- .form-card -->
+    </div><!-- #form-wrapper -->
+
+  </main>
+
+  <footer>
+    <p>Copyright © <span id="currentYear"></span> The House of Real Estate, Pune. All rights reserved.</p>
+    <p style="margin-top:4px">Engineered by <a href="https://narendraspatil.github.io/NarenP-website/" target="_blank">Operations Department, THORE</a></p>
+  </footer>
+
+</div><!-- .page-wrapper -->
 
 <div id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<!-- Dual submission status modal -->
+<div id="crm-modal-backdrop">
+  <div class="crm-modal" id="crm-modal">
+    <div class="crm-modal-title" id="crm-modal-title">Submission Status</div>
+
+    <div class="status-dashboard">
+      <div class="status-row" id="db-status-row">
+        <span class="status-row-icon" id="db-status-icon">⏳</span>
+        <div class="status-row-text">
+          <div class="status-row-label">Friday Lineup Entry</div>
+          <div class="status-row-value" id="db-status-value">Submitting…</div>
+        </div>
+      </div>
+      <div class="status-row" id="crm-status-row">
+        <span class="status-row-icon" id="crm-status-icon">⏳</span>
+        <div class="status-row-text">
+          <div class="status-row-label">CRM Lead Status Update</div>
+          <div class="status-row-value" id="crm-status-value">Updating…</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="crm-modal-msg" id="crm-modal-msg"></div>
+    <div class="crm-modal-detail" id="crm-modal-detail"></div>
+    <button class="crm-modal-btn" onclick="closeCrmModal()">Got it</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ── CONFIG ────────────────────────────────────────────────────
-// FN Clients form still reads master data from AND submits to
-// the Friday Lineup GAS (single source of truth) — UNCHANGED.
-// The Friday Lineup GAS will forward a copy to the old FN Clients
-// GAS automatically on the server side, exactly as before.
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwL4V1nCL4M-BAMbHX0Wupfa_2mxaJXrb_p9japd1ZdAkesb4BUumSJBFGH54js7pe3/exec';
+  // ── CONFIG ────────────────────────────────────────────────────
+  const SUPABASE_URL      = 'https://ivetvywbdewkkqbazjxu.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2ZXR2eXdiZGV3a2txYmF6anh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NzQ2NzcsImV4cCI6MjEwNDE1MDY3N30.1lFi27ywZ1iVAU7NykMKY_Lie3krA58rBFXICXZstgo';
 
-// NEW: parallel, best-effort write into Supabase. This never blocks,
-// slows down, or can fail the GAS submission above — it's a shadow
-// copy only, per the migration plan (GAS stays authoritative for FN
-// Clients until you decide otherwise).
-const SUPABASE_URL      = 'https://ivetvywbdewkkqbazjxu.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2ZXR2eXdiZGV3a2txYmF6anh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NzQ2NzcsImV4cCI6MjEwNDE1MDY3N30.1lFi27ywZ1iVAU7NykMKY_Lie3krA58rBFXICXZstgo';
-
-let supabaseClient = null;
-if (window.supabase && typeof window.supabase.createClient === 'function') {
-  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: { persistSession: false }
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: false } // this page never logs a user in
   });
-} else {
-  console.error('Supabase library failed to load — check the CDN <script> tag and network access. FN Clients form will still work via GAS; only master-data loading and the shadow write are affected.');
-}
+  const ACCESS_JSON_URL = 'https://raw.githubusercontent.com/VisionInData/TrueorFalse/main/Check/access.json';
+  const DASHBOARD_URL = 'dashboard.html';
 
-// ── STATE ─────────────────────────────────────────────────────
-let empData     = [];
-let projData    = [];
-let clientCount = 0;
-let prefillData = {};
+  // ── LEADRAT CRM CONFIG ──────────────────────────────────────────
+  // Set these to your deployed Leadrat lead-updater Web App (the
+  // leadrat-lead-update-test project's Code.gs) and its shared secret.
+  const LEADRAT_GAS_URL = 'https://script.google.com/macros/s/AKfycbz-vsPECs2MvOW8KzbEvHGNzy_L0SpPUnG7XhoyTrIIncrCNOwEHzE8pOosh60LSz1Qqg/exec';
+  const LEADRAT_APP_SECRET = 'hYwpG8NtI9SkegrQ';
 
-// NEW: 'fn' (existing GAS + Supabase shadow-copy flow) or 'token'
-// (Token FN clients — saved straight into Supabase table fn_token_clients).
-let CLIENT_TYPE = '';
-const TOKEN_TABLE = 'fn_token_clients';
+  // Maps this form's "Type" field to a status/sub-status pair the
+  // Leadrat backend accepts. ASSUMPTION, not confirmed against a CRM
+  // spec: "Visit" -> Site Visit Scheduled / First Visit (always "First
+  // Visit", since this form doesn't distinguish first visit vs revisit);
+  // "VC" -> Meeting Scheduled / VC/Online. Adjust here if that's wrong —
+  // nothing else needs to change.
+  const VISIT_TYPE_TO_LEADRAT_STATUS = {
+    'Visit': { statusKey: 'site_visit_scheduled', subStatusKey: 'first_visit' },
+    'VC':    { statusKey: 'meeting_scheduled',    subStatusKey: 'vc_online' }
+  };
 
-// ── BOOT ──────────────────────────────────────────────────────
-window.onload = function () {
-  // Read prefill params from URL
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('prefill') === '1') {
-    prefillData = {
-      customerName:      params.get('customerName')  || '',
-      contactNumber:     params.get('contactNumber') || '',
-      salesExec:         params.get('salesExec')     || '',
-      teamLead:          params.get('teamLead')      || '',
-      cluster:           params.get('cluster')       || '',
-      projectName:       params.get('projectName')   || '',
-      developerName:     params.get('developerName') || '',
-      visitDate:         params.get('visitDate')     || '',
-      requirement:       params.get('requirement')   || '',
-      convertedFromVisit: params.get('convertedFromVisit') || ''
-    };
-    document.getElementById('prefillBanner').classList.add('show');
+  // ── STATE ─────────────────────────────────────────────────────
+  let masterData = {};
+  let projectMap = {};
+  let isSubmitting = false; // guards against double-clicks / double submits
+
+  // ── VISIT DAY (Saturday / Sunday only) ─────────────────────────
+  // The form opens only on Friday, so "this weekend" = the next Saturday
+  // and the Sunday after it. The SE picks a day; the actual calendar date
+  // is computed here and stored as YYYY-MM-DD (same format the rest of the
+  // code — notes, CRM scheduledDate — already expects).
+  function pad2_(n) { return String(n).padStart(2, '0'); }
+
+  function toYmdLocal_(d) {
+    // Local-time formatting (toISOString would shift the date via UTC).
+    return d.getFullYear() + '-' + pad2_(d.getMonth() + 1) + '-' + pad2_(d.getDate());
   }
-  // Prefilled links come from "convert to FN" on the dashboard -> always FN Clients.
-  // ?clientType=token (or =fn) lets a link open the form already on the right type.
-  const ctParam = (params.get('clientType') || '').toLowerCase();
-  if (params.get('prefill') === '1') setClientType('fn');
-  else if (ctParam === 'token' || ctParam === 'fn') setClientType(ctParam);
-  loadMasterData();
-};
 
-// ── CLIENT TYPE (NEW) ─────────────────────────────────────────
-function setClientType(v) {
-  document.getElementById('clientType').value = v;
-  onClientTypeChange(v);
-}
-function onClientTypeChange(v) {
-  CLIENT_TYPE = v || '';
-  mark('clientType', true, 'err-clientType');
-  updateTypeUI();
-  if (!CLIENT_TYPE) {
-    // Nothing chosen: hide the rest of the form again and drop any entered clients.
-    document.getElementById('tlSelect').value = '';
-    onTLChange('');
+  function getWeekendDates_() {
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const daysToSat = ((6 - today.getDay()) + 7) % 7 || 7; // Friday -> 1
+    const sat = new Date(today); sat.setDate(today.getDate() + daysToSat);
+    const sun = new Date(sat);   sun.setDate(sat.getDate() + 1);
+    const fmt = d => d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+    return [
+      { value: toYmdLocal_(sat), label: 'Saturday — ' + fmt(sat) },
+      { value: toYmdLocal_(sun), label: 'Sunday — '   + fmt(sun) }
+    ];
   }
-}
-function updateTypeUI() {
-  const isToken = CLIENT_TYPE === 'token';
-  document.getElementById('spSection').style.display = CLIENT_TYPE ? 'block' : 'none';
-  document.getElementById('moduleTitle').textContent = isToken ? 'Token FN Clients Management' : 'FN Clients Management';
-  document.getElementById('logoSub').textContent     = isToken ? 'Token FN Clients · Final Stage Submission' : 'FN Clients · Final Stage Submission';
-  document.getElementById('reviewDest').textContent  = CLIENT_TYPE ? '→ ' + (isToken ? 'Token FN Clients' : 'FN Clients') : '';
-}
 
-// ── MASTER DATA ───────────────────────────────────────────────
-// Reads employee/project lists straight from Supabase (fast, no JSONP
-// round trip) — profiles = employees with a Supabase Auth login
-// (Team Lead and above), employee_master = everyone else (Sales
-// Executives etc. with no login). Both are needed for a complete list.
-// NOTE: this read-only lookup is independent of the GAS submission
-// path below — GAS keeps handling the actual FN Client write.
-async function loadMasterData() {
-  const sel = document.getElementById('tlSelect');
-  sel.innerHTML = '<option value="">⏳ Loading…</option>';
-
-  if (!supabaseClient) { sel.innerHTML = '<option value="">❌ Load failed — refresh</option>'; return; }
-
-  try {
-    const [{ data: profiles, error: profErr }, { data: staff, error: staffErr }, { data: projects, error: projErr }] = await Promise.all([
-      supabaseClient.from('profiles').select('full_name, team_lead, cluster, pnl_head'),
-      supabaseClient.from('employee_master').select('full_name, team_lead, cluster, pnl_head'),
-      supabaseClient.from('project_master').select('project_name, developer_name')
-    ]);
-    if (profErr || staffErr || projErr) { sel.innerHTML = '<option value="">❌ Load failed — refresh</option>'; return; }
-
-    const allEmployees = [...(profiles || []), ...(staff || [])];
-    empData  = allEmployees.map(e => ({ name: e.full_name, teamLead: e.team_lead, cluster: e.cluster, pnlHead: e.pnl_head }));
-
-    // Map database column names (snake_case) to JavaScript properties (camelCase)
-    projData = (projects || []).map(p => ({ 
-      projectName: p.project_name, 
-      developerName: p.developer_name 
-    }));
-
-    populateTLDropdown();
-
-    // Apply prefill AFTER data loads
-    if (prefillData.teamLead) {
-      sel.value = prefillData.teamLead;
-      onTLChange(prefillData.teamLead, true);
-    }
-  } catch (err) {
-    sel.innerHTML = '<option value="">❌ Network error</option>';
+  function populateVisitDayOptions() {
+    const sel = document.getElementById('visitDate');
+    getWeekendDates_().forEach(opt => {
+      const o = document.createElement('option');
+      o.value = opt.value;
+      o.textContent = opt.label;
+      sel.appendChild(o);
+    });
   }
-}
 
-function populateTLDropdown() {
-  const sel = document.getElementById('tlSelect');
-  const tls = [...new Set(empData.map(e => e.teamLead))].filter(Boolean).sort();
-  sel.innerHTML = '<option value="">— Select Team Leader —</option>';
-  tls.forEach(tl => { const o = document.createElement('option'); o.value = o.textContent = tl; sel.appendChild(o); });
-}
-
-function onTLChange(tl, isPrefill) {
-  const emp = empData.find(e => e.teamLead === tl);
-  document.getElementById('cluster').value = emp ? emp.cluster : '';
-  document.getElementById('pnlHead').value = emp ? (emp.pnlHead || '') : '';
-
-  // Reset clients
-  document.getElementById('clientsContainer').innerHTML = '';
-  clientCount = 0;
-
-  if (tl) {
-    document.getElementById('clientsSection').style.display = 'block';
-    document.getElementById('submitBtn').style.display = 'flex';
-    addClient(isPrefill ? prefillData : null);
-  } else {
-    document.getElementById('clientsSection').style.display = 'none';
-    document.getElementById('submitBtn').style.display = 'none';
-  }
-  updateReview();
-}
-
-// ── ADD CLIENT BLOCK ──────────────────────────────────────────
-function addClient(prefill) {
-  clientCount++;
-  const id = clientCount;
-  const pf = prefill || {};
-
-  // SE options filtered by TL
-  const currentTL = document.getElementById('tlSelect').value;
-  let seOpts = '<option value="">Select Sales Executive</option>';
-  empData.filter(e => e.teamLead === currentTL).forEach(e => {
-    const sel = pf.salesExec === e.name ? ' selected' : '';
-    seOpts += `<option value="${esc(e.name)}"${sel}>${esc(e.name)}</option>`;
+  // ── BOOT ──────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    populateVisitDayOptions();
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+    startCountdown();
+    scheduleAutoClose();
+    checkFormStatus();
   });
 
-  // Auto-fill developer from project map
-  const devValue = pf.projectName
-    ? (projData.find(p => p.projectName === pf.projectName) || {}).developerName || pf.developerName || ''
-    : '';
+  window.addEventListener('load', () => {
+    setTimeout(() => document.getElementById('loading-screen').classList.add('hidden'), 2000);
+  });
 
-  const div = document.createElement('div');
-  div.className = 'client-block';
-  div.id        = 'client-' + id;
+  function openDashboard() {
+    window.open(DASHBOARD_URL, '_blank');
+  }
 
-  div.innerHTML = `
-    <div class="client-head">
-      <div class="client-num"><div class="client-badge">${id}</div>Client #${id}</div>
-      ${id > 1 ? `<button class="remove-btn" onclick="removeClient(${id})">✕ Remove</button>` : ''}
-    </div>
+  // ── FORM STATUS CHECK ─────────────────────────────────────────
+  // function checkFormStatus() {
+  //   jsonpFetch({ action: 'getFormStatus' }, data => {
+  //     if (!data.ok) { showGate('error'); return; }
+  //     if (data.formStatus === 'open') {
+  //       document.getElementById('form-wrapper').style.display = 'block';
+  //       document.getElementById('status-gate').classList.remove('visible');
+  //       loadMasterData();
+  //     } else {
+  //       showGate('closed', data.message);
+  //     }
+  //   }, () => showGate('error'));
+  // }
 
-    <div class="field">
-      <label>Customer Name <span class="req">*</span></label>
-      <input type="text" id="c${id}-name" placeholder="Full name of client" value="${esc(pf.customerName || '')}" oninput="updateReview()">
-      <div class="field-err" id="err-c${id}-name">Required</div>
-    </div>
+    // Pure client-side check now — no backend call needed at all. Mirrors the
+    // old getFormStatus() GAS logic exactly: open only Friday, 10am–9pm, and
+    // only if access.json's form_status flag also says "open".
+    async function checkFormStatus() {
+      try {
+        const res = await fetch(ACCESS_JSON_URL);
+        const accessData = await res.json();
+        const now = new Date();
+        const day = now.getDay();
+        const currentTime = now.getHours() + now.getMinutes() / 60;
+        const isOpen = (accessData.form_status || '').toLowerCase() === 'open'
+                       && day === 5 && currentTime >= 10 && currentTime <= 21;
 
-    <div class="field">
-      <label>Contact Number <span class="req">*</span></label>
-      <input type="tel" id="c${id}-contact" placeholder="10-digit mobile" maxlength="10"
-        value="${esc(pf.contactNumber || '')}"
-        oninput="livePhone(this)" onpaste="setTimeout(()=>livePhone(document.getElementById('c${id}-contact')),0)">
-      <div class="field-err" id="err-c${id}-contact">Must be exactly 10 digits</div>
-    </div>
-
-    <div class="field">
-      <label>Sales Executive <span class="req">*</span></label>
-      <select id="c${id}-se">${seOpts}</select>
-      <div class="field-err" id="err-c${id}-se">Required</div>
-    </div>
-
-    <div class="grid-2">
-      <div class="field">
-        <label>Property Type <span class="req">*</span></label>
-        <select id="c${id}-ptype" onchange="updateReview()">
-          <option value="">Select</option>
-          <option>Residential</option><option>Commercial</option>
-          <option>Plots</option><option>Villa</option><option>Industrial</option>
-        </select>
-        <div class="field-err" id="err-c${id}-ptype">Required</div>
-      </div>
-      <div class="field">
-        <label>Configuration <span class="req">*</span></label>
-        <select id="c${id}-config" onchange="updateReview()">
-          <option value="">Select</option>
-          <option>1 BHK</option><option>1.5 BHK</option><option>2 BHK</option><option>2.5 BHK</option>
-          <option>3 BHK</option><option>3.5 BHK</option><option>4 BHK</option><option>4+ BHK</option>
-          <option>Studio</option><option>Office Space</option><option>Shop</option><option>Plot</option><option>N/A</option>
-        </select>
-        <div class="field-err" id="err-c${id}-config">Required</div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Budget (₹) <span class="req">*</span></label>
-      <div class="budget-row">
-        <input type="number" id="c${id}-budgetNum" placeholder="e.g. 85 or 50.50" min="0.01" max="99" step="0.01" inputmode="decimal" oninput="onBudgetInput(this)">
-        <select id="c${id}-budgetDenom">
-          <option value="Lakh">Lakh</option>
-          <option value="Cr">Cr</option>
-          <option value="Thousand">Thousand</option>
-        </select>
-      </div>
-      <div class="field-err" id="err-c${id}-budgetNum">Enter a value from 0.01–99 (decimals ok, e.g. 50.50) — pick the unit (Lakh/Cr/Thousand), don't type the full amount</div>
-    </div>
-
-    <div class="field">
-      <label>Project Name <span class="req">*</span></label>
-      <div class="combo-wrap">
-        <input type="text" class="combo-input" id="c${id}-proj"
-               placeholder="Type to search project…"
-               value="${esc(pf.projectName || '')}"
-               data-value="${esc(pf.projectName || '')}"
-               autocomplete="off"
-               oninput="comboFilter(${id})"
-               onfocus="comboFilter(${id})"
-               onblur="comboBlur(${id})">
-        <div class="combo-list" id="c${id}-projList"></div>
-      </div>
-      <div class="field-err" id="err-c${id}-proj">Please pick a project from the list — free-typed names aren't accepted</div>
-    </div>
-
-    <div class="field">
-      <label>Developer / Builder Name</label>
-      <input type="text" id="c${id}-dev" readonly placeholder="Auto-filled from project" value="${esc(devValue)}">
-    </div>
-
-    <div class="field">
-      <label>Status <span class="req">*</span></label>
-      <select id="c${id}-status" onchange="applyStatusColor(this); updateReview()">
-        <option value="">Select</option>
-        <option value="Hot">🔴 Hot</option>
-        <option value="Warm">🟠 Warm</option>
-        <option value="Cold">🔵 Cold</option>
-      </select>
-      <div class="field-err" id="err-c${id}-status">Required</div>
-    </div>
-
-    <div class="sub-label">Builder Contact Details</div>
-
-    <div class="field">
-      <label>Builder Sourcing Manager Name <span class="req">*</span></label>
-      <input type="text" id="c${id}-srcName" placeholder="Manager name" oninput="updateReview()">
-      <div class="field-err" id="err-c${id}-srcName">Required</div>
-    </div>
-
-    <div class="field">
-      <label>Builder Sourcing Manager Contact <span class="req">*</span></label>
-      <input type="tel" id="c${id}-srcContact" placeholder="10-digit number" maxlength="10" oninput="livePhone(this)">
-      <div class="field-err" id="err-c${id}-srcContact">Must be exactly 10 digits</div>
-    </div>
-
-    <div class="field">
-      <label>Builder Closing Manager Name</label>
-      <input type="text" id="c${id}-closeNm" placeholder="Manager name" oninput="updateReview()">
-    </div>
-
-    <div class="field">
-      <label>Visit Date <span class="req">*</span></label>
-      <input type="date" id="c${id}-date" value="${esc(pf.visitDate || '')}" onchange="updateReview()">
-      <div class="field-err" id="err-c${id}-date">Required</div>
-    </div>
-
-    <div class="field">
-      <label>Remarks <span class="req">*</span></label>
-      <textarea id="c${id}-remark" placeholder="Notes or remarks…" oninput="updateReview()"></textarea>
-      <div class="field-err" id="err-c${id}-remark">Required</div>
-    </div>
-  `;
-
-  document.getElementById('clientsContainer').appendChild(div);
-
-  // If prefill had a project pre-selected, trigger the change to fill developer
-  if (pf.projectName) {
-      setTimeout(() => {
-        const proj = projData.find(p => p.projectName === pf.projectName);
-        document.getElementById(`c${id}-dev`).value = proj ? (proj.developerName || '') : (pf.developerName || '');
-      }, 50);
-    }
-
-  updateReview();
-}
-
-function applyStatusColor(sel) {
-  sel.className = sel.className.replace(/\bs-\w+/g, '');
-  if (sel.value === 'Hot')  sel.classList.add('s-hot');
-  if (sel.value === 'Warm') sel.classList.add('s-warm');
-  if (sel.value === 'Cold') sel.classList.add('s-cold');
-}
-
-function livePhone(input) {
-  const c = input.value.replace(/\D/g, '');
-  if (c !== input.value) input.value = c;
-  input.classList.remove('phone-ok','phone-bad');
-  if (!c.length) return;
-  input.classList.add(c.length === 10 ? 'phone-ok' : 'phone-bad');
-  updateReview();
-}
-
-// Live-clamp the budget number field so a full rupee amount (e.g. 10000000)
-// can never be entered directly — force people to use the unit dropdown instead.
-function onBudgetInput(input) {
-  let v = input.value;
-
-  if (v !== '') {
-    // strip anything that isn't a digit or a decimal point (covers paste of large numbers)
-    let cleaned = v.replace(/[^0-9.]/g, '');
-    const parts = cleaned.split('.');
-    if (parts.length > 2) cleaned = parts[0] + '.' + parts.slice(1).join('');
-    if (cleaned !== v) v = cleaned;
-
-    const num = parseFloat(v);
-    if (!isNaN(num)) {
-      if (num > 99) {
-        v = '99';
-      } else if (num < 0) {
-        v = '0';
+        if (isOpen) {
+          document.getElementById('form-wrapper').style.display = 'block';
+          document.getElementById('status-gate').classList.remove('visible');
+          loadMasterData();
+        } else {
+          window.location.href = 'closed.html';
+        }
+      } catch (err) {
+        showGate('error');
       }
     }
-    if (v !== input.value) input.value = v;
-  }
 
-  const idNum = input.id.match(/^c(\d+)-budgetNum$/);
-  if (idNum) {
-    const num = parseFloat(input.value);
-    const ok  = input.value !== '' && !isNaN(num) && num > 0 && num <= 99;
-    mark(input.id, ok, `err-c${idNum[1]}-budgetNum`);
-  }
 
-  updateReview();
-}
+   // function checkFormStatus() {
+   //   document.getElementById('form-wrapper').style.display = 'block';
+   //   document.getElementById('status-gate').classList.remove('visible');
+   //   loadMasterData();
+   // }
 
-function removeClient(id) {
-  const el = document.getElementById('client-' + id);
-  if (el) el.remove();
-  updateReview();
-}
+  function showGate(type, message) {
+    document.getElementById('form-wrapper').style.display = 'none';
+    const gate = document.getElementById('status-gate');
+    gate.classList.add('visible');
 
-function getClientIds() {
-  return [...document.querySelectorAll('.client-block')].map(b => b.id.replace('client-',''));
-}
-
-function comboFilter(id) {
-  const input = document.getElementById(`c${id}-proj`);
-  const list  = document.getElementById(`c${id}-projList`);
-  const q     = input.value.trim().toLowerCase();
-
-  const matches = q
-    ? projData.filter(p => p.projectName.toLowerCase().includes(q))
-    : projData;
-
-  let html = '';
-  matches.slice(0, 50).forEach(p => {
-    html += `<div class="combo-opt" onmousedown="comboSelect(${id}, '${escJs(p.projectName)}')">${esc(p.projectName)}</div>`;
-  });
-
-  // No "Other / not listed" option any more — projects must come from the master list only.
-  if (!matches.length) {
-    html = q
-      ? `<div class="combo-empty">No matching project — check spelling or ask ops to add it to the master list</div>`
-      : `<div class="combo-empty">Start typing to search…</div>`;
-  }
-
-  list.innerHTML = html;
-  list.classList.add('show');
-}
-
-function comboSelect(id, value) {
-  const input = document.getElementById(`c${id}-proj`);
-  const list  = document.getElementById(`c${id}-projList`);
-  const devEl = document.getElementById(`c${id}-dev`);
-
-  input.value = value;
-  input.dataset.value = value;
-  const proj = projData.find(p => p.projectName === value);
-  devEl.value = proj ? (proj.developerName || '') : '';
-
-  list.classList.remove('show');
-  mark(`c${id}-proj`, true, `err-c${id}-proj`);
-  updateReview();
-}
-
-function comboBlur(id) {
-  // Slight delay so the mousedown on an option still registers before hiding
-  setTimeout(() => {
-    const list  = document.getElementById(`c${id}-projList`);
-    const input = document.getElementById(`c${id}-proj`);
-    if (list) list.classList.remove('show');
-    if (!input) return;
-
-    const typed = input.value.trim();
-    const exact = typed ? projData.find(p => p.projectName === typed) : null;
-
-    if (exact) {
-      // Matches a real project (typed the full exact name without clicking it) — accept it.
-      input.dataset.value = exact.projectName;
-      document.getElementById(`c${id}-dev`).value = exact.developerName || '';
-      mark(`c${id}-proj`, true, `err-c${id}-proj`);
+    if (type === 'closed') {
+      document.getElementById('gate-icon').textContent   = '🔒';
+      document.getElementById('gate-title').textContent  = 'Form Closed';
+      document.getElementById('gate-msg').textContent    = message || 'The Friday Lineup Form is currently closed.';
+      startGateCountdown();
     } else {
-      // Anything that isn't an exact match to the master list gets rejected —
-      // clear the field rather than let a free-typed / misspelled name through.
-      input.value = '';
-      input.dataset.value = '';
-      document.getElementById(`c${id}-dev`).value = '';
-      mark(`c${id}-proj`, false, `err-c${id}-proj`);
+      document.getElementById('gate-icon').textContent   = '⚠️';
+      document.getElementById('gate-title').textContent  = 'Unable to Load';
+      document.getElementById('gate-msg').textContent    = 'Could not connect to the form. Please check your connection and refresh.';
     }
-    updateReview();
-  }, 150);
-}
+  }
 
-function getProjectName(id) {
-  const input = document.getElementById(`c${id}-proj`);
-  if (!input) return '';
-  // Only ever return a value that is confirmed against the master project list.
-  const valid = projData.some(p => p.projectName === input.dataset.value);
-  return valid ? input.dataset.value : '';
-}
+  // function startGateCountdown() {
+  //   const now  = new Date();
+  //   const next = new Date();
+  //   const days = (5 - now.getDay() + 7) % 7 || 7;
+  //   next.setDate(now.getDate() + days);
+  //   next.setHours(10, 0, 0, 0);
 
-function escJs(s) { return String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
-
-function getBudget(id) {
-  const num   = (document.getElementById(`c${id}-budgetNum`)   || {}).value || '';
-  const denom = (document.getElementById(`c${id}-budgetDenom`) || {}).value || 'Lakh';
-  return num ? `${num} ${denom}` : '';
-}
-
-// ── REVIEW ────────────────────────────────────────────────────
-function updateReview() {
-  const ids   = getClientIds();
-  const cards = document.getElementById('reviewCards');
-  cards.innerHTML = '';
-  document.getElementById('reviewCount').textContent = ids.length;
-
-  ids.forEach(id => {
-    const name    = (document.getElementById(`c${id}-name`)    || {}).value || '';
-    const contact = (document.getElementById(`c${id}-contact`) || {}).value || '';
-    const status  = (document.getElementById(`c${id}-status`)  || {}).value || '';
-    const budget  = getBudget(id);
-    const project = getProjectName(id);
-    const card = document.createElement('div');
-    card.className = 'review-card';
-    card.innerHTML =
-      `<div class="review-card-name">${name ? esc(name) : '<em style="opacity:0.5">No name entered</em>'}</div>` +
-      (contact ? `<div class="review-card-row">📞 ${esc(contact)}</div>` : '') +
-      (project ? `<div class="review-card-row">🏗 ${esc(project)}</div>` : '') +
-      (status  ? `<div class="review-card-row">📌 ${esc(status)}</div>` : '') +
-      (budget  ? `<div class="review-card-row">💰 ₹${esc(budget)}</div>` : '');
-    cards.appendChild(card);
-  });
-
-  const hasTL = document.getElementById('tlSelect').value;
-  document.getElementById('reviewSection').classList.toggle('show', ids.length > 0 && !!hasTL);
-}
-
-// ── VALIDATION ────────────────────────────────────────────────
-function validateAll() {
-  let valid = true;
-  const ct  = document.getElementById('clientType').value;
-  mark('clientType', !!ct, 'err-clientType');
-  if (!ct) valid = false;
-  const tl  = document.getElementById('tlSelect').value;
-  mark('tlSelect', !!tl, 'err-tl');
-  if (!tl) valid = false;
-
-  getClientIds().forEach(id => {
-    const name       = (val(`c${id}-name`)       || '').trim();
-    const contact    = (val(`c${id}-contact`)    || '').trim();
-    const se         = val(`c${id}-se`)          || '';
-    const ptype      = val(`c${id}-ptype`)       || '';
-    const config     = val(`c${id}-config`)      || '';
-    const budgetNum  = (val(`c${id}-budgetNum`)  || '').trim();
-    const status     = val(`c${id}-status`)      || '';
-    const srcName    = (val(`c${id}-srcName`)    || '').trim();
-    const srcContact = (val(`c${id}-srcContact`) || '').trim();
-    const date       = val(`c${id}-date`)        || '';
-    const remark     = (val(`c${id}-remark`)     || '').trim();
-    const project    = getProjectName(id);
-
-    const cOk  = !!contact  && /^\d{10}$/.test(contact);
-    const scOk = !!srcContact && /^\d{10}$/.test(srcContact);
-
-    // Budget must be a plain number strictly between 0 and 99 (decimals allowed),
-    // e.g. "50.50" for 50.5 Lakh — never a full rupee figure like "10000000".
-    const budgetNumVal = Number(budgetNum);
-    const budgetOk = !!budgetNum && /^\d{1,2}(\.\d+)?$/.test(budgetNum) && !isNaN(budgetNumVal) && budgetNumVal > 0 && budgetNumVal <= 99;
-
-    mark(`c${id}-name`,       !!name,                               `err-c${id}-name`);
-    mark(`c${id}-contact`,    cOk,                                  `err-c${id}-contact`);
-    mark(`c${id}-se`,         !!se,                                 `err-c${id}-se`);
-    mark(`c${id}-ptype`,      !!ptype,                              `err-c${id}-ptype`);
-    mark(`c${id}-config`,     !!config,                             `err-c${id}-config`);
-    mark(`c${id}-budgetNum`,  budgetOk,                             `err-c${id}-budgetNum`);
-    mark(`c${id}-proj`,       !!project,                            `err-c${id}-proj`);
-    mark(`c${id}-status`,     !!status,                             `err-c${id}-status`);
-    mark(`c${id}-srcName`,    !!srcName,                            `err-c${id}-srcName`);
-    mark(`c${id}-srcContact`, scOk,                                 `err-c${id}-srcContact`);
-    mark(`c${id}-date`,       !!date,                               `err-c${id}-date`);
-    mark(`c${id}-remark`,     !!remark,                             `err-c${id}-remark`);
-
-    if (!name || !cOk || !se || !ptype || !config || !budgetOk ||
-        !project || !status || !srcName || !scOk || !date || !remark) valid = false;
-  });
-  return valid;
-}
-
-function val(id)       { return (document.getElementById(id) || {}).value; }
-function mark(id, ok, errId) {
-  const el = document.getElementById(id);
-  if (el) el.classList.toggle('invalid', !ok);
-  const er = document.getElementById(errId);
-  if (er) er.classList.toggle('show', !ok);
-}
-
-// Maps one form entry to a row of fn_clients / fn_token_clients (identical columns).
-function entryToRow(e) {
-  return {
-    cluster:              e.cluster || null,
-    pnl_head:             e.pnlHead || null,
-    manager:              e.manager || null,
-    team_lead:            e.teamLeaderName || null,
-    sales_executive_name: e.salesExecutiveName,
-    customer_name:        e.customerName || null,
-    contact_number:       e.contactNumber || null,
-    property_type:        e.propertyType || null,
-    configuration:        e.configuration || null,
-    budget:               e.budget || null,
-    project_name:         e.projectName || null,
-    developer_name:       e.developerName || null,
-    status:               e.status || null,
-    builder_sourcing_manager_name:    e.builderSourcingManagerName || null,
-    builder_sourcing_manager_contact: e.builderSourcingManagerContact || null,
-    builder_closing_manager_name:     e.builderClosingManagerName || null,
-    visit_date:           e.visitDate || null,
-    remark:               e.remark || null,
-    operations_remark:     e.operationsRemark || null,
-    converted_from_visit: e.convertedFromVisit === true || e.convertedFromVisit === 'Yes'
-  };
-}
-
-// ── NEW: parallel Supabase write ────────────────────────────────
-// Fire-and-forget: never awaited by the GAS submit flow below, never
-// shown to the user, and any failure here is only logged to the
-// console. GAS remains the sole source of truth for FN Clients until
-// you decide to cut over — this is purely a shadow copy for the
-// eventual migration.
-function shadowWriteToSupabase(entries) {
-  if (!supabaseClient) { console.error('Supabase shadow-write skipped: client not initialized.'); return; }
+  //   const el = document.getElementById('gate-timer');
+  //   const tick = () => {
+  //     const diff = Math.max(0, next - new Date());
+  //     if (!diff) { el.textContent = 'Opens shortly — refresh the page!'; return; }
+  //     const d = Math.floor(diff / 86400000);
+  //     const h = Math.floor((diff % 86400000) / 3600000);
+  //     const m = Math.floor((diff % 3600000)  / 60000);
+  //     const s = Math.floor((diff % 60000)    / 1000);
+  //     el.textContent = `Opens in: ${d}d ${h}h ${m}m ${s}s`;
+  //   };
+  //   tick();
+  //   setInterval(tick, 1000);
+  // }
   
-  const rows = entries.map(entryToRow);
-
-  supabaseClient.from('fn_clients').insert(rows)
-    .then(({ error }) => { if (error) console.error('Supabase shadow-write (fn_clients) failed:', error.message); })
-    .catch(err => console.error('Supabase shadow-write (fn_clients) failed:', err));
-}
-
-// ── SUBMIT ─────────────────────────────────────────────────────
-function submitAll() {
-  if (!validateAll()) {
-    toast('Please fill all required fields correctly', 'error');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    return;
-  }
-
-  const btn     = document.getElementById('submitBtn');
-  const spinner = document.getElementById('spinner');
-  const label   = document.getElementById('submitLabel');
-  btn.disabled          = true;
-  spinner.style.display = 'block';
-  label.textContent     = 'Submitting…';
-
-  const tl        = document.getElementById('tlSelect').value;
-  const cluster   = document.getElementById('cluster').value;
-  const pnlHead   = document.getElementById('pnlHead').value;
-  const timestamp = new Date().toISOString();
-  const subId     = 'sub_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
-
-  const entries = getClientIds().map(id => ({
-    timestamp,
-    cluster, pnlHead,
-    teamLeaderName:    tl,
-    salesExecutiveName: val(`c${id}-se`)       || '',
-    customerName:       (val(`c${id}-name`)    || '').trim(),
-    contactNumber:      val(`c${id}-contact`)  || '',
-    propertyType:       val(`c${id}-ptype`)    || '',
-    configuration:      val(`c${id}-config`)   || '',
-    budget:             getBudget(id),
-    projectName:        getProjectName(id),
-    developerName:      val(`c${id}-dev`)      || '',
-    status:             val(`c${id}-status`)   || '',
-    builderSourcingManagerName:    (val(`c${id}-srcName`)    || '').trim(),
-    builderSourcingManagerContact: val(`c${id}-srcContact`)  || '',
-    builderClosingManagerName:     (val(`c${id}-closeNm`)    || '').trim(),
-    visitDate:          val(`c${id}-date`)     || '',
-    remark:             (val(`c${id}-remark`)  || '').trim(),
-    operationsRemark:   '',
-    convertedFromVisit: prefillData.convertedFromVisit === 'Yes'
-  }));
-
-  // NEW: Token FN clients never touch GAS — Supabase is their only store,
-  // so this write is awaited and its errors are shown to the user.
-  if (CLIENT_TYPE === 'token') { submitTokenClients(entries, tl); return; }
-
-  // NEW: kick off the Supabase shadow-write in parallel — does not block,
-  // does not gate success/failure of the GAS submission below in any way.
-  shadowWriteToSupabase(entries);
-
-  fetch(GAS_URL, {
-    method: 'POST', mode: 'no-cors',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: 'data=' + encodeURIComponent(JSON.stringify({ action: 'submitFNClient', entries, submissionId: subId }))
-  })
-  .then(() => pollConfirm(subId, 0))
-  .then(confirmed => {
-    if (confirmed) {
-      document.getElementById('successSub').textContent = `${entries.length} client(s) submitted by TL: ${tl}`;
-      document.getElementById('successBanner').classList.add('show');
-      document.getElementById('typeSection').style.display  = 'none';
-      document.getElementById('spSection').style.display    = 'none';
-      document.getElementById('clientsSection').style.display = 'none';
-      document.getElementById('reviewSection').classList.remove('show');
-      document.getElementById('submitBtn').style.display    = 'none';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      throw new Error('Could not confirm submission. Data may have saved — check your sheet before retrying.');
+  function startGateCountdown() {
+    const el = document.getElementById('gate-timer');
+  
+    function tick() {
+      const now = new Date();
+  
+      // Next Friday 10 AM
+      const next = new Date(now);
+      const daysUntilFriday = (5 - now.getDay() + 7) % 7 || 7;
+  
+      next.setDate(now.getDate() + daysUntilFriday);
+      next.setHours(10, 0, 0, 0);
+  
+      const diff = next - now;
+  
+      if (diff <= 0) {
+        el.textContent = 'Opening shortly... Refresh page';
+        return;
+      }
+  
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+  
+      el.textContent = `Opens in: ${d}d ${h}h ${m}m ${s}s`;
     }
-  })
-  .catch(err => {
-    toast(err.message || 'Submission failed', 'error');
-    btn.disabled          = false;
-    spinner.style.display = 'none';
-    label.textContent     = 'Submit All Entries';
-  });
-}
-
-// ── TOKEN FN SUBMIT (NEW) ──────────────────────────────────────
-async function submitTokenClients(entries, tl) {
-  const btn     = document.getElementById('submitBtn');
-  const spinner = document.getElementById('spinner');
-  const label   = document.getElementById('submitLabel');
-  const fail = msg => {
-    toast(msg, 'error');
-    btn.disabled          = false;
-    spinner.style.display = 'none';
-    label.textContent     = 'Submit All Entries';
-  };
-  if (!supabaseClient) { fail('Could not reach the database — refresh the page and try again.'); return; }
-  try {
-    // One INSERT statement = all-or-nothing, so a failed submit can be retried safely.
-    const { error } = await supabaseClient.from(TOKEN_TABLE).insert(entries.map(entryToRow));
-    if (error) throw new Error(error.message);
-    document.getElementById('successSub').textContent = `${entries.length} Token FN client(s) submitted by TL: ${tl}`;
-    document.getElementById('successBanner').classList.add('show');
-    document.getElementById('typeSection').style.display    = 'none';
-    document.getElementById('spSection').style.display      = 'none';
-    document.getElementById('clientsSection').style.display = 'none';
-    document.getElementById('reviewSection').classList.remove('show');
-    btn.style.display = 'none';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  } catch (err) {
-    console.error('Token FN submit failed:', err);
-    fail('Token FN submission failed: ' + (err.message || 'Unknown error'));
+  
+    tick();
+    setInterval(tick, 1000);
   }
-}
 
-// ── POLL FOR CONFIRMATION ──────────────────────────────────────
-function pollConfirm(subId, attempt) {
-  return new Promise(resolve => {
-    if (attempt > 10) { resolve(false); return; }
-    setTimeout(() => {
-      jsonpFetch({ action: 'checkSubmission', submissionId: subId }, data => {
-        if (data && data.confirmed) resolve(true);
-        else pollConfirm(subId, attempt + 1).then(resolve);
-      }, () => pollConfirm(subId, attempt + 1).then(resolve));
-    }, attempt === 0 ? 1500 : 2500);
+  // ── LOAD MASTER DATA ─────────────────────────────────────────
+  async function loadMasterData() {
+    try {
+      const [{ data: profilesRaw, error: profErr }, { data: staffRaw, error: staffErr }, { data: projectsRaw, error: projErr }] = await Promise.all([
+        supabaseClient.from('profiles').select('full_name, team_lead, cluster, pnl_head'),
+        supabaseClient.from('employee_master').select('full_name, team_lead, cluster, pnl_head'),
+        supabaseClient.from('project_master').select('project_name, developer_name')
+      ]);
+      if (profErr || staffErr || projErr) { showToast('Failed to load form data', 'error'); return; }
+
+      // profiles = employees with a Supabase Auth login (Team Lead and above);
+      // employee_master = everyone else (Sales Executives etc. with no login).
+      // Both are needed for a complete employee/dropdown list.
+      const allEmployees = [...(profilesRaw || []), ...(staffRaw || [])];
+
+      const data = {
+        ok: true,
+        employees: allEmployees.map(e => ({ name: e.full_name, teamLead: e.team_lead, cluster: e.cluster, pnlHead: e.pnl_head })),
+        projects: projectsRaw.map(p => ({ projectName: p.project_name, developerName: p.developer_name })),
+        developerList: [...new Set(projectsRaw.map(p => p.developer_name))].filter(Boolean).sort()
+      };
+      masterData = data;
+
+      // Build project → developer map
+      (data.projects || []).forEach(p => { projectMap[p.projectName] = p.developerName || ''; });
+
+      // Build employee lookup arrays
+      const empNames  = (data.employees || []).map(e => e.name);
+      const projNames = (data.projects  || []).map(p => p.projectName);
+      const devNames  = data.developerList || [];
+
+      autocomplete(document.getElementById('employee'), empNames);
+      autocomplete(document.getElementById('project'),  projNames);
+      autocomplete(document.getElementById('developer'), devNames);
+
+      // Employee change → auto-fill TL + cluster
+      const empInput = document.getElementById('employee');
+      empInput.addEventListener('change', syncEmployee);
+      empInput.addEventListener('blur',   syncEmployee);
+      empInput.addEventListener('input',  () => {
+        document.getElementById('teamLead').value = '';
+        document.getElementById('cluster').value  = '';
+      });
+
+      // Project change → auto-fill developer
+      const projInput = document.getElementById('project');
+      projInput.addEventListener('blur', syncProject);
+      projInput.addEventListener('blur', () => {
+        const proj = projInput.value.trim();
+      
+        if (proj && !projectMap.hasOwnProperty(proj)) {
+          showToast(
+            'This project is not available in the system. Please contact Operations Department to add the project.',
+            'error'
+          );
+        }
+      });
+
+      // Time picker
+      flatpickr('#visitTime', {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: 'h:i K',
+        time_24hr:  false,
+        theme:      'dark'
+      });
+    } catch (err) {
+      showToast('Network error loading form data', 'error');
+    }
+  }
+
+  function syncEmployee() {
+    const emp  = (document.getElementById('employee').value || '').trim();
+    const found = (masterData.employees || []).find(e => e.name === emp);
+    document.getElementById('teamLead').value = found ? found.teamLead : '';
+    document.getElementById('cluster').value  = found ? found.cluster  : '';
+  }
+
+  function syncProject() {
+    const proj     = (document.getElementById('project').value || '').trim();
+    const devEl    = document.getElementById('developer');
+    const devValue = projectMap[proj];
+    if (devValue !== undefined) {
+      devEl.value    = devValue;
+      devEl.readOnly = !!devValue;
+    } else {
+      devEl.readOnly = false;
+    }
+  }
+
+  // ── AUTOCOMPLETE ─────────────────────────────────────────────
+  function autocomplete(inp, arr) {
+    let focus = -1;
+
+    inp.addEventListener('input', function () {
+      closeAll();
+      if (!this.value) return;
+      focus = -1;
+      const box = document.createElement('div');
+      box.className = 'autocomplete-items';
+
+      const term = this.value.toLowerCase();
+      let count  = 0;
+      for (const item of arr) {
+        if (!item.toLowerCase().includes(term)) continue;
+        if (++count > 50) break;
+        const d  = document.createElement('div');
+        const ix = item.toLowerCase().indexOf(term);
+        d.innerHTML =
+          escHtml(item.substr(0, ix)) +
+          '<strong>' + escHtml(item.substr(ix, this.value.length)) + '</strong>' +
+          escHtml(item.substr(ix + this.value.length));
+        d.addEventListener('mousedown', () => {
+          inp.value = item;
+          closeAll();
+          inp.dispatchEvent(new Event('change'));
+        });
+        box.appendChild(d);
+      }
+      if (count === 0) return;
+      inp.parentNode.appendChild(box);
+    });
+
+    inp.addEventListener('keydown', function (e) {
+      const box = this.parentNode.querySelector('.autocomplete-items');
+      if (!box) return;
+      const items = box.querySelectorAll('div');
+      if (e.key === 'ArrowDown') { focus = Math.min(focus + 1, items.length - 1); setActive(items); }
+      else if (e.key === 'ArrowUp') { focus = Math.max(focus - 1, 0); setActive(items); }
+      else if (e.key === 'Enter') { e.preventDefault(); if (focus > -1) items[focus].dispatchEvent(new Event('mousedown')); }
+      else if (e.key === 'Escape') closeAll();
+    });
+
+    function setActive(items) {
+      items.forEach((it, i) => it.classList.toggle('autocomplete-active', i === focus));
+    }
+
+    function closeAll() {
+      document.querySelectorAll('.autocomplete-items').forEach(el => el.remove());
+    }
+
+    document.addEventListener('click', e => { if (!inp.parentNode.contains(e.target)) closeAll(); });
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  // ── PHONE: dynamic validation per country code ─────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    const countryEl = document.getElementById('phoneCountryCode');
+    const phoneEl    = document.getElementById('phone');
+    countryEl.addEventListener('change', () => {
+      phoneEl.value = ''; // avoid stale digits that no longer fit the new rule
+      phoneEl.classList.remove('invalid');
+      if (countryEl.value === '91') {
+        phoneEl.setAttribute('maxlength', '10');
+        phoneEl.placeholder = '10-digit mobile';
+      } else {
+        phoneEl.setAttribute('maxlength', '15');
+        phoneEl.placeholder = 'Mobile number';
+      }
+    });
+    // Clear the duplicate-highlight as soon as the user edits the number
+    phoneEl.addEventListener('input', () => phoneEl.classList.remove('invalid'));
   });
-}
 
-// ── RESET ──────────────────────────────────────────────────────
-function resetForm() {
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = false;
-  document.getElementById('spinner').style.display = 'none';
-  document.getElementById('submitLabel').textContent = 'Submit All Entries';
-  btn.style.display = 'none';
+  // ── BUDGET & NOTE FORMATTING ─────────────────────────────────────
+  // Uses the raw typed string (not a re-parsed float) so trailing decimals
+  // like "1.20" are preserved exactly as entered — matches spec examples
+  // ("1.20 Cr" alongside "27 Cr", "77.89 Cr").
+  function formatBudgetString(rawValue, denomination) {
+    const v = (rawValue || '').toString().trim();
+    if (!v || !denomination) return '';
+    return v + ' ' + denomination;
+  }
 
-  document.getElementById('successBanner').classList.remove('show');
-  document.getElementById('typeSection').style.display  = 'block';
-  document.getElementById('clientType').value           = '';
-  CLIENT_TYPE = '';
-  updateTypeUI();   // also hides the Sales Person section until a type is chosen
-  document.getElementById('tlSelect').value             = '';
-  document.getElementById('cluster').value              = '';
-  document.getElementById('pnlHead').value              = '';
-  document.getElementById('clientsContainer').innerHTML = '';
-  clientCount = 0;
-  document.getElementById('clientsSection').style.display = 'none';
-  document.getElementById('reviewSection').classList.remove('show');
-  prefillData = {};
-  document.getElementById('prefillBanner').classList.remove('show');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+  // "YYYY-MM-DD" + "h:mm AM/PM" -> "Friday, 12 Oct 2026 at 04:30 PM"
+  function formatNoteDateTime(visitDate, visitTimeStr) {
+    if (!visitDate || !visitTimeStr) return '';
+    const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const [y, m, d] = visitDate.split('-').map(Number);
+    if (!y || !m || !d) return '';
+    const dateObj = new Date(y, m - 1, d);
+    const dayName   = DAYS[dateObj.getDay()];
+    const dd        = String(d).padStart(2, '0');
+    const monthName = MONTHS[m - 1];
 
-// ── HELPERS ───────────────────────────────────────────────────
-function esc(s) { return String(s||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+    const tm = /^(\d{1,2}):(\d{2})\s*([AP]M)$/i.exec(visitTimeStr.trim());
+    const timeStr = tm
+      ? String(tm[1]).padStart(2, '0') + ':' + tm[2] + ' ' + tm[3].toUpperCase()
+      : visitTimeStr;
 
-let toastTimer;
-function toast(msg, type) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className   = ['show', type||''].filter(Boolean).join(' ');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { el.className = ''; }, 3500);
-}
+    return `${dayName}, ${dd} ${monthName} ${y} at ${timeStr}`;
+  }
 
-// jsonpFetch is still used ONLY for checkSubmission polling against the
-// GAS project — that endpoint hasn't moved, so this stays as-is.
-function jsonpFetch(params, onSuccess, onError) {
-  const cbName = '__cb_' + Date.now() + '_' + Math.random().toString(36).slice(2,5);
-  const script = document.createElement('script');
-  const qs     = Object.entries({...params, callback: cbName}).map(([k,v]) => `${k}=${encodeURIComponent(v)}`).join('&');
-  const timer  = setTimeout(() => { cleanup(); if (onError) onError(new Error('Timeout')); }, 12000);
-  window[cbName] = data => { cleanup(); onSuccess(data); };
-  script.onerror = () => { cleanup(); if (onError) onError(new Error('Load failed')); };
-  function cleanup() { clearTimeout(timer); delete window[cbName]; if (script.parentNode) script.parentNode.removeChild(script); }
-  script.src = GAS_URL + '?' + qs;
-  document.head.appendChild(script);
-}
+  // Builds the single standardized note used for both the Supabase
+  // `remark` column and the CRM `notes` field.
+  function buildStructuredNote({ visitType, project, requirement, budgetStr, employee, visitDate, visitTime }) {
+    const actionType = visitType === 'VC' ? 'meeting scheduled' : 'site visit scheduled';
+    const configurations = Array.isArray(requirement) ? requirement.join(', ') : (requirement || '');
+    const dateTimeStr = formatNoteDateTime(visitDate, visitTime);
+    return `${actionType} for project - ${project}, Configuration required - ${configurations}, Budget - ${budgetStr}, by ${employee}, on ${dateTimeStr}`;
+  }
+
+  // ── DUPLICATE CHECK ─────────────────────────────────────────────
+  // Duplicate = same Sales Executive + same customer phone number.
+  // If a DIFFERENT executive adds the same customer, that is allowed.
+  // Returns true if a matching row already exists in friday_lineup_visits.
+  async function isDuplicateEntry(employee, phone) {
+    const { count, error } = await supabaseClient
+      .from('friday_lineup_visits')
+      .select('id', { count: 'exact', head: true })
+      .eq('employee_name', employee)
+      .eq('phone', phone);
+    if (error) throw error;
+    return (count || 0) > 0;
+  }
+
+  // ── SUBMIT ────────────────────────────────────────────────────
+  async function submitForm() {
+    if (isSubmitting) return; // ignore double-clicks while a submit is in flight
+
+    const now    = new Date();
+    const cutoff = new Date(); cutoff.setHours(21, 0, 0, 0);
+    if (now > cutoff) { showToast('Form submission is closed after 9:00 PM', 'error'); return; }
+
+    const employee  = (document.getElementById('employee').value  || '').trim();
+    const teamLead  = document.getElementById('teamLead').value;
+    const cluster   = document.getElementById('cluster').value;
+    const cname     = (document.getElementById('cname').value     || '').trim();
+    const phone     = (document.getElementById('phone').value     || '').trim();
+    const phoneCountryCode = document.getElementById('phoneCountryCode').value;
+    const project   = (document.getElementById('project').value   || '').trim();
+    const developer = (document.getElementById('developer').value || '').trim();
+    const visitDate = document.getElementById('visitDate').value;
+    const visitTime = document.getElementById('visitTime').value;
+    const closure   = document.getElementById('closure').value;
+    const visitType = document.getElementById('visitType').value;
+    const remark    = (document.getElementById('remark').value    || '').trim();
+    const budgetValueRaw    = (document.getElementById('budgetValue').value || '').trim();
+    const budgetDenomination = document.getElementById('budgetDenomination').value;
+    const requirement = [...document.querySelectorAll('input[name="requirement"]:checked')].map(c => c.value);
+
+    // Validate
+    if (!employee || !(masterData.employees || []).find(e => e.name === employee)) {
+      showToast('Please select a valid Sales Executive from suggestions', 'error'); return;
+    }
+    if (!projectMap.hasOwnProperty(project)) {
+      showToast(
+        'This project is not available in the system. Please contact Operations Department to add the project.',
+        'error'
+      );
+      return;
+    }
+    if (!teamLead || !cluster) {
+      syncEmployee();
+      if (!document.getElementById('teamLead').value) {
+        showToast('TL/Cluster mapping not found. Contact admin.', 'error'); return;
+      }
+    }
+    if (!cname || !phone || !project || !developer || !visitDate || !visitTime || !closure || !visitType || !remark) {
+      showToast('Please fill all required fields', 'error'); return;
+    }
+    if (!getWeekendDates_().some(o => o.value === visitDate)) {
+      showToast('Visit day must be this Saturday or Sunday', 'error'); return;
+    }
+    const isIndiaPhone = phoneCountryCode === '91';
+    const phoneRegex   = isIndiaPhone ? /^\d{10}$/ : /^\d{6,15}$/;
+    if (!phoneRegex.test(phone)) {
+      showToast(isIndiaPhone ? 'Enter a valid 10-digit phone number' : 'Enter a valid phone number (6–15 digits)', 'error');
+      return;
+    }
+    if (requirement.length === 0) { showToast('Select at least one property requirement', 'error'); return; }
+    const budgetNum = parseFloat(budgetValueRaw);
+    if (!budgetValueRaw || isNaN(budgetNum) || budgetNum < 1 || budgetNum > 99.99) {
+      showToast('Enter a valid budget between 1 and 99.99', 'error'); return;
+    }
+    if (!budgetDenomination) { showToast('Select a budget denomination (Lakhs / Cr)', 'error'); return; }
+
+    const btn = document.getElementById('form').querySelector('.btn-primary');
+    isSubmitting = true;
+    btn.textContent = 'Checking…';
+    btn.disabled    = true;
+
+    // ── Duplicate check: same SE + same phone number already in the system.
+    // Runs BEFORE the modal opens, so a duplicate triggers neither the
+    // Supabase insert nor the CRM update. If the check itself fails
+    // (network / permissions), submission is blocked rather than risking
+    // a duplicate slipping through.
+    try {
+      if (await isDuplicateEntry(employee, phone)) {
+        showToast('Duplicate entry: you have already added a customer with this phone number.', 'error');
+        document.getElementById('phone').classList.add('invalid');
+        btn.textContent = 'Submit Entry';
+        btn.disabled    = false;
+        isSubmitting    = false;
+        return;
+      }
+    } catch (err) {
+      showToast('Could not verify duplicate entry. Please try again.', 'error');
+      btn.textContent = 'Submit Entry';
+      btn.disabled    = false;
+      isSubmitting    = false;
+      return;
+    }
+    document.getElementById('phone').classList.remove('invalid');
+
+    // ── Structured note — single source of truth for both the Supabase
+    // `remark` column and the CRM `notes` field. The SE's Remarks text is
+    // mandatory and is appended as the final segment of the note.
+    const budgetStr = formatBudgetString(budgetValueRaw, budgetDenomination);
+    const structuredNote = buildStructuredNote({
+      visitType, project, requirement, budgetStr, employee, visitDate, visitTime
+    });
+    const finalNote = `${structuredNote}, Remarks - ${remark}`;
+
+    btn.textContent = 'Submitting…';
+
+    showSubmissionModal();
+
+    // ── 1. Supabase insert — same field set as the old GAS submitVisit ──
+    // action, just written directly to Postgres instead of relayed to GAS.
+    let dbSucceeded = false;
+    try {
+      const { error } = await supabaseClient.from('friday_lineup_visits').insert({
+        employee_name:  employee,
+        team_lead:      teamLead || null,
+        cluster:        cluster || null,
+        customer_name:  cname,
+        phone:          phone,
+        project_name:   project,
+        developer_name: developer,
+        visit_date:     visitDate,
+        visit_time:     visitTime,
+        requirements:   Array.isArray(requirement) ? requirement.join(', ') : requirement,
+        closure_chance: closure,
+        visit_type:     visitType,
+        remark:         finalNote
+      });
+      if (error) throw error;
+      dbSucceeded = true;
+      setDbStatus(true);
+      document.getElementById('form').reset();
+      document.getElementById('teamLead').value = '';
+      document.getElementById('cluster').value  = '';
+      const devEl = document.getElementById('developer');
+      devEl.value    = '';
+      devEl.readOnly = false;
+    } catch (err) {
+      setDbStatus(false);
+      // 23505 = unique_violation — only fires if you add the optional
+      // unique index in Supabase (backstop for race conditions).
+      if (err && err.code === '23505') {
+        document.getElementById('db-status-value').textContent = 'Duplicate Entry — Not Saved';
+      }
+    } finally {
+      btn.textContent = 'Submit Entry';
+      btn.disabled    = false;
+      isSubmitting    = false;
+    }
+
+    // ── 2. CRM lead status update — separate call, own status row in the
+    // same modal. Only runs if the lineup entry was actually saved, so a
+    // rejected duplicate never touches the CRM.
+    if (dbSucceeded) {
+      updateLeadInCrm({
+        employee, cname, phone, phoneCountryCode, project, visitDate, visitTime, visitType, remark: finalNote
+      });
+    } else {
+      setCrmStatus(false, 'Skipped because the lineup entry was not saved.');
+    }
+  }
+
+  function resetForm() {
+    document.getElementById('form').reset();
+    document.getElementById('teamLead').value = '';
+    document.getElementById('cluster').value  = '';
+    const devEl = document.getElementById('developer');
+    devEl.value    = '';
+    devEl.readOnly = false;
+    document.getElementById('phone').setAttribute('maxlength', '10');
+    document.getElementById('phone').placeholder = '10-digit mobile';
+    document.getElementById('phone').classList.remove('invalid');
+  }
+
+  // ── CRM (LEADRAT) UPDATE ─────────────────────────────────────────
+  function buildScheduledDateTimeLocal_(visitDate, visitTimeStr) {
+    // visitDate: "YYYY-MM-DD" from <input type=date>.
+    // visitTimeStr: "h:mm AM/PM" from flatpickr (dateFormat 'h:i K').
+    // Returns "YYYY-MM-DDTHH:MM" (24h, local) — parseable by `new Date()`
+    // unambiguously across browsers, unlike mixing the two strings as-is.
+    const m = /^(\d{1,2}):(\d{2})\s*([AP]M)$/i.exec((visitTimeStr || '').trim());
+    if (!visitDate || !m) return null;
+    let hour = parseInt(m[1], 10);
+    const minute = m[2];
+    const ampm = m[3].toUpperCase();
+    if (ampm === 'PM' && hour !== 12) hour += 12;
+    if (ampm === 'AM' && hour === 12) hour = 0;
+    return visitDate + 'T' + String(hour).padStart(2, '0') + ':' + minute;
+  }
+
+  function updateLeadInCrm(v) {
+    if (LEADRAT_GAS_URL.indexOf('PASTE_') === 0) {
+      // not configured yet
+      setCrmStatus(false, 'CRM auto-update is not configured for this form yet.');
+      return;
+    }
+
+    const scheduledDate = buildScheduledDateTimeLocal_(v.visitDate, v.visitTime);
+    const statusMap = VISIT_TYPE_TO_LEADRAT_STATUS[v.visitType];
+    if (!scheduledDate || !statusMap) {
+      setCrmStatus(false, "Unrecognized visit type or date/time.");
+      return;
+    }
+
+    const leadratPayload = {
+      appSecret: LEADRAT_APP_SECRET,
+      source: 'friday-lineup-form',
+      assignedToName: v.employee,
+      customerName: v.cname,
+      mobileNumber: '+' + v.phoneCountryCode + v.phone,
+      projectName: v.project,
+      statusKey: statusMap.statusKey,
+      subStatusKey: statusMap.subStatusKey,
+      scheduledDate: scheduledDate,
+      notes: v.remark,
+      dryRun: false
+    };
+
+    // GET with the payload in the query string (not POST-with-body):
+    // Apps Script always 302-redirects, and fetch() silently downgrades a
+    // POST to GET (dropping the body) when following that redirect.
+    const url = LEADRAT_GAS_URL + '?payload=' + encodeURIComponent(JSON.stringify(leadratPayload));
+
+    fetch(url, { method: 'GET' })
+      .then(res => res.json())
+      .then(data => {
+        if (data.succeeded) {
+          setCrmStatus(true);
+        } else {
+          setCrmStatus(false, data.error || 'Lead not updated in CRM.');
+        }
+      })
+      .catch(() => {
+        setCrmStatus(false, 'Could not reach the CRM update service.');
+      });
+  }
+
+  // ── Dual submission status modal ─────────────────────────────────
+  function showSubmissionModal() {
+    document.getElementById('crm-modal').classList.remove('is-error');
+    document.getElementById('db-status-row').className  = 'status-row';
+    document.getElementById('crm-status-row').className = 'status-row';
+    document.getElementById('db-status-icon').textContent  = '⏳';
+    document.getElementById('db-status-value').textContent = 'Submitting…';
+    document.getElementById('crm-status-icon').textContent  = '⏳';
+    document.getElementById('crm-status-value').textContent = 'Updating…';
+    document.getElementById('crm-modal-msg').textContent = '';
+    document.getElementById('crm-modal-detail').textContent = '';
+    document.getElementById('crm-modal-backdrop').classList.add('show');
+  }
+
+  function setDbStatus(isSuccess) {
+    const row = document.getElementById('db-status-row');
+    row.className = 'status-row ' + (isSuccess ? 'is-success' : 'is-error');
+    document.getElementById('db-status-icon').textContent  = isSuccess ? '✅' : '❌';
+    document.getElementById('db-status-value').textContent = isSuccess ? 'Submitted Successfully' : 'Submission Failed';
+  }
+
+  function setCrmStatus(isSuccess, detail) {
+    const row = document.getElementById('crm-status-row');
+    row.className = 'status-row ' + (isSuccess ? 'is-success' : 'is-warning');
+    document.getElementById('crm-status-icon').textContent  = isSuccess ? '✅' : '⚠️';
+    document.getElementById('crm-status-value').textContent = isSuccess ? 'Lead Status Updated in CRM' : 'Action Required: CRM Update Failed';
+
+    document.getElementById('crm-modal').classList.toggle('is-error', !isSuccess);
+    document.getElementById('crm-modal-msg').textContent = isSuccess
+      ? 'Your lead status has been updated automatically in CRM. You do not need to change the status manually for successful CRM submissions.'
+      : '⚠️ CRM update could not be completed automatically. Please change status manually for unsuccessful submission into CRM.';
+    document.getElementById('crm-modal-detail').textContent = (!isSuccess && detail) ? ('Details: ' + detail) : '';
+  }
+
+  function closeCrmModal() {
+    document.getElementById('crm-modal-backdrop').classList.remove('show');
+  }
+
+  // ── COUNTDOWN TIMER (header) ──────────────────────────────────
+  function startCountdown() {
+    const target = new Date(); target.setHours(21, 0, 0, 0);
+    const el     = document.getElementById('timer');
+    const tick   = () => {
+      const diff = target - new Date();
+      if (diff <= 0) { el.textContent = 'Closed'; return; }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      el.textContent = `${h}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  function scheduleAutoClose() {
+    const now     = new Date();
+    const close   = new Date(); close.setHours(21, 0, 0, 0);
+    const diff    = close - now;
+    if (diff > 0) setTimeout(() => location.reload(), diff);
+  }
+
+  // ── (JSONP helper removed — no more GAS calls on this page except
+  //    the untouched Leadrat CRM bridge below, which uses a plain
+  //    no-cors fetch, not JSONP.) ────────────────────────────────
+
+  // ── TOAST ──────────────────────────────────────────────────────
+  let toastTimer;
+  function showToast(msg, type = '') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className   = ['show', type].filter(Boolean).join(' ');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.className = ''; }, 4000);
+  }
 </script>
 </body>
 </html>
