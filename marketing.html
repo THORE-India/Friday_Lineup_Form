@@ -173,7 +173,7 @@ async function doLoad(silent){const[r,i,p,za,ac,tk,st]=await Promise.all([sb.fro
  if(needAct())await loadAllAct();
  if(!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#fb')))filters();
  if(tab!=='new')draw();
- if($('dr').classList.contains('open')&&curItem){if(!I.find(x=>x.id===curItem))closeDr();else if(!dirty())open_(curItem)}
+ if($('dr').classList.contains('open')&&curItem){if(!I.find(x=>x.id===curItem))closeDr();else if(!dirty()&&!BUSY)open_(curItem)}
  if(!silent){const u=(await sb.rpc('campaign_storage_usage')).data;if(u)$('mt').textContent=(useOci()?`Files ${(u.files/1073741824).toFixed(2)} of 20 GB (Oracle)`:`Files ${(u.files/1048576).toFixed(0)} MB of 1 GB (Supabase)`)+` · Database ${(u.db/1048576).toFixed(0)} of 500 MB`}}
 function taskDiff(rows){const prev=TS;TS={};rows.forEach(t=>TS[t.id]=t.status);TASKS=rows;if(!taskInit){taskInit=true;return}
  rows.forEach(t=>{if(t.is_template)return;const o=prev[t.id];
@@ -464,7 +464,7 @@ function open_(id){curItem=id;const x=I.find(i=>i.id===id);if(!x)return toast('T
  ${canAs?`<div class="admin-edit-panel"><div class="admin-edit-title">👥 Assignment (can be changed at any stage)</div><div class="admin-edit-label">Executive</div><select class="admin-edit-select" id="ae">${optsel(execs(),x.executive_id,'Unassigned')}</select><div class="admin-edit-label" style="margin-top:10px">Designer</div><select class="admin-edit-select" id="ad">${optsel(designers(),x.designer_id,'Unassigned')}</select><div class="row"><button class="btn-p" onclick="assign('${id}')">Save assignment</button></div></div>`:''}
  <div class="admin-edit-panel"><div class="admin-edit-title">📝 Work</div>${briefBlock}${ed('content','Campaign content (texts, headlines, CTA, link)',exe&&x.status==='content')}${ed('setup','Setup confirmation (platform, campaign link)',exe&&x.status==='approved')}
  <div class="admin-edit-label" style="margin-top:10px">Creative files</div>${files.map(a=>`<div class="log"><a href="#" onclick="view('${a.id}');return false">v${a.version} ${E(a.filename)}</a> ${E(a.note||'')} <span class="m">· ${fdt(a.uploaded_at)} · ${E(nm(a.uploaded_by))}</span></div>`).join('')||'<div class="m">None yet</div>'}
- ${x.designer_id===me.id&&x.status==='designing'?`<div class="m" style="margin-top:8px">Maximum file size: ${maxMb()} MB</div><input class="admin-edit-select" type="file" id="file" accept="image/jpeg,image/png,image/webp,video/mp4,application/pdf" style="margin-top:4px"><input class="admin-edit-select" id="note" placeholder="What changed?" style="margin-top:6px"><div class="row"><button class="clear-btn" onclick="upload('${id}')">Upload new version</button></div>`:''}
+ ${x.designer_id===me.id&&x.status==='designing'?`<div class="m" style="margin-top:8px">Maximum file size: ${maxMb()} MB. Larger files are compressed automatically when you upload.</div><input class="admin-edit-select" type="file" id="file" accept="image/jpeg,image/png,image/webp,video/mp4,application/pdf" style="margin-top:4px"><input class="admin-edit-select" id="note" placeholder="What changed?" style="margin-top:6px"><div class="row"><button class="clear-btn" onclick="upload('${id}')">Upload new version</button></div>`:''}
  ${can&&nx?`<div class="admin-edit-label" style="margin-top:12px">Comment ${nx.some(n=>n[2])?'(required when sending back)':''}</div><textarea class="admin-edit-textarea" id="cm"></textarea><div class="row">${['brief','content','approved'].includes(x.status)&&exe?`<button class="clear-btn" onclick="act('${id}','${x.status}')">Save draft</button>`:''}${nx.map(n=>`<button class="${n[2]?'clear-btn bad':'btn-p'}" onclick="act('${id}','${n[0]}')">${n[1]}</button>`).join('')}</div>`:''}
  ${mgr()&&!['verified','cancelled'].includes(x.status)?`<div class="row"><button class="clear-btn" onclick="setState('item','${id}','${x.status==='on_hold'?'resume':'hold'}')">${x.status==='on_hold'?'Resume':'Put on hold'}</button><button class="clear-btn bad" onclick="setState('item','${id}','cancel')">Cancel campaign</button></div>`:''}
  ${mgr()&&x.status==='verified'&&pst(q)!=='cancelled'?`<div class="row"><button class="btn-p" onclick="startOpt('${id}')">🛠️ Create optimization request</button></div>`:''}${x.state_reason?`<p class="m" style="margin-top:8px">Reason: ${E(x.state_reason)}</p>`:''}</div>
@@ -490,9 +490,55 @@ async function act(id,to){const d={};['brief','content','setup'].forEach(k=>{con
 async function assign(id){if(await run(sb.rpc('campaign_assign',{p_item:id,p_exec:$('ae').value||null,p_designer:$('ad').value||null}),'Assignment saved')){await load();open_(id)}}
 async function setState(k,id,a){const r=a==='resume'?null:prompt(a==='cancel'?'Reason for cancelling (required). This cannot be undone:':'Reason for putting on hold (required):');
  if(a!=='resume'&&!(r||'').trim())return;if(await run(sb.rpc('campaign_set_state',{p_kind:k,p_id:id,p_action:a,p_reason:r}),'Updated')){await load();if(k==='item')open_(id)}}
+/* ---- automatic compression of files above the admin upload limit ---- */
+let BUSY=false;
+const prog=m=>{const t=$('toast');clearTimeout(t._t);t.textContent=m;t.style.display='block'};
+const loadJs=u=>new Promise((res,rej)=>{if(document.querySelector('script[src="'+u+'"]'))return res();const e=document.createElement('script');e.src=u;e.onload=res;e.onerror=()=>rej(new Error('Could not load '+u));document.head.appendChild(e)});
+const swapExt=(n,e)=>n.replace(/\.[^.]+$/,'')+'.'+e;
+async function fitFile(f,max){const t=f.type||'';
+ if(/^image\/(jpeg|png|webp)$/.test(t))return fitImage(f,max);
+ if(t.startsWith('video/'))return fitVideo(f,max);
+ if(t==='application/pdf')return fitPdf(f,max);
+ return null}
+async function fitImage(f,max){prog('Compressing image…');const bmp=await createImageBitmap(f),webp=f.type==='image/webp',type=webp?'image/webp':'image/jpeg';let q=.9,sc=1,blob=null;
+ for(let i=0;i<30;i++){const c=document.createElement('canvas');c.width=Math.max(1,Math.round(bmp.width*sc));c.height=Math.max(1,Math.round(bmp.height*sc));const x=c.getContext('2d');if(!webp){x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height)}x.drawImage(bmp,0,0,c.width,c.height);
+  blob=await new Promise(r=>c.toBlob(r,type,q));if(blob&&blob.size<=max&&blob.type===type)break;blob=null;if(q>.55)q-=.1;else sc*=.85;if(sc<.05)break}
+ if(!blob)return null;return new File([blob],webp?f.name:swapExt(f.name,'jpg'),{type})}
+async function recVideo(v,dest,f,dur,max,k){
+ const totalBps=max*8*k/dur,abps=Math.min(96000,totalBps*.2),vbps=Math.max(80000,totalBps-abps);
+ const maxW=vbps>2.5e6?1920:vbps>1.2e6?1280:vbps>6e5?960:vbps>3e5?640:426,sc=Math.min(1,maxW/v.videoWidth),cw=Math.max(2,Math.round(v.videoWidth*sc/2)*2),ch=Math.max(2,Math.round(v.videoHeight*sc/2)*2);
+ const cv=document.createElement('canvas');cv.width=cw;cv.height=ch;const cx=cv.getContext('2d');
+ const mime=['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(m=>MediaRecorder.isTypeSupported(m));if(!mime)return null;
+ const rec=new MediaRecorder(new MediaStream([...cv.captureStream(30).getVideoTracks(),...dest.stream.getAudioTracks()]),{mimeType:mime,videoBitsPerSecond:vbps,audioBitsPerSecond:abps}),chunks=[];
+ rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};const stopped=new Promise(r=>rec.onstop=r);
+ v.currentTime=0;const ended=new Promise(r=>{v.onended=r});
+ try{await v.play()}catch(e){v.muted=true;await v.play()}
+ let last=-1;const draw=setInterval(()=>{cx.drawImage(v,0,0,cw,ch);const pc=Math.min(99,Math.round(v.currentTime/dur*100));if(pc!==last){last=pc;prog('Compressing video… '+pc+'% — keep this tab open')}},33);
+ rec.start(1000);await ended;clearInterval(draw);rec.stop();await stopped;
+ const type=mime.split(';')[0];return new File([new Blob(chunks,{type})],swapExt(f.name,type==='video/mp4'?'mp4':'webm'),{type})}
+async function fitVideo(f,max){if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream)return null;
+ const url=URL.createObjectURL(f),v=document.createElement('video');v.src=url;v.playsInline=true;v.preload='auto';let ac=null;
+ try{await new Promise((res,rej)=>{v.onloadedmetadata=res;v.onerror=()=>rej(new Error('Cannot read this video'))});
+  const dur=v.duration;if(!isFinite(dur)||dur<=0)return null;
+  ac=new(window.AudioContext||window.webkitAudioContext)();await ac.resume();const dest=ac.createMediaStreamDestination();ac.createMediaElementSource(v).connect(dest);
+  let k=.85;for(let a=0;a<2;a++){const out=await recVideo(v,dest,f,dur,max,k);if(!out)return null;if(out.size<=max)return out;k*=max/out.size*.9;prog('Still too large — compressing again…')}
+  return null}
+ finally{if(ac)ac.close();URL.revokeObjectURL(url)}}
+async function fitPdf(f,max){prog('Preparing PDF compression…');
+ await loadJs('https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js');await loadJs('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js');
+ pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+ const doc=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;
+ for(const[sc,q]of[[1.5,.7],[1.2,.55],[1,.45],[.8,.35],[.6,.3]]){let pdf=null;
+  for(let n=1;n<=doc.numPages;n++){prog('Compressing PDF… page '+n+' of '+doc.numPages);const pg=await doc.getPage(n),vp=pg.getViewport({scale:sc}),c=document.createElement('canvas');c.width=Math.round(vp.width);c.height=Math.round(vp.height);
+   const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);await pg.render({canvasContext:x,viewport:vp}).promise;
+   const w=c.width,h=c.height,o=w>h?'l':'p',img=c.toDataURL('image/jpeg',q);if(!pdf)pdf=new jspdf.jsPDF({unit:'pt',format:[w,h],orientation:o,compress:true});else pdf.addPage([w,h],o);pdf.addImage(img,'JPEG',0,0,w,h,undefined,'FAST')}
+  const blob=pdf.output('blob');if(blob.size<=max)return new File([blob],f.name,{type:'application/pdf'})}
+ return null}
 /* ---- files: Oracle Object Storage (legacy Supabase files still open) ---- */
 const OCI_FN='oci-media',useOci=()=>SET.storage_provider==='oci',maxMb=()=>+SET.max_upload_mb||20;
-async function upload(id){const f=$('file').files[0];if(!f)return toast('Choose a file first');if(f.size>maxMb()*1048576)return toast('Files can be '+maxMb()+' MB at most');
+async function upload(id){let f=$('file').files[0];if(!f)return toast('Choose a file first');const lim=maxMb()*1048576;
+ if(f.size>lim){BUSY=true;try{prog('File is over '+maxMb()+' MB — compressing automatically…');f=await fitFile(f,Math.floor(lim*.95))}catch(e){console.error(e);f=null}finally{BUSY=false}
+  if(!f)return toast('Could not compress this file below '+maxMb()+' MB. Please use a smaller file.')}
  const x=I.find(i=>i.id===id),v=x.campaign_assets.length+1;let row;toast('Uploading…');
  if(useOci()){const{data,error}=await sb.functions.invoke(OCI_FN,{body:{action:'upload',item_id:id,filename:f.name,content_type:f.type,version:v}});
   if(error||!data||data.error)return toast('Upload could not start: '+(data?.error||error?.message||'unknown'));
@@ -517,7 +563,7 @@ function adminView(){const head=sh('SYSTEM OWNER','Admin Control','Storage setti
  return head+`<div class="chart-grid"><div class="chart-card full"><div class="chart-card-title">🗄️ <span>Storage & uploads</span></div>
  <div class="fg"><div><div class="admin-edit-label">Where new files are stored</div><select class="admin-edit-select" id="s_prov"><option value="supabase" ${prov==='supabase'?'selected':''}>Supabase Storage (1 GB on the free plan)</option><option value="oci" ${prov==='oci'?'selected':''}>Oracle Object Storage (20 GB free)</option></select></div>
  <div><div class="admin-edit-label">Maximum upload size (MB)</div><input class="admin-edit-select" id="s_mb" type="number" min="1" max="500" value="${E(mb)}"></div></div>
- <p class="m" style="margin-top:8px">Files already uploaded stay where they are and keep opening normally; only new uploads follow this setting. Supabase's free plan allows at most 50 MB per file.</p>
+ <p class="m" style="margin-top:8px">Files already uploaded stay where they are and keep opening normally; only new uploads follow this setting. Supabase's free plan allows at most 50 MB per file. Files larger than the maximum are compressed automatically in the user's browser before they are uploaded.</p>
  <div class="row"><button class="btn-p" onclick="saveStorage()">Save storage settings</button><button class="clear-btn" onclick="testOci()">Test Oracle connection</button></div></div>
  <div class="chart-card full"><div class="row" style="margin:0 0 10px"><div class="chart-card-title" style="margin:0">👥 <span>Accounts</span> (${ADM.length})</div><span class="sp"></span><button class="btn-p" onclick="newUser()">+ New account</button><button class="clear-btn" onclick="ADM=null;draw()">↻ Reload</button></div>${T(['Person','Pulse role','Marketing role','Status','Last sign-in','Actions'],rows)}<p class="m" style="margin-top:6px">Deactivate keeps all history and blocks sign-in. Delete is only possible for people with no campaign or task history.</p></div></div>`}
 async function saveStorage(){const p=$('s_prov').value,m=$('s_mb').value;if(p==='oci'&&!confirm('New files will go to Oracle. Make sure the Oracle setup is finished and the connection test passed. Continue?'))return;
