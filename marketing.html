@@ -65,10 +65,10 @@ td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text);vert
 .nmrow{display:flex;gap:6px;margin-bottom:6px;align-items:center}.nmrow input{flex:1}.admin-edit-select.cust{border-color:#2563EB;background:#EFF6FF}
 .admin-edit-panel{margin-top:1rem;padding:1rem 1.1rem;background:var(--surface2);border:1.5px solid var(--border-gold);border-radius:var(--radius)}.admin-edit-title{font-size:.66rem;font-weight:700;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;margin-bottom:.8rem}
 .ch{padding:5px 11px;border:1px solid var(--border-mid);border-radius:999px;font-size:.72rem;font-weight:600;cursor:pointer;background:#fff;color:var(--text-sub);transition:all var(--dur)}.ch:hover{border-color:#93C5FD}.ch.on{background:var(--gold);border-color:var(--gold);color:#fff}.chips{display:flex;flex-wrap:wrap;gap:6px}.cu{display:flex;gap:6px;margin-top:6px;max-width:300px}
-.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.36);backdrop-filter:blur(4px);display:flex;align-items:stretch;justify-content:flex-end;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}.modal-overlay.open{opacity:1;visibility:visible}
-.modal-box{background:#fff;width:min(30rem,94vw);height:100vh;border-left:1px solid var(--border-mid);border-radius:18px 0 0 18px;box-shadow:-20px 0 60px rgba(15,23,42,.18);transform:translateX(100%);transition:transform .28s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;overflow:hidden}.modal-overlay.open .modal-box{transform:none}
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.36);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}.modal-overlay.open{opacity:1;visibility:visible}
+.modal-box{background:#fff;width:min(46rem,100%);max-height:92vh;border:1px solid var(--border-mid);border-radius:18px;box-shadow:0 30px 80px rgba(15,23,42,.28);transform:translateY(18px) scale(.97);transition:transform .25s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;overflow:hidden}.modal-overlay.open .modal-box{transform:none}
 .modal-header{background:#fff;border-bottom:1px solid var(--border);padding:15px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0}.modal-title{font-weight:800;font-size:1rem}.modal-close{width:32px;height:32px;background:var(--surface2);border:1px solid var(--border-mid);border-radius:50%;color:#475569;font-size:.82rem;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}.modal-close:hover{background:var(--red-bg);color:var(--red);border-color:#FECACA}
-.modal-body{padding:18px;overflow:auto;flex:1}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.detail-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px}.detail-item.full{grid-column:1/-1}
+.modal-body{padding:20px;overflow:auto;flex:1;min-height:0}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.detail-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px}.detail-item.full{grid-column:1/-1}
 .detail-label{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);margin-bottom:4px}.detail-value{font-size:.83rem;font-weight:500;word-break:break-word}.muted{color:var(--text-dim)}
 .vlink{color:var(--gold);font-weight:700;word-break:break-all;text-decoration:underline}
 .log{font-size:.72rem;color:var(--text-dim);border-top:1px solid var(--border);padding:5px 0}.log a{color:var(--gold);font-weight:600}
@@ -77,7 +77,7 @@ td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text);vert
 .login-eyebrow{text-align:center;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}.login-title{font-family:'DM Serif Display',serif;font-size:1.8rem;text-align:center;margin-bottom:4px;line-height:1.1}.login-sub{text-align:center;color:var(--text-dim);font-size:.82rem;margin-bottom:2rem}
 .form-field{margin-bottom:1rem}.form-field label{display:block;font-size:.68rem;font-weight:700;color:var(--text-sub);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}.form-field input{width:100%;padding:11px 14px;background:#fff;border:1.5px solid var(--border-mid);border-radius:var(--radius-sm);font:400 16px 'Inter',sans-serif;outline:none}.form-field input:focus{border-color:#2563EB;box-shadow:0 0 0 3px rgba(37,99,235,.14)}
 .login-btn{width:100%;padding:12px;background:var(--gold);border:0;border-radius:var(--radius-sm);color:#fff;font:800 .88rem 'Inter',sans-serif;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;margin-top:6px;box-shadow:0 4px 14px rgba(30,64,175,.22)}.login-btn:hover{background:var(--gold-bright);transform:translateY(-1px)}.login-status{text-align:center;font-size:.8rem;color:var(--red);margin-top:14px;min-height:20px}
-.quick-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--text);color:#F8FAFC;padding:9px 18px;border-radius:9999px;font-size:.78rem;font-weight:600;box-shadow:0 12px 30px rgba(15,23,42,.28);z-index:900;display:none}
+.quick-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--text);color:#F8FAFC;padding:9px 18px;border-radius:9999px;font-size:.78rem;font-weight:600;box-shadow:0 12px 30px rgba(15,23,42,.28);z-index:1100;display:none}.upl{position:fixed;inset:0;z-index:1000;background:rgba(15,23,42,.45);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:16px}.upl-box{background:#fff;border-radius:16px;padding:22px 24px;width:min(26rem,100%);box-shadow:var(--shadow-lg)}.upl-t{font-weight:800;font-size:.88rem;word-break:break-all}.upl-bar{height:10px;border-radius:99px;background:var(--border);overflow:hidden;margin:14px 0 8px}.upl-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#1E40AF,#2563EB);border-radius:99px;transition:width .15s}.upl-bar.ind i{width:35%;animation:indm 1.1s ease-in-out infinite}@keyframes indm{0%{margin-left:-35%}100%{margin-left:100%}}.upl-m{font-size:.76rem;color:var(--text-sub);font-weight:600}.upl-w{font-size:.66rem;color:var(--text-dim);margin-top:8px}
 footer{background:#fff;border-top:1px solid var(--border);padding:12px 20px;text-align:center;font-size:.7rem;color:var(--text-dim)}footer a{color:var(--gold);text-decoration:none}
 #bell{position:relative;font-size:.9rem}.bdg{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:99px;background:var(--red);color:#fff;font-size:.55rem;font-weight:800;display:none;align-items:center;justify-content:center;border:2px solid #fff}
 .bell-wrap{position:relative}.bell-panel{position:absolute;top:calc(100% + 10px);right:0;width:22rem;max-width:92vw;background:#fff;border:1px solid var(--border-mid);border-radius:var(--radius);box-shadow:var(--shadow-lg);display:none;z-index:999;overflow:hidden}.bell-panel.show{display:block}
@@ -100,10 +100,10 @@ footer{background:#fff;border-top:1px solid var(--border);padding:12px 20px;text
 <div class="content"><div id="fb"></div><div id="app"></div></div>
 <footer>Engineered for excellence by <a href="https://narendraspatil.github.io/NarenP-website/" target="_blank">Operations Department, THORE</a> &nbsp;|&nbsp; Copyright © <span id="yr"></span> All rights reserved.</footer>
 <div class="modal-overlay" id="dr" onclick="if(event.target===this)closeDr()"><div class="modal-box"><div class="modal-header"><div class="modal-title" id="drt">Campaign</div><div class="modal-close" onclick="closeDr()">✕</div></div><div class="modal-body" id="drb"></div></div></div>
-<div id="pops"></div><div class="quick-toast" id="toast"></div>
+<div class="upl" id="upl"><div class="upl-box"><div class="upl-t" id="upl_t"></div><div class="upl-bar" id="upl_bar"><i id="upl_b"></i></div><div class="upl-m" id="upl_m"></div><div class="upl-w">Please keep this window open until the upload finishes.</div></div></div><div id="pops"></div><div class="quick-toast" id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
-const sb=supabase.createClient('https://ivetvywbdewkkqbazjxu.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2ZXR2eXdiZGV3a2txYmF6anh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NzQ2NzcsImV4cCI6MjEwNDE1MDY3N30.1lFi27ywZ1iVAU7NykMKY_Lie3krA58rBFXICXZstgo');
+const SB_URL='https://ivetvywbdewkkqbazjxu.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2ZXR2eXdiZGV3a2txYmF6anh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1NzQ2NzcsImV4cCI6MjEwNDE1MDY3N30.1lFi27ywZ1iVAU7NykMKY_Lie3krA58rBFXICXZstgo';const sb=supabase.createClient(SB_URL,SB_KEY);
 const B='campaign-assets',$=i=>document.getElementById(i),E=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ST=['brief','designing','exec_review','content','approval','final_approval','approved','setup_review','verified'],ALL=ST.concat(['on_hold','cancelled']);
 const LB={brief:'Brief',designing:'Design',exec_review:'Executive Review',content:'Content',approval:'Manager approval',final_approval:'Final approval',approved:'Approved',setup_review:'Setup Done Check',verified:'Completed',on_hold:'On hold',cancelled:'Cancelled'};
@@ -129,7 +129,7 @@ const dl=d=>{if(!d)return'';const n=Math.ceil((new Date(d)-new Date(new Date().t
 const sh=(k,t,p)=>`<div class="section-head"><div><div class="section-kicker">${k}</div><h1>${t}</h1><p>${p}</p></div><div class="section-live"><span></span> Live data</div></div>`;
 const di=(l,v,full,raw)=>`<div class="detail-item ${full?'full':''}"><div class="detail-label">${l}</div><div class="detail-value">${(raw?v:E(v))||'<span class="muted">—</span>'}</div></div>`;
 const fixUrl=u=>{u=String(u||'').trim();return u?(/^https?:\/\//i.test(u)?u:'https://'+u):''};
-const linkify=t=>E(t).replace(/(https?:\/\/[^\s<]+)/g,'<a class="vlink" href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+const linkify=t=>E(t).replace(/https?:\/\/[^\s<]+/g,u=>{const m=u.match(/[.,:!?)\]]+$/),tail=m?m[0]:'',core=tail?u.slice(0,-tail.length):u;return '<a class="vlink" href="'+core+'" target="_blank" rel="noopener noreferrer">'+core+'</a>'+tail});
 const fd=d=>new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
 const ageTxt=d=>{const n=Math.floor((Date.now()-new Date(d))/864e5);return n<=0?'today':n===1?'1 day old':n+' days old'};
 $('yr').textContent=new Date().getFullYear();
@@ -196,6 +196,11 @@ function popups(f){f.slice(0,3).forEach(a=>{const it=I.find(x=>x.id===a.item_id)
 function poll(){clearInterval(timer);timer=setInterval(()=>{if(!document.hidden&&me&&role)load(true)},20000)}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&me&&role)load(true)});window.addEventListener('focus',()=>{if(me&&role)load(true)});
 document.addEventListener('click',e=>{if(!e.target.closest('#bellWrap')){$('bp').classList.remove('show');NEWSET=new Set()}});
+const normN=v=>String(v||'').trim().toLowerCase();
+async function nameTaken(names,exceptId){const list=[...new Set(names.map(v=>String(v||'').trim()).filter(Boolean))];if(!list.length)return null;
+ const loc=new Map(I.filter(x=>x.id!==exceptId&&x.name).map(x=>[normN(x.name),x.name]));for(const n of list)if(loc.has(normN(n)))return loc.get(normN(n));
+ const{data}=await sb.from('campaign_items').select('id,name').in('name',list);const hit=(data||[]).find(r=>r.id!==exceptId);return hit?hit.name:null}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!BUSY&&$('dr').classList.contains('open'))closeDr()});
 /* ================= helpers ================= */
 const cname=x=>(x.opt_count?`<span class="badge" style="--c:#7C3AED">Optimized - ${x.opt_count}</span> `:'')+E(x.name||x.ref);
 const TLB={new:'New',started:'Started',manager_review:'Manager review',completed:'Completed',cancelled:'Cancelled'},TCOL={new:'#64748B',started:'#2563EB',manager_review:'#D97706',completed:'#15803D',cancelled:'#DC2626'};
@@ -353,7 +358,9 @@ function dupCustom(){const seen=new Set();for(const l of LINES)for(const k of Ob
 async function submitReq(){const p={zone:$('zone').value,cluster:$('cluster').value,city:$('city').value.trim(),project_name:$('project_name').value.trim(),developer:$('developer').value,deadline:$('deadline').value,key_points:$('key_points').value,config_list:CFG.filter(c=>c.config.trim())};
  if(!p.zone||!p.cluster||!p.city||!p.project_name||!p.deadline)return toast('Zone, cluster, city, project and deadline are required');
  if(!EDIT&&PM.length&&!(p.project_name in pmMap))return toast('Pick the project from the list');
- const dup=dupCustom();if(dup)return toast('Two campaigns have the same name: '+dup);
+ const dup=dupCustom();if(dup)return toast('Name already exists: '+dup);
+ {const units=[];LINES.forEach(l=>{for(let k=0;k<l.n;k++){const c=l.names[k];if(c)units.push(c);else if(!EDIT)units.push(defNm(l,k))}});const seen=new Set();for(const n of units){const q=normN(n);if(seen.has(q))return toast('Name already exists: '+n);seen.add(q)}
+  const taken=await nameTaken(units,null);if(taken)return toast('Name already exists: '+taken)}
  const lines=LINES.map(l=>({objective:l.obj,subtype:l.subtype,ctype:l.ctype,targeting:l.targeting,region:l.region,n:l.n,executive_id:l.executive_id||null,designer_id:l.designer_id||null}));
  if(EDIT){const before=new Set(I.filter(x=>x.request_id===EDIT).map(x=>x.id));if(!await run(sb.rpc('campaign_update_request',{p_req:EDIT,p})))return;if(lines.length){if(!await run(sb.rpc('campaign_add_campaigns',{p_req:EDIT,p_lines:lines})))return;await applyNames(EDIT,before)}toast('Project updated');EDIT=null;LINES=[];tab='projects';load();return}
  if(!lines.length)return toast('Add at least one campaign (lead generation or awareness)');p.lines=lines;
@@ -378,7 +385,7 @@ async function submitOpt(){const d=$('o_d').checked,c=$('o_c').checked;if(!d&&!c
  if(d&&!$('o_dn').value.trim())return toast('Describe the design changes');if(c&&!$('o_cn').value.trim())return toast('Describe the content changes');
  const b={design:d,content:c,design_notes:$('o_dn').value,content_notes:$('o_cn').value,executive_id:$('o_ex').value||null,designer_id:$('o_de').value||null};
  if(OPTEXT){const p={...b,project_name:$('x_pr').value.trim(),zone:$('x_zone').value,cluster:$('x_cl').value,city:$('x_city').value.trim(),developer:$('x_dev').value,campaign_name:$('x_name').value.trim(),ctype:$('x_type').value.trim(),targeting:$('x_tg').value,region:$('x_rg').value.trim()};
-  if(!p.project_name||!p.campaign_name)return toast('Project and campaign name are required');if(PM.length&&!(p.project_name in pmMap))return toast('Pick the project from the list');
+  if(!p.project_name||!p.campaign_name)return toast('Project and campaign name are required');if(await nameTaken([p.campaign_name],null))return toast('Name already exists');if(PM.length&&!(p.project_name in pmMap))return toast('Pick the project from the list');
   if(!await run(sb.rpc('campaign_create_optimization_external',{p}),'Optimization request created'))return}
  else{const v=$('o_pick').value,x=I.find(i=>i.status==='verified'&&v===i.name+' ['+i.ref+']');if(!x)return toast('Pick a completed campaign from the list');
   if(!await run(sb.rpc('campaign_start_optimization',{p_item:x.id,p:b}),'Optimization request created'))return}
@@ -451,7 +458,7 @@ async function sendSuggest(id){const c=($('sg_c').value||'').trim();if(!c)return
 function closeDr(){$('dr').classList.remove('open');curItem=null}
 function open_(id){curItem=id;const x=I.find(i=>i.id===id);if(!x)return toast('That campaign is no longer available to you');
  const q=rq(x),d=x.data||{},w=WHO[x.status],exe=x.executive_id===me.id,can=w==='e'?exe:w==='d'?x.designer_id===me.id:w==='z'?Z.some(a=>a.zone===q.zone&&a.approver_id===me.id):(mgr()&&!exe),canAs=mgr()&&!['verified','cancelled'].includes(x.status),
- ed=(k,l,on)=>on?`<div class="admin-edit-label" style="margin-top:10px">${l}</div><textarea class="admin-edit-textarea" id="f_${k}">${E(d[k]||'')}</textarea>`:di(l,d[k],1),files=[...x.campaign_assets].sort((a,b)=>a.version-b.version),
+ ed=(k,l,on)=>on?`<div class="admin-edit-label" style="margin-top:10px">${l}</div><textarea class="admin-edit-textarea" id="f_${k}">${E(d[k]||'')}</textarea>`:(d[k]?di(l,`<span style="white-space:pre-line">${linkify(d[k])}</span>`,1,1):di(l,'',1)),files=[...x.campaign_assets].sort((a,b)=>a.version-b.version),
  /* CHANGE 6: no "Changes to creative" for approvals */
  nx=NX[x.status]&&(x.opt_active||x.objective==='awareness')&&x.status==='approval'?[['verified',x.opt_active?'Approve and close optimization':'Approve — mark awareness campaign completed'],['exec_review','Send back to Executive Review',1]]:x.opt_active&&x.status==='exec_review'&&!(d.opt&&d.opt.content)?[['approval','Accept creative, send to manager'],['designing','Send to designer for changes',1]]:NX[x.status],
  /* CHANGE 2: brief with clickable video / reel link */
@@ -484,15 +491,20 @@ function editCamp(id){const x=I.find(i=>i.id===id);if(!x)return;curItem=null;
 async function saveEdit(id){const x=I.find(i=>i.id===id);if(!x)return;const nmv=$('ec_name').value.trim(),ob=$('ec_obj').value,st=$('ec_st').value,c=$('ec_c').value.trim(),
  chN=nmv&&nmv!==(x.name||''),chO=ob!==(x.objective==='awareness'?'awareness':'lead'),chS=st!==x.status;
  if(!chN&&!chO&&!chS)return toast('Nothing has been changed');if((chO||chS)&&!c)return toast('A comment is compulsory to change the stage or type');
+ if(chN&&await nameTaken([nmv],id))return toast('Name already exists');
  if(await run(sb.rpc('campaign_admin_edit',{p_item:id,p_name:chN?nmv:null,p_status:chS?st:null,p_objective:chO?ob:null,p_comment:c||null}),'Campaign updated')){ACTALL=null;await load();open_(id)}}
-async function act(id,to){const d={};['brief','content','setup'].forEach(k=>{const e=$('f_'+k);if(e)d[k]=e.value});const vl=$('f_video_link');if(vl)d.video_link=vl.value.trim();
+async function act(id,to){const x0=I.find(i=>i.id===id);
+ if(x0&&['approval','final_approval'].includes(x0.status)&&to==='exec_review'){const c=($('cm')?.value||'').trim();if(!c)return toast('Write the changes needed in the comment box');
+  if(await run(sb.rpc('campaign_send_back',{p_item:id,p_comment:c}),'Sent back to Executive Review')){await load();open_(id)}return}
+ const d={};['brief','content','setup'].forEach(k=>{const e=$('f_'+k);if(e)d[k]=e.value});const vl=$('f_video_link');if(vl)d.video_link=vl.value.trim();
  if(await run(sb.rpc('campaign_advance',{p_item:id,p_to:to,p_comment:$('cm')?.value||null,p_data:d}),'Saved')){await load();open_(id)}}
 async function assign(id){if(await run(sb.rpc('campaign_assign',{p_item:id,p_exec:$('ae').value||null,p_designer:$('ad').value||null}),'Assignment saved')){await load();open_(id)}}
 async function setState(k,id,a){const r=a==='resume'?null:prompt(a==='cancel'?'Reason for cancelling (required). This cannot be undone:':'Reason for putting on hold (required):');
  if(a!=='resume'&&!(r||'').trim())return;if(await run(sb.rpc('campaign_set_state',{p_kind:k,p_id:id,p_action:a,p_reason:r}),'Updated')){await load();if(k==='item')open_(id)}}
 /* ---- automatic compression of files above the admin upload limit ---- */
 let BUSY=false;
-const prog=m=>{const t=$('toast');clearTimeout(t._t);t.textContent=m;t.style.display='block'};
+const upl={show(n){$('upl').style.display='flex';$('upl_t').textContent=n;this.set('Preparing…',null)},set(m,pc){$('upl_m').textContent=m;$('upl_bar').classList.toggle('ind',pc==null);$('upl_b').style.width=pc==null?'':pc+'%'},hide(){$('upl').style.display='none'}};
+const prog=m=>{const mm=String(m).match(/(\d+)%/);upl.set(m,mm?+mm[1]:null)};
 const loadJs=u=>new Promise((res,rej)=>{if(document.querySelector('script[src="'+u+'"]'))return res();const e=document.createElement('script');e.src=u;e.onload=res;e.onerror=()=>rej(new Error('Could not load '+u));document.head.appendChild(e)});
 const swapExt=(n,e)=>n.replace(/\.[^.]+$/,'')+'.'+e;
 async function fitFile(f,max){const t=f.type||'';
@@ -536,17 +548,32 @@ async function fitPdf(f,max){prog('Preparing PDF compression…');
  return null}
 /* ---- files: Oracle Object Storage (legacy Supabase files still open) ---- */
 const OCI_FN='oci-media',useOci=()=>SET.storage_provider==='oci',maxMb=()=>+SET.max_upload_mb||20;
-async function upload(id){let f=$('file').files[0];if(!f)return toast('Choose a file first');const lim=maxMb()*1048576;
- if(f.size>lim){BUSY=true;try{prog('File is over '+maxMb()+' MB — compressing automatically…');f=await fitFile(f,Math.floor(lim*.95))}catch(e){console.error(e);f=null}finally{BUSY=false}
-  if(!f)return toast('Could not compress this file below '+maxMb()+' MB. Please use a smaller file.')}
- const x=I.find(i=>i.id===id),v=x.campaign_assets.length+1;let row;toast('Uploading…');
- if(useOci()){const{data,error}=await sb.functions.invoke(OCI_FN,{body:{action:'upload',item_id:id,filename:f.name,content_type:f.type,version:v}});
-  if(error||!data||data.error)return toast('Upload could not start: '+(data?.error||error?.message||'unknown'));
-  let put;try{put=await fetch(data.upload_url,{method:'PUT',headers:{'Content-Type':f.type||'application/octet-stream'},body:f})}catch(e){return toast('Upload blocked by the browser (CORS). See the setup guide, step E4.')}
-  if(!put.ok)return toast('Oracle rejected the upload ('+put.status+')');
-  row={item_id:id,version:v,path:data.object_name,provider:'oci',oci_url:data.object_url,filename:f.name,mime:f.type,size_bytes:f.size,note:$('note').value}}
- else{const path=`${id}/v${v}/${f.name.replace(/[^\w.\-]/g,'_')}`;if(!await run(sb.storage.from(B).upload(path,f,{contentType:f.type})))return;row={item_id:id,version:v,path,filename:f.name,mime:f.type,size_bytes:f.size,note:$('note').value}}
- if(await run(sb.from('campaign_assets').insert(row),'Uploaded')){await load();open_(id)}}
+const mb1=n=>(n/1048576).toFixed(1);
+function xhrSend(method,url,headers,body,onp){return new Promise((res,rej)=>{const r=new XMLHttpRequest();r.open(method,url);Object.entries(headers).forEach(([k,v])=>r.setRequestHeader(k,v));r.upload.onprogress=e=>{if(e.lengthComputable)onp(e.loaded,e.total)};r.onload=()=>r.status>=200&&r.status<300?res(r):rej(new Error(r.status+' '+String(r.responseText||'').slice(0,160)));r.onerror=()=>rej(new Error('Network error'));r.send(body)})}
+async function upload(id){
+ if(BUSY)return toast('An upload is already in progress');
+ let f=$('file').files[0];if(!f)return toast('Choose a file first');
+ const x=I.find(i=>i.id===id);if(!x)return;
+ const dupOf=g=>x.campaign_assets.find(a=>a.filename===g.name&&+a.size_bytes===g.size);
+ let d0=dupOf(f);if(d0)return toast('This file is already uploaded (v'+d0.version+'). Please choose a different file.');
+ const note=$('note')?$('note').value:'',lim=maxMb()*1048576;
+ BUSY=true;upl.show(f.name);
+ try{
+  if(f.size>lim){upl.set('File is over '+maxMb()+' MB — compressing automatically…',null);let g=null;try{g=await fitFile(f,Math.floor(lim*.95))}catch(e){console.error(e)}
+   if(!g){toast('Could not compress this file below '+maxMb()+' MB. Please use a smaller file.');return}
+   f=g;d0=dupOf(f);if(d0){toast('This file is already uploaded (v'+d0.version+'). Please choose a different file.');return}}
+  const v=x.campaign_assets.length+1,pg=(l,t)=>{const pc=Math.round(l/t*100);upl.set('Uploading '+mb1(l)+' MB of '+mb1(t)+' MB ('+pc+'%)',pc)};let row;
+  upl.set('Uploading 0.0 MB of '+mb1(f.size)+' MB (0%)',0);
+  if(useOci()){const{data,error}=await sb.functions.invoke(OCI_FN,{body:{action:'upload',item_id:id,filename:f.name,content_type:f.type,version:v}});
+   if(error||!data||data.error){toast('Upload could not start: '+(data?.error||error?.message||'unknown'));return}
+   try{await xhrSend('PUT',data.upload_url,{'Content-Type':f.type||'application/octet-stream'},f,pg)}catch(e){toast(/Network/.test(e.message)?'Upload blocked by the browser (CORS). See the setup guide, step E4.':'Oracle rejected the upload ('+e.message+')');return}
+   row={item_id:id,version:v,path:data.object_name,provider:'oci',oci_url:data.object_url,filename:f.name,mime:f.type,size_bytes:f.size,note}}
+  else{const path=`${id}/v${v}/${f.name.replace(/[^\w.\-]/g,'_')}`,{data:{session}}=await sb.auth.getSession();
+   try{await xhrSend('POST',SB_URL+'/storage/v1/object/'+B+'/'+path.split('/').map(encodeURIComponent).join('/'),{Authorization:'Bearer '+session.access_token,apikey:SB_KEY,'x-upsert':'false','Content-Type':f.type||'application/octet-stream'},f,pg)}catch(e){toast('Upload failed: '+e.message);return}
+   row={item_id:id,version:v,path,filename:f.name,mime:f.type,size_bytes:f.size,note}}
+  upl.set('Saving…',100);
+  if(await run(sb.from('campaign_assets').insert(row),'Uploaded')){await load();open_(id)}
+ }finally{BUSY=false;upl.hide()}}
 async function view(aid){const a=I.flatMap(x=>x.campaign_assets).find(y=>y.id===aid);if(!a)return;
  if(a.provider==='oci'){const{data,error}=await sb.functions.invoke(OCI_FN,{body:{action:'download',asset_id:aid}});if(error||!data||data.error)return toast('Could not open file: '+(data?.error||error?.message||'unknown'));window.open(data.url)}
  else{const r=await sb.storage.from(B).createSignedUrl(a.path,300);if(r.data)window.open(r.data.signedUrl);else toast(r.error.message)}}
