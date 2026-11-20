@@ -616,8 +616,8 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
   tbody tr:not(.budget-total-row):not(.sp-cluster-row):not(.sp-team-row):not(.sp-team-subtotal):not(.sp-cluster-subtotal):not(.sp-grand-total):not(.mp-agency-row):not(.mp-zone-row):not(.mp-cluster-row):not(.mp-cluster-subtotal):not(.mp-zone-subtotal):not(.mp-agency-subtotal):not(.mp-grand-total) td:first-child{position:static;box-shadow:none;background:transparent!important;}
   tbody tr:not(.budget-total-row):not(.sp-cluster-row):not(.sp-team-row):not(.sp-team-subtotal):not(.sp-cluster-subtotal):not(.sp-grand-total):not(.mp-agency-row):not(.mp-zone-row):not(.mp-cluster-row):not(.mp-cluster-subtotal):not(.mp-zone-subtotal):not(.mp-agency-subtotal):not(.mp-grand-total) td:nth-child(1),tbody tr:not(.budget-total-row):not(.sp-cluster-row):not(.sp-team-row):not(.sp-team-subtotal):not(.sp-cluster-subtotal):not(.sp-grand-total):not(.mp-agency-row):not(.mp-zone-row):not(.mp-cluster-row):not(.mp-cluster-subtotal):not(.mp-zone-subtotal):not(.mp-agency-subtotal):not(.mp-grand-total) td:nth-child(2){font-weight:700;}
   /* Hide lower-priority columns on mobile. */
-  #v-table td:nth-child(n+5):nth-child(-n+10),#vd-table td:nth-child(n+3):nth-child(-n+8),#fn-table td:nth-child(n+5):nth-child(-n+9),#tk-table td:nth-child(n+5):nth-child(-n+9){display:none!important;}
-  #v-table td:nth-child(11),#v-table td:nth-child(12),#v-table td:nth-child(13),#vd-table td:nth-child(9),#vd-table td:nth-child(10),#fn-table td:nth-child(10),#fn-table td:nth-child(11),#tk-table td:nth-child(10),#tk-table td:nth-child(11){display:grid!important;}
+  #v-table td:nth-child(n+5):nth-child(-n+10),#vd-table td:nth-child(n+3):nth-child(-n+7),#fn-table td:nth-child(n+5):nth-child(-n+9),#tk-table td:nth-child(n+5):nth-child(-n+9){display:none!important;}
+  #v-table td:nth-child(11),#v-table td:nth-child(12),#v-table td:nth-child(13),#vd-table td:nth-child(8),#vd-table td:nth-child(9),#fn-table td:nth-child(10),#fn-table td:nth-child(11),#tk-table td:nth-child(10),#tk-table td:nth-child(11){display:grid!important;}
   .modal-box,.drill-box{width:100%;max-width:none;border-radius:18px 18px 0 0;height:92vh;margin-top:auto;transform:translateY(100%);}
   .modal-overlay.open .modal-box,.drill-overlay.open .drill-box{transform:translateY(0);}
   .modal-header::after{display:none;}
@@ -706,24 +706,151 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
 .lead-edit-actions .admin-save-btn{flex:1;margin-top:0;}
 .lead-edit-actions .clear-btn{height:auto;padding:0 18px;}
 
+
+/* ================================================================
+   THORE PULSE 2.0 — density, hierarchy and usability refinement.
+   Layout/visual only. Workflow, IDs, data logic unchanged.
+   ================================================================ */
+:root{--header-h:56px;--shadow-xs:0 1px 2px rgba(15,23,42,.04);}
+/* Header: one compact row — brand · section pills · search · status · user */
+.header{border-bottom:0;box-shadow:0 1px 0 rgba(15,23,42,.06),0 6px 16px rgba(15,23,42,.04);}
+.header-top{height:var(--header-h);min-height:var(--header-h);padding:0 16px;gap:14px;}
+.header-left{gap:0;}
+.logo-word{font-size:1.2rem;}
+.header-center{flex:1;min-width:0;display:flex;justify-content:flex-start;}
+.dash-tabs{width:auto;max-width:100%;gap:2px;padding:0;background:transparent;border:0;box-shadow:none;}
+.dash-tab{height:30px;padding:0 11px;border-radius:999px;font-size:.74rem;font-weight:600;color:#475569;gap:6px;}
+.dash-tab.active{background:#1E40AF;color:#fff;box-shadow:none;}
+.dash-tab.active::after{display:none;}
+.dash-tab:not(.active):hover{background:#F1F5F9;color:#0F172A;}
+.tab-badge{min-width:0;height:auto;padding:2px 6px;font-size:.62rem;background:#EEF2F7;color:#64748B;}
+.dash-tab.active .tab-badge{background:rgba(255,255,255,.22);color:#fff;}
+.hdr-search{display:flex;align-items:center;gap:7px;height:32px;width:clamp(140px,15vw,230px);padding:0 8px 0 11px;background:#F1F5F9;border:1px solid transparent;border-radius:999px;color:#64748B;flex-shrink:0;transition:background .15s,border-color .15s,box-shadow .15s;}
+.hdr-search:focus-within{background:#fff;border-color:#93C5FD;box-shadow:0 0 0 3px rgba(37,99,235,.10);}
+.hdr-search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:500 .76rem 'Inter',sans-serif;color:#0F172A;}
+.hdr-search input::placeholder{color:#94A3B8;}
+.hdr-search input::-webkit-search-cancel-button{display:none;}
+.hdr-search .x{display:none;width:20px;height:20px;border:0;background:transparent;color:#94A3B8;border-radius:50%;cursor:pointer;font-size:1rem;line-height:1;align-items:center;justify-content:center;}
+.hdr-search.has-value .x{display:flex;}
+.hdr-search .x:hover{background:#E2E8F0;color:#0F172A;}
+.hdr-search.is-off,.header-top:has(#dashTabs[style*="none"]) .hdr-search{display:none;}
+.header-right{margin-left:0;gap:8px;}
+.status-pill{padding:3px 9px;font-size:.66rem;}
+.icon-btn,.profile-avatar{width:30px;height:30px;}
+.section-head{display:none!important;}
+/* KPI cards: horizontal, ~50px tall */
+.kpi-banner.metrics-row{padding:10px 16px 0;gap:8px;}
+.kpi-banner .metric-card{min-height:0;height:52px;padding:0 12px;gap:10px;border-radius:10px;border:1px solid #EEF2F7;box-shadow:var(--shadow-xs);}
+.kpi-banner .metric-card:hover{transform:none;border-color:#E2E8F0;box-shadow:0 2px 8px rgba(15,23,42,.06);}
+.kpi-banner .metric-icon{width:28px;height:28px;border-radius:8px;font-size:.82rem;}
+.kpi-banner .metric-body{display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:baseline;min-width:0;}
+.kpi-banner .metric-value{grid-column:1;grid-row:1;font-size:1.2rem;font-weight:800;letter-spacing:-.02em;}
+.kpi-banner .metric-label{grid-column:1/-1;grid-row:2;margin:1px 0 0;font-size:.64rem;font-weight:600;text-transform:none;letter-spacing:.01em;color:#64748B;}
+.kpi-banner .metric-trend{display:none;}
+.kpi-banner .metric-trend[id]{display:block;grid-column:2;grid-row:1;margin:0;font-size:.62rem;font-weight:600;color:#64748B;}
+/* Filters: wrap, never scroll sideways */
+.filter-search{display:none!important;}
+.filter-command-row:has(>.filter-search:only-child){display:none;}
+.filters-bar{margin:8px 16px 0;padding:8px 10px;border:1px solid #EEF2F7;border-radius:10px;box-shadow:var(--shadow-xs);}
+.filter-command-row .filters-bar{margin:0;padding:8px 10px;}
+.filters-grid{flex-wrap:wrap;overflow:visible;gap:6px 8px;align-items:flex-end;padding:0;}
+.filter-item{flex:1 1 100px;min-width:88px;gap:2px;}
+.filter-item.date-range-item{flex:1.7 1 210px;}
+.filter-item:has(>.filter-actions),.filter-item:has(>.clear-btn){flex:0 0 auto;min-width:0;}
+.filter-item label{font-size:.6rem;font-weight:600;letter-spacing:.01em;text-transform:none;color:#64748B;line-height:1.15;}
+.filter-item select,.filter-item input,.ms-trigger,.clear-btn{height:28px;border-color:#E2E8F0;border-radius:7px;}
+.filter-item select,.filter-item input,.ms-trigger{font-size:.7rem!important;}
+.filter-actions{margin-left:0;padding-left:0;}
+.view-tab{height:22px;}
+.active-filter-chips{margin:6px 16px 0;}
+.prefilter-note{margin:8px 16px 0;padding:4px 10px;font-size:.68rem;}
+/* Active-leads status chip */
+.meta-left{display:flex;align-items:center;gap:10px;min-width:0;}
+.status-chip{position:relative;display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 3px 0 9px;border:1px solid #BBF7D0;background:#F0FDF4;color:#047857;border-radius:999px;font:700 .66rem 'Inter',sans-serif;cursor:pointer;}
+.status-chip .dot{width:6px;height:6px;border-radius:50%;background:#10B981;}
+.status-chip .act{padding:2px 8px;border-radius:999px;background:#fff;border:1px solid #BBF7D0;font-size:.62rem;}
+.status-chip:hover{background:#ECFDF5;border-color:#6EE7B7;}
+.status-chip .tip{position:absolute;left:0;top:calc(100% + 8px);width:max-content;max-width:260px;padding:8px 10px;background:#0F172A;color:#F8FAFC;border-radius:8px;font-size:.7rem;font-weight:500;line-height:1.4;text-align:left;opacity:0;visibility:hidden;transform:translateY(-2px);transition:opacity .12s,transform .12s;pointer-events:none;z-index:60;}
+.status-chip:hover .tip,.status-chip:focus-visible .tip{opacity:1;visibility:visible;transform:none;}
+/* Table: lighter grid, tighter rows */
+.table-meta{margin:8px 16px 0;padding:6px 12px;border:1px solid #EEF2F7;border-bottom:0;border-radius:10px 10px 0 0;}
+.row-count{font-size:.72rem;font-weight:600;}
+.table-wrap{margin:0 16px 12px;max-height:calc(100vh - 250px);min-height:240px;border:1px solid #EEF2F7;border-radius:0 0 10px 10px;box-shadow:var(--shadow-xs);}
+th{padding:7px 10px;font-size:.66rem;font-weight:700;letter-spacing:.01em;text-transform:none;color:#475569;background:#F8FAFC;border-bottom:1px solid #E2E8F0;}
+th:first-child{background:#F8FAFC;}
+thead{box-shadow:0 1px 0 #E2E8F0;}
+td{padding:6px 10px;font-size:.78rem;line-height:1.35;color:#334155;border-bottom:1px solid #F1F5F9;}
+td:first-child{box-shadow:1px 0 0 #F1F5F9;}
+tbody tr:hover td{background:#F8FAFF;}
+tr.clickable-row:hover td{background:#F1F6FF;}
+td.remark-cell{max-width:240px;}
+td.remark-cell span{display:block;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#475569;}
+td.remark-cell.empty{color:#94A3B8;}
+.remark-tip{position:fixed;left:0;top:0;z-index:10000;max-width:400px;padding:10px 12px;background:#0F172A;color:#F8FAFC;border-radius:10px;font-size:.76rem;line-height:1.5;white-space:pre-wrap;word-break:break-word;box-shadow:0 12px 32px rgba(15,23,42,.28);pointer-events:none;opacity:0;visibility:hidden;transition:opacity .12s;}
+.remark-tip.show{opacity:1;visibility:visible;}
+.badge{padding:2px 8px;}
+.convert-btn{width:26px;height:26px;}
+.chart-card,.maintenance-box{border-color:#EEF2F7;box-shadow:var(--shadow-xs);}
+/* Detail view: centered modal, card sections, two columns */
+.detail-tabs,.modal-header::after{display:none!important;}
+.modal-header{padding:12px 18px;}
+.modal-title{font-size:1.05rem;font-weight:700;}
+.modal-actions{display:flex;align-items:center;gap:8px;}
+.modal-actions .edit-lead-btn{margin:0;}
+.detail-label{font-size:.62rem;font-weight:600;text-transform:none;letter-spacing:.01em;}
+.detail-item{border-color:#EEF2F7;}
+.detail-cols{column-count:2;column-gap:14px;padding:14px 18px 18px;}
+.modal-box.editing .detail-cols{display:none;}
+.modal-box:not(.editing) #detailPanelOverview,.modal-box:not(.editing) #detailGrid,#visitDetailGrid{display:contents!important;}
+#detailPanelActivity,#detailPanelNotes{display:none!important;}
+.dc-card,.detail-cols .admin-edit-panel{break-inside:avoid;margin:0 0 12px;padding:12px 14px;background:#fff;border:1px solid #EEF2F7;border-radius:12px;box-shadow:var(--shadow-xs);}
+.dc-title,.detail-cols .admin-edit-title{font-size:.72rem;font-weight:700;letter-spacing:.01em;text-transform:none;color:#1E40AF;margin:0 0 8px;}
+.dc-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px 14px;}
+.dc-item{min-width:0;}
+.dc-item .detail-label{margin:0 0 2px;color:#64748B;}
+.dc-item .detail-value{font-size:.84rem;font-weight:600;color:#0F172A;}
+.dc-item .detail-value.gold{color:#1E40AF;}
+.dc-item .detail-value.muted{font-weight:500;color:#94A3B8;}
+.dc-sub{font-size:.62rem;font-weight:600;color:#64748B;margin:0 0 3px;}
+.dc-text{font-size:.82rem;line-height:1.55;color:#334155;white-space:pre-wrap;word-break:break-word;}
+.dc-text.muted{color:#94A3B8;}
+.dc-block+.dc-block{margin-top:10px;padding-top:10px;border-top:1px solid #F1F5F9;}
+@media(min-width:769px){
+  .modal-overlay{align-items:center;justify-content:center;padding:24px;}
+  .modal-box{width:min(78vw,1200px);max-width:1200px;height:auto;max-height:90vh;border:1px solid #E2E8F0;border-radius:16px;box-shadow:0 24px 64px rgba(15,23,42,.22);transform:translateY(12px) scale(.98);}
+  .modal-overlay.open .modal-box{transform:none;}
+  #leadEditForm .detail-grid{grid-template-columns:repeat(3,1fr);}
+}
+@media(max-width:900px){.detail-cols{column-count:1;}}
+@media(max-width:900px){
+  .header-top{height:auto;flex-wrap:wrap;padding:8px 12px;row-gap:6px;}
+  .header-left{order:0;flex:0 0 auto;}.hdr-search{order:1;flex:1;width:auto;}.header-right{order:2;}
+  .header-center{order:3;flex:1 0 100%;}.dash-tabs{width:100%;overflow-x:auto;scrollbar-width:none;}
+}
+@media(max-width:768px){
+  .kpi-banner .metric-card{height:48px;}
+  td.remark-cell,td.remark-cell span{max-width:none;}td.remark-cell span{white-space:normal;}
+  .dc-grid{grid-template-columns:1fr 1fr;}
+}
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="header-top">
-    <div class="header-left">
-      <div class="logo-block">
-        <div class="logo-text">
-          <div class="logo-word">THORE <span class="logo-pulse-word">PULSE</span></div>
-          <div class="logo-sub">Business Performance &amp; Intelligence System</div>
-        </div>
-      </div>
-      <div class="header-context">
-        <div class="header-context-eyebrow">Operations Control Centre</div>
-        <div class="header-context-title">Performance &amp; Workflow</div>
+    <div class="header-left"><div class="logo-block"><div class="logo-text"><div class="logo-word">THORE <span class="logo-pulse-word">PULSE</span></div></div></div></div>
+    <div class="header-center">
+      <div id="dashTabs" class="dash-tabs" style="display:none;">
+        <button class="dash-tab active" data-dash="visits" onclick="switchDashboard('visits')">Friday Lineup <span class="tab-badge" id="tabBadge-visits">0</span></button>
+        <button class="dash-tab" data-dash="visitdone" onclick="switchDashboard('visitdone')">Visit Done <span class="tab-badge" id="tabBadge-visitdone">0</span></button>
+        <button class="dash-tab" data-dash="fnclients" onclick="switchDashboard('fnclients')">FN Clients <span class="tab-badge" id="tabBadge-fnclients">0</span></button>
+        <button class="dash-tab" data-dash="tokenfn" onclick="switchDashboard('tokenfn')">Tokens FN <span class="tab-badge" id="tabBadge-tokenfn">0</span></button>
+        <button class="dash-tab" id="marketingTabBtn" data-dash="marketing" onclick="switchDashboard('marketing')">Marketing <span class="tab-badge" id="tabBadge-marketing">0</span></button>
+        <button class="dash-tab" data-dash="salesdash" onclick="switchDashboard('salesdash')">Sales <span class="tab-badge" id="tabBadge-salesdash">0</span></button>
+        <button class="dash-tab" data-dash="weeklytargets" onclick="switchDashboard('weeklytargets')">Weekly Targets <span class="tab-badge" id="tabBadge-weeklytargets">0</span></button>
       </div>
     </div>
+    <div class="hdr-search is-off" id="hdrSearchWrap"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="hdrSearch" type="search" placeholder="Search…" oninput="onHdrSearch(this.value)" autocomplete="off" aria-label="Search current view"><button type="button" class="x" aria-label="Clear search" onclick="clearHdrSearch()">×</button></div>
     <div class="header-right">
       <div id="connStatus" class="status-pill online"><div class="status-dot"></div> Online</div>
       <a href="index.html" class="icon-btn" title="Go to Form" style="font-size:0.76rem;font-weight:700;">←</a>
@@ -743,20 +870,7 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
       <path class="pulse-line-path" d="M0,12 L140,12 L158,12 L168,-4 L180,28 L192,2 L204,12 L222,12 L600,12" />
     </svg>
   </div>
-  <div class="header-nav">
-    <div id="dashTabs" class="dash-tabs" style="display:none;">
-        <button class="dash-tab active" data-dash="visits" onclick="switchDashboard('visits')">📋 Friday Lineup <span class="tab-badge" id="tabBadge-visits">0</span></button>
-        <button class="dash-tab" data-dash="visitdone" onclick="switchDashboard('visitdone')">✅ Visit Done <span class="tab-badge" id="tabBadge-visitdone">0</span></button>
-        <button class="dash-tab" data-dash="fnclients" onclick="switchDashboard('fnclients')">🏆 FN Clients <span class="tab-badge" id="tabBadge-fnclients">0</span></button>
-        <button class="dash-tab" data-dash="tokenfn" onclick="switchDashboard('tokenfn')">🎫 Tokens FN <span class="tab-badge" id="tabBadge-tokenfn">0</span></button>
-        <button class="dash-tab" id="marketingTabBtn" data-dash="marketing" onclick="switchDashboard('marketing')">📈 Marketing <span class="tab-badge" id="tabBadge-marketing">0</span></button>
-        <button class="dash-tab" data-dash="salesdash" onclick="switchDashboard('salesdash')">📊 Sales <span class="tab-badge" id="tabBadge-salesdash">0</span></button>
-        <button class="dash-tab" data-dash="weeklytargets" onclick="switchDashboard('weeklytargets')">🎯 Weekly Targets <span class="tab-badge" id="tabBadge-weeklytargets">0</span></button>
-      </div>
-    </div>
-  </div>
 </div>
-
 
 <div class="refresh-indicator" id="refreshInd">🔄 Refreshing…</div>
 
@@ -778,7 +892,6 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
 
     <!-- VISITS -->
     <div id="visitsDash">
-      <div class="section-head"><div><div class="section-kicker">FRIDAY LINEUP</div><h1>Upcoming Visits</h1><p>Prioritise the next conversations and keep the field team moving.</p></div><div class="section-live"><span></span> Live data</div></div>
       <div class="metrics-row kpi-banner" id="visitsMetrics">
         <div class="metric-card"><div class="metric-icon gold">📋</div><div class="metric-body"><div class="metric-value" id="vm-total">—</div><div class="metric-label">Total Visits</div><div class="metric-trend" id="vm-trend">Current view</div></div></div>
         <div class="metric-card"><div class="metric-icon green">📅</div><div class="metric-body"><div class="metric-value" id="vm-today">—</div><div class="metric-label">Today's Visits</div><div class="metric-trend">Scheduled today</div></div></div>
@@ -802,9 +915,9 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
       <div class="active-filter-chips" id="v-filterChips"></div><div class="table-meta"><div class="row-count" id="v-rowCount">Loading…</div><div class="last-updated" id="v-lastUpdated"></div></div>
       <div id="v-detailView" class="table-wrap">
         <table id="v-table"><thead><tr>
-          <th class="sortable" onclick="sortVisits(0)">Cluster</th><th class="sortable" onclick="sortVisits(1)">Team Lead</th>
+          <th class="sortable" onclick="sortVisits(0)">Cluster</th><th class="sortable" onclick="sortVisits(1)">Manager Name</th>
           <th class="sortable" onclick="sortVisits(2)">SE</th><th class="sortable" onclick="sortVisits(3)">Customer</th>
-          <th>Phone</th><th class="sortable" onclick="sortVisits(5)">Project</th><th class="sortable" onclick="sortVisits(6)">Developer</th>
+          <th>Phone</th><th class="sortable" onclick="sortVisits(5)">Project</th><th class="sortable" onclick="sortVisits(6)">Remark</th>
           <th class="sortable" onclick="sortVisits(7)">Visit Date</th><th>Visit Time</th><th>Requirements</th><th>Closure</th><th>Visit Type</th><th>Convert</th>
         </tr></thead><tbody id="v-tbody"></tbody></table>
       </div>
@@ -813,7 +926,6 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
 
     <!-- VISIT DONE -->
     <div id="visitdoneDash" style="display:none;">
-      <div class="section-head"><div><div class="section-kicker">VISIT OUTCOMES</div><h1>Completed Visits</h1><p>Review completed touchpoints and move the strongest opportunities forward.</p></div><div class="section-live"><span></span> Live data</div></div>
       <div class="metrics-row kpi-banner" id="visitDoneMetrics">
         <div class="metric-card"><div class="metric-icon gold">✅</div><div class="metric-body"><div class="metric-value" id="vdm-total">—</div><div class="metric-label">Total Done</div><div class="metric-trend">Completed touchpoints</div></div></div>
         <div class="metric-card"><div class="metric-icon green">🤝</div><div class="metric-body"><div class="metric-value" id="vdm-visit">—</div><div class="metric-label">In-Person Visits</div><div class="metric-trend">On-site meetings</div></div></div>
@@ -838,15 +950,14 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
       <div class="table-wrap">
         <table id="vd-table"><thead><tr>
           <th class="sortable" onclick="sortVD(0)">Visit Date</th><th class="sortable" onclick="sortVD(1)">Customer Name</th>
-          <th>Phone</th><th class="sortable" onclick="sortVD(3)">Team Lead</th><th class="sortable" onclick="sortVD(4)">Sales Executive</th>
-          <th class="sortable" onclick="sortVD(5)">Project</th><th>Developer</th><th>Notes</th><th>Type</th><th>Convert</th>
+          <th>Phone</th><th class="sortable" onclick="sortVD(3)">Manager Name</th><th class="sortable" onclick="sortVD(4)">Sales Executive</th>
+          <th class="sortable" onclick="sortVD(5)">Project</th><th>Remark</th><th>Type</th><th>Convert</th>
         </tr></thead><tbody id="vd-tbody"></tbody></table>
       </div>
     </div>
 
     <!-- FN CLIENTS -->
     <div id="fnDash" style="display:none;">
-      <div class="section-head"><div><div class="section-kicker">FN CLIENTS</div><h1>Opportunity Pipeline</h1><p>Scan active clients first. Drill into a record only when the next action matters.</p></div><div class="section-live"><span></span> Pipeline view</div></div>
       <div class="metrics-row kpi-banner" id="fnMetrics">
         <div class="metric-card"><div class="metric-icon gold">🏆</div><div class="metric-body"><div class="metric-value" id="fnm-total">—</div><div class="metric-label">Total Clients</div><div class="metric-trend">Visible dataset</div></div></div>
         <div class="metric-card"><div class="metric-icon" style="background:#FEF2F2">🔴</div><div class="metric-body"><div class="metric-value" id="fnm-hot">—</div><div class="metric-label">Hot Leads</div><div class="metric-trend">Immediate attention</div></div></div>
@@ -854,7 +965,6 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
         <div class="metric-card"><div class="metric-icon blue">⚡</div><div class="metric-body"><div class="metric-value" id="fnm-active">—</div><div class="metric-label">Active Pipeline</div><div class="metric-trend">Hot + Warm + Cold</div></div></div>
       </div>
       <div class="loan-dept-banner" id="loanDeptBanner">💼 Loan Department View — showing only <strong style="margin:0 4px">Lost</strong> &amp; <strong style="margin:0 4px">Booked</strong> clients</div>
-      <div class="prefilter-note" id="fnPrefilterNote" style="display:none;">ℹ️ Showing active clients only (Hot, Warm, Cold). Lost &amp; Booked are hidden.<button onclick="showAllFNStatuses()">Show All</button></div>
       <div class="filter-command-row"><div class="filter-search"><span class="search-icon">⌕</span><input type="search" id="fn-globalSearch" placeholder="Search client, phone, ID…" oninput="applyFNFilters()" autocomplete="off"><button type="button" class="search-clear" aria-label="Clear search" onclick="clearGlobalSearch('fn')">×</button></div></div><div class="filters-bar"><div class="filters-grid">
         <div class="filter-item"><label>PNL Head</label><select id="fn-pnlFilter" onchange="applyFNFilters()"><option value="">All PNL Heads</option></select></div>
         <div class="filter-item"><label>Manager</label><select id="fn-managerFilter" onchange="applyFNFilters()"><option value="">All Managers</option></select></div>
@@ -880,13 +990,13 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
         <div class="filter-item date-range-item"><label>Date Range</label><div class="date-range-pair"><input type="date" id="fn-fromDate" onchange="applyFNFilters()" title="From date"><span class="date-range-sep">–</span><input type="date" id="fn-toDate" onchange="applyFNFilters()" title="To date"></div></div>
         <div class="filter-item"><label>&nbsp;</label><div class="filter-actions"><button class="clear-btn" onclick="clearFNFilters()">Clear</button><div class="view-tabs" id="fnViewTabs"><button class="view-tab active" id="fn-detailTab" onclick="switchFNView('detail')">Detail</button><button class="view-tab" id="fn-pivotTab" onclick="switchFNView('pivot')">Pivot</button></div></div></div>
       </div></div>
-      <div class="active-filter-chips" id="fn-filterChips"></div><div class="table-meta"><div class="row-count" id="fn-rowCount">Loading…</div><div class="last-updated" id="fn-lastUpdated"></div></div>
+      <div class="active-filter-chips" id="fn-filterChips"></div><div class="table-meta"><div class="meta-left"><div class="row-count" id="fn-rowCount">Loading…</div><button type="button" class="status-chip" id="fnPrefilterNote" style="display:none;" onclick="showAllFNStatuses()" aria-label="Active leads only. Click to show the complete dataset."><span class="dot"></span>Active Leads Only<span class="act">Show all</span><span class="tip">Showing Hot, Warm and Cold clients. Click to show complete dataset.</span></button></div><div class="last-updated" id="fn-lastUpdated"></div></div>
       <div id="fn-detailView" class="table-wrap">
         <table id="fn-table"><thead><tr>
-          <th class="sortable" onclick="sortFN(0)">Cluster</th><th class="sortable" onclick="sortFN(1)">Team Lead</th>
+          <th class="sortable" onclick="sortFN(0)">Cluster</th><th class="sortable" onclick="sortFN(1)">Manager Name</th>
           <th class="sortable" onclick="sortFN(2)">SE</th><th class="sortable" onclick="sortFN(3)">Customer</th>
           <th class="sortable" onclick="sortFN(4)">Created Date</th><th class="sortable" onclick="sortFN(5)">Project</th>
-          <th>Developer</th><th>Config</th><th>Budget</th><th>Status</th><th class="sortable" onclick="sortFN(10)">Visit Date</th>
+          <th>Remark</th><th>Config</th><th>Budget</th><th>Status</th><th class="sortable" onclick="sortFN(10)">Visit Date</th>
         </tr></thead><tbody id="fn-tbody"></tbody></table>
       </div>
       <div id="fn-pivotView" class="table-wrap" style="display:none;"><table id="fn-pivot"><thead></thead><tbody></tbody></table></div>
@@ -894,14 +1004,12 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
 
     <!-- TOKENS FN -->
     <div id="tokenfnDash" style="display:none;">
-      <div class="section-head"><div><div class="section-kicker">TOKENS FN</div><h1>Token Pipeline</h1><p>Clients who have reached token stage. Scan active clients first, then drill into a record when the next action matters.</p></div><div class="section-live"><span></span> Pipeline view</div></div>
       <div class="metrics-row kpi-banner" id="tkMetrics">
         <div class="metric-card"><div class="metric-icon gold">🏆</div><div class="metric-body"><div class="metric-value" id="tkm-total">—</div><div class="metric-label">Total Token Clients</div><div class="metric-trend">Visible dataset</div></div></div>
         <div class="metric-card"><div class="metric-icon" style="background:#FEF2F2">🔴</div><div class="metric-body"><div class="metric-value" id="tkm-hot">—</div><div class="metric-label">Hot Leads</div><div class="metric-trend">Immediate attention</div></div></div>
         <div class="metric-card"><div class="metric-icon green">✅</div><div class="metric-body"><div class="metric-value" id="tkm-booked">—</div><div class="metric-label">Booked</div><div class="metric-trend">Closed wins</div></div></div>
         <div class="metric-card"><div class="metric-icon blue">⚡</div><div class="metric-body"><div class="metric-value" id="tkm-active">—</div><div class="metric-label">Active Pipeline</div><div class="metric-trend">Hot + Warm + Cold</div></div></div>
       </div>
-            <div class="prefilter-note" id="tkPrefilterNote" style="display:none;">ℹ️ Showing active clients only (Hot, Warm, Cold). Lost &amp; Booked are hidden.<button onclick="showAllTKStatuses()">Show All</button></div>
       <div class="filter-command-row"><div class="filter-search"><span class="search-icon">⌕</span><input type="search" id="tk-globalSearch" placeholder="Search client, phone, ID…" oninput="applyTKFilters()" autocomplete="off"><button type="button" class="search-clear" aria-label="Clear search" onclick="clearGlobalSearch('tk')">×</button></div></div><div class="filters-bar"><div class="filters-grid">
         <div class="filter-item"><label>PNL Head</label><select id="tk-pnlFilter" onchange="applyTKFilters()"><option value="">All PNL Heads</option></select></div>
         <div class="filter-item"><label>Manager</label><select id="tk-managerFilter" onchange="applyTKFilters()"><option value="">All Managers</option></select></div>
@@ -927,13 +1035,13 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
         <div class="filter-item date-range-item"><label>Date Range</label><div class="date-range-pair"><input type="date" id="tk-fromDate" onchange="applyTKFilters()" title="From date"><span class="date-range-sep">–</span><input type="date" id="tk-toDate" onchange="applyTKFilters()" title="To date"></div></div>
         <div class="filter-item"><label>&nbsp;</label><div class="filter-actions"><button class="clear-btn" onclick="clearTKFilters()">Clear</button><div class="view-tabs" id="tkViewTabs"><button class="view-tab active" id="tk-detailTab" onclick="switchTKView('detail')">Detail</button><button class="view-tab" id="tk-pivotTab" onclick="switchTKView('pivot')">Pivot</button></div></div></div>
       </div></div>
-      <div class="active-filter-chips" id="tk-filterChips"></div><div class="table-meta"><div class="row-count" id="tk-rowCount">Loading…</div><div class="last-updated" id="tk-lastUpdated"></div></div>
+      <div class="active-filter-chips" id="tk-filterChips"></div><div class="table-meta"><div class="meta-left"><div class="row-count" id="tk-rowCount">Loading…</div><button type="button" class="status-chip" id="tkPrefilterNote" style="display:none;" onclick="showAllTKStatuses()" aria-label="Active leads only. Click to show the complete dataset."><span class="dot"></span>Active Leads Only<span class="act">Show all</span><span class="tip">Showing Hot, Warm and Cold clients. Click to show complete dataset.</span></button></div><div class="last-updated" id="tk-lastUpdated"></div></div>
       <div id="tk-detailView" class="table-wrap">
         <table id="tk-table"><thead><tr>
-          <th class="sortable" onclick="sortTK(0)">Cluster</th><th class="sortable" onclick="sortTK(1)">Team Lead</th>
+          <th class="sortable" onclick="sortTK(0)">Cluster</th><th class="sortable" onclick="sortTK(1)">Manager Name</th>
           <th class="sortable" onclick="sortTK(2)">SE</th><th class="sortable" onclick="sortTK(3)">Customer</th>
           <th class="sortable" onclick="sortTK(4)">Created Date</th><th class="sortable" onclick="sortTK(5)">Project</th>
-          <th>Developer</th><th>Config</th><th>Budget</th><th>Status</th><th class="sortable" onclick="sortTK(10)">Visit Date</th>
+          <th>Remark</th><th>Config</th><th>Budget</th><th>Status</th><th class="sortable" onclick="sortTK(10)">Visit Date</th>
         </tr></thead><tbody id="tk-tbody"></tbody></table>
       </div>
       <div id="tk-pivotView" class="table-wrap" style="display:none;"><table id="tk-pivot"><thead></thead><tbody></tbody></table></div>
@@ -941,7 +1049,6 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
 
     <!-- MARKETING DASHBOARD -->
     <div id="marketingDash" style="display:none;">
-      <div class="section-head"><div><div class="section-kicker">MARKETING PERFORMANCE</div><h1>Acquisition Efficiency</h1><p>Understand where spend turns into visits, bookings and revenue.</p></div><div class="section-live"><span></span> Performance view</div></div>
       <div class="metrics-row kpi-banner" id="mpMetrics">
         <div class="metric-card"><div class="metric-icon gold">🧲</div><div class="metric-body"><div class="metric-value" id="mpm-leads">—</div><div class="metric-label">Total Leads</div><div class="metric-trend">Filtered acquisition</div></div></div>
         <div class="metric-card"><div class="metric-icon blue">💸</div><div class="metric-body"><div class="metric-value" id="mpm-spent">—</div><div class="metric-label">Total Spent</div><div class="metric-trend">Campaign investment</div></div></div>
@@ -988,14 +1095,6 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
 
     <!-- SALES DASHBOARD (V2 — sales_performance aggregated schema, single-window graphs+table) -->
     <div id="salesDash" style="display:none;">
-      <div class="section-head">
-        <div>
-          <div class="section-kicker">SALES PERFORMANCE</div>
-          <h1>Sales Command View</h1>
-          <p>Funnel ratios and totals in one view — filter once, scroll through everything.</p>
-        </div>
-        <div class="section-live"><span></span> Live data</div>
-      </div>
 
       <div class="metrics-row kpi-banner" id="sp2Metrics">
         <div class="metric-card"><div class="metric-icon gold">🧲</div><div class="metric-body"><div class="metric-value" id="sp2m-leads">—</div><div class="metric-label">Leads</div><div class="metric-trend">Lead volume</div></div></div>
@@ -1049,7 +1148,6 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
 
     <!-- WEEKLY TARGETS -->
     <div id="weeklytargetsDash" style="display:none;">
-      <div class="section-head"><div><div class="section-kicker">WEEKLY TARGETS</div><h1>Target vs Achievement</h1><p>Rolling 12-month view of weekly Site Visit, VC and Booking targets against actuals.</p></div><div class="section-live"><span></span> Performance view</div></div>
 
       <div class="filters-bar"><div class="filters-grid">
         <div class="filter-item"><label>Leader Level</label>
@@ -1129,17 +1227,13 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
 <!-- DETAIL MODAL -->
 <div class="modal-overlay" id="detailModal" onclick="closeDetailModal(event)">
   <div class="modal-box">
-    <div class="modal-header"><div class="modal-title" id="modalCustomerName">Client Details</div><div class="modal-close" onclick="closeDetailModal()">✕</div></div>
+    <div class="modal-header"><div class="modal-title" id="modalCustomerName">Client Details</div><div class="modal-actions"><button class="edit-lead-btn" id="editLeadBtn" type="button" onclick="openLeadEdit()" title="Edit all details of this lead">✏️ Edit</button><div class="modal-close" onclick="closeDetailModal()">✕</div></div></div>
     <div class="modal-body">
       <div class="detail-tabs" role="tablist">
         <button class="detail-tab active" id="detailTabOverview" onclick="switchDetailTab('overview')">Overview</button>
         <button class="detail-tab" id="detailTabActivity" onclick="switchDetailTab('activity')">Activity Log</button>
         <button class="detail-tab" id="detailTabNotes" onclick="switchDetailTab('notes')">Notes</button>
-        <button class="edit-lead-btn" id="editLeadBtn" type="button" onclick="openLeadEdit()" title="Edit all details of this lead">✏️ Edit</button>
       </div>
-      <div class="detail-panel active" id="detailPanelOverview"><div class="detail-grid" id="detailGrid"></div></div>
-      <div class="detail-panel" id="detailPanelActivity"><div class="activity-card"><div class="detail-label">Operations activity</div><div class="activity-value" id="detailActivityText">No activity recorded.</div></div></div>
-      <div class="detail-panel" id="detailPanelNotes"><div class="activity-card"><div class="detail-label">Client / operations notes</div><div class="activity-value" id="detailNotesText">No notes recorded.</div></div></div>
       <div id="leadEditPanel">
         <div class="lead-edit-title">✏️ Edit Lead</div>
         <div class="lead-edit-note">Change any detail of this lead. Only the fields you change are saved.</div>
@@ -1149,7 +1243,13 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
           <button class="clear-btn" type="button" onclick="cancelLeadEdit()">Cancel</button>
         </div>
         <div class="admin-save-status" id="leadEditStatus"></div>
-      </div> <div class="admin-edit-panel" id="adminEditPanel" style="display:none;">
+      </div>
+      <div class="detail-cols">
+      <div class="detail-panel active" id="detailPanelOverview"><div class="detail-grid" id="detailGrid"></div></div>
+      <div class="detail-panel" id="detailPanelActivity"><div class="activity-card"><div class="detail-label">Operations activity</div><div class="activity-value" id="detailActivityText">No activity recorded.</div></div></div>
+      <div class="detail-panel" id="detailPanelNotes"><div class="activity-card"><div class="detail-label">Client / operations notes</div><div class="activity-value" id="detailNotesText">No notes recorded.</div></div></div>
+
+      <div class="admin-edit-panel" id="adminEditPanel" style="display:none;">
         <div class="admin-edit-title" id="adminEditTitle">✏️ Operations Update</div>
         <div class="admin-edit-row" id="adminStatusRow">
           <div><div class="admin-edit-label">Change Status</div>
@@ -1161,6 +1261,7 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
         <button class="admin-save-btn" id="adminSaveBtn" onclick="saveAdminUpdate()">Save Update</button>
         <div class="admin-save-status" id="adminSaveStatus"></div>
       </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1170,7 +1271,7 @@ tr.sp-cluster-row td:first-child,tr.sp-team-row td:first-child,tr.mp-agency-row 
   <div class="modal-box">
     <div class="modal-header"><div class="modal-title" id="visitModalCustomerName">Visit Details</div><div class="modal-close" onclick="closeVisitDetailModal()">✕</div></div>
     <div class="modal-body">
-      <div class="detail-grid" id="visitDetailGrid"></div>
+      <div class="detail-cols"><div class="detail-grid" id="visitDetailGrid"></div></div>
     </div>
   </div>
 </div>
@@ -1760,7 +1861,7 @@ function switchVisitView(v){
 function renderVisitTable(rows){
   const tbody=document.getElementById('v-tbody');document.getElementById('v-rowCount').textContent=rows.length+' visit(s)';
   if(!rows.length){tbody.innerHTML='<tr><td colspan="13" class="no-data">No matching records found</td></tr>';return;}
-  tbody.innerHTML=rows.map((r,i)=>`<tr class="clickable-row" onclick="openVisitDetailModal(visitsFiltered[${i}])"><td>${esc(r.cluster)}</td><td>${esc(r.teamLead)}</td><td>${esc(r.employee)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td>${esc(r.phone)}</td><td>${esc(r.project)}</td><td>${esc(r.developer)}</td><td style="white-space:nowrap">${esc(r.visitDate)}</td><td style="white-space:nowrap">${esc(r.visitTime)}</td><td style="max-width:140px;white-space:normal;font-size:0.78rem">${esc(r.requirement)}</td><td>${esc(r.closure)}</td><td>${r.visitType?`<span class="badge ${r.visitType==='Visit'?'badge-yes':'badge-cold'}">${esc(r.visitType)}</span>`:'—'}</td><td onclick="event.stopPropagation()"><button class="convert-btn" onclick="convertToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="More actions">⋮</button></td></tr>`).join('');
+  tbody.innerHTML=rows.map((r,i)=>`<tr class="clickable-row" onclick="openVisitDetailModal(visitsFiltered[${i}])"><td>${esc(r.cluster)}</td><td>${esc(r.manager)}</td><td>${esc(r.employee)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td>${esc(r.phone)}</td><td>${esc(r.project)}</td>${remarkCell(r.remark)}<td style="white-space:nowrap">${esc(r.visitDate)}</td><td style="white-space:nowrap">${esc(r.visitTime)}</td><td style="max-width:140px;white-space:normal;font-size:0.78rem">${esc(r.requirement)}</td><td>${esc(r.closure)}</td><td>${r.visitType?`<span class="badge ${r.visitType==='Visit'?'badge-yes':'badge-cold'}">${esc(r.visitType)}</span>`:'—'}</td><td onclick="event.stopPropagation()"><button class="convert-btn" onclick="convertToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="More actions">⋮</button></td></tr>`).join('');
 }
 function renderVisitPivot(rows){
   const dates=[...new Set(rows.map(r=>fmtDate(r.visitDate)).filter(Boolean))].sort();
@@ -1780,7 +1881,7 @@ function populateVisitFilters(rows){
   fillSelect('v-devFilter',[...new Set(rows.map(r=>r.developer).filter(Boolean))].sort(),'All Developers');
 }
 function sortVisits(col){if(vSortCol===col)vSortDir=vSortDir==='asc'?'desc':'asc';else{vSortCol=col;vSortDir='asc';}document.querySelectorAll('#v-table th').forEach((th,i)=>{th.classList.remove('asc','desc');if(i===col)th.classList.add(vSortDir);});applySortVisits();renderVisitTable(visitsFiltered);}
-function applySortVisits(){const keys=['cluster','teamLead','employee','customer','phone','project','developer','visitDate','visitTime'];const key=keys[vSortCol]||'visitDate';visitsFiltered.sort((a,b)=>{const v1=a[key]||'',v2=b[key]||'';return vSortDir==='asc'?v1.localeCompare(v2):v2.localeCompare(v1);});}
+function applySortVisits(){const keys=['cluster','manager','employee','customer','phone','project','remark','visitDate','visitTime'];const key=keys[vSortCol]||'visitDate';visitsFiltered.sort((a,b)=>{const v1=a[key]||'',v2=b[key]||'';return vSortDir==='asc'?v1.localeCompare(v2):v2.localeCompare(v1);});}
 
 function renderFNData(rows){
   fnAll=rows.map(r=>({...r,visitDate:fmtDate(r.visitDate)}));populateFNFilters(fnAll);
@@ -1823,7 +1924,7 @@ function renderFNTable(rows){
 
   let rowsHtml=rows.map((r,i)=>{
     let cd='—';if(r.timestamp){try{const d=new Date(r.timestamp);if(!isNaN(d))cd=d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'});else cd=r.timestamp;}catch(_){cd=r.timestamp;}}
-    return`<tr class="clickable-row" onclick="openDetailModal(fnFiltered[${i}])"><td>${esc(r.cluster)}</td><td>${esc(r.teamLead)}</td><td>${esc(r.employee)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td style="white-space:nowrap;font-size:0.78rem">${esc(cd)}</td><td>${esc(r.project)}</td><td>${esc(r.developer||r.builderSourcingName||'—')}</td><td>${esc(r.configuration)}</td><td>${esc(r.budget)}</td><td onclick="event.stopPropagation()">${fnStatusCell(r,i)}</td><td style="white-space:nowrap">${esc(r.visitDate)}</td></tr>`;
+    return`<tr class="clickable-row" onclick="openDetailModal(fnFiltered[${i}])"><td>${esc(r.cluster)}</td><td>${esc(r.manager)}</td><td>${esc(r.employee)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td style="white-space:nowrap;font-size:0.78rem">${esc(cd)}</td><td>${esc(r.project)}</td>${remarkCell(r.remark)}<td>${esc(r.configuration)}</td><td>${esc(r.budget)}</td><td onclick="event.stopPropagation()">${fnStatusCell(r,i)}</td><td style="white-space:nowrap">${esc(r.visitDate)}</td></tr>`;
   }).join('');
 
   const totalRupees=rows.reduce((sum,r)=>sum+parseBudget(r.budget),0);
@@ -1856,14 +1957,18 @@ function populateFNFilters(rows){
   fillSelect('fn-devFilter',[...new Set(rows.map(r=>r.developer||r.builderSourcingName).filter(Boolean))].sort(),'All Developers');
 }
 function sortFN(col){if(fnSortCol===col)fnSortDir=fnSortDir==='asc'?'desc':'asc';else{fnSortCol=col;fnSortDir='asc';}document.querySelectorAll('#fn-table th').forEach((th,i)=>{th.classList.remove('asc','desc');if(i===col)th.classList.add(fnSortDir);});applySortFN();renderFNTable(fnFiltered);}
-function applySortFN(){const keys=['cluster','teamLead','employee','customer','timestamp','project','developer','configuration','budget','status','visitDate'];const key=keys[fnSortCol]||'timestamp';fnFiltered.sort((a,b)=>{if(key==='timestamp'){const d1=a.timestamp?new Date(a.timestamp).getTime():0,d2=b.timestamp?new Date(b.timestamp).getTime():0;return fnSortDir==='asc'?d1-d2:d2-d1;}const v1=a[key]||'',v2=b[key]||'';return fnSortDir==='asc'?v1.localeCompare(v2):v2.localeCompare(v1);});}
+function applySortFN(){const keys=['cluster','manager','employee','customer','timestamp','project','remark','configuration','budget','status','visitDate'];const key=keys[fnSortCol]||'timestamp';fnFiltered.sort((a,b)=>{if(key==='timestamp'){const d1=a.timestamp?new Date(a.timestamp).getTime():0,d2=b.timestamp?new Date(b.timestamp).getTime():0;return fnSortDir==='asc'?d1-d2:d2-d1;}const v1=a[key]||'',v2=b[key]||'';return fnSortDir==='asc'?v1.localeCompare(v2):v2.localeCompare(v1);});}
 
 function openDetailModal(r){
   document.getElementById('modalCustomerName').textContent=r.customer||'Client Details';
   let createdOn='—';if(r.timestamp){try{const d=new Date(r.timestamp);if(!isNaN(d)){createdOn=d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'})+' '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true,timeZone:'UTC'});}else createdOn=r.timestamp;}catch(_){createdOn=r.timestamp;}}
-  const fields=[{label:'Created On',value:createdOn,full:false,gold:true},{label:'Status',value:r.status,full:false,badge:true},{label:'Cluster',value:r.cluster,full:false},{label:'PNL Head',value:r.pnlHead,full:false},{label:'Team Leader',value:r.teamLead,full:false},{label:'Sales Executive',value:r.employee,full:false},{label:'Customer Name',value:r.customer,full:false},{label:'Contact Number',value:r.phone,full:false},{label:'Property Type',value:r.propertyType,full:false},{label:'Configuration',value:r.configuration,full:false},{label:'Budget',value:r.budget?'₹ '+r.budget:'',full:false},{label:'Visit Date',value:r.visitDate,full:false},{label:'Project Name',value:r.project,full:false},{label:'Developer / Builder',value:r.developer||r.builderSourcingName,full:false},{label:'Builder Sourcing Manager',value:r.builderSourcingName,full:false},{label:'Sourcing Manager Contact',value:r.builderSourcingContact,full:false},{label:'Builder Closing Manager',value:r.builderClosingName,full:false},{label:'Remarks',value:r.remark,full:true},{label:'Operations Remark',value:r.operationsRemark,full:true}];
-  const grid=document.getElementById('detailGrid');
-  grid.innerHTML=fields.map(f=>{const val=f.value?String(f.value).trim():'';const display=val?(f.badge?statusBadge(val):`<div class="detail-value ${f.gold?'gold':''}">${esc(val)}</div>`):`<div class="detail-value muted">—</div>`;return`<div class="detail-item ${f.full?'full':''}"><div class="detail-label">${f.label}</div>${display}</div>`;}).join('');
+  const F=(label,value,o)=>Object.assign({label,value},o||{});
+  document.getElementById('detailGrid').innerHTML=
+    dcCard('Customer Details',[F('Customer Name',r.customer),F('Contact Number',r.phone),F('Status',r.status,{badge:true}),F('Sales Executive',r.employee),F('Team Leader',r.teamLead),F('Manager',r.manager),F('PNL Head',r.pnlHead),F('Cluster',r.cluster)])+
+    dcCard('Property Details',[F('Project Name',r.project),F('Developer / Builder',r.developer||r.builderSourcingName),F('Property Type',r.propertyType),F('Builder Sourcing Manager',r.builderSourcingName),F('Sourcing Manager Contact',r.builderSourcingContact),F('Builder Closing Manager',r.builderClosingName)])+
+    dcCard('Budget & Configuration',[F('Budget',r.budget?'₹ '+r.budget:'',{gold:true}),F('Configuration',r.configuration)])+
+    dcCard('Visit Information',[F('Visit Date',r.visitDate),F('Created On',createdOn)])+
+    dcText('Remarks',[{label:'Client remark',value:r.remark},{label:'Operations remark',value:r.operationsRemark}]);
   window._currentDetailRecord=r;
   const adminPanel=document.getElementById('adminEditPanel');const canEdit=isAdmin()||isLoanDept();adminPanel.style.display=canEdit?'block':'none';
   if(canEdit){document.getElementById('adminStatusSelect').value='';document.getElementById('adminRemarkInput').value='';document.getElementById('adminCurrentStatus').textContent=r.status||'—';document.getElementById('adminSaveStatus').textContent='';document.getElementById('adminSaveBtn').disabled=false;
@@ -1874,17 +1979,13 @@ function closeDetailModal(e){if(e&&e.target!==document.getElementById('detailMod
 
 function openVisitDetailModal(r){
   document.getElementById('visitModalCustomerName').textContent=r.customer||'Visit Details';
-  const fields=[
-    {label:'Cluster',value:r.cluster},{label:'PNL Head',value:r.pnlHead},{label:'Manager',value:r.manager},
-    {label:'Team Leader',value:r.teamLead},{label:'Sales Executive',value:r.employee},
-    {label:'Customer Name',value:r.customer},{label:'Contact Number',value:r.phone},
-    {label:'Project Name',value:r.project},{label:'Developer / Builder',value:r.developer},
-    {label:'Visit Date',value:r.visitDate},{label:'Visit Time',value:r.visitTime},
-    {label:'Closure Chance',value:r.closure},{label:'Visit Type',value:r.visitType,badge:true},
-    {label:'Requirements',value:r.requirement,full:true},{label:'Notes',value:r.remark,full:true}
-  ];
-  const grid=document.getElementById('visitDetailGrid');
-  grid.innerHTML=fields.map(f=>{const val=f.value?String(f.value).trim():'';const display=val?(f.badge?`<span class="badge ${val==='Visit'?'badge-yes':'badge-cold'}">${esc(val)}</span>`:`<div class="detail-value">${esc(val)}</div>`):`<div class="detail-value muted">—</div>`;return`<div class="detail-item ${f.full?'full':''}"><div class="detail-label">${f.label}</div>${display}</div>`;}).join('');
+  const F=(label,value,o)=>Object.assign({label,value},o||{});
+  const vb=v=>`<span class="badge ${v==='Visit'?'badge-yes':'badge-cold'}">${esc(v)}</span>`;
+  document.getElementById('visitDetailGrid').innerHTML=
+    dcCard('Customer Details',[F('Customer Name',r.customer),F('Contact Number',r.phone),F('Sales Executive',r.employee),F('Team Leader',r.teamLead),F('Manager',r.manager),F('PNL Head',r.pnlHead),F('Cluster',r.cluster)])+
+    dcCard('Property Details',[F('Project Name',r.project),F('Developer / Builder',r.developer)])+
+    dcCard('Visit Information',[F('Visit Date',r.visitDate),F('Visit Time',r.visitTime),F('Visit Type',r.visitType,{badge:true,badgeHtml:vb}),F('Closure Chance',r.closure)])+
+    dcText('Remarks',[{label:'Requirements',value:r.requirement},{label:'Notes',value:r.remark}]);
   document.getElementById('visitDetailModal').classList.add('open');document.body.style.overflow='hidden';
 }
 function closeVisitDetailModal(e){if(e&&e.target!==document.getElementById('visitDetailModal'))return;document.getElementById('visitDetailModal').classList.remove('open');document.body.style.overflow='';}
@@ -2045,8 +2146,8 @@ function applyVDFilters(){
 function clearVDFilters(){['vd-pnlFilter','vd-managerFilter','vd-tlFilter','vd-empFilter','vd-projFilter','vd-devFilter','vd-typeFilter','vd-custFilter','vd-phoneFilter','vd-fromDate','vd-toDate'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});vdFiltered=[...vdAll];renderVDTable(vdFiltered);}
 function renderVDTable(rows){
   const tbody=document.getElementById('vd-tbody');document.getElementById('vd-rowCount').textContent=rows.length+' visit(s) done';
-  if(!rows.length){tbody.innerHTML='<tr><td colspan="10" class="no-data">No records found</td></tr>';return;}
-  tbody.innerHTML=rows.map(r=>`<tr><td style="white-space:nowrap">${esc(r.visitDate)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td>${esc(r.phone)}</td><td>${esc(r.teamLead)}</td><td>${esc(r.employee)}</td><td>${esc(r.project)}</td><td>${esc(r.developer)}</td><td style="max-width:160px;white-space:normal;font-size:0.76rem;color:var(--text-dim)">${esc(r.notes)}</td><td>${r.type?`<span class="badge ${r.type==='Visit'?'badge-yes':'badge-cold'}">${esc(r.type)}</span>`:'—'}</td><td><button class="convert-btn" onclick="convertVDToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="More actions">⋮</button></td></tr>`).join('');
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="9" class="no-data">No records found</td></tr>';return;}
+  tbody.innerHTML=rows.map(r=>`<tr><td style="white-space:nowrap">${esc(r.visitDate)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td>${esc(r.phone)}</td><td>${esc(r.manager)}</td><td>${esc(r.employee)}</td><td>${esc(r.project)}</td>${remarkCell(r.notes)}<td>${r.type?`<span class="badge ${r.type==='Visit'?'badge-yes':'badge-cold'}">${esc(r.type)}</span>`:'—'}</td><td><button class="convert-btn" onclick="convertVDToFN(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="More actions">⋮</button></td></tr>`).join('');
 }
 function populateVDFilters(rows){
   fillSelect('vd-pnlFilter',[...new Set(rows.map(r=>r.pnlHead).filter(Boolean))].sort(),'All PNL Heads');
@@ -2057,7 +2158,7 @@ function populateVDFilters(rows){
   fillSelect('vd-devFilter',[...new Set(rows.map(r=>r.developer).filter(Boolean))].sort(),'All Developers');
 }
 function sortVD(col){if(vdSortCol===col)vdSortDir=vdSortDir==='asc'?'desc':'asc';else{vdSortCol=col;vdSortDir='asc';}document.querySelectorAll('#vd-table th').forEach((th,i)=>{th.classList.remove('asc','desc');if(i===col)th.classList.add(vdSortDir);});applySortVD();renderVDTable(vdFiltered);}
-function applySortVD(){const keys=['visitDate','customer','phone','teamLead','employee','project','developer','notes','type'];const key=keys[vdSortCol]||'visitDate';vdFiltered.sort((a,b)=>{const v1=a[key]||'',v2=b[key]||'';return vdSortDir==='asc'?v1.localeCompare(v2):v2.localeCompare(v1);});}
+function applySortVD(){const keys=['visitDate','customer','phone','manager','employee','project','notes','type'];const key=keys[vdSortCol]||'visitDate';vdFiltered.sort((a,b)=>{const v1=a[key]||'',v2=b[key]||'';return vdSortDir==='asc'?v1.localeCompare(v2):v2.localeCompare(v1);});}
 function convertVDToFN(row){const params=new URLSearchParams({prefill:'1',customerName:row.customer||'',contactNumber:row.phone||'',salesExec:row.employee||'',teamLead:row.teamLead||'',cluster:row.cluster||'',projectName:row.project||'',developerName:row.developer||'',visitDate:row.visitDate||'',convertedFromVisit:'Yes'});window.open(FN_FORM_URL+'?'+params.toString(),'_blank');}
 
 // ══════════════════════════════════════════════════════════
@@ -2944,7 +3045,7 @@ function updateTabBadges(){
 function clearGlobalSearch(prefix){const el=document.getElementById(prefix+'-globalSearch');if(el){el.value='';if(prefix==='v')applyVisitFilters();else if(prefix==='vd')applyVDFilters();else if(prefix==='fn')applyFNFilters();else if(prefix==='tk')applyTKFilters();else if(prefix==='mp')applyMPFilters();}}
 function focusActiveSearch(){const el=document.getElementById(activeDash==='visits'?'v-globalSearch':activeDash==='visitdone'?'vd-globalSearch':activeDash==='fnclients'?'fn-globalSearch':activeDash==='tokenfn'?'tk-globalSearch':activeDash==='marketing'?'mp-globalSearch':'');if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'});}}
 function clearActiveFilters(){if(activeDash==='visits')clearVisitFilters();else if(activeDash==='visitdone')clearVDFilters();else if(activeDash==='fnclients')clearFNFilters();else if(activeDash==='tokenfn')clearTKFilters();else if(activeDash==='marketing')clearMPFilters();else if(activeDash==='salesdash')clearSP2Filters();else if(activeDash==='weeklytargets')clearWTFilters();}
-function renderFilterChips(prefix,items){const host=document.getElementById(prefix+'-filterChips');if(!host)return;host.innerHTML=items.filter(x=>x.value!==undefined&&x.value!==null&&String(x.value).trim()!=='').map(x=>`<span class="filter-chip">${esc(x.label)}: ${esc(x.value)} <button type="button" aria-label="Remove ${esc(x.label)} filter" onclick="removeFilter('${prefix}','${x.id}')">×</button></span>`).join('');}
+function renderFilterChips(prefix,items){syncHdrSearch();const host=document.getElementById(prefix+'-filterChips');if(!host)return;host.innerHTML=items.filter(x=>x.value!==undefined&&x.value!==null&&String(x.value).trim()!=='').map(x=>`<span class="filter-chip">${esc(x.label)}: ${esc(x.value)} <button type="button" aria-label="Remove ${esc(x.label)} filter" onclick="removeFilter('${prefix}','${x.id}')">×</button></span>`).join('');}
 function removeFilter(prefix,id){const el=document.getElementById(id);if(!el)return;if(el.tagName==='INPUT'||el.tagName==='SELECT')el.value='';if(prefix==='v')applyVisitFilters();else if(prefix==='vd')applyVDFilters();else if(prefix==='fn')applyFNFilters();else if(prefix==='tk')applyTKFilters();else if(prefix==='mp')applyMPFilters();}
 function syncDataLabels(tableId,labels){const table=document.getElementById(tableId);if(!table)return;const th=[...table.querySelectorAll('thead th')].map(x=>x.textContent.trim());table.querySelectorAll('tbody tr').forEach(tr=>{[...tr.children].forEach((td,i)=>{if(th[i])td.setAttribute('data-label',th[i]);});});}
 function syncAllDataLabels(){syncDataLabels('v-table');syncDataLabels('vd-table');syncDataLabels('fn-table');syncDataLabels('tk-table');syncDataLabels('mp-table');syncDataLabels('sp2-table');syncDataLabels('wt-table');}
@@ -3381,7 +3482,7 @@ function renderTKTable(rows){
   if(!rows.length){tbody.innerHTML='<tr><td colspan="11" class="no-data">No Token FN clients found</td></tr>';syncDataLabels('tk-table');return;}
   let rowsHtml=rows.map((r,i)=>{
     let cd='—';if(r.timestamp){try{const d=new Date(r.timestamp);if(!isNaN(d))cd=d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'});else cd=r.timestamp;}catch(_){cd=r.timestamp;}}
-    return`<tr class="clickable-row" onclick="openDetailModal(tkFiltered[${i}])"><td>${esc(r.cluster)}</td><td>${esc(r.teamLead)}</td><td>${esc(r.employee)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td style="white-space:nowrap;font-size:0.78rem">${esc(cd)}</td><td>${esc(r.project)}</td><td>${esc(r.developer||'—')}</td><td>${esc(r.configuration)}</td><td>${esc(r.budget)}</td><td onclick="event.stopPropagation()">${tkStatusCell(r,i)}</td><td style="white-space:nowrap">${esc(r.visitDate)}</td></tr>`;
+    return`<tr class="clickable-row" onclick="openDetailModal(tkFiltered[${i}])"><td>${esc(r.cluster)}</td><td>${esc(r.manager)}</td><td>${esc(r.employee)}</td><td style="font-weight:600;color:var(--text)">${esc(r.customer)}</td><td style="white-space:nowrap;font-size:0.78rem">${esc(cd)}</td><td>${esc(r.project)}</td>${remarkCell(r.remark)}<td>${esc(r.configuration)}</td><td>${esc(r.budget)}</td><td onclick="event.stopPropagation()">${tkStatusCell(r,i)}</td><td style="white-space:nowrap">${esc(r.visitDate)}</td></tr>`;
   }).join('');
   const budgetTotalStr=formatBudgetTotal(rows.reduce((sum,r)=>sum+parseBudget(r.budget),0));
   rowsHtml+=`<tr class="budget-total-row"><td colspan="8" style="text-align:right;color:var(--text-dim);font-size:0.70rem;letter-spacing:0.06em;text-transform:uppercase;">Total Budget (${rows.length} clients)</td><td style="color:var(--gold);font-weight:800">${budgetTotalStr}</td><td></td><td></td></tr>`;
@@ -3405,7 +3506,7 @@ function renderTKPivot(rows){
 }
 function escJsStr(s){return esc(String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"));}
 function sortTK(col){if(tkSortCol===col)tkSortDir=tkSortDir==='asc'?'desc':'asc';else{tkSortCol=col;tkSortDir='asc';}document.querySelectorAll('#tk-table th').forEach((th,i)=>{th.classList.remove('asc','desc');if(i===col)th.classList.add(tkSortDir);});applySortTK();renderTKTable(tkFiltered);}
-function applySortTK(){const keys=['cluster','teamLead','employee','customer','timestamp','project','developer','configuration','budget','status','visitDate'];const key=keys[tkSortCol]||'timestamp';tkFiltered.sort((a,b)=>{if(key==='timestamp'){const d1=a.timestamp?new Date(a.timestamp).getTime():0,d2=b.timestamp?new Date(b.timestamp).getTime():0;return tkSortDir==='asc'?d1-d2:d2-d1;}const v1=a[key]||'',v2=b[key]||'';return tkSortDir==='asc'?v1.localeCompare(v2):v2.localeCompare(v1);});}
+function applySortTK(){const keys=['cluster','manager','employee','customer','timestamp','project','remark','configuration','budget','status','visitDate'];const key=keys[tkSortCol]||'timestamp';tkFiltered.sort((a,b)=>{if(key==='timestamp'){const d1=a.timestamp?new Date(a.timestamp).getTime():0,d2=b.timestamp?new Date(b.timestamp).getTime():0;return tkSortDir==='asc'?d1-d2:d2-d1;}const v1=a[key]||'',v2=b[key]||'';return tkSortDir==='asc'?v1.localeCompare(v2):v2.localeCompare(v1);});}
 
 // admin-only inline status change (RLS still has the final say)
 function tkStatusCell(r,i){
@@ -3445,6 +3546,29 @@ function openTKDrillModal(e,employeeName,statusLabel){
   document.getElementById('drillModal').classList.add('open');document.body.style.overflow='hidden';
 }
 
+
+/* ================================================================
+   THORE PULSE 2.0 — header search, remark tooltip, card detail view
+   ================================================================ */
+function remarkCell(v){v=String(v==null?'':v).trim();if(!v)return'<td class="remark-cell empty">—</td>';return`<td class="remark-cell" data-full="${esc(v)}"><span>${esc(v)}</span></td>`;}
+function dcVal(f){const v=f.value==null?'':String(f.value).trim();if(!v)return'<div class="detail-value muted">—</div>';if(f.badge)return f.badgeHtml?f.badgeHtml(v):statusBadge(v);return`<div class="detail-value${f.gold?' gold':''}">${esc(v)}</div>`;}
+function dcCard(title,items){return`<section class="dc-card"><h3 class="dc-title">${title}</h3><div class="dc-grid">${items.map(f=>`<div class="dc-item${f.full?' full':''}"><div class="detail-label">${f.label}</div>${dcVal(f)}</div>`).join('')}</div></section>`;}
+function dcText(title,blocks){return`<section class="dc-card"><h3 class="dc-title">${title}</h3>${blocks.map(b=>{const v=b.value?String(b.value).trim():'';return`<div class="dc-block"><div class="dc-sub">${b.label}</div><div class="dc-text${v?'':' muted'}">${v?esc(v):'—'}</div></div>`;}).join('')}</section>`;}
+const HS_MAP={visits:'v',visitdone:'vd',fnclients:'fn',tokenfn:'tk',marketing:'mp'};
+function hsSectionEl(){const p=HS_MAP[activeDash];return p?document.getElementById(p+'-globalSearch'):null;}
+function syncHdrSearch(){const w=document.getElementById('hdrSearchWrap'),i=document.getElementById('hdrSearch'),el=hsSectionEl();if(!w||!i)return;if(!el){w.classList.add('is-off');return;}w.classList.remove('is-off');i.placeholder=el.placeholder||'Search…';if(i.value!==el.value&&document.activeElement!==i)i.value=el.value;w.classList.toggle('has-value',!!i.value);}
+function onHdrSearch(v){const el=hsSectionEl();if(!el)return;el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}));document.getElementById('hdrSearchWrap').classList.toggle('has-value',!!v);}
+function clearHdrSearch(){const i=document.getElementById('hdrSearch');i.value='';onHdrSearch('');i.focus();}
+function focusActiveSearch(){const w=document.getElementById('hdrSearchWrap');if(w&&!w.classList.contains('is-off')){window.scrollTo({top:0,behavior:'smooth'});document.getElementById('hdrSearch').focus();}}
+(function(){const _s=switchDashboard;switchDashboard=function(w){_s(w);syncHdrSearch();};})();
+(function(){
+  const tip=document.createElement('div');tip.className='remark-tip';document.body.appendChild(tip);let cur=null;
+  const find=e=>e.target.closest?e.target.closest('td.remark-cell[data-full]'):null;
+  document.addEventListener('mouseover',e=>{const t=find(e);if(!t||t===cur)return;cur=t;tip.textContent=t.dataset.full;tip.classList.add('show');
+    const r=t.getBoundingClientRect(),tw=tip.offsetWidth,th=tip.offsetHeight;let x=Math.max(8,Math.min(r.left,innerWidth-tw-12)),y=r.bottom+6;if(y+th>innerHeight-8)y=Math.max(8,r.top-th-6);tip.style.left=x+'px';tip.style.top=y+'px';});
+  document.addEventListener('mouseout',e=>{if(!cur)return;const t=find(e);if(t===cur&&!(e.relatedTarget&&cur.contains(e.relatedTarget))){tip.classList.remove('show');cur=null;}});
+  window.addEventListener('scroll',()=>{tip.classList.remove('show');cur=null;},true);
+})();
 </script>
 </body>
 </html>
